@@ -1,0 +1,190 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model UserDto
+@{
+    ViewBag.Title = "Standings";
+}
+<div class="row page-titles">
+    <div class="col-md-5 col-8 align-self-center">
+        <h3 class="text-themecolor m-b-0 m-t-0">Manage User Details</h3>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">Manage User Details</li>
+        </ol>
+    </div>
+
+    <div class="col-md-7 col-4 align-self-center">
+        <div class="d-flex m-t-10 justify-content-end">
+            <div class="d-flex m-r-20 m-l-10 hidden-md-down">
+                <div class="spark-chart form-material">
+                </div>
+                <div class="spark-chart form-material">
+                    <button type="button" id="btnCreateShift" class="btn waves-effect waves-light btn-block btn-info" onclick="ShowShiftDetails()"><i class="mdi mdi-account-plus"></i>&nbsp;Add New User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">User Details</h4>
+                @using (Html.BeginForm("Search", "Employee", new { value = 100 }, FormMethod.Post))
+                {
+                    <div class="row">
+
+                        <div class="col-md-2">
+                            <div class="form-group-sm ">
+                                <input class="form-control " type="text" name="txtSearch" id="txtSearch" placeholder="Search.." />
+                                <label for="StartShiftUtc">&nbsp;</label>
+
+                            </div>
+                        </div>
+                        <div class="col-md-2" id="divLoader">
+                            <div class="form-group-sm ">
+
+
+                                <button type="submit" class="btn btn btn-primary" id="btnfilter" data-toggle="tooltip" data-placement="top" title="Filter Records By Date Range"><i class="fa fa-filter"></i> &nbsp;Filter</button>
+
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group mt-4-q">
+                            </div>
+                        </div>
+
+                    </div>
+                }
+                <div class="row"></div>
+                <div class="table-responsive">
+                    <table id="basic-2" class="display">
+                        <thead>
+                            <tr>
+
+                                <th data-orderable="true">UId</th>
+                                <th>Full Name</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Mobile Number</th>
+                                <th>View</th>
+                                <th>Change Password</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody id="">
+
+                            @foreach (var item in Model.userList)
+                            {
+                                <tr>
+
+                                    <td>@item.Id</td>
+                                    <td>@item.FullName</td>
+                                    <td>@item.UserName</td>
+                                    <td>@item.EmailAddr</td>
+                                    <td>@item.MobileNumber</td>
+                                    <td>
+                                        <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
+                                    </td>
+                                    <td>
+                                        <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetailsPw(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
+                                    </td>
+                                    <td>
+                                        @using (Html.BeginForm("DeleteUser", "User", new { Id = @item.Id }, FormMethod.Post))
+                                        {
+                                            <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-clipboard'></i></button>
+
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="AddShiftModel" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" id="AddEditContainerModel">
+    </div>
+</div>
+
+
+
+
+@section scripts{
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+
+        function ShowShiftDetails(id) {
+
+            console.log(id);
+
+            $.ajax({
+                type: "POST",
+                url: "/User/CreateUser/" + id,
+                data: { id: 101 },
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $("#AddEditContainerModel").html(response);
+                    $("#AddShiftModel").modal('show');
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        }
+
+
+        function ShowShiftDetailsPw(id) {
+
+            console.log(id);
+
+            $.ajax({
+                type: "POST",
+                url: "/User/changePwUser/" + id,
+                data: { id: 101 },
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $("#AddEditContainerModel").html(response);
+                    $("#AddShiftModel").modal('show');
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        }
+
+        $('body').on('focus', "#date-format", function () {
+
+            $('#date-format').bootstrapMaterialDatePicker({
+                time: true,
+                format: "YYYY-MM-DD hh:mm"
+
+            });
+
+        });
+
+
+    </script>
+
+
+
+}

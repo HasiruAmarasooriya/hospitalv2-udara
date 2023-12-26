@@ -1,0 +1,159 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model OPDDto;
+@{
+}
+@inject IConfiguration Configuration
+<script type="text/javascript">
+
+    function ShowPatientModal(id) {
+        $.ajax({
+            type: "POST",
+            url: "/OPDRegistration/CreateOPDPatientRegistration/" + id,
+            data: { id: 101 },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $("#AddEditContainerModel2").html(response);
+                $("#AddShiftModel2").modal('show');
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+
+    }
+</script>
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/EditAppoinment</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form asp-action="AddNewOPD" method="post">
+        <input type="hidden" id="custId" asp-for="opdId">
+        <input type="hidden" id="oid" asp-for="opd.Id">
+        <div class="modal-body">
+
+            <div class="row">
+
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="companyName">Patient</label>
+                        <select class="form-control ddlSearchList" id="dropPatient"  asp-for="opd.PatientID">
+@*                            <option value="">Please Select</option>
+                            @foreach (var item in Model.patientsList)
+                            {
+                              <option value="@item.Id">@item.FullName</option>
+                         
+                            }*@
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <br>
+                    <div class="spark-chart form-material">
+                        <div style="overflow-x: auto;">
+                            <span style="display: inline-block; white-space: nowrap;">
+                                <strong>Or &nbsp;&nbsp;</strong>
+                                <button type="button" id="btnNewPatient" class="btn waves-effect waves-light btn-block btn-info" onclick="ShowPatientModal()"><i class="mdi mdi-account-plus"></i>&nbsp;New Patient</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+            </div>
+
+
+
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="companyName">OPD Doctor</label>
+                        <select class="form-control ddlSearchList" asp-for="opd.ConsultantID" id="dropDoctor">
+                            <option >Select one</option>
+                            @foreach (var item in Model.consultantList)
+                            {
+                                    <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">DoctorFee:</label>
+                        <input class="form-control " type="number" style="text-align:right;" asp-for="opd.ConsultantFee" id="DoctorFee"  placeholder="Amount" anabled />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">HospitalFee:</label>
+                        <input class="form-control " type="number" style="text-align:right;" asp-for="opd.HospitalFee" placeholder="Amount" anabled />
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Room No</label>
+                        <select class="form-control ddlSearchList" asp-for="opd.RoomID" id="dropSex">
+                            <option value="0">1</option>
+                            <option value="1">2</option>
+                            <option value="2">3</option>
+                            <option value="3">4</option>
+                            <option value="4">5</option>
+
+                        </select>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Appoinment Date</label>
+                        <input type="text" id="date-format" asp-format="{0:dd.MM.yyyy hh:mm}" class="form-control" asp-for="opd.DateTime" placeholder="Saturday 24 June 2017 - 21:44">
+
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Appoinment No</label>
+                        <input type="text" asp-for="opd.AppoimentNo" class="form-control">
+
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+        </div>
+    </form>
+</div>

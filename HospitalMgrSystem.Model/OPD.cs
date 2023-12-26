@@ -1,0 +1,39 @@
+﻿using HospitalMgrSystem.Model.Enums;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace HospitalMgrSystem.Model
+{
+    public class OPD
+    {
+        public int Id { get; set; }
+        //OPD Shedular need to be add here
+        //Payment Status
+        public PaymentStatus paymentStatus { get; set; }
+        public int PatientID { get; set; }
+        [ForeignKey("PatientID")]
+        public Patient? patient { get; set; }
+        public int ConsultantID { get; set; }
+        [ForeignKey("ConsultantID")]
+        public Consultant? consultant { get; set; }
+        public int RoomID { get; set; }
+        [ForeignKey("RoomID")]
+        public Room? room { get; set; }
+
+        public decimal ConsultantFee { get; set; }
+        public decimal HospitalFee { get; set; }
+        public decimal OtherFee { get; set; }
+
+        public int AppoimentNo { get; set; }
+        public int isOnOPD { get; set; }
+        public DateTime DateTime { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime ModifiedDate { get; set; }
+        public CommonStatus Status { get; set; }
+
+    }
+}

@@ -1,0 +1,126 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model ItemDto
+@{
+}
+@inject IConfiguration Configuration
+<script type="text/javascript">
+    function select_onchange(value) {
+        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+        var settings = {
+            "url": commonUrl + "Items/GetAllItemSubCategoryByID?CategoryID=" + value,
+            "method": "GET",
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            const select = document.querySelector('#dropSubCategory');
+
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+
+            for (let item of response) {
+                const option = document.createElement('option');
+                option.value = item.itemSubCategoryId;
+                option.text = item.itemSubCategoryName;
+                select.add(option);
+            }
+        });
+    }
+
+</script>
+
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/Edit Items  </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form asp-action="AddNewIem" method="post">
+        <input type="hidden" id="custId" asp-for="Item.Id">
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="companyName">SNo</label>
+                        <input class="form-control " type="text" id="txtFullName" asp-for="Item.SNo" placeholder="S/ No" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="companyName">Main Category</label>
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange(this.value);" asp-for="Item.ItemCategoryId" id="cars">
+                        <option>Please Select</option>
+                        @foreach (var item in Model.ItemCategory)
+                        {
+                            <option value="@item.ItemCategoryId">@item.ItemCategoryName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="companyName">Sub Category</label>
+                        <select class="form-control ddlSearchList" asp-for="Item.ItemSubCategoryId" id="dropSubCategory">
+                            <option>Please Select</option>
+
+                            @if (Model.ItemSubCategory != null)
+                            {
+                                @foreach (var item in Model.ItemSubCategory)
+                                {
+                                    <option value="@item.ItemSubCategoryId">@item.ItemSubCategoryName</option>
+                                }
+                            }
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="companyName">Type</label>
+                        <select class="form-control ddlSearchList" asp-for="Item.Type" id="cars">
+                        <option value="1">Product</option>
+                        <option value="2">Service</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label for="companyName">Item of Drugus </label>
+                        <input class="form-control " type="text" id="txtTelephoneNumber" asp-for="Item.ItemName" placeholder="Name of Investigation" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="companyName">Price</label>
+                        <input class="form-control " type="text" id="txtTelephoneNumber" asp-for="Item.Price"  placeholder="Price" />
+                </div>
+            </div>
+
+
+
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="companyName">Description</label>
+                        <textarea asp-for="Item.Description" class="form-control " cols="40" rows="5" placeholder="Description"></textarea>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+    </div>
+    </form>
+</div>

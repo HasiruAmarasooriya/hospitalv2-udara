@@ -1,0 +1,50 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model OPDDto;
+@{
+    Layout = null;
+}
+@inject IConfiguration Configuration
+<script type="text/javascript">
+    generateQRCode(200)
+    function generateQRCode(size) {
+        var opdId = @Html.Raw(Json.Serialize(Model.opdId));
+        var data = "OPD"+opdId.toString();
+        const qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: data,
+            width: size,
+            height: size,
+        });
+    }
+
+    function printQRCode() {
+        
+    const printWindow = window.open("", "Print QR Code", "width=400,height=400");
+        printWindow.document.write('<div style="text-align: center;">Kumudu Hospital</div>');
+        printWindow.document.write('<div style="text-align: center; margin: 5px; padding: 5px;">');
+        printWindow.document.write('<img  src="' + document.getElementById("qrcode").getElementsByTagName("img")[0].src + '">');
+        printWindow.document.write('</div>');
+        printWindow.document.write('<div style="text-align: center;">OPD' + @Html.Raw(Json.Serialize(Model.opdId)) + '</div>');
+        printWindow.document.close();
+        printWindow.print();
+
+    }
+
+</script>
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">QR</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+
+    <div class="modal-body">
+        <div id="qrcode" class="d-flex justify-content-center"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn  waves-effect btn-primary" onclick=printQRCode();><i class="fa fa-save"></i>&nbsp;Print</button>
+    </div>
+
+</div>

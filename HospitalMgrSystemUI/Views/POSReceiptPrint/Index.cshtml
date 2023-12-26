@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">RDLC Report in ASP.NET Core 6</h1>
+</div>
+<button id="btnPrint" class="btn btn-success">Print Me!</button>
+<div id="printError" class="alert alert-danger" style="display: none;"></div>
+
+@section scripts {
+   @* <script src="~/js/print.js"></script>*@
+    <script>
+        // Use JavaScript/jQuery to handle the button click event and send the AJAX request.
+        //$(document).ready(function () {
+        //    $('#btnPrint').on('click', function () {
+        //        $.ajax({
+        //            url: '/POSReceiptPrint/PrintRecept',
+        //            type: 'GET',
+        //            success: function () {
+        //                // Handle a successful print request here.
+        //                // You can display a success message if needed.
+        //                console.log('Print request successful');
+        //            },
+        //            error: function (xhr, status, error) {
+        //                // Handle errors and display error messages to the user.
+        //                console.log('Error:', error);
+
+        //                // Display the error message to the user.
+        //                $('#printError').text('Error printing receipt. Please try again later.');
+        //                $('#printError').show();
+        //            }
+        //        });
+        //    });
+        //});
+        $(document).ready(function () {
+            $('#btnPrint').on('click', function () {
+                $.ajax({
+                    url: '/POSReceiptPrint/PrintRecept',
+                    type: 'GET',
+                    success: function (data) {
+                        // Handle a successful print request here.
+                        // You can display a success message if needed.
+                        console.log('Print request successful');
+
+                        // Create a new Blob with the image data
+                        var imageBase64 = data.imageBase64;
+
+                        // Create an <img> element to display the image
+                        var img = document.createElement('img');
+                        img.src = 'data:image/png;base64,' + imageBase64;
+
+                        // Add the image to the page
+                        document.body.appendChild(img);
+
+                        // Wait for the image to load (optional)
+                        img.onload = function () {
+                            // Trigger the print dialog
+                            if (window.print) {
+                                window.print();
+                            }
+                        };
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle errors and display error messages to the user.
+                        console.log('Error:', error);
+
+                        // Display the error message to the user.
+                        $('#printError').text('Error printing receipt. Please try again later.');
+                        $('#printError').show();
+                    }
+                });
+            });
+        });
+
+            //$(document).ready(function () {
+            //    $('#btnPrint').on('click', function () {
+            //        // Change the window location to the PrintRecept action
+            //        window.location.href = '/POSReceiptPrint/PrintRecept';
+            //    });
+            //});
+        //$(document).ready(function () {
+        //    $('#btnPrint').on('click', function () {
+        //        $.ajax({
+        //            url: '/POSReceiptPrint/PrintRecept',
+        //            type: 'GET',
+        //            success: function (data) {
+        //                // Handle the response data here
+        //                var itemList = data.ItemList;         // Access the first DataTable
+        //                var detailsReceipt = data.DetailsReceipt; // Access the second DataTable
+
+        //                // Now, you can use itemList and detailsReceipt in the printReceipt() function
+        //                printReceipt(itemList, detailsReceipt);
+        //            },
+        //            error: function (xhr, status, error) {
+        //                console.log('Error:', error);
+        //                $('#printError').show();
+        //            }
+        //        });
+        //    });
+        //});
+
+        //function printReceipt(itemList, detailsReceipt) {
+        //    var receiptContent = "<html><head><meta http-equiv=\"refresh\" content=\"0\"></head><body>";
+
+        //    // Add the content of the first DataTable (itemList)
+        //    // ...
+
+        //    // Add the content of the second DataTable (detailsReceipt)
+        //    // ...
+
+        //    receiptContent += "<p>Date: " + new Date().toDateString() + "</p>";
+        //    // Add more receipt content as needed
+
+        //    receiptContent += "</body></html>";
+
+
+        //    var printWindow = window.open('', '', 'width=600,height=600');
+        //    printWindow.document.open();
+        //    printWindow.document.write(receiptContent);
+        //    printWindow.document.close();
+        //    printWindow.print();
+        //    printWindow.close();
+        //}
+
+
+
+    </script>
+}
+
+
+
+
+

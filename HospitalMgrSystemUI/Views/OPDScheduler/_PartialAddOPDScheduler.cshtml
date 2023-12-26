@@ -1,0 +1,176 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model OPDSchedulerDto;
+@{
+}
+@inject IConfiguration Configuration
+@section Styles{
+    <style>
+
+    </style>
+}
+
+    <div class="modal-content">
+        <div class="modal-header">
+         <h4 class="modal-title" id="myLargeModalLabel">Add New OPD</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        </div>
+        <div class="modal-body" id="newOpdFrm">
+            <form asp-action="AddNewOPD" id="newOpdFrm" method="post">
+
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Date</label>
+                            <input type="text" id="date-format" asp-format="{0:yyyy.MM.dd}" asp-for="cDate" class="form-control" placeholder="DD:MM:YYYY">
+
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="table-responsive">
+                <table id="myTable2" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Session</th>
+                            <th>OPD Doctor</th>
+                            <th>Status</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Active Session</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblBodyPayments2">
+                        <tr>
+                            <td class="text-center" data-orderable="true">Morning Session</td>
+                            <td class="text-center px-3">
+                                    <input type="hidden" id="OPDSheduleMoID" asp-for="OPDSheduleMoID">
+                                    <input type="hidden" id="OPDSheduleMoStatus" asp-for="OPDSchedulerStatusMo">
+                                    <select class="form-control ddlSearchList" id="dropDoctorMo" asp-for="DrMoID">
+                                    <option value="0">Select one</option>
+                                    @foreach (var item in Model.Consultants)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                </select>
+                            </td>
+                            <th class="text-center">@Model.OPDSchedulerStatusMo</th>
+                            <td class="text-center px-3">
+                                <!-- Replace the button with a time picker -->
+                                <input type="time" class="form-control" id="morningTimePicker" asp-for="startTimeMo" />
+                            </td>
+                            <td class="text-center px-3">
+                                <input type="time" class="form-control" id="morningEndTimePicker" asp-for="endTimeMo" />
+                            </td>
+                            <td class="text-center px-3">                   
+                                <div class="form-check">
+                                    @if(Model.activeMo == 1){
+                                        <input type="radio" id="customRadio1" name="customRadio" value="0" class="form-check-input" checked>
+                                    }else{
+                                        <input type="radio" id="customRadio1" name="customRadio" value="0" class="form-check-input">
+                                    }
+                                 
+                                    <label class="form-check-label" for="customRadio1"></label>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" onclick="endSession('morningSession')">End</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="text-center" data-orderable="true">Day Session</td>
+                            <td class="text-center px-3">
+                                <input type="hidden" id="OPDSheduleDaID" asp-for="OPDSheduleDaID">
+                                <input type="hidden" id="OPDSheduleDaStatus" asp-for="OPDSchedulerStatusDa">
+                                <select class="form-control ddlSearchList" id="dropDoctorDa" asp-for="DrDaID">
+                                    <option value="0">Select one</option>
+                                    @foreach (var item in Model.Consultants)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                </select>
+                            </td>
+                            <th class="text-center">@Model.OPDSchedulerStatusDa</th>
+                            <td class="text-center px-3">
+                                <input type="time" class="form-control" id="dayTimePicker" asp-for="startTimeDay" />
+                            </td>
+                            <td class="text-center px-3">
+                                <input type="time" class="form-control" id="dayEndTimePicker" asp-for="endTimeDay" />
+                            </td>
+                            <td class="text-center">
+                                    <div class="form-check">
+                                    @if (Model.activeDa == 1)
+                                    {
+                                        <input type="radio" id="customRadio2" name="customRadio" class="form-check-input" value="1" checked>
+                                    }
+                                    else
+                                    {
+                                        <input type="radio" id="customRadio2" name="customRadio" class="form-check-input" value="1">
+                                    }
+                                        <label class="form-check-label" for="customRadio2"></label>
+                                    </div>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" onclick="endSession('daySession')">End</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="text-center" data-orderable="true">Night Session</td>
+                            <td class="text-center px-3">
+                                <input type="hidden" id="OPDSheduleNiID" asp-for="OPDSheduleNiID">
+                                <input type="hidden" id="OPDSheduleNiStatus" asp-for="OPDSchedulerStatusNi">
+                                <select class="form-control ddlSearchList" id="dropDoctorNi" asp-for="DrNiID">
+                                    <option value="0">Select one</option>
+                                    @foreach (var item in Model.Consultants)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                </select>
+                            </td>
+                            <th class="text-center">@Model.OPDSchedulerStatusNi</th>
+                            <td class="text-center px-3">
+                                <!-- Replace the button with a time picker -->
+                                <input type="time" class="form-control" id="nightTimePicker" asp-for="startTimeNi" />
+                            </td>
+                            <td class="text-center px-3">
+                                <input type="time" class="form-control" id="nightEndTimePicker" asp-for="endTimeNi" />
+                            </td>
+                            <td class="text-center">
+                                    <div class="form-check">
+@*                                    <input type="radio" id="customRadio3" name="customRadio" value="2" class="form-check-input" asp-for="activeNi">*@
+                                    @if (Model.activeNi == 1)
+                                    {
+                                        <input type="radio" id="customRadio3" name="customRadio" class="form-check-input" value="2" checked>
+                                    }
+                                    else
+                                    {
+                                        <input type="radio" id="customRadio3" name="customRadio" class="form-check-input" value="2">
+                                    }
+                                        <label class="form-check-label" for="customRadio3"></label>
+                                    </div>
+                                
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" onclick="endSession('nightSession')">End</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+            <button type="button" class="btn  waves-effect btn-primary" onclick="submitOPDShedular()"><i class="fa fa-save"></i>&nbsp;Save</button>
+    </div>
+</div>
+

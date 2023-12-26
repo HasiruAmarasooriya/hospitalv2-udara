@@ -1,0 +1,270 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model ChannelingDto;
+@{
+
+}
+@inject IConfiguration Configuration
+<script type="text/javascript">
+
+
+    function select_onchange_shedule(value) {
+        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+        var selectedDate = document.getElementById("date-format").value;
+        var settings = {
+            "url": commonUrl + "ChannelingShedule/GetSheduleGetById?Id=" + value,
+            "method": "GET",
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            var doctorFee = response.consultantFee; // Assuming the doctor's fee is present in the response
+            document.getElementById("DoctorFeee").value = doctorFee;
+
+            var hospitalFee = response.hospitalFee; // Assuming the hospital fee is present in the response
+            document.getElementById("HospitalFee").value = hospitalFee;
+
+
+
+
+
+
+            //var dateInput = document.getElementById('date-format');
+            //dateInput.value = response.dateTime;
+
+            var dateInput = document.getElementById('date-format');
+            var options = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric'
+            };
+            dateInput.value = response.dateTime.toLocaleString(undefined, options);
+
+
+
+
+
+
+
+
+
+
+
+            const select = document.querySelector('#dropNoOfAppoinment');
+
+            var settings2 = {
+                "url": commonUrl + "Channeling/ChannelingGetBySheduleId?Id=" + response.id,
+                "method": "GET",
+                "headers": {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+            };
+
+            var appointmentCount = response.noOfAppointment;
+
+            $.ajax(settings2).done(function (response) {
+                console.log(response);
+
+
+
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+
+                var appointmentCount2 = response;
+
+                for (var i = 1; i <= appointmentCount; i++) {
+                    var isMatch = false;
+
+                    for (var x = 0; x < appointmentCount2.length; x++) {
+                        var secondVal = i
+                        if (i == appointmentCount2[x].appointmentNo) {
+                            isMatch = true;
+                        }
+
+                    }
+                    if (isMatch == false) {
+                        const option = document.createElement('option');
+                        option.value = i;
+                        option.text = i;
+                        select.add(option);
+                    }
+
+                }
+
+
+            });
+
+
+
+
+        });
+    }
+
+    function select_onchange_doctor(value) {
+        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+        var selectedDate = document.getElementById("date-format").value;
+        var settings = {
+            "url": commonUrl + "ChannelingShedule/GetAllSheduleGetByConsultantId?Id=" + value,
+            "method": "GET",
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+        };
+
+
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+
+            const select = document.querySelector('#dropShedule');
+
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+
+            for (let item of response) {
+                const option = document.createElement('option');
+                option.value = item.id;
+
+                // Format the date and time
+                const dateTime = new Date(item.dateTime).toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                });
+
+                option.text = dateTime;
+                select.add(option);
+            }
+        });
+    }
+</script>
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/EditChanneling</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form asp-action="AddNewChannel" method="post">
+        <input type="hidden"  asp-for="channeling.Id">
+        <div class="modal-body">
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="companyName">PatientName</label>
+                        <select class="form-control ddlSearchList" asp-for="channeling.PatientID" id="dropPatient" >
+                            <option value="">Select one</option>
+                            @foreach (var item in Model.PatientList)
+                            {
+                                <option value="@item.Id">@item.FullName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Doctor Name</label>
+                        <select class="form-control ddlSearchList" id="dropDoctor" onchange="javascript:select_onchange_doctor(this.value);" asp-for="channeling.ChannelingSchedule.ConsultantId">
+                            <option value="">Select one</option>
+                            @foreach (var item in Model.listConsultants)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Channeling Shedule</label>
+                        <select class="form-control ddlSearchList" id="dropShedule" onchange="javascript:select_onchange_shedule(this.value);" asp-for="channeling.ChannelingScheduleID">
+                            <option>Select one</option>
+                            @foreach (var item in Model.listChannelingSchedule)
+                            {
+                                <option value="@item.Id">@item.DateTime</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Doctor Fee:</label>
+                        <input class="form-control " type="text" asp-for="channeling.ChannelingSchedule.ConsultantFee" style="text-align:right;" id="DoctorFeee"  placeholder="Amount"  />
+                    </div>
+
+
+
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Hospital Fee:</label>
+                        <input class="form-control " type="text" asp-for="channeling.ChannelingSchedule.HospitalFee" style="text-align:right;" id="HospitalFee"  placeholder="Amount"  />
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Channeling Date</label>
+                        <input type="text" id="date-format" asp-for="channeling.ChannelingSchedule.DateTime" asp-format="{0:dd.MM.yyyy hh:mm}" class="form-control" placeholder="Saturday 24 June 2017 - 21:44">
+
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">No Of Appoinment </label>
+                        <select class="form-control ddlSearchList" id="dropNoOfAppoinment" asp-for="channeling.AppointmentNo">
+                            
+                            @if (Model != null) {
+                                if (Model.channeling != null){
+                                @if (Model.channeling.AppointmentNo>0)
+                                {
+                                    <option>@Model.channeling.AppointmentNo</option>
+                               }
+                                }else{
+                                    <option>Select one</option>
+                                }
+                            
+                            }
+                               
+                            
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+        </div>
+    </form>
+</div>

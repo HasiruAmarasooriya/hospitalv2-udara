@@ -1,0 +1,325 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model OPDSchedulerDto;
+@{
+}
+@inject IConfiguration Configuration
+@section Styles{
+    <style>
+        .select2-selection__rendered {
+            line-height: 31px !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 35px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 34px !important;
+        }
+    </style>
+}
+    <div class="row page-titles">
+        <div class="col-md-5 col-8 align-self-center">
+            <h3 class="text-themecolor m-b-0 m-t-0">Manage OPD Scheduler Details</h3>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                <li class="breadcrumb-item active">Manage OPD Scheduler Details</li>
+            </ol>
+        </div>
+
+        <div class="col-md-7 col-4 align-self-center">
+            <div class="d-flex m-t-10 justify-content-end">
+                <div class="d-flex m-r-20 m-l-10 hidden-md-down">
+                    <div class="spark-chart form-material">
+                    </div>
+                    <div class="spark-chart form-material">
+                        <button type="button" id="btnCreateShift" class="btn waves-effect waves-light btn-block btn-info" onclick="ShowShiftDetails()"><i class="mdi mdi-account-plus"></i>&nbsp;Add Today OPD Scheduler</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">OPD Scheduler Details</h4>
+                    <div class="table-responsive">
+                        <table id="basic-2" class="display">
+                            <thead>
+                                <tr>
+                                    <th>No</th>  
+                                    <th>Session</th>
+                                    <th>Doctor</th>
+                                    <th>Status</th>
+                                    <th>Arrival time</th>
+                                    <th>Departure time</th>
+                                    <th>Action 1</th>
+                                    <th>Action 2</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @if (Model.OPDSchedulerList != null)
+                            { @foreach (var item in Model.OPDSchedulerList)
+                                {
+                                    <tr>
+
+
+
+                                        <td>@item.Id</td>
+
+                                        <td>@item.OPDSession</td>
+                                        <td>
+                                            @if (item.Consultant != null)
+                                            {
+                                                @item.Consultant.Name
+                                            }
+                                        </td>
+                                        <td>@item.OPDSchedulerStatus</td>
+                                        <td>@item.startTime</td>
+                                        <td>@item.endTime</td>
+                                        <td>
+                                            <input type="hidden" id="date-format-@item.Id" asp-for="cDate" value="@item.cDate.ToString("yyyy-MM-dd")">
+                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
+                                        </td>
+                                        <td>
+                                            @if (Model != null)
+                                            {
+
+                                                @using (Html.BeginForm("DeleteOPD", "OPDRegistration", new { Id = @item.Id }, FormMethod.Post))
+                                                {
+
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+
+                                                }
+                                            }
+
+                                        </td>
+                                    </tr>
+                                } }
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div id="AddShiftModel" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" id="AddEditContainerModel">
+    </div>
+</div>
+<div id="AddShiftModel2" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" id="AddEditContainerModel2">
+    </div>
+</div>
+
+    @section scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+
+
+        });
+
+        function ShowShiftDetails(id) {
+            var date;
+
+            if (id !== 0) {
+                // Construct the ID by concatenating "date-format-" with the id value
+                var elementId = "date-format-" + id;
+
+                // Retrieve the value using the constructed ID
+                date = $("#" + elementId).val();
+            } else {
+                //date = moment().format("YYYY-MM-DD");
+                date = null;
+            }
+            var cDate =null;
+            if(date != null){
+                var cDate = moment(date, "YYYY-MM-DD").format();
+            }
+ 
+            var OPDSchedulerDto = {
+                opdShedularID: id,
+                cDate: cDate
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/OPDScheduler/OPDSchedulaerPOP",
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify(OPDSchedulerDto),
+                success: function (response) {
+                    $("#AddEditContainerModel").html(response);
+                    $("#AddShiftModel").modal('show');
+                    $('#dropDoctorMo').select2({
+                        width: '100%',
+                        height: "auto !important",
+                        dropdownCssClass: "bigdrop",
+                        placeholder: 'Select one',
+                        dropdownParent: $('#newOpdFrm'),
+                        allowClear: false
+                    });
+                    $('#dropDoctorDa').select2({
+                        width: '100%',
+                        height: "auto !important",
+                        dropdownCssClass: "bigdrop",
+                        placeholder: 'Select one',
+                        dropdownParent: $('#newOpdFrm'),
+                        allowClear: false
+                    });
+                    $('#dropDoctorNi').select2({
+                        width: '100%',
+                        height: "auto !important",
+                        dropdownCssClass: "bigdrop",
+                        placeholder: 'Select one',
+                        dropdownParent: $('#newOpdFrm'),
+                        allowClear: false
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        }
+
+        $('body').on('focus', "#date-format", function () {
+
+            $('#date-format').bootstrapMaterialDatePicker({
+                time: false,
+                format: "YYYY-MM-DD"
+
+            });
+
+        });
+
+        function submitOPDShedular() {
+            // Get the values of all input fields
+            var date = $("#date-format").val();
+            var morningDoctor = $("#dropDoctorMo").val();
+            var morningStartTime = $("#morningTimePicker").val();
+            var morningEndTime = $("#morningEndTimePicker").val();
+            var dayDoctor = $("#dropDoctorDa").val();
+            var dayStartTime = $("#dayTimePicker").val();
+            var dayEndTime = $("#dayEndTimePicker").val();
+            var nightDoctor = $("#dropDoctorNi").val();
+            var nightStartTime = $("#nightTimePicker").val();
+            var nightEndTime = $("#nightEndTimePicker").val();
+            var selectedSession = $("input[name='customRadio']:checked").val();
+
+            var OPDSchMoId = $("#OPDSheduleMoID").val();
+            var OPDSchDaId = $("#OPDSheduleDaID").val();
+            var OPDSchNiId = $("#OPDSheduleNiID").val();
+
+            var OPDSchMoStatus = $("#OPDSheduleMoStatus").val();
+            var OPDSchDaStatus = $("#OPDSheduleDaStatus").val();
+            var OPDSchNiStatus = $("#OPDSheduleNiStatus").val();
+            // Additional processing or validation can be added here
+
+
+            
+
+
+
+            var opdSchedulerDataArray = [];
+            var doctor=[];
+            var startDateTime = [];
+            var endDateTime = [];
+            var scheduleIds = [];
+            var scheduleStatus = [];
+
+            doctor.push(morningDoctor);
+            doctor.push(dayDoctor);
+            doctor.push(nightDoctor);
+
+            startDateTime.push(moment(date + " " + morningStartTime, "YYYY-MM-DD hh:mm").format());
+            startDateTime.push(moment(date + " " + dayStartTime, "YYYY-MM-DD hh:mm").format());
+            startDateTime.push(moment(date + " " + nightStartTime, "YYYY-MM-DD hh:mm").format());
+
+            endDateTime.push(moment(date + " " + morningEndTime, "YYYY-MM-DD hh:mm").format());
+            endDateTime.push(moment(date + " " + dayEndTime, "YYYY-MM-DD hh:mm").format());
+            endDateTime.push(moment(date + " " + nightEndTime, "YYYY-MM-DD hh:mm").format());
+
+
+            scheduleIds.push(OPDSchMoId);
+            scheduleIds.push(OPDSchDaId);
+            scheduleIds.push(OPDSchNiId);
+
+
+            scheduleStatus.push(OPDSchMoStatus);
+            scheduleStatus.push(OPDSchDaStatus);
+            scheduleStatus.push(OPDSchNiStatus);
+
+            var cDate = moment(date, "YYYY-MM-DD").format()
+            
+            for (var i = 0; i < 3; i++) {
+                var isActiveSession=0;
+                var sessionStatus = "Inactive";
+                if (selectedSession == i){
+                    isActiveSession=1;
+                    sessionStatus = "Active";
+                }
+            
+                var opdSchedulerData = {
+                    Id: scheduleIds[i],
+                    ConsultantId: doctor[i],
+                    OPDSchedulerStatus: 0,
+                    OPDSession: i,
+                    cDate: cDate,
+                    startTime: startDateTime[i],
+                    endTime: endDateTime[i],
+                    isActiveSession: isActiveSession,
+                    isPaid: 0, 
+                    Status: 0 
+                };
+
+                opdSchedulerDataArray.push(opdSchedulerData);
+            }
+
+
+            //var opdShedularDtoObject = {
+            //    OPDSchedulerList: opdSchedulerDataArray,
+            //};
+
+            var jsonOb = JSON.stringify(opdSchedulerDataArray);
+            console.log("json obj:", jsonOb);
+            $.ajax({
+                url: '/OPDScheduler/AddTodayOPDShedular',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(opdSchedulerDataArray),
+                success: function (data) {
+
+                    window.location.href = '/OPDScheduler/Index';
+                },
+                error: function (error) {
+                    console.error('Error submitting drugus items:', error);
+                }
+            });
+
+
+
+
+        }
+
+    </script>
+
+
+
+}
+

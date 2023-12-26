@@ -1,0 +1,259 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model ChannelingDto
+@{
+
+}
+@inject IConfiguration Configuration
+@section Styles{
+    <style>
+        .select2-selection__rendered {
+            line-height: 31px !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 35px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 34px !important;
+        }
+    </style>
+    
+}
+<div class="row page-titles">
+    <div class="col-md-5 col-8 align-self-center">
+        <h3 class="text-themecolor m-b-0 m-t-0">Manage Channeling Details</h3>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">Manage Channeling Details</li>
+        </ol>
+    </div>
+
+    <div class="col-md-7 col-4 align-self-center">
+        <div class="d-flex m-t-10 justify-content-end">
+            <div class="d-flex m-r-20 m-l-10 hidden-md-down">
+                <div class="spark-chart form-material">
+                </div>
+                <div class="spark-chart form-material">
+                    <button type="button" id="btnCreateShift" class="btn waves-effect waves-light btn-block btn-info" onclick="ShowShiftDetails()"><i class="mdi mdi-account-plus"></i>&nbsp;Add New Channeling</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+@*                <h4 class="card-title">Channeling Details</h4>
+                @using (Html.BeginForm("Search", "Channel", new { value = 100 }, FormMethod.Post))
+                {
+                    <div class="row">
+
+                        <div class="col-md-2">
+                            <div class="form-group-sm ">
+                                <input class="form-control " type="text" name="txtSearch" id="txtSearch" placeholder="Search.." />
+                                <label for="StartShiftUtc">&nbsp;</label>
+
+                            </div>
+                        </div>
+                        <div class="col-md-2" id="divLoader">
+                            <div class="form-group-sm ">
+
+
+                                <button type="submit" class="btn btn btn-primary" id="btnfilter" data-toggle="tooltip" data-placement="top" title="Filter Records By Date Range"><i class="fa fa-filter"></i> &nbsp;Filter</button>
+
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group mt-4-q">
+                            </div>
+                        </div>
+
+                    </div>
+                }*@
+                <div class="row"></div>
+                <div class="table-responsive">
+                    <table id="basic-2" class="display">
+                        <thead>
+                            <tr>
+
+
+                                <th>Channeling ID</th>
+                                <th>Patient</th>
+                                <th>Appoinment No</th>
+                                <th>Consultant</th>
+                                <th>Shedule</th>
+                                <th>Status</th>
+                                <th>View</th>
+                                <th>QR</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody id="">
+                            @if(Model!=null){
+                                @foreach (var item in Model.ChannelingList)
+                                {
+                                    <tr>
+
+                                        <td>@item.Id</td>
+                                        <td>@item.Patient.FullName</td>
+                                        <td>@item.AppointmentNo</td>
+                                        <td>@item.ChannelingSchedule.Consultant.Name</td>
+                                        <td>@item.ChannelingSchedule.DateTime</td>
+                                        <td>@item.Status</td>
+                                        <td>
+                                            <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id,@item.ChannelingSchedule.Id);><i class='fa fa-eye'></i></button>  &nbsp;
+                                        </td>
+                                        <td>
+                                            <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>  &nbsp;
+                                        </td>
+                                        <td>
+                                            @using (Html.BeginForm("DeleteChanneling", "Channeling", new { Id = @item.Id }, FormMethod.Post))
+                                            {
+                                                <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                           
+
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="AddShiftModel" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" id="AddEditContainerModel">
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script>
+        //var patientsList;
+        function ShowShiftDetails(id,csID) {
+
+            console.log(id);
+
+            $.ajax({
+                type: "POST",
+                url: "/Channeling/CreateChanneling/" + id,
+                data: { id: 101 },
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $("#AddEditContainerModel").html(response);
+                    if (csID>0){
+                        select_onchange_shedule(csID)
+                    }
+
+                    $("#AddShiftModel").modal('show');
+
+                    $('#dropPatient').select2({
+                        width: '100%',
+                        height: "auto !important",
+                        dropdownCssClass: "bigdrop",
+                        dropdownParent: $('#AddShiftModel'),
+                        placeholder: 'Select one', 
+                        allowClear: true, 
+                    });
+
+                    $('#dropDoctor').select2({
+                        width: '100%',
+                        height: "auto !important",
+                        dropdownCssClass: "bigdrop",
+                        dropdownParent: $('#AddShiftModel'),
+                        placeholder: 'Select one',
+                        allowClear: true,
+                    });
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        }
+
+
+        //function matchCustom(params, data) {
+        //    // If there are no search terms, return all of the data
+        //    if ($.trim(params.term) === '') {
+        //        return data;
+        //    }
+
+        //    // Do not display the item if there is no 'text' property
+        //    if (typeof data.text === 'undefined') {
+        //        return null;
+        //    }
+
+        //    // Check if the search term matches the name or contact number
+        //    var searchTerm = params.term.toLowerCase();
+
+        //    if (data.fullName.toLowerCase().startsWith(searchTerm) || data.mobileNumber.toLowerCase().startsWith(searchTerm)) {
+        //        return data;
+        //    }
+
+        //    // Return `null` if the term should not be displayed
+        //    return null;
+        //}
+
+
+        //$('body').on('focus', "#date-format", function () {
+
+        //    $('#date-format').bootstrapMaterialDatePicker({
+        //        time: true,
+        //        format: "YYYY-MM-DD hh:mm"
+
+        //    });
+
+        //});
+
+        $('body').on('focus', "#date-format", function () {
+            $('#date-format').bootstrapMaterialDatePicker({
+                time: true,
+                format: "YYYY-MM-DD h:mm:ss"
+            });
+        });
+
+        function ShowQR(id) {
+
+            $.ajax({
+                type: "POST",
+                url: "/Channeling/OpenQR/" + id,
+                data: '{customerId: 100 }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $("#AddEditContainerModel").html(response);
+                    $("#AddShiftModel").modal('show');
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        }
+
+    </script>
+}

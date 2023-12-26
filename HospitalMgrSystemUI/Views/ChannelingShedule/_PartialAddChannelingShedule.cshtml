@@ -1,0 +1,146 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model ChannelingSheduleDto;
+@{
+    Layout = null;
+}
+@inject IConfiguration Configuration
+<script type="text/javascript">
+
+    function select_onchange_Specialist(value) {
+        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+        var settings = {
+            "url": commonUrl + "Consultant/ConsultantGetBySpecialistId?id=" + value,
+            "method": "GET",
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+        };
+
+
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+
+            const select = document.querySelector('#consultants');
+
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+
+            for (let item of response) {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.text = item.name;
+                select.add(option);
+            }
+        });
+    }
+
+</script>
+
+
+
+
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/EditChanneling</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form asp-action="AddNewChannelingShedule" method="post">
+        <input type="hidden" id="oid" asp-for="ChannelingSchedule.Id">
+        <div class="modal-body">
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Specialist</label>
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_Specialist(this.value);" asp-for="ChannelingSchedule.Consultant.SpecialistId" id="specialist">
+                            <option value="">Please Select</option>
+                            @foreach (var item in Model.Specialists)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="companyName">Consultant</label>
+                        <select class="form-control ddlSearchList" asp-for="ChannelingSchedule.ConsultantId" id="consultants">
+                            <option value="0">Select Consultant</option>
+                            @foreach (var item in Model.Consultants)
+                            {
+                                <option value="@item.Id">@item.Name - @item.Specialist.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Consultant Fee:</label>
+                        <input class="form-control " type="text" style="text-align:right;" asp-for="ChannelingSchedule.ConsultantFee" id="DoctorFee"  placeholder="Amount"  />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Hospital Fee:</label>
+                        <input class="form-control " type="text" style="text-align:right;" asp-for="ChannelingSchedule.HospitalFee"  placeholder="Amount"  />
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Channeling Date</label>
+                        <input type="text" id="date-format" asp-format="{0:dd.MM.yyyy hh:mm}" asp-for="ChannelingSchedule.DateTime" class="form-control" placeholder="Saturday 24 June 2017 - 21:44">
+
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">No of Appoinment</label>
+                        <input class="form-control " type="text" asp-for="ChannelingSchedule.NoOfAppointment" placeholder="NO Of Appoinment" />
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Status</label>
+                        <select class="form-control ddlSearchList" asp-for="ChannelingSchedule.Status">
+                            <option>Select one</option>
+                            <option value="0">ACTIVE</option>
+                            <option value="1">INACTIVE</option>
+
+                        </select>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+        </div>
+    </form>
+</div>
+

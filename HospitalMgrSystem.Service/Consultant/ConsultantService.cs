@@ -1,0 +1,109 @@
+﻿using HospitalMgrSystem.Model;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace HospitalMgrSystem.Service.Consultant
+{
+    public class ConsultantService : IConsultantService
+    {
+        public HospitalMgrSystem.Model.Consultant CreateConsultant(HospitalMgrSystem.Model.Consultant consultant) 
+        {
+
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                if (consultant.Id == 0)
+                {
+                    dbContext.Consultants.Add(consultant);
+                    dbContext.SaveChanges();
+                }
+                else
+                {
+                    HospitalMgrSystem.Model.Consultant result = (from p in dbContext.Consultants where p.Id == consultant.Id select p).SingleOrDefault();
+                    result.Age = consultant.Age;
+                    result.ContectNumber = consultant.ContectNumber;
+                    result.Email = consultant.Email;
+                    result.Gender = consultant.Gender;
+                    result.ModifiedDate = DateTime.Now;
+                    result.Name = consultant.Name;
+                    result.Specialist = consultant.Specialist;
+                    result.SpecialistId = consultant.SpecialistId;
+                    result.Status = consultant.Status;
+                    result.Address = consultant.Address;
+                    dbContext.SaveChanges();
+                }
+                return dbContext.Consultants.Find(consultant.Id);
+            }
+        }
+
+        public List<Model.Consultant> GetAllConsultantByStatus()
+        {
+            List<Model.Consultant> mtList = new List<Model.Consultant>();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.Consultants.Include(c => c.Specialist).Where(o => o.Status == 0).ToList<Model.Consultant>();
+
+            }
+            return mtList;
+        }
+
+        public List<Model.Consultant> GetAllOPDConsultantByStatus()
+        {
+            List<Model.Consultant> mtList = new List<Model.Consultant>();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.Consultants.Include(c => c.Specialist).Where(o => o.Status == 0 && o.SpecialistId == 43).ToList<Model.Consultant>();
+
+            }
+            return mtList;
+        }
+        public List<Model.Consultant> ConsultantGetBySpecialistId(int id)
+        {
+            List<Model.Consultant> mtList = new List<Model.Consultant>();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.Consultants.Include(c => c.Specialist).Where(o => o.Status == 0 && o.SpecialistId==id).ToList<Model.Consultant>();
+
+            }
+            return mtList;
+        }
+        public Model.Consultant GetAllConsultantByID(int? id)
+        {
+            Model.Consultant consultant  = new Model.Consultant();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                consultant = dbContext.Consultants.First(o => o.Id == id);
+
+            }
+            return consultant;
+        }
+
+        public HospitalMgrSystem.Model.Consultant DeleteConsultant(HospitalMgrSystem.Model.Consultant consultant)
+        {
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                HospitalMgrSystem.Model.Consultant result = (from p in dbContext.Consultants where p.Id == consultant.Id select p).SingleOrDefault();
+                result.Status = 1;
+                dbContext.SaveChanges();
+                return result;
+            }
+
+        }
+
+        public List<Model.Consultant> SearchConsultant(string value)
+        {
+            List<Model.Consultant> mtList = new List<Model.Consultant>();
+            if (value == null) { value = ""; }
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.Consultants.Include(c => c.Specialist).Where(o => (o.Name.Contains(value) || o.ContectNumber.Contains(value) 
+                || o.Specialist.Name.Contains(value)) && o.Status == 0).ToList<Model.Consultant>();
+
+            }
+            return mtList;
+        }
+    }
+}
