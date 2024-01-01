@@ -180,7 +180,7 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.AppoimentNo = 0;
                     oPDDto.opd.CreateDate = DateTime.Now;
                     oPDDto.opd.ModifiedDate = DateTime.Now;
-                    oPDDto.opd.HospitalFee = oPDDto.opd.OpdType == 1 ? hospitalFee : 0;
+                    oPDDto.opd.HospitalFee = oPDDto.OpdType == 1 ? hospitalFee : 0;
                     oPDDto.opd.ConsultantFee = 0;
                     OPDobj = new OPDService().CreateOPD(oPDDto.opd);
 
@@ -190,6 +190,7 @@ namespace HospitalMgrSystemUI.Controllers
                         {
                             drugusItem.opdId = OPDobj.Id;
                             drugusItem.Amount = drugusItem.Qty * drugusItem.Price;
+                            drugusItem.IsRefund = 0;
                             new OPDService().CreateOPDDrugus(drugusItem);
                         }
                     }
