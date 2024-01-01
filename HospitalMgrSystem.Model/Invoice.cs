@@ -12,7 +12,7 @@ namespace HospitalMgrSystem.Model
         public int Id { get; set; }
         public int? CustomerID { get; set; }
         public string? CustomerName { get; set; }
-        public int? ServiceID { get; set; }
+        public int ServiceID { get; set; }
         public InvoiceType InvoiceType { get; set; }
         public PaymentStatus paymentStatus { get; set; }
         public InvoiceStatus Status { get; set; }
