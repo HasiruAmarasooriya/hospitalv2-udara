@@ -8,25 +8,25 @@
 @inject IConfiguration Configuration
 
 
-    <div class="modal-content">
-        <div class="modal-header">
-         <h4 class="modal-title" id="myLargeModalLabel">Add New OPD</h4>
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add New OPD</h4>
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        </div>
-        <div class="modal-body" id="newOpdFrm">
-            <form asp-action="AddNewOPD" method="post">
+    </div>
+    <div class="modal-body" id="newOpdFrm">
+        <form asp-action="AddNewOPD" method="post">
             <input type="hidden" id="opid" asp-for="opdId">
-                <div class="row">
+            <div class="row">
 
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="companyName">Patient</label>
-                            <select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="opd.PatientID" id="dropPatient">
-                                <option value="-2">Select one</option>
-                                @foreach (var item in Model.patientsList)
-                                {
-                                    <option value="@item.Id">@item.FullName (@item.MobileNumber)</option>
-                                }
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="companyName">Patient</label>
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="opd.PatientID" id="dropPatient">
+                            <option value="-2">Select one</option>
+                            @foreach (var item in Model.patientsList)
+                            {
+                                <option value="@item.Id">@item.FullName (@item.MobileNumber)</option>
+                            }
                         </select>
 
                     </div>
@@ -60,8 +60,29 @@
 
 
             <div class="row">
+                <div class="col-md-12 font-bold">
+                    <div>Please Select the OPD type</div>
+                </div>
 
                 <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="OPDType" id="Doctor" value="1" onclick="handleOPDTypeChange()" checked>
+                        <label class="form-check-label" for="Doctor">
+                            Doctor Only
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="OPDType" id="Investigation" value="0" onclick="handleOPDTypeChange()">
+                        <label class="form-check-label" for="Investigation">
+                            Investigation Only
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-6" id="doctorFields">
                     <div class="form-group">
                         <label for="companyName">OPD Doctor</label>
                         <select class="form-control ddlSearchList" id="dropDoctor">
@@ -72,10 +93,10 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6" id="investigationFields">
                     <div class="form-group">
                         <label for="companyName">Hospital Fee:</label>
-                        <input class="form-control " type="number" style="text-align:right;" placeholder="Amount" asp-for="opd.HospitalFee" disabled />
+                        <input class="form-control " type="number" id="hospitalFeeInput" style="text-align:right;" placeholder="Amount" asp-for="opd.HospitalFee" disabled />
                     </div>
 
                 </div>
@@ -83,7 +104,7 @@
 
 
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-12">
                     <div class="form-group">
                         <label for="companyName">Name</label>
                         <select class="form-control ddlSearchList" onchange="javascript:select_onchange_drug(this.value);" id="drugus" asp-for="opdDrugus.DrugId">
@@ -95,20 +116,21 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-3">
+
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="companyName">Qty </label>
                         <input class="form-control " type="text" style="text-align:right;" onkeyup="javascript:select_onchange_qty();" value="0.00" id="txtQty" placeholder="Qty" />
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="companyName">Price</label>
                         <input class="form-control " type="text" style="text-align:right;" id="txtPrice" value="0.00" placeholder="Price" />
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="companyName">Amount</label>
                         <input class="form-control " type="text" style="text-align:right;" id="txtAmount" value="0.00" placeholder="Amount" disabled />
@@ -151,11 +173,21 @@
         </form>
     </div>
 
-    <div class="modal-footer">
-        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
-        <button type="button" class="btn  waves-effect btn-primary" onclick="submitDrugusItems()"><i class="fa fa-save"></i>&nbsp;Save</button>
-
+    <div class="text-left mx-3">
+        <div>
+            Total: <input id="total" class="form-control" type="text" placeholder="Your Total will Appear Here" readonly>
+        </div>
+        <div class="mt-4 text-right">
+            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Close</button>
+            <button type="button" class="btn waves-effect btn-primary ms-2" onclick="submitDrugusItems()">
+                <i class="fa fa-save"></i>&nbsp;Save
+            </button>
+            <button type="button" class="btn waves-effect btn-primary ms-2" onclick="submitDrugusItemsWithQR()">
+                <i class='fa fa-print'></i>&nbsp;Print & Save
+            </button>
+        </div>
     </div>
+
 
     <div class="modal-footer">
         <hr>
@@ -173,17 +205,25 @@
                         </tr>
                     </thead>
                     <tbody id="tblBodyPayments">
-                        @if (Model != null && Model.OPDDrugusList!= null){
+                        @{
+                            decimal totalAmount = 0;
+                        }
+                        @if (Model != null && Model.OPDDrugusList != null)
+                        {
+
                             @foreach (var item in Model.OPDDrugusList)
                             {
                                 <tr>
-
+                                    @{
+                                        totalAmount = totalAmount + item.Amount;
+                                    }
 
                                     <td>@item.Drug.DrugName</td>
 
                                     <td>@item.Qty</td>
 
                                     <td>@item.Price</td>
+
                                     <td>@item.Amount</td>
 
                                     <td>
@@ -205,6 +245,9 @@
 
                     </tbody>
                 </table>
+                <div>
+                    Total: <input id="total" class="form-control" value="@totalAmount" type="text" placeholder="Your Total will Appear Here" readonly>
+                </div>
             </div>
         </div>
     </div>
