@@ -34,6 +34,15 @@ namespace HospitalMgrSystem.Model
         public DateTime CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
         public CommonStatus Status { get; set; }
+        public int CreatedUser { get; set; }
+        public int ModifiedUser { get; set; }
+
+        [NotMapped]
+        public decimal? TotalAmount { get; set; }
+
+        [NotMapped]
+        public int OpdType { get; set; }
+
 
     }
 }
