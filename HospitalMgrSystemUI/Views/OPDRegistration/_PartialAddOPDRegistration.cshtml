@@ -60,7 +60,7 @@
 
 
             <div class="row">
-                <div class="col-md-12 font-bold">
+                @* <div class="col-md-12 font-bold">
                     <div>Please Select the OPD type</div>
                 </div>
 
@@ -68,7 +68,7 @@
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="OPDType" id="Doctor" value="1" onclick="handleOPDTypeChange()" checked>
                         <label class="form-check-label" for="Doctor">
-                            Doctor Only
+                            OPD
                         </label>
                     </div>
                 </div>
@@ -80,16 +80,18 @@
                             Investigation Only
                         </label>
                     </div>
-                </div>
+                </div> *@
 
                 <div class="col-md-6" id="doctorFields">
                     <div class="form-group">
                         <label for="companyName">OPD Doctor</label>
-                        <select class="form-control ddlSearchList" id="dropDoctor">
+                        <select class="form-control ddlSearchList" id="dropDoctor" onchange="handleOPDTypeChange()">
+                            <option value="1">Please Select</option>
                             @foreach (var item in Model.consultantList)
                             {
                                 <option value="@item.Id">@item.Name</option>
                             }
+                            <option value="82">Investigation</option>
                         </select>
                     </div>
                 </div>

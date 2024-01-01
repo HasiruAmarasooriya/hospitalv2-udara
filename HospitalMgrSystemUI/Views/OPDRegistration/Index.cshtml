@@ -248,22 +248,12 @@
         var total = 0;
 
         function handleOPDTypeChange() {
-            var doctorRadio = document.getElementById('Doctor');
-            var investigationRadio = document.getElementById('Investigation');
             var dropDoctor = document.getElementById('dropDoctor');
-            var hospitalFeeInput = document.getElementById('hospitalFeeInput');
 
-            if (doctorRadio.checked) {
-                // If Doctor Only is selected, make both fields visible
-                dropDoctor.disabled = false;
-                hospitalFeeInput.disabled = true;
-                hospitalFeeInput.value = 700.00;
-            } else if (investigationRadio.checked) {
-                // If Investigation Only is selected, disable both fields and set Hospital Fee to 0
-                dropDoctor.disabled = true;
-                dropDoctor.value = "Unavailable";
-                hospitalFeeInput.disabled = true;
-                hospitalFeeInput.value = 0;
+            if (dropDoctor.value == 82) {
+                document.getElementById('hospitalFeeInput').value = 0;
+            } else {
+                document.getElementById('hospitalFeeInput').value = 700;
             }
         }
 
@@ -515,9 +505,9 @@
             var contactNo = $('#txtMobileNumber').val();
             var sex = $('#dropSex').val();
             var age = $('#txtAge').val();
-            var doctortID = $('#dropDoctor').val();
+            var doctortID = parseInt($('#dropDoctor').val());
             var opdID = $('#opid').val();
-            var opdType = $("input[type='radio'][name='OPDType']:checked").val();
+            var opdType = document.getElementById('dropDoctor').value == 82 ? 0 : 1;
 
             var patientObject = {
                 Id: patientID,
@@ -529,8 +519,7 @@
 
             var opdObject = {
                 Id: opdID,
-                ConsultantID: doctortID,
-                OpdType: opdType
+                ConsultantID: doctortID
             };
 
 
@@ -538,9 +527,13 @@
                 patient: patientObject,
                 OPDDrugusList: drugusList,
                 opd: opdObject,
+                OpdType: opdType,
             };
+
             var jsonOb = JSON.stringify(opdDtoObject);
-            console.log(jsonOb);
+            // console.log(jsonOb);
+            console.log(opdDtoObject);
+
             $.ajax({
                 url: '/OPDRegistration/AddNewOPD', // Adjust the URL based on your actual route
                 type: 'POST',
