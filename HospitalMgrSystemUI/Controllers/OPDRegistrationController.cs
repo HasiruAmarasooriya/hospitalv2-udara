@@ -31,6 +31,9 @@ namespace HospitalMgrSystemUI.Controllers
         [BindProperty]
         public string SearchValue { get; set; }
 
+        [BindProperty]
+        public int opdId { get; set; }
+
 
         #region OPD Management 
         public IActionResult Index(int isPop)
@@ -49,6 +52,41 @@ namespace HospitalMgrSystemUI.Controllers
 
         public IActionResult filterForm()
         {
+            if (_OPDDto.paidStatus != -1)
+            {
+                try
+                {
+                    OPDDto oPDDto = new OPDDto();
+                    List<OPDTbDto> oPDTbDto = new List<OPDTbDto>();
+                    var result = new OPDService().GetAllOPDByAndDateRangePaidStatus(_OPDDto.StartTime, _OPDDto.EndTime);
+
+                    foreach (var item in result)
+                    {
+                        oPDTbDto.Add(new OPDTbDto()
+                        {
+                            Id = item.Id,
+                            roomName = item.room.Name,
+                            consaltantName = item.consultant.Name,
+                            FullName = item.patient.FullName,
+                            MobileNumber = item.patient.MobileNumber,
+                            DateTime = item.DateTime,
+                            Sex = (HospitalMgrSystem.Model.Enums.SexStatus)item.patient.Sex,
+                            Status = item.Status,
+                            TotalAmount = item.TotalAmount,
+                            paymentStatus = item.paymentStatus
+
+                        });
+                    }
+                    oPDDto.listOPDTbDto = oPDTbDto;
+                    return View("Index", oPDDto);
+
+                }
+                catch (Exception ex)
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+
             try
             {
                 OPDDto oPDDto = new OPDDto();
@@ -79,16 +117,18 @@ namespace HospitalMgrSystemUI.Controllers
 
         public ActionResult CreateOPDReg(int Id)
         {
+
+
             OPDDto oPDDto = new OPDDto();
             oPDDto.consultantList = LoadActiveConsultants();
             oPDDto.patientsList = LoadPatients();
             oPDDto.Drugs = DrugsSearch();
             decimal consaltantFee = new DefaultService().GetDefailtConsaltantPrice();
             decimal hospitalFee = new DefaultService().GetDefailtHospitalPrice();
-            OPD opdObject= new OPD();
+            OPD opdObject = new OPD();
             opdObject.ConsultantFee = consaltantFee;
             opdObject.HospitalFee = hospitalFee;
-           
+
             if (Id > 0)
             {
                 using (var httpClient = new HttpClient())
@@ -112,15 +152,20 @@ namespace HospitalMgrSystemUI.Controllers
                 oPDDto.opd = opdObject;
                 return PartialView("_PartialAddOPDRegistration", oPDDto);
             }
-          
+
         }
 
         //Create user modify user details should be include
         public IActionResult AddNewOPD([FromBody] OPDDto oPDDto)
         {
+            var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+
             try
             {
                 Patient patient = new Patient();
+
+                oPDDto.patient.CreateUser = Convert.ToInt32(userIdCookie);
+                oPDDto.patient.ModifiedUser = Convert.ToInt32(userIdCookie);
                 patient = CreatePatient(oPDDto.patient);
                 if (patient != null)
                 {
@@ -130,10 +175,15 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.PatientID = patient.Id;
                     oPDDto.opd.DateTime = DateTime.Now;
                     oPDDto.opd.RoomID = 1;
+                    oPDDto.opd.ModifiedUser = Convert.ToInt32(userIdCookie);
+                    oPDDto.opd.CreatedUser = Convert.ToInt32(userIdCookie);
                     oPDDto.opd.AppoimentNo = 0;
-                    oPDDto.opd.HospitalFee = hospitalFee;
+                    oPDDto.opd.CreateDate = DateTime.Now;
+                    oPDDto.opd.ModifiedDate = DateTime.Now;
+                    oPDDto.opd.HospitalFee = oPDDto.opd.OpdType == 1 ? hospitalFee : 0;
                     oPDDto.opd.ConsultantFee = 0;
                     OPDobj = new OPDService().CreateOPD(oPDDto.opd);
+
                     if (OPDobj != null)
                     {
                         foreach (var drugusItem in oPDDto.OPDDrugusList)
@@ -147,6 +197,66 @@ namespace HospitalMgrSystemUI.Controllers
                 }
 
                 return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+        public IActionResult AddNewOPDWithQR([FromBody] OPDDto oPDDto)
+        {
+            var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+
+            try
+            {
+                Patient patient = new Patient();
+
+                oPDDto.patient.CreateUser = Convert.ToInt32(userIdCookie);
+                oPDDto.patient.ModifiedUser = Convert.ToInt32(userIdCookie);
+                patient = CreatePatient(oPDDto.patient);
+                OPD OPDobj = new OPD();
+
+                string name = patient.FullName;
+                var age = patient.Age;
+                var phone = patient.MobileNumber;
+                var sex = patient.Sex;
+
+                OPDDto oPDDtoId = new OPDDto();
+
+                if (patient != null)
+                {
+                    decimal hospitalFee = new DefaultService().GetDefailtHospitalPrice();
+                    oPDDto.opd.PatientID = patient.Id;
+                    oPDDto.opd.DateTime = DateTime.Now;
+                    oPDDto.opd.RoomID = 1;
+                    oPDDto.opd.ModifiedUser = Convert.ToInt32(userIdCookie);
+                    oPDDto.opd.CreatedUser = Convert.ToInt32(userIdCookie);
+                    oPDDto.opd.AppoimentNo = 0;
+                    oPDDto.opd.CreateDate = DateTime.Now;
+                    oPDDto.opd.ModifiedDate = DateTime.Now;
+                    oPDDto.opd.HospitalFee = oPDDto.opd.OpdType == 1 ? hospitalFee : 0;
+                    oPDDto.opd.ConsultantFee = 0;
+                    OPDobj = new OPDService().CreateOPD(oPDDto.opd);
+
+                    if (OPDobj != null)
+                    {
+                        _OPDDto.opdId = OPDobj.Id;
+                        _OPDDto.name = name;
+                        _OPDDto.age = age;
+                        _OPDDto.sex = sex;
+                        _OPDDto.phone = phone;
+
+                        foreach (var drugusItem in oPDDto.OPDDrugusList)
+                        {
+                            drugusItem.opdId = OPDobj.Id;
+                            drugusItem.Amount = drugusItem.Qty * drugusItem.Price;
+                            new OPDService().CreateOPDDrugus(drugusItem);
+                        }
+                    }
+                }
+                return PartialView("_PartialQR", _OPDDto);
+                // return View("Index", _OPDDto);
             }
             catch (Exception ex)
             {
@@ -254,7 +364,7 @@ namespace HospitalMgrSystemUI.Controllers
         private List<OPDTbDto> LoadOPD()
         {
             List<OPD> opd = new List<OPD>();
-            List <OPDTbDto> oPDTbDto = new List<OPDTbDto>();
+            List<OPDTbDto> oPDTbDto = new List<OPDTbDto>();
             using (var httpClient = new HttpClient())
             {
                 try
@@ -268,8 +378,8 @@ namespace HospitalMgrSystemUI.Controllers
                         {
                             Id = item.Id,
                             roomName = item.room.Name,
-                            consaltantName= item.consultant.Name,
-                            FullName = item.patient.FullName,                                                
+                            consaltantName = item.consultant.Name,
+                            FullName = item.patient.FullName,
                             MobileNumber = item.patient.MobileNumber,
                             DateTime = item.DateTime,
                             Sex = (HospitalMgrSystem.Model.Enums.SexStatus)item.patient.Sex,
@@ -278,7 +388,8 @@ namespace HospitalMgrSystemUI.Controllers
                     }
 
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     return null;
                 }
             }
@@ -325,7 +436,7 @@ namespace HospitalMgrSystemUI.Controllers
         }
         #endregion
 
-        #region Drugs Management 
+        #region Drugs  Management 
 
 
         public List<Drug> DrugsSearch()
