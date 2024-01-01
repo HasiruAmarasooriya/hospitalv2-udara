@@ -25,7 +25,8 @@ namespace HospitalMgrSystem.Service.OPD
                 else
                 {
                     HospitalMgrSystem.Model.OPD result = (from p in dbContext.OPD where p.Id == opd.Id select p).SingleOrDefault();
-                    result.CreateDate = DateTime.Now;
+                    result.ModifiedDate = opd.ModifiedDate;
+                    result.ModifiedUser = opd.ModifiedUser;
                     result.Id = opd.Id;
                     result.ConsultantFee = opd.ConsultantFee;
                     result.HospitalFee = opd.HospitalFee;
@@ -93,15 +94,32 @@ namespace HospitalMgrSystem.Service.OPD
         public List<Model.OPD> GetAllOPDByAndDateRangePaidStatus(DateTime startDate, DateTime endDate)
         {
             List<Model.OPD> mtList = new List<Model.OPD>();
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            // List<Model.OPD> invoiceList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
                 mtList = dbContext.OPD
                     .Include(c => c.patient)
                     .Include(c => c.consultant)
                     .Include(c => c.room)
-                    .Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate)
+                    .Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.PAID)
                     .OrderByDescending(o => o.Id)
                     .ToList<Model.OPD>();
+
+                // invoiceList = dbContext.Invoices.Where(o => o.InvoiceType == InvoiceType.OPD && o.ServiceID == mtList[0].Id).Select(r => r.SubTotal).ToList<Model.OPD>();
+                var opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
+                var invoiceList = dbContext.Invoices.Where(o => o.InvoiceType == InvoiceType.OPD && opdIds.Contains(o.ServiceID)).ToList();
+
+                foreach (var item in invoiceList)
+                {
+                    foreach (var opd in mtList)
+                    {
+                        if (opd.Id == item.ServiceID)
+                        {
+                            opd.TotalAmount = item.SubTotal;
+                        }
+                    }
+                }
+
             }
             return mtList;
         }
@@ -109,7 +127,7 @@ namespace HospitalMgrSystem.Service.OPD
         public List<Model.OPD> GetAllOPDByAndDateRangePaidStatusAndOnOPD(DateTime startDate, DateTime endDate)
         {
             List<Model.OPD> mtList = new List<Model.OPD>();
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
                 mtList = dbContext.OPD
                     .Include(c => c.patient)
@@ -145,7 +163,7 @@ namespace HospitalMgrSystem.Service.OPD
             List<Model.OPDDrugus> mtList = new List<Model.OPDDrugus>();
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.OPDDrugus.Include(c => c.Drug).Include(c => c.opd).Where(c => c.Status == Model.Enums.CommonStatus.Active && c.opdId==id).ToList<Model.OPDDrugus>();
+                mtList = dbContext.OPDDrugus.Include(c => c.Drug).Include(c => c.opd).Where(c => c.Status == Model.Enums.CommonStatus.Active && c.opdId == id).ToList<Model.OPDDrugus>();
 
             }
             return mtList;
@@ -166,22 +184,22 @@ namespace HospitalMgrSystem.Service.OPD
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
                 if (opdDrugus.Id == 0)
-            {
-                dbContext.OPDDrugus.Add(opdDrugus);
-                dbContext.SaveChanges();
-            }
-            else
-            {
-                HospitalMgrSystem.Model.OPDDrugus result = (from p in dbContext.OPDDrugus where p.Id == opdDrugus.Id select p).SingleOrDefault();
-                result.opdId = opdDrugus.opdId;
-                result.DrugId = opdDrugus.DrugId;
-                result.Amount = opdDrugus.Amount;
-                result.Price = opdDrugus.Price;
-                result.Qty = opdDrugus.Qty;
-                result.Type = opdDrugus.Type;
-                dbContext.SaveChanges();
-            }
-            return dbContext.OPDDrugus.Find(opdDrugus.Id);
+                {
+                    dbContext.OPDDrugus.Add(opdDrugus);
+                    dbContext.SaveChanges();
+                }
+                else
+                {
+                    HospitalMgrSystem.Model.OPDDrugus result = (from p in dbContext.OPDDrugus where p.Id == opdDrugus.Id select p).SingleOrDefault();
+                    result.opdId = opdDrugus.opdId;
+                    result.DrugId = opdDrugus.DrugId;
+                    result.Amount = opdDrugus.Amount;
+                    result.Price = opdDrugus.Price;
+                    result.Qty = opdDrugus.Qty;
+                    result.Type = opdDrugus.Type;
+                    dbContext.SaveChanges();
+                }
+                return dbContext.OPDDrugus.Find(opdDrugus.Id);
             }
         }
         public Model.OPDDrugus DeleteOPDDrugus(int opdDruguID)
@@ -223,7 +241,7 @@ namespace HospitalMgrSystem.Service.OPD
             List<Model.OPDInvestigation> mtList = new List<Model.OPDInvestigation>();
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.OPDInvestigations.Include(c => c.Investigation).Include(c => c.opd).Where(c => c.Status == Model.Enums.CommonStatus.Active && c.opdId == id ).ToList<Model.OPDInvestigation>();
+                mtList = dbContext.OPDInvestigations.Include(c => c.Investigation).Include(c => c.opd).Where(c => c.Status == Model.Enums.CommonStatus.Active && c.opdId == id).ToList<Model.OPDInvestigation>();
 
             }
             return mtList;
@@ -309,7 +327,7 @@ namespace HospitalMgrSystem.Service.OPD
             }
             return mtList;
         }
-        public List<Model.OPDItem> GetOPDItemsByInvoiceStatus(int id,ItemInvoiceStatus invoiceStatus)
+        public List<Model.OPDItem> GetOPDItemsByInvoiceStatus(int id, ItemInvoiceStatus invoiceStatus)
         {
             List<Model.OPDItem> mtList = new List<Model.OPDItem>();
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
@@ -383,7 +401,7 @@ namespace HospitalMgrSystem.Service.OPD
         {
             PrintDocument recordDoc = new PrintDocument();
             recordDoc.DocumentName = "QR";
-            recordDoc.PrintController = new StandardPrintController(); 
+            recordDoc.PrintController = new StandardPrintController();
 
             recordDoc.Print();
 
