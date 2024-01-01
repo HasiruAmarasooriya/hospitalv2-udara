@@ -6,7 +6,7 @@
 @{
 }
 @inject IConfiguration Configuration
-@section Styles{
+@section Styles {
     <style>
         .select2-selection__rendered {
             line-height: 31px !important;
@@ -29,96 +29,96 @@
             <li class="breadcrumb-item active">Manage OPD Details</li>
         </ol>
     </div>
-       
-<div class="col-md-7 col-4 align-self-center">
-    <div class="d-flex m-t-10 justify-content-end">
-        <div class="d-flex m-r-20 m-l-10 hidden-md-down">
-        <div class="spark-chart form-material">
-        <ol class="list-unstyled d-flex">
-            <li class="mr-2">
-                <button class="btn waves-effect btn-primary"><i class="fa-solid fa-moon"></i>&nbsp; Night shift</button>
-            </li>
-            <li>
-                <button type="button" id="btnCreateShift" class="btn waves-effect waves-light btn-block btn-info" onclick="ShowShiftDetails()">&nbsp;Add New OPD</button>
-            </li>
-        </ol>
-        </div>
 
+    <div class="col-md-7 col-4 align-self-center">
+        <div class="d-flex m-t-10 justify-content-end">
+            <div class="d-flex m-r-20 m-l-10 hidden-md-down">
+                <div class="spark-chart form-material">
+                    <ol class="list-unstyled d-flex">
+                        <li class="mr-2">
+                            <button class="btn waves-effect btn-primary"><i class="fa-solid fa-moon"></i>&nbsp; Night shift</button>
+                        </li>
+                        <li>
+                            <button type="button" id="btnCreateShift" class="btn waves-effect waves-light btn-block btn-info" onclick="ShowShiftDetails()">&nbsp;Add New OPD</button>
+                        </li>
+                    </ol>
+                </div>
+
+            </div>
         </div>
     </div>
-</div>
 
 </div>
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="modal-body">
-                    <form asp-action="filterForm" method="post">
-                        <input type="hidden" id="opid" asp-for="opdId">
-                        <div class="row">
+                <form asp-action="filterForm" method="post">
+                    <input type="hidden" id="opid" asp-for="opdId">
+                    <div class="row">
 
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="companyName">Start Date</label>
-                                    <input type="text" id="date-format-start" asp-format="{0:yyyy.MM.dd}" class="form-control" asp-for="StartTime" placeholder="">
+                                <input type="text" id="date-format-start" asp-format="{0:yyyy.MM.dd}" class="form-control" asp-for="StartTime" placeholder="">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="companyName">End Date</label>
-                                    <input type="text" id="date-format-end" asp-format="{0:yyyy.MM.dd}" class="form-control" asp-for="EndTime" placeholder="">
+                                <input type="text" id="date-format-end" asp-format="{0:yyyy.MM.dd}" class="form-control" asp-for="EndTime" placeholder="">
                             </div>
                         </div>
                         <div class="col-md-3">
-                        <div class="form-group">
+                            <div class="form-group">
                                 <label for="companyName">Session</label>
                                 <select class="form-control ddlSearchList" id="dropSex" asp-for="sessionType">
                                     <option value="-1">All</option>
                                     <option value="0">Morning</option>
-                                        <option value="1">Day</option>
-                                        <option value="2">Night</option>
+                                    <option value="1">Day</option>
+                                    <option value="2">Night</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="companyName">Paid Status</label>
-                                    <select class="form-control ddlSearchList" id="dropSex" asp-for="paidStatus">
-                                        <option value="-1">All</option>
-                                        <option value="0">PAID</option>
-                                        <option value="1">PARTIAL PAID</option>
-                                        <option value="1">NOT PAID</option>
-                                    </select>
-                                </div>
-                        </div>
-
-                        </div>
-
-
-
-                        <div class="modal-footer d-flex justify-content-between">
-                            <div class="spark-chart form-material">
-                                <ol class="list-unstyled d-flex">
-                                    <li class="mr-2">
-                                        <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Today</button>
-                                    </li>
-
-                                    <li class="mr-2">
-                                        <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Yesterday</button>
-                                    </li>
-                                    <li class="mr-2">
-                                        <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Week</button>
-                                    </li>
-                                    <li class="mr-2">
-                                        <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Month</button>
-                                    </li>
-                                </ol>
-                            </div>
-                            <div>
-                                <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">&nbsp;Clear</button>
-                                <button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Filter</button>
+                            <div class="form-group">
+                                <label for="companyName">Paid Status</label>
+                                <select class="form-control ddlSearchList" id="dropSex" asp-for="paidStatus">
+                                    <option value="-1">All</option>
+                                    <option value="0">PAID</option>
+                                    <option value="1">PARTIAL PAID</option>
+                                    <option value="1">NOT PAID</option>
+                                </select>
                             </div>
                         </div>
+
+                    </div>
+
+
+
+                    <div class="modal-footer d-flex justify-content-between">
+                        <div class="spark-chart form-material">
+                            <ol class="list-unstyled d-flex">
+                                <li class="mr-2">
+                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Today</button>
+                                </li>
+
+                                <li class="mr-2">
+                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Yesterday</button>
+                                </li>
+                                <li class="mr-2">
+                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Week</button>
+                                </li>
+                                <li class="mr-2">
+                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Month</button>
+                                </li>
+                            </ol>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal" onclick="handleClear()">&nbsp;Clear</button>
+                            <button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Filter</button>
+                        </div>
+                    </div>
 
 
 
@@ -134,35 +134,38 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">OPD Details</h4>
-                 <input type="hidden" id="isPOP" asp-for="isPoP">
+                <input type="hidden" id="isPOP" asp-for="isPoP">
+                <input type="hidden" id="isId" asp-for="opdId">
                 <div class="table-responsive">
                     <table id="basic-2" class="display">
-                            <thead>
-                                <tr>
+                        <thead>
+                            <tr>
 
-          
-                                    <th>Pt's Full Name</th>
-                                    <th>Room No</th>
-                                    <th>Consultant</th>
-                                    <th>Sex</th>
-                                    <th>contact no</th>
-                                    <th>Date & Time</th>
-                                    <th>Status</th>
-                                    <th>Print</th>
-                                    <th>Action 1</th>
-                                    <th>Action 2</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+
+                                <th>Pt's Full Name</th>
+                                <th>Payment Status</th>
+                                <th>Consultant</th>
+                                <th>Sex</th>
+                                <th>contact no</th>
+                                <th>Date & Time</th>
+                                <th>Status</th>
+                                <th>Print</th>
+                                <th>Action 1</th>
+                                <th>Action 2</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                decimal? totalAmount = 0;
+                            }
                             @if (Model.listOPDTbDto != null)
-                            { @foreach (var item in Model.listOPDTbDto)
+                            {
+
+                                @foreach (var item in Model.listOPDTbDto)
                                 {
                                     <tr>
-
-
-
                                         <td>@item.FullName</td>
-                                        <td>@item.roomName</td>
+                                        <td>@item.paymentStatus</td>
                                         <td>
                                             @if (item.consaltantName != null)
                                             {
@@ -172,7 +175,7 @@
                                         <td>
                                             @item.Sex
                                         </td>
-                                        <td>@item.MobileNumber</td>                                      
+                                        <td>@item.MobileNumber</td>
                                         <td>@item.DateTime</td>
                                         <td>@item.Status</td>
                                         <td>
@@ -196,10 +199,27 @@
 
                                         </td>
                                     </tr>
-                                } }
-                           
-                            </tbody>
-                        </table>
+                                    @if (item.TotalAmount != null)
+                                    {
+                                        totalAmount = totalAmount + item.TotalAmount;
+                                    }
+
+                                }
+                            }
+
+                            @if (totalAmount != null)
+                            {
+                                <tr>
+                                    <td colspan="3"></td>
+                                    <td colspan="2">Total Amount</td>
+                                    <td colspan="2">@totalAmount</td>
+                                    <td colspan="3"></td>
+                                </tr>
+                            }
+
+
+                        </tbody>
+                    </table>
 
                 </div>
             </div>
@@ -217,7 +237,7 @@
 
 
 
-@section scripts{
+@section scripts {
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
@@ -225,6 +245,17 @@
         var patientsList;
         var consaltantList;
         var drugusList = [];
+        var total = 0;
+
+        function handleOPDTypeChange() {
+            var dropDoctor = document.getElementById('dropDoctor');
+
+            if (dropDoctor.value == 82) {
+                document.getElementById('hospitalFeeInput').value = 0;
+            } else {
+                document.getElementById('hospitalFeeInput').value = 700;
+            }
+        }
 
         $(document).ready(function () {
 
@@ -236,11 +267,15 @@
             }
         });
 
+        function handleClear() {
+            window.location.href = '/OPDRegistration/';
+        }
+
 
         function ShowShiftDetails(id) {
 
             console.log(id);
-          
+
             $.ajax({
                 type: "POST",
                 url: "/OPDRegistration/CreateOPDReg/" + id,
@@ -269,7 +304,7 @@
                         }
                     });
 
-                      //doctor dropdown
+                    //doctor dropdown
                     $('#dropDoctor').select2({
                         width: '100%',
                         height: "auto !important",
@@ -374,7 +409,7 @@
         }
 
 
- 
+
         function select_onchange_drug(value) {
             const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
             var itenNo = document.getElementById("drugus").value;
@@ -401,18 +436,23 @@
         }
 
         function select_onchange_qty(value) {
-                var qty = document.getElementById("txtQty").value;
-                var price = document.getElementById("txtPrice").value;
-                amount = qty * price;
-                document.getElementById("txtAmount").value = amount.toFixed(2);
+            var qty = document.getElementById("txtQty").value;
+            var price = document.getElementById("txtPrice").value;
+            amount = qty * price;
+            document.getElementById("txtAmount").value = amount.toFixed(2);
         }
 
         function addDrugusItem() {
-           // var opdID = document.getElementById("opid").value;
+            // var opdID = document.getElementById("opid").value;
             var drugId = document.getElementById("drugus").value;
             var qty = document.getElementById("txtQty").value;
             var price = document.getElementById("txtPrice").value;
             var amount = qty * price;
+            total = total + amount;
+
+            document.getElementById("total").value = total;
+
+            console.log(total);
 
             // Create a new drugus item and add it to the list
             var drugusItem = {
@@ -420,7 +460,7 @@
                 Qty: qty,
                 Price: price,
                 Amount: amount
-  
+
             };
             drugusList.push(drugusItem);
 
@@ -461,12 +501,13 @@
         function submitDrugusItems() {
 
             var fullName = $('#dropPatient option:selected').text();
-            var patientID=  $('#dropPatient').val();
+            var patientID = $('#dropPatient').val();
             var contactNo = $('#txtMobileNumber').val();
-            var sex=  $('#dropSex').val();
-            var age=  $('#txtAge').val();
-            var doctortID = $('#dropDoctor').val();
+            var sex = $('#dropSex').val();
+            var age = $('#txtAge').val();
+            var doctortID = parseInt($('#dropDoctor').val());
             var opdID = $('#opid').val();
+            var opdType = document.getElementById('dropDoctor').value == 82 ? 0 : 1;
 
             var patientObject = {
                 Id: patientID,
@@ -478,17 +519,21 @@
 
             var opdObject = {
                 Id: opdID,
-                ConsultantID:doctortID
+                ConsultantID: doctortID
             };
 
 
             var opdDtoObject = {
                 patient: patientObject,
                 OPDDrugusList: drugusList,
-                opd: opdObject
+                opd: opdObject,
+                OpdType: opdType,
             };
+
             var jsonOb = JSON.stringify(opdDtoObject);
-            console.log(jsonOb);
+            // console.log(jsonOb);
+            console.log(opdDtoObject);
+
             $.ajax({
                 url: '/OPDRegistration/AddNewOPD', // Adjust the URL based on your actual route
                 type: 'POST',
@@ -507,9 +552,64 @@
                 }
             });
 
-
         }
-   
+
+        function submitDrugusItemsWithQR() {
+
+            var fullName = $('#dropPatient option:selected').text();
+            var patientID = $('#dropPatient').val();
+            var contactNo = $('#txtMobileNumber').val();
+            var sex = $('#dropSex').val();
+            var age = $('#txtAge').val();
+            var doctortID = $('#dropDoctor').val();
+            var opdID = $('#opid').val();
+            var opdType = $("input[type='radio'][name='OPDType']:checked").val();
+
+            var patientObject = {
+                Id: patientID,
+                FullName: fullName,
+                MobileNumber: contactNo,
+                Age: age,
+                Sex: sex
+            };
+
+            var opdObject = {
+                Id: opdID,
+                ConsultantID: doctortID,
+                OpdType: opdType
+            };
+
+
+            var opdDtoObject = {
+                patient: patientObject,
+                OPDDrugusList: drugusList,
+                opd: opdObject
+            };
+            var jsonOb = JSON.stringify(opdDtoObject);
+            console.log(jsonOb);
+            $.ajax({
+                url: '/OPDRegistration/AddNewOPDWithQR', // Adjust the URL based on your actual route
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(opdDtoObject),
+                success: function (data) {
+                    drugusList = [];
+                    document.getElementById("tblBodyPayments2").innerHTML = "";
+                    var opdId = @Html.Raw(Json.Serialize(Model.opdId));
+                    console.log(opdId);
+                    // Handle success, e.g., redirect to another page
+                    // window.location.href = '/OPDRegistration/Index';
+                    $("#AddEditContainerModel").html(data);
+                    $("#AddShiftModel").modal('show');
+
+                },
+                error: function (error) {
+                    // Handle error
+                    console.error('Error submitting drugus items:', error);
+                }
+            });
+        }
+
 
         $('body').on('focus', "#date-format", function () {
 

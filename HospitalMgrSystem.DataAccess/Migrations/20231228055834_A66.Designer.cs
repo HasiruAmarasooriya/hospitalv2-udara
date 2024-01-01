@@ -4,6 +4,7 @@ using HospitalMgrSystem.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HospitalMgrSystem.DataAccess.Migrations
 {
     [DbContext(typeof(HospitalDBContext))]
-    partial class HospitalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231228055834_A66")]
+    partial class A66
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -923,9 +926,6 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedUser")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime2");
 
@@ -934,9 +934,6 @@ namespace HospitalMgrSystem.DataAccess.Migrations
 
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("ModifiedUser")
-                        .HasColumnType("int");
 
                     b.Property<decimal>("OtherFee")
                         .HasColumnType("decimal(18,2)");
@@ -1013,9 +1010,6 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("DrugId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IsRefund")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ModifiedDate")

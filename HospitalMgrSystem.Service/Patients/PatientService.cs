@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace HospitalMgrSystem.Service.Patients
 {
-    public class PatientService  : IPatientService
+    public class PatientService : IPatientService
     {
-        public HospitalMgrSystem.Model.Patient CreatePatient(HospitalMgrSystem.Model.Patient patient) {
+        public HospitalMgrSystem.Model.Patient CreatePatient(HospitalMgrSystem.Model.Patient patient)
+        {
 
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
                 if (patient.Id == 0)
                 {
@@ -21,11 +22,12 @@ namespace HospitalMgrSystem.Service.Patients
                 else
                 {
                     Patient result = (from p in dbContext.Patients where p.Id == patient.Id select p).SingleOrDefault();
-                   // result.FullName = patient.FullName;
+                    // result.FullName = patient.FullName;
                     result.Address = patient.Address;
                     result.Age = patient.Age;
                     result.MobileNumber = patient.MobileNumber;
                     result.ModifiedDate = DateTime.Now;
+                    result.ModifiedUser = patient.ModifiedUser;
                     result.Nationality = patient.Nationality;
                     result.NIC = patient.NIC;
                     result.Religion = patient.Religion;
@@ -34,7 +36,7 @@ namespace HospitalMgrSystem.Service.Patients
                     dbContext.SaveChanges();
                 }
                 return dbContext.Patients.Find(patient.Id);
-            }    
+            }
         }
 
         public List<Model.Patient> GetAllPatientByStatus()
@@ -54,7 +56,7 @@ namespace HospitalMgrSystem.Service.Patients
             if (value == null) { value = ""; }
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.Patients.Where(o => (o.FullName.Contains(value) || o.MobileNumber.Contains(value) || o.NIC.Contains(value) ) && o.Status == Model.Enums.PatientStatus.New).ToList<Model.Patient>();
+                mtList = dbContext.Patients.Where(o => (o.FullName.Contains(value) || o.MobileNumber.Contains(value) || o.NIC.Contains(value)) && o.Status == Model.Enums.PatientStatus.New).ToList<Model.Patient>();
 
             }
             return mtList;
@@ -80,9 +82,9 @@ namespace HospitalMgrSystem.Service.Patients
                 dbContext.SaveChanges();
                 return result;
             }
-          
+
         }
     }
 
-   
+
 }

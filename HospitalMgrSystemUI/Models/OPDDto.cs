@@ -14,6 +14,11 @@ namespace HospitalMgrSystemUI.Models
         public DateTime EndTime { get; set; }
         public int sessionType { get; set; }
         public int paidStatus { get; set; }
+        public string name { get; set; }
+        public int age { get; set; }
+        public int sex { get; set; }
+        public string phone { get; set; }
+        public int OpdType { get; set; }
 
         public OPD? opd { get; set; }
         public Patient? patient { get; set; }   

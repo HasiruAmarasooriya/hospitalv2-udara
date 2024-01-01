@@ -8,6 +8,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<DrugsController>();
 builder.Services.AddMvc().AddSessionStateTempDataProvider();
 builder.Services.AddSession();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation(); // Add this line for runtime compilation
 
 var app = builder.Build();
 
