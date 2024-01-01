@@ -218,6 +218,7 @@ namespace HospitalMgrSystem.Service.OPD
             {
                 Model.OPDDrugus result = (from p in dbContext.OPDDrugus where p.Id == Id select p).SingleOrDefault();
                 result.itemInvoiceStatus = Model.Enums.ItemInvoiceStatus.Remove;
+                result.IsRefund = 1;
                 dbContext.SaveChanges();
                 return result;
             }
