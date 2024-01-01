@@ -8,10 +8,23 @@
 }
 @inject IConfiguration Configuration
 <script type="text/javascript">
-    generateQRCode(200)
+
+
+    var opdId = @Html.Raw(Json.Serialize(Model.opdId));
+    var fullName = @Html.Raw(Json.Serialize(Model.name));
+    var age = @Html.Raw(Json.Serialize(Model.age));
+    var sex = @Html.Raw(Json.Serialize(Model.sex == 1 ? "Male" : Model.sex == 2 ? "Female" : "None"));
+    var telephoneNumber = @Html.Raw(Json.Serialize(Model.phone));
+
     function generateQRCode(size) {
-        var opdId = @Html.Raw(Json.Serialize(Model.opdId));
-        var data = "OPD"+opdId.toString();
+
+        // Concatenate the variables to form the data
+        var data = "OPD" + opdId.toString() + "\n" +
+            "Name: " + fullName + "\n" +
+            "Age: " + age + "\n" +
+            "Sex: " + sex + "\n" +
+            "Telephone: " + telephoneNumber;
+
         const qrcode = new QRCode(document.getElementById("qrcode"), {
             text: data,
             width: size,
@@ -20,17 +33,41 @@
     }
 
     function printQRCode() {
-        
-    const printWindow = window.open("", "Print QR Code", "width=400,height=400");
-        printWindow.document.write('<div style="text-align: center;">Kumudu Hospital</div>');
+        var currentDate = new Date();
+
+        const printWindow = window.open("", "Print QR Code", "width=400,height=400");
+
+        printWindow.document.write('<div style="text-align: center; font-weight: bold;">Kumudu Hospital</div>');
+        printWindow.document.write('<div style="text-align: center; font-weight: bold;">(PVT) LTD</div>');
+        printWindow.document.write('<div style="text-align: center;">' + currentDate.toLocaleString() + '</div>');
+
+        // QR Code image with reduced size
+        var imageSize = 100; // Set your desired image size here
         printWindow.document.write('<div style="text-align: center; margin: 5px; padding: 5px;">');
-        printWindow.document.write('<img  src="' + document.getElementById("qrcode").getElementsByTagName("img")[0].src + '">');
+        printWindow.document.write('<img src="' + document.getElementById("qrcode").getElementsByTagName("img")[0].src + '" width="' + imageSize + '" height="' + imageSize + '">');
         printWindow.document.write('</div>');
-        printWindow.document.write('<div style="text-align: center;">OPD' + @Html.Raw(Json.Serialize(Model.opdId)) + '</div>');
+
+        // Variables data in a table
+        printWindow.document.write('<div style="text-align: center;">');
+        printWindow.document.write('<table style="margin: auto;">');
+        printWindow.document.write('<tr><td>OPD:</td><td>' + opdId + '</td></tr>');
+        printWindow.document.write('<tr><td>Name:</td><td>' + fullName + '</td></tr>');
+        printWindow.document.write('<tr><td>Age:</td><td>' + age + '</td></tr>');
+        printWindow.document.write('<tr><td>Sex:</td><td>' + sex + '</td></tr>');
+        printWindow.document.write('<tr><td>Telephone:</td><td>' + telephoneNumber + '</td></tr>');
+        printWindow.document.write('</table>');
+        printWindow.document.write('</div>');
+
         printWindow.document.close();
         printWindow.print();
 
     }
+
+    function closeModal() {
+        $('#modalQR').modal('hide');
+    }
+
+    generateQRCode(200)
 
 </script>
 <div class="modal-content">
@@ -43,7 +80,7 @@
         <div id="qrcode" class="d-flex justify-content-center"></div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal" onclick="closeModal()">Close</button>
         <button type="submit" class="btn  waves-effect btn-primary" onclick=printQRCode();><i class="fa fa-save"></i>&nbsp;Print</button>
     </div>
 
