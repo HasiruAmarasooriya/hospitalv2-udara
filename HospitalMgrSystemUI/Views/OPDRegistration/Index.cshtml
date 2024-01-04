@@ -36,7 +36,7 @@
                 <div class="spark-chart form-material">
                     <ol class="list-unstyled d-flex">
                         <li class="mr-2">
-                            <button class="btn waves-effect btn-primary"><i class="fa-solid fa-moon"></i>&nbsp; Night shift</button>
+                            <button onclick="changeShift()" class="btn waves-effect btn-primary" value="@Model.isNightShift" id="shiftButton"><i class="fa-solid fa-moon"></i>&nbsp; Night shift</button>
                         </li>
                         <li>
                             <button type="button" id="btnCreateShift" class="btn waves-effect waves-light btn-block btn-info" onclick="ShowShiftDetails()">&nbsp;Add New OPD</button>
@@ -152,6 +152,7 @@
                                 <th>Print</th>
                                 <th>Action 1</th>
                                 <th>Action 2</th>
+                                <th>Action 3</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -195,6 +196,21 @@
                                                     <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
 
                                                 }
+                                            }
+
+                                        </td>
+
+                                        <td>
+                                            @if (Model != null)
+                                            {
+                                                @* @using (Html.BeginForm("Index", "Cashier", new { PreID = @item.Id }, FormMethod.Post))
+                                                {
+
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+
+                                                } *@
+
+                                                <a href="/Cashier?PreID=@item.Id"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button></a>
                                             }
 
                                         </td>
@@ -247,6 +263,28 @@
         var drugusList = [];
         var total = 0;
 
+        function changeShift() {
+            var isNightShift = document.getElementById("shiftButton").value;
+
+            console.log(isNightShift);
+
+            $.ajax({
+                type: "POST",
+                url: "/OPDRegistration/ChangeShift/",
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    window.location.href = '/OPDRegistration/Index';
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
+
         function handleOPDTypeChange() {
             var dropDoctor = document.getElementById('dropDoctor');
 
@@ -264,6 +302,14 @@
 
             if (isPOPValue === 0) {
                 ShowShiftDetails(0);
+            }
+
+            var isNightShift = document.getElementById("shiftButton").value;
+
+            if (isNightShift == "NIGHT_SHIFT") {
+                document.getElementById("shiftButton").innerHTML = "<i class='fa-solid fa-sun'></i>&nbsp; Day shift";
+            } else {
+                document.getElementById("shiftButton").innerHTML = "<i class='fa-solid fa-moon'></i>&nbsp; Night shift";
             }
         });
 
