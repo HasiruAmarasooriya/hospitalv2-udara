@@ -34,6 +34,16 @@ namespace HospitalMgrSystemUI.Controllers
         [BindProperty]
         public int opdId { get; set; }
 
+        #region Shift Management
+
+        public IActionResult ChangeShift()
+        {
+            OPDService oPDService = new OPDService();
+            oPDService.UpdateShift();
+            return RedirectToAction("Index");
+        }
+
+        #endregion
 
         #region OPD Management 
         public IActionResult Index(int isPop)
@@ -47,6 +57,7 @@ namespace HospitalMgrSystemUI.Controllers
             oPDDto.patientsList = LoadPatients();
             oPDDto.consultantList = LoadConsultants();
             oPDDto.listOPDTbDto = LoadOPD();
+            oPDDto.isNightShift = new DefaultService().GetDefailtShiftStatus();
             return View(oPDDto);
         }
 
