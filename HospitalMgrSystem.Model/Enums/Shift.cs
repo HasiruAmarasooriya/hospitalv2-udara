@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace HospitalMgrSystem.Model.Enums
 {
-    public enum PaymentStatus
+    public enum Shift
     {
-        PAID,
-        PARTIAL_PAID,
-        OPD,
-        NOT_PAID
+        DAY_SHIFT,
+        NIGHT_SHIFT
     }
 }
