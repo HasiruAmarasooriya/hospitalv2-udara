@@ -36,6 +36,7 @@ namespace HospitalMgrSystem.Model
         public CommonStatus Status { get; set; }
         public int CreatedUser { get; set; }
         public int ModifiedUser { get; set; }
+        public Shift shift { get; set; }
 
         [NotMapped]
         public decimal? TotalAmount { get; set; }
