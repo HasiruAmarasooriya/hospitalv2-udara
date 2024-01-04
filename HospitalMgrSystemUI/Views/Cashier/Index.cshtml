@@ -7,6 +7,42 @@
 }
 @inject IConfiguration Configuration
 <script type="text/javascript">
+
+    window.onload = (event) => {
+        var urlParams = new URLSearchParams(window.location.search);
+        var id = urlParams.get('id');
+
+        console.log(id)
+
+    };
+
+
+    // $(window).load(function () {
+    //     // Extract the PreID from the URL
+        
+
+
+    //     // if (id != null) {
+    //     //     var preID = "OPD" + id
+    //     //     // Make an AJAX call to the Index method
+    //     //     $.ajax({
+    //     //         url: '/Cashier/Index',
+    //     //         type: 'POST',
+    //     //         dataType: "html",
+    //     //         data: { PreID: preID },
+    //     //         success: function (result) {
+    //     //             // Handle the success response, update your UI or perform other actions
+    //     //             console.log(result);
+    //     //         },
+    //     //         error: function (error) {
+    //     //             // Handle the error, display an alert or perform other error-handling actions
+    //     //             console.error('Error:', error);
+    //     //         }
+    //     //     });
+    //     // }
+    // });
+
+
     function select_onchange_payments() {
 
         var total = document.getElementById("totalID").value;
@@ -45,7 +81,7 @@
             document.body.removeChild(iframe);
         };
     }
-     function AddOPDToAdmission(id) {
+    function AddOPDToAdmission(id) {
 
         $.ajax({
             type: "POST",
@@ -200,7 +236,7 @@
         var logoImage = new Image();
         var barcodeImage = new Image();
         var imagesLoaded = 0;
-    
+
 
         logoImage.src = "https://kumuduhospital.com/assets/images/kumudu_logo2.jpg"; // Replace with your actual logo URL
         barcodeImage.src = "https://png.pngtree.com/png-clipart/20220424/original/pngtree-black-and-white-icons-of-barcode-numbers-png-image_7554658.png"; // Replace with your actual barcode URL
@@ -254,7 +290,6 @@
 </script>
 
 <div class="row page-titles">
-
 </div>
 
 <div class="row">
@@ -267,7 +302,7 @@
 
 
                         @using (Html.BeginForm("Index", "Cashier", FormMethod.Post))
-                            {
+                        {
                             <div class="d-flex">
                                 <div class=" p-2">
                                     <input type="text" class="form-control" id="preID" placeholder="Sean of search item..." asp-for="PreID">
@@ -277,33 +312,34 @@
                                 </div>
                                 <div class="ml-auto p-2">
                                     <button type="button" class="btn btn-danger">CANCEL SALE</button>
-                                    @if (Model != null && Model.PreID != null){
+                                    @if (Model != null && Model.PreID != null)
+                                    {
                                         <input type="hidden" id="opid" asp-for="PreID" value="@Model.PreID">
                                         <button type="button" id="printButton" onclick=PrintInvoice(); class="btn btn-warning">PRINT</button>
                                     }
-                                    
+
                                 </div>
-                                
+
 
                             </div>
-                            }
-             
+                        }
+
                     </div>
                 </div>
 
             </div>
 
             <div class="row">
-               <div class="col-12 " style="padding:0;">
-                    <div class="card" >
-                    <div class="card-body">
-                     <h4 class="card-title">Items</h4>
-                        <div class="table-responsive">
-                            @if (Model != null)
-                            {
-                            @if (Model.cashierBillingItemDtoList != null && Model.opd != null)
-                            {
-                                    <table class="table">
+                <div class="col-12 " style="padding:0;">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Items</h4>
+                            <div class="table-responsive">
+                                @if (Model != null)
+                                {
+                                    @if (Model.cashierBillingItemDtoList != null && Model.opd != null)
+                                    {
+                                        <table class="table">
 
                                             <thead class="table-success">
                                                 <tr>
@@ -340,67 +376,67 @@
 
                                                         </td>
                                                     </tr>
-                                                } 
-                                </tbody>                               
-                            </table>
-                            }
-@*                            @if (Model.opd != null)
-                            { 
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+                                    @*                            @if (Model.opd != null)
+                                {
                                 <table class="table">
-                                    <thead class="table-success">
-                                        <tr>
-                                            <th>ID</th>
-     
-                                            <th>Doctor Fee</th>
-                                            <th>Hospital Fee</th>
-                                            <th>Subtotal</th>                                           
-                                        </tr>
+                                <thead class="table-success">
+                                <tr>
+                                <th>ID</th>
 
-                                    </thead>
-                                    <tbody>
+                                <th>Doctor Fee</th>
+                                <th>Hospital Fee</th>
+                                <th>Subtotal</th>
+                                </tr>
 
-                                                    <tr>
-                                                    <td>@Model.opd.Id</td>
-                                                    <td>@Model.opd.ConsultantFee</td>
-                                                    <td>@Model.opd.HospitalFee</td>
-                                                    <td>@(Model.opd.HospitalFee + Model.opd.ConsultantFee)</td>
-                                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                <tr>
+                                <td>@Model.opd.Id</td>
+                                <td>@Model.opd.ConsultantFee</td>
+                                <td>@Model.opd.HospitalFee</td>
+                                <td>@(Model.opd.HospitalFee + Model.opd.ConsultantFee)</td>
+                                </tr>
 
 
-                                    </tbody>
+                                </tbody>
                                 </table>
-                                                                            
-                            }*@
 
-                            @if (Model.channel != null)
-                            { 
-                                <table class="table">
-                                    <thead class="table-success">
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Pt Name</th>
-                                            <th>Doctor Fee</th>
-                                            <th>Hospital Fee</th>
-                                            <th>Subtotal</th>                                           
-                                        </tr>
+                                }*@
 
-                                    </thead>
-                                    <tbody>
+                                    @if (Model.channel != null)
+                                    {
+                                        <table class="table">
+                                            <thead class="table-success">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Pt Name</th>
+                                                    <th>Doctor Fee</th>
+                                                    <th>Hospital Fee</th>
+                                                    <th>Subtotal</th>
+                                                </tr>
 
-                                                    <tr>
-                                                        <td>@Model.channel.Id</td>
-                                                        <td>@Model.channel.Patient.FullName</td>
-                                                        <td>@Model.channel.ChannelingSchedule.ConsultantFee</td>
-                                                        <td>@Model.channel.ChannelingSchedule.HospitalFee</td>
-                                                        <td>@(Model.channel.ChannelingSchedule.HospitalFee + Model.channel.ChannelingSchedule.ConsultantFee)</td>
-                                                    </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <tr>
+                                                    <td>@Model.channel.Id</td>
+                                                    <td>@Model.channel.Patient.FullName</td>
+                                                    <td>@Model.channel.ChannelingSchedule.ConsultantFee</td>
+                                                    <td>@Model.channel.ChannelingSchedule.HospitalFee</td>
+                                                    <td>@(Model.channel.ChannelingSchedule.HospitalFee + Model.channel.ChannelingSchedule.ConsultantFee)</td>
+                                                </tr>
 
 
-                                    </tbody>
-                                </table>
-                                                                            }
-                            }
-                        </div>
+                                            </tbody>
+                                        </table>
+                                    }
+                                }
+                            </div>
                             @if (Model != null)
                             {
                                 @if (Model.opd != null)
@@ -408,46 +444,47 @@
                                     <div class="d-flex justify-content-center">
                                         @*<button id='btnEdit1' class='btn waves-effect waves-light  btn-info' onclick=AddOPDToAdmission(@Model.opd.Id); style="margin-left:10px;"><i class='fa fa-plus'></i></button>
 
-                                        <button id='btnEdit1' class='btn waves-effect waves-light  btn-info' onclick=AddDrugusToAdmission(@Model.opd.Id); style="margin-left:10px;"><i class='fa fa-plus'></i></button>
+                                <button id='btnEdit1' class='btn waves-effect waves-light  btn-info' onclick=AddDrugusToAdmission(@Model.opd.Id); style="margin-left:10px;"><i class='fa fa-plus'></i></button>
 
-                                        <button id='btnEdit2' class='btn waves-effect waves-light  btn-info' onclick=AddInvestigationToAdmission(@Model.opd.Id); style="margin-left:10px;"><i class='fa fa-plus'></i></button>
+                                <button id='btnEdit2' class='btn waves-effect waves-light  btn-info' onclick=AddInvestigationToAdmission(@Model.opd.Id); style="margin-left:10px;"><i class='fa fa-plus'></i></button>
 
-                                        <button id='btnEdit4' class='btn waves-effect waves-light  btn-info' onclick=AddItemsToAdmission(@Model.opd.Id); style="margin-left:10px;"><i class='fa fa-plus'></i></button>*@
+                                <button id='btnEdit4' class='btn waves-effect waves-light  btn-info' onclick=AddItemsToAdmission(@Model.opd.Id); style="margin-left:10px;"><i class='fa fa-plus'></i></button>*@
                                     </div>
                                 }
                             }
+                        </div>
                     </div>
+
                 </div>
-                
-               </div> 
-                
+
             </div>
             @if (Model != null)
             {
-             @if (Model.cashierRemoveBillingItemDtoList != null && Model.opd != null){
-            <div class="row">
-                <div class="col-12 " style="padding:0;">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Refund Items</h4>
-                            <div class="table-responsive">
+                @if (Model.cashierRemoveBillingItemDtoList != null && Model.opd != null)
+                {
+                    <div class="row">
+                        <div class="col-12 " style="padding:0;">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Refund Items</h4>
+                                    <div class="table-responsive">
 
-                                <table class="table">
-                                    <thead class="table-success">
-                                        <tr>
-                                            <th>Item</th>
-                                            <th>Price</th>
-                                            <th>Qty.</th>
-                                            <th>Disc.</th>
-                                            <th>Subtotal</th>
-                                            <th>Delete</th>
-                                        </tr>
+                                        <table class="table">
+                                            <thead class="table-success">
+                                                <tr>
+                                                    <th>Item</th>
+                                                    <th>Price</th>
+                                                    <th>Qty.</th>
+                                                    <th>Disc.</th>
+                                                    <th>Subtotal</th>
+                                                    <th>Delete</th>
+                                                </tr>
 
-                                    </thead>
-                                    <tbody>
+                                            </thead>
+                                            <tbody>
 
-                                          
-                                             @foreach (var item in Model.cashierRemoveBillingItemDtoList)
+
+                                                @foreach (var item in Model.cashierRemoveBillingItemDtoList)
                                                 {
                                                     <tr>
                                                         <td>@item.billingItemName (@item.billingItemsTypeName)</td>
@@ -470,18 +507,18 @@
                                                         </td>
                                                     </tr>
                                                 }
-                                    
 
-                                    </tbody>
-                                </table>
 
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
                             </div>
+
                         </div>
+
                     </div>
-
-                </div>
-
-            </div>
                 }
             }
             <div class="row">
@@ -523,7 +560,7 @@
                                                         </td>
                                                     </tr>
                                                 } }
-                                                                                       
+
                                         }
                                     </tbody>
                                 </table>
@@ -540,68 +577,68 @@
     <div class="col-4">
         <div class="card">
             <div class="card-body">
-              
+
                 <div class="table-responsive">
                     <form asp-action="AddSale" method="post">
-                    <table class="table" style="border-collapse: collapse;">
+                        <table class="table" style="border-collapse: collapse;">
                             <input type="hidden" asp-for="customerID">
                             <input type="hidden" asp-for="invoiceType">
                             <input type="hidden" asp-for="sufID">
                             <input type="hidden" asp-for="invoiceID">
-                        <tr>
-                            <td>CUSTOMER NAME</td>
+                            <tr>
+                                <td>CUSTOMER NAME</td>
                                 <td> <input class="form-control " type="text" asp-for="customerName" id="customerNameID" placeholder="" /></td>
-                        </tr>
-                        <tr>
-                           <td>SUBTOTAL</td>
-                            <td> <input class="form-control " type="text" asp-for="subtotal" id="subtotalID" placeholder="" readonly/></td>
-                        </tr>
-                        <tr>
-                            <td>DISCOUNT</td>
-                            <td><input class="form-control " type="text" asp-for="discount" id="discount" placeholder="" readonly /></td>
-                        </tr>
-                        <tr>
-                            <td style ="color:red;">TOTAL</td>
-                            <td><input class="form-control " type="text" asp-for="total" id="totalID" placeholder="" readonly /></td>
-                        </tr>
-                        <tr style="font-size: 12px;text-transform: uppercase;text-align: left;font-weight: 600;border-bottom: white;">
-                            <td style="border-bottom: 1px solid white; border-right:1px solid #f3f1f1;width:50%">Paid</td>
-                            <td style="border-bottom: 1px solid white;">Due</td>
-                        </tr>
-                        <tr style="font-size:14px;text-align:center;">
-                            <td style="border-right:1px solid #f3f1f1"><input class="form-control " type="text" asp-for="totalPaidAmount" id="totalPaidAmountID" placeholder="" readonly /></td>
-                            <td style="color:red;"><input class="form-control " type="text" asp-for="totalDueAmount" id="dueAmountID" placeholder="" readonly /></td>
-                        </tr>
-                     
-                        <tr>
-                            <td style="border-bottom: 1px solid white;" colspan="2" style="text-align:left">ADD PAYMENT</td>
-                          
-                        </tr>
-                          <tr>
-                            <td style="border-bottom: 1px solid white;"><span class="label label-success">CASH</span></td>
-                            <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="cash" id="cashID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
-                          </tr>
+                            </tr>
+                            <tr>
+                                <td>SUBTOTAL</td>
+                                <td> <input class="form-control " type="text" asp-for="subtotal" id="subtotalID" placeholder="" readonly /></td>
+                            </tr>
+                            <tr>
+                                <td>DISCOUNT</td>
+                                <td><input class="form-control " type="text" asp-for="discount" id="discount" placeholder="" readonly /></td>
+                            </tr>
+                            <tr>
+                                <td style="color:red;">TOTAL</td>
+                                <td><input class="form-control " type="text" asp-for="total" id="totalID" placeholder="" readonly /></td>
+                            </tr>
+                            <tr style="font-size: 12px;text-transform: uppercase;text-align: left;font-weight: 600;border-bottom: white;">
+                                <td style="border-bottom: 1px solid white; border-right:1px solid #f3f1f1;width:50%">Paid</td>
+                                <td style="border-bottom: 1px solid white;">Due</td>
+                            </tr>
+                            <tr style="font-size:14px;text-align:center;">
+                                <td style="border-right:1px solid #f3f1f1"><input class="form-control " type="text" asp-for="totalPaidAmount" id="totalPaidAmountID" placeholder="" readonly /></td>
+                                <td style="color:red;"><input class="form-control " type="text" asp-for="totalDueAmount" id="dueAmountID" placeholder="" readonly /></td>
+                            </tr>
 
-                        <tr>
-                            <td style="border-bottom: 1px solid white;"><span class="label label-success">CREDIT CARD</span></td>
-                            <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="credit" id="creditID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
-                        </tr>
-                        <tr>
-                            <td style="border-bottom: 1px solid white;"><span class="label label-success">DEBIT CARD</span></td>
-                            <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="debit" id="debitID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
-                        </tr>
-                        <tr>
-                            
-                            <td style="border-bottom: 1px solid white;"><span class="label label-success">CHEQUE</span></td>
-                            <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="cheque" id="chequeID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
-                        </tr>
-                        <tr>
-                            <td style="border-bottom: 1px solid white;"><span class="label label-success">GIFT CARD</span></td>
-                            <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="giftCard" id="giftcardID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
-                        </tr>
-                    </table>
+                            <tr>
+                                <td style="border-bottom: 1px solid white;" colspan="2" style="text-align:left">ADD PAYMENT</td>
 
-                    <center><button type="submit" class="btn btn-success">END SALE</button></center>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom: 1px solid white;"><span class="label label-success">CASH</span></td>
+                                <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="cash" id="cashID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
+                            </tr>
+
+                            <tr>
+                                <td style="border-bottom: 1px solid white;"><span class="label label-success">CREDIT CARD</span></td>
+                                <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="credit" id="creditID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom: 1px solid white;"><span class="label label-success">DEBIT CARD</span></td>
+                                <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="debit" id="debitID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
+                            </tr>
+                            <tr>
+
+                                <td style="border-bottom: 1px solid white;"><span class="label label-success">CHEQUE</span></td>
+                                <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="cheque" id="chequeID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom: 1px solid white;"><span class="label label-success">GIFT CARD</span></td>
+                                <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="giftCard" id="giftcardID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
+                            </tr>
+                        </table>
+
+                        <center><button type="submit" class="btn btn-success">END SALE</button></center>
                     </form>
 
                 </div>
