@@ -1,4 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.Enums;
 using System.Collections.Generic;
 
 namespace HospitalMgrSystemUI.Models
@@ -24,6 +25,7 @@ namespace HospitalMgrSystemUI.Models
         public Patient? patient { get; set; }   
         public Drug? Drug { get; set; }
         public Investigation? investigation { get; set; }
+        public Shift isNightShift { get; set; }
 
         public OPDDrugus? opdDrugus { get; set; }
         public OPDInvestigation? opdInvestigation { get; set; }
