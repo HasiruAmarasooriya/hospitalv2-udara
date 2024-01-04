@@ -1,4 +1,6 @@
-﻿using HospitalMgrSystem.Model.Enums;
+﻿using HospitalMgrSystem.DataAccess;
+using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -30,6 +32,17 @@ namespace HospitalMgrSystem.Service.Default
 
             }
             return consultantFee.Price;
+        }
+
+        public Shift GetDefailtShiftStatus()
+        {
+            NightShift nightShift = new NightShift();
+            using (HospitalDBContext dbContext = new HospitalDBContext())
+            {
+                nightShift = dbContext.NightShifts.First(o => o.Id == 1);
+
+            }
+            return nightShift.IsNightShift;
         }
     }
 }
