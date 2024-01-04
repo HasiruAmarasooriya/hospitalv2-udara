@@ -23,6 +23,7 @@ using System.Drawing.Printing;
 using System.Drawing;
 using System.Text;
 using Org.BouncyCastle.Asn1.Ocsp;
+using Azure.Core;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -62,6 +63,7 @@ namespace HospitalMgrSystemUI.Controllers
                 {
                     try
                     {
+                        PreID = "OPD" + PreID;
                         if (PreID != null)
                         {
                             cashierDto.PreID= PreID ;

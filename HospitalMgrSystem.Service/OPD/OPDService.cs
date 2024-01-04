@@ -12,6 +12,30 @@ namespace HospitalMgrSystem.Service.OPD
 {
     public class OPDService : IOPDService
     {
+        #region Shift Management
+
+        public void UpdateShift()
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                NightShift nightShift = dbContext.NightShifts.First(o => o.Id == 1);
+
+                if (nightShift.IsNightShift == Shift.DAY_SHIFT)
+                {
+                    nightShift.IsNightShift = Shift.NIGHT_SHIFT;
+                }
+                else
+                {
+                    nightShift.IsNightShift = Shift.DAY_SHIFT;
+                }
+
+                dbContext.SaveChanges();
+            }
+
+        }
+
+        #endregion
+
         #region OPD Management 
         public Model.OPD CreateOPD(Model.OPD opd)
         {
