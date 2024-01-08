@@ -16,8 +16,7 @@ namespace HospitalMgrSystem.Model
         public InvoiceType InvoiceType { get; set; }
         public PaymentStatus paymentStatus { get; set; }
         public InvoiceStatus Status { get; set; }
-        public decimal? Discount { get; set; }
-        public decimal? SubTotal { get; set; }
+ 
         public int? CreateUser { get; set; }
         public int? ModifiedUser { get; set; }
         public DateTime CreateDate { get; set; }

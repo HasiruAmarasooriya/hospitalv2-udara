@@ -63,6 +63,68 @@ namespace HospitalMgrSystem.Service.OPD
             }
         }
 
+        public Model.OPD UpdatePaidStatus(Model.OPD opd)
+        {
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                try
+                {
+                    if (opd.Id != 0)
+                    {
+                        HospitalMgrSystem.Model.OPD result = (from p in dbContext.OPD where p.Id == opd.Id select p).SingleOrDefault();
+                        result.paymentStatus = opd.paymentStatus; // Update only the "Price" column
+                        result.ModifiedDate = DateTime.Now; // Optional, set the ModifiedDate if needed
+                        result.ModifiedUser = opd.ModifiedUser; // Optional, set the ModifiedDate if needed
+                        dbContext.SaveChanges();
+                    }
+                    return dbContext.OPD.Find(opd.Id);
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+
+
+            }
+        }
+
+        public Model.Invoice UpdateOPDDrugInvoiceStatus(List<Model.InvoiceItem> invoiceItems)
+        {
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                OPDDrugus opdDrug = new OPDDrugus();
+                try
+                {
+
+                    opdDrug.Id = invoiceItems[0].ItemID;
+                    foreach (var item in invoiceItems)
+                    {
+           
+                        if(item.billingItemsType == BillingItemsType.Drugs)
+                        {
+                            HospitalMgrSystem.Model.OPDDrugus result = (from p in dbContext.OPDDrugus where p.Id == item.ItemID select p).SingleOrDefault();
+                            if (result != null)
+                            {
+                                result.itemInvoiceStatus = item.itemInvoiceStatus; // Update only the "Price" column
+                                dbContext.SaveChanges();
+                            }
+                        }
+
+                    }
+
+                    return dbContext.Invoices.Find(opdDrug.Id);
+
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+
+
+
+            }
+        }
+
         public Model.OPD GetAllOPDByID(int? id)
         {
             Model.OPD opd = new Model.OPD();
@@ -139,7 +201,7 @@ namespace HospitalMgrSystem.Service.OPD
                     {
                         if (opd.Id == item.ServiceID)
                         {
-                            opd.TotalAmount = item.SubTotal;
+                            opd.TotalAmount =0;
                         }
                     }
                 }

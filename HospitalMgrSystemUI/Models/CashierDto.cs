@@ -39,10 +39,12 @@ namespace HospitalMgrSystemUI.Models
         public OPD opd { get; set; }
         public Invoice invoice { get; set; }
         public List<OPDDrugus> OPDDrugusList { get; set; }
+        public List<OPDDrugus> OPDDrugusListInvoiced { get; set; }
         public List<OPDInvestigation> OPDInvestigationList { get; set; }
         public List<OPDItem> OPDItemList { get; set; }
 
         public List<BillingItemDto> cashierBillingItemDtoList { get; set; }
+        public List<BillingItemDto> cashierBilledItemDtoList { get; set; }
         public List<BillingItemDto> cashierRemoveBillingItemDtoList { get; set; }
         public List<InvoiceItem> InvoiceItemList { get; set; }
         public List<Payment> paymentList { get; set; }

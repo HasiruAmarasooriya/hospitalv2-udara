@@ -15,6 +15,7 @@ using HospitalMgrSystem.Service.Item;
 using HospitalMgrSystem.Service.Default;
 using HospitalMgrSystem.Service.OPDSchedule;
 using System.Security.Cryptography;
+using HospitalMgrSystem.Model.Enums;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -192,6 +193,7 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.CreateDate = DateTime.Now;
                     oPDDto.opd.ModifiedDate = DateTime.Now;
                     oPDDto.opd.HospitalFee = oPDDto.OpdType == 1 ? hospitalFee : 0;
+                    oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
                     oPDDto.opd.ConsultantFee = 0;
                     OPDobj = new OPDService().CreateOPD(oPDDto.opd);
 
@@ -200,6 +202,7 @@ namespace HospitalMgrSystemUI.Controllers
                         foreach (var drugusItem in oPDDto.OPDDrugusList)
                         {
                             drugusItem.opdId = OPDobj.Id;
+                            drugusItem.itemInvoiceStatus = ItemInvoiceStatus.Add;
                             drugusItem.Amount = drugusItem.Qty * drugusItem.Price;
                             drugusItem.IsRefund = 0;
                             new OPDService().CreateOPDDrugus(drugusItem);
@@ -262,6 +265,7 @@ namespace HospitalMgrSystemUI.Controllers
                         foreach (var drugusItem in oPDDto.OPDDrugusList)
                         {
                             drugusItem.opdId = OPDobj.Id;
+                            drugusItem.itemInvoiceStatus = ItemInvoiceStatus.Add;
                             drugusItem.Amount = drugusItem.Qty * drugusItem.Price;
                             new OPDService().CreateOPDDrugus(drugusItem);
                         }

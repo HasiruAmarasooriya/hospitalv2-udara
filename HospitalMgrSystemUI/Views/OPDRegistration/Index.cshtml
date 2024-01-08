@@ -185,7 +185,20 @@
                                         <td>
                                             <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
                                         </td>
+                                        <td>
+                                            @if (Model != null)
+                                            {
+                                                @* @using (Html.BeginForm("Index", "Cashier", new { PreID = @item.Id }, FormMethod.Post))
+                                    {
 
+                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+
+                                    } *@
+
+                                                <a href="/Cashier?PreID=@item.Id"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
+                                            }
+
+                                        </td>
                                         <td>
                                             @if (Model != null)
                                             {
@@ -200,20 +213,7 @@
 
                                         </td>
 
-                                        <td>
-                                            @if (Model != null)
-                                            {
-                                                @* @using (Html.BeginForm("Index", "Cashier", new { PreID = @item.Id }, FormMethod.Post))
-                                                {
 
-                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
-
-                                                } *@
-
-                                                <a href="/Cashier?PreID=@item.Id"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button></a>
-                                            }
-
-                                        </td>
                                     </tr>
                                     @if (item.TotalAmount != null)
                                     {
@@ -223,7 +223,7 @@
                                 }
                             }
 
-                            @if (totalAmount != null)
+@*                            @if (totalAmount != null)
                             {
                                 <tr>
                                     <td colspan="3"></td>
@@ -231,7 +231,7 @@
                                     <td colspan="2">@totalAmount</td>
                                     <td colspan="3"></td>
                                 </tr>
-                            }
+                            }*@
 
 
                         </tbody>

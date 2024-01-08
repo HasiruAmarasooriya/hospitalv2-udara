@@ -24,6 +24,7 @@ using System.Drawing;
 using System.Text;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Azure.Core;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -119,6 +120,7 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 CashierDto cashierDto = new CashierDto();
                 List<BillingItemDto> billingItemDtoList = new List<BillingItemDto>();
+                List<BillingItemDto> billedItemDtoList = new List<BillingItemDto>();
 
                 decimal subtotal = 0;
                 decimal discount = 0;
@@ -145,6 +147,7 @@ namespace HospitalMgrSystemUI.Controllers
                     cashierDto.invoiceType = InvoiceType.OPD;
                     cashierDto.customerID = opd.PatientID;
                     cashierDto.OPDDrugusList = GetOPDDrugus(number, ItemInvoiceStatus.Add);
+                    cashierDto.OPDDrugusListInvoiced= GetOPDDrugus(number, ItemInvoiceStatus.BILLED);
                     cashierDto.OPDInvestigationList = GetOPDInvestigation(number, ItemInvoiceStatus.Add);
                     cashierDto.OPDItemList = GetOPDItems(number, ItemInvoiceStatus.Add);
                     cashierDto.invoice= new CashierService().GetInvoiceByServiceIDAndInvoiceType(number, InvoiceType.OPD);
@@ -157,6 +160,26 @@ namespace HospitalMgrSystemUI.Controllers
                             billingItemDtoList.Add(new BillingItemDto()
                             {
                                 BillingItemID = item.Id,                             
+                                billingItemsType = BillingItemsType.Drugs,
+                                billingItemsTypeName = item.billingItemsType.ToString(),
+                                billingItemName = item.Drug.DrugName,
+                                qty = item.Qty,
+                                price = item.Price,
+                                discount = 0,
+                                amount = item.Amount
+                            });
+                        }
+                    }
+
+                    if (cashierDto.OPDDrugusListInvoiced.Count > 0)
+                    {
+                        foreach (var item in cashierDto.OPDDrugusListInvoiced)
+                        {
+                            decimal itemAmount = item.Qty * item.Price;
+                            subtotal = subtotal + itemAmount;
+                            billedItemDtoList.Add(new BillingItemDto()
+                            {
+                                BillingItemID = item.Id,
                                 billingItemsType = BillingItemsType.Drugs,
                                 billingItemsTypeName = item.billingItemsType.ToString(),
                                 billingItemName = item.Drug.DrugName,
@@ -240,32 +263,105 @@ namespace HospitalMgrSystemUI.Controllers
                         decimal subtot = item.CashAmount + item.ChequeAmount + item.CreditAmount + item.DdebitAmount + item.GiftCardAmount;
                         cashierDto.totalPaymentPaidAmount = cashierDto.totalPaymentPaidAmount + subtot;
                     }
+
+                    cashierDto.InvoiceItemList = new CashierService().GetInvoiceItemByInvoicedID(cashierDto.invoice.Id);
+                    bool hospitalFeeBilled = false;
+                    bool consaltantFeeBilled = false;
+                    foreach (var item in cashierDto.InvoiceItemList)
+                    {
+                         if(item.billingItemsType == BillingItemsType.Hospital)
+                        {
+                            hospitalFeeBilled = true;
+                            billedItemDtoList.Add(new BillingItemDto()
+                            {
+                                BillingItemID = 2,
+                                billingItemsType = BillingItemsType.Hospital,
+                                billingItemsTypeName = "",
+                                billingItemName = "Hospital Fee",
+                                qty = 1,
+                                price = cashierDto.hospitalFee,
+                                discount = 0,
+                                amount = cashierDto.hospitalFee
+                            });
+
+                        }
+                        if (item.billingItemsType == BillingItemsType.Consultant)
+                        {
+                            consaltantFeeBilled = true;
+                            billedItemDtoList.Add(new BillingItemDto()
+                            {
+                                BillingItemID = 1,
+                                billingItemsType = BillingItemsType.Consultant,
+                                billingItemsTypeName = "",
+                                billingItemName = "Consultant Fee",
+                                qty = 1,
+                                price = cashierDto.consaltantFee,
+                                discount = 0,
+                                amount = cashierDto.consaltantFee
+                            });
+                        }
+                    }
+
+                    if (!consaltantFeeBilled)
+                    {
+                        billingItemDtoList.Add(new BillingItemDto()
+                        {
+                            BillingItemID = 1,
+                            billingItemsType = BillingItemsType.Consultant,
+                            billingItemsTypeName = "",
+                            billingItemName = "Consultant Fee",
+                            qty = 1,
+                            price = cashierDto.consaltantFee,
+                            discount = 0,
+                            amount = cashierDto.consaltantFee
+                        });
+                    }
+
+
+                    if (!hospitalFeeBilled)
+                    {
+                        billingItemDtoList.Add(new BillingItemDto()
+                        {
+                            BillingItemID = 2,
+                            billingItemsType = BillingItemsType.Hospital,
+                            billingItemsTypeName = "",
+                            billingItemName = "Hospital Fee",
+                            qty = 1,
+                            price = cashierDto.hospitalFee,
+                            discount = 0,
+                            amount = cashierDto.hospitalFee
+                        });
+                    }
+
+
+                }
+                else
+                {
+                    billingItemDtoList.Add(new BillingItemDto()
+                    {
+                        BillingItemID = 1,
+                        billingItemsType = BillingItemsType.Consultant,
+                        billingItemsTypeName = "",
+                        billingItemName = "Consultant Fee",
+                        qty = 1,
+                        price = cashierDto.consaltantFee,
+                        discount = 0,
+                        amount = cashierDto.consaltantFee
+                    });
+
+                    billingItemDtoList.Add(new BillingItemDto()
+                    {
+                        BillingItemID = 2,
+                        billingItemsType = BillingItemsType.Hospital,
+                        billingItemsTypeName = "",
+                        billingItemName = "Hospital Fee",
+                        qty = 1,
+                        price = cashierDto.hospitalFee,
+                        discount = 0,
+                        amount = cashierDto.hospitalFee
+                    });
                 }
 
-
-                billingItemDtoList.Add(new BillingItemDto()
-                {
-                    BillingItemID = 1,
-                    billingItemsType = BillingItemsType.Consultant,
-                    billingItemsTypeName = "",
-                    billingItemName = "Consultant Fee",
-                    qty = 1,
-                    price = cashierDto.consaltantFee,
-                    discount = 0,
-                    amount = cashierDto.consaltantFee
-                });
-
-                billingItemDtoList.Add(new BillingItemDto()
-                {
-                    BillingItemID = 2,
-                    billingItemsType = BillingItemsType.Hospital,
-                    billingItemsTypeName = "",
-                    billingItemName = "Hospital Fee",
-                    qty = 1,
-                    price = cashierDto.hospitalFee,
-                    discount = 0,
-                    amount = cashierDto.hospitalFee
-                });
 
                 cashierDto.PreID = input;
                 cashierDto.sufID = number;
@@ -275,6 +371,7 @@ namespace HospitalMgrSystemUI.Controllers
                 cashierDto.preTotal = cashierDto.preSubtotal - discount;
                 cashierDto.total = cashierDto.subtotal - discount;
                 cashierDto.cashierBillingItemDtoList = billingItemDtoList;
+                cashierDto.cashierBilledItemDtoList = billedItemDtoList;
                 return cashierDto;
             }
             catch (Exception ex)
@@ -422,6 +519,7 @@ namespace HospitalMgrSystemUI.Controllers
                             {
                                 InvoiceId = id,
                                 ItemID=item.Id,
+                                itemInvoiceStatus = ItemInvoiceStatus.BILLED,
                                 billingItemsType = BillingItemsType.Drugs,
                                 qty = item.Qty,
                                 price = item.Price,
@@ -430,6 +528,18 @@ namespace HospitalMgrSystemUI.Controllers
                             });
                         }
                     }
+
+                    billingItemDtoList.Add(new InvoiceItem()
+                    {
+                        InvoiceId = id,
+                        ItemID =1,
+                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                        billingItemsType = BillingItemsType.Hospital,
+                        qty = 1,
+                        price = opd.HospitalFee,
+                        Discount = 0,
+                        Total = opd.HospitalFee
+                    });
 
                     if (cashierDto.OPDInvestigationList.Count > 0)
                     {
@@ -532,6 +642,8 @@ namespace HospitalMgrSystemUI.Controllers
         {
             using (var httpClient = new HttpClient())
             {
+                var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+
                 Invoice invoice= new Invoice();
                 List<InvoiceItem> invoiceItems = new List<InvoiceItem>();
                 Payment payments = new Payment();
@@ -543,10 +655,8 @@ namespace HospitalMgrSystemUI.Controllers
                     invoice.InvoiceType = (HospitalMgrSystem.Model.Enums.InvoiceType)_CashierDto.invoiceType;
                     invoice.paymentStatus = PaymentStatus.NOT_PAID;
                     invoice.Status = InvoiceStatus.New;
-                    invoice.Discount = _CashierDto.discount;
-                    invoice.SubTotal = _CashierDto.subtotal;
-                    invoice.CreateUser = 1;
-                    invoice.ModifiedUser = 1;
+                    invoice.CreateUser = Convert.ToInt32(userIdCookie);
+                    invoice.ModifiedUser = Convert.ToInt32(userIdCookie);
                     invoice.CreateDate = DateTime.Now;
                     invoice.ModifiedDate = DateTime.Now;
                     invoice.ServiceID = _CashierDto.sufID;
@@ -574,15 +684,26 @@ namespace HospitalMgrSystemUI.Controllers
                         payments.DdebitAmount = _CashierDto.debit;
                         payments.ChequeAmount = _CashierDto.cheque;
                         payments.GiftCardAmount = _CashierDto.giftCard;
-                        payments.CreateUser = 1;
-                        payments.ModifiedUser = 1;
+                        payments.CreateUser = Convert.ToInt32(userIdCookie);
+                        payments.ModifiedUser = Convert.ToInt32(userIdCookie);
                         payments.CreateDate = DateTime.Now;
                         payments.ModifiedDate = DateTime.Now;
                         Payment resPayment = new CashierService().AddPayments(payments);
                         if (_CashierDto.totalDueAmount == 0)
                         {
+                            //update payment status on OPD
+                            if (resInvoice.InvoiceType == InvoiceType.OPD)
+                            {
+                                OPD updateOPD = new OPD();
+                                updateOPD.Id = _CashierDto.sufID;
+                                updateOPD.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                updateOPD.paymentStatus = PaymentStatus.PAID;
+                                OPD upOpd = new OPDService().UpdatePaidStatus(updateOPD);
+                            }
+
                             resInvoice.paymentStatus = PaymentStatus.PAID;
                             Invoice upInvoice = new CashierService().UpdatePaidStatus(resInvoice);
+            
 
                         }
                         else
@@ -598,6 +719,7 @@ namespace HospitalMgrSystemUI.Controllers
                     _CashierDto.InvoiceItemList = invoiceItems;
 
                     InvoiceItem hospitalItem = new InvoiceItem();
+                    hospitalItem.itemInvoiceStatus = ItemInvoiceStatus.BILLED;
                     hospitalItem.billingItemsType = BillingItemsType.Hospital;
                     hospitalItem.ItemID = (int) DefaultStatus.IS_DEFAULT;
                     hospitalItem.Discount = 0;
@@ -609,6 +731,7 @@ namespace HospitalMgrSystemUI.Controllers
 
 
                     InvoiceItem consaltantItem = new InvoiceItem();
+                    consaltantItem.itemInvoiceStatus = ItemInvoiceStatus.BILLED;
                     consaltantItem.billingItemsType = BillingItemsType.Consultant;
                     consaltantItem.ItemID = (int)DefaultStatus.IS_DEFAULT;
                     consaltantItem.Discount = 0;
@@ -625,6 +748,12 @@ namespace HospitalMgrSystemUI.Controllers
                     _CashierDto.giftCard= payments.GiftCardAmount;
 
                     Invoice InvoiceItem = new CashierService().AddInvoiceItems(invoiceItems);
+                    if (resInvoice.InvoiceType == InvoiceType.OPD)
+                    {
+                        new OPDService().UpdateOPDDrugInvoiceStatus(invoiceItems);
+                    }
+                       
+
                     //PrintRecept();
                     //var pdfContent = new ViewAsPdf("_PartialViewInvoice", _CashierDto)
                     //{
@@ -993,21 +1122,20 @@ namespace HospitalMgrSystemUI.Controllers
             return PartialView("_PartialAddItems", opdDto);
         }
 
-        public List<Item> SearchItems()
+        public List<HospitalMgrSystem.Model.Item> SearchItems()
         {
-            List<Item> items = new List<Item>();
+            List<HospitalMgrSystem.Model.Item> items = new List<HospitalMgrSystem.Model.Item>();
             using (var httpClient = new HttpClient())
             {
                 try
                 {
-
                     items = new ItemService().GetAllItemByStatus();
-
                 }
                 catch (Exception ex) { }
             }
             return items;
         }
+
 
         private List<OPDItem> GetOPDItems(int id)
         {

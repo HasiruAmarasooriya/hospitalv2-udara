@@ -26,8 +26,7 @@ namespace HospitalMgrSystem.Service.Cashier
                     else
                     {
                         HospitalMgrSystem.Model.Invoice result = (from p in dbContext.Invoices where p.Id == invoice.Id select p).SingleOrDefault();
-                        result.paymentStatus = invoice.paymentStatus; // Update only the "Price" column
-                        result.SubTotal = invoice.SubTotal; // Update only the "Price" column
+                        result.paymentStatus = invoice.paymentStatus; // Update only the "Price" column                   
                         result.ModifiedDate = DateTime.Now; // Optional, set the ModifiedDate if needed
                     }
                     return dbContext.Invoices.Find(invoice.Id);
@@ -177,6 +176,19 @@ namespace HospitalMgrSystem.Service.Cashier
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
                 mtList = dbContext.Payments.Where(c => c.InvoiceID == invoiceID).ToList<Model.Payment>();
+
+            }
+            return mtList;
+        }
+
+
+        public List<Model.InvoiceItem> GetInvoiceItemByInvoicedID(int invoiceID)
+        {
+
+            List<Model.InvoiceItem> mtList = new List<Model.InvoiceItem>();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.InvoiceItems.Where(c => c.InvoiceId == invoiceID).ToList<Model.InvoiceItem>();
 
             }
             return mtList;

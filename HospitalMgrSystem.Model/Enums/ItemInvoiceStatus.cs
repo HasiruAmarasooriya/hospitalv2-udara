@@ -8,7 +8,9 @@ namespace HospitalMgrSystem.Model.Enums
 {
     public enum ItemInvoiceStatus
     {
+      
         Add,
-        Remove
+        Remove,
+        BILLED
     }
 }

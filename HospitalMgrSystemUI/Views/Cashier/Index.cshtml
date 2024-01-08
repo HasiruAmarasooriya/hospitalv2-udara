@@ -356,26 +356,51 @@
 
                                                 @foreach (var item in Model.cashierBillingItemDtoList)
                                                 {
-                                                    <tr>
-                                                        <td>@item.billingItemName (@item.billingItemsTypeName)</td>
-                                                        <td>@item.price</td>
-                                                        <td>@item.qty</td>
-                                                        <td>@item.discount</td>
-                                                        <td>@item.amount</td>
-                                                        <td>
-                                                            @if (Model != null)
-                                                            {
 
-                                                                @using (Html.BeginForm("RemoveItem", "Cashier", new { Id = @item.BillingItemID, InvoiceType = Model.invoiceType, BillingItemsType = @item.billingItemsType, PreID = Model.PreID }, FormMethod.Post))
+                                                    @if (item.price != 0 )
+                                                    {
+                                                        <tr>
+                                                            <td>@item.billingItemName (@item.billingItemsTypeName)</td>
+                                                            <td>@item.price</td>
+                                                            <td>@item.qty</td>
+                                                            <td>@item.discount</td>
+                                                            <td>@item.amount</td>
+                                                            <td>
+
+
+                                                            </td>
+                                                        </tr>
+                                                    }
+
+                                                }
+
+                                                @foreach (var item in Model.cashierBilledItemDtoList)
+                                                {
+
+                                                    @if (item.price != 0 )
+                                                    {
+                                                        <tr>
+                                                            <td>@item.billingItemName (@item.billingItemsTypeName)</td>
+                                                            <td>@item.price</td>
+                                                            <td>@item.qty</td>
+                                                            <td>@item.discount</td>
+                                                            <td>@item.amount</td>
+                                                            <td>
+                                                                @if (Model != null)
                                                                 {
 
-                                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>Refund</button>
+                                                                    @using (Html.BeginForm("RemoveItem", "Cashier", new { Id = @item.BillingItemID, InvoiceType = Model.invoiceType, BillingItemsType = @item.billingItemsType, PreID = Model.PreID }, FormMethod.Post))
+                                                                    {
 
+                                                                        <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>Refund</button>
+
+                                                                    }
                                                                 }
-                                                            }
 
-                                                        </td>
-                                                    </tr>
+                                                            </td>
+                                                        </tr>
+                                                    }
+
                                                 }
                                             </tbody>
                                         </table>
