@@ -150,6 +150,7 @@ namespace HospitalMgrSystemUI.Controllers
 
                         oPDDto.opd = new OPDService().GetAllOPDByID(Id);
                         oPDDto.OPDDrugusList = GetOPDDrugus(Id);
+                        oPDDto.opdId = Id;
                         return PartialView("_PartialAddOPDRegistration", oPDDto);
                     }
                     catch (Exception ex)
@@ -195,7 +196,15 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.HospitalFee = oPDDto.OpdType == 1 ? hospitalFee : 0;
                     oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
                     oPDDto.opd.ConsultantFee = 0;
-                    OPDobj = new OPDService().CreateOPD(oPDDto.opd);
+
+                    if (oPDDto.opd.Id > 0)
+                    {
+                        OPDobj = new OPDService().UpdateOPDStatus(oPDDto.opd, oPDDto.OPDDrugusList);
+                    }
+                    else
+                    {
+                        OPDobj = new OPDService().CreateOPD(oPDDto.opd);
+                    }
 
                     if (OPDobj != null)
                     {
@@ -399,7 +408,8 @@ namespace HospitalMgrSystemUI.Controllers
                             MobileNumber = item.patient.MobileNumber,
                             DateTime = item.DateTime,
                             Sex = (HospitalMgrSystem.Model.Enums.SexStatus)item.patient.Sex,
-                            Status = item.Status
+                            Status = item.Status,
+                            paymentStatus = item.paymentStatus
                         });
                     }
 
