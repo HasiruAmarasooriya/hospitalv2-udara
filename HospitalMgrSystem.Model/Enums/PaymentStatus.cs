@@ -10,6 +10,7 @@ namespace HospitalMgrSystem.Model.Enums
     {
         PAID,
         PARTIAL_PAID,
+        NEED_TO_PAY,
         OPD,
         NOT_PAID
     }
