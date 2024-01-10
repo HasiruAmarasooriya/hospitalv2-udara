@@ -63,6 +63,46 @@ namespace HospitalMgrSystem.Service.OPD
             }
         }
 
+        public Model.OPD UpdateOPDStatus(Model.OPD opd, List<OPDDrugus> oPDDrugs)
+        {
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+
+                Model.OPD result = (from p in dbContext.OPD where p.Id == opd.Id select p).SingleOrDefault();
+                Invoice invoiceData = (from p in dbContext.Invoices where p.ServiceID == opd.Id && p.InvoiceType == InvoiceType.OPD select p).SingleOrDefault();
+                List<InvoiceItem> invoiceItemData = (from p in dbContext.InvoiceItems where p.InvoiceId == invoiceData.Id select p).ToList();
+                List<OPDDrugus> oPDDrugus = (from p in dbContext.OPDDrugus where p.opdId == opd.Id select p).ToList();
+
+                var invoiceItemDataTotal = invoiceItemData.Sum(o => o.Total);
+                var previousDrugsTotal = oPDDrugus.Sum(o => o.Amount);
+
+                var drugsTotal = 0;
+                foreach (var drugItem in oPDDrugs)
+                {
+                    // Invoice table eketh update karanna
+                    previousDrugsTotal += drugItem.Amount;
+                }
+
+                if (invoiceItemDataTotal < previousDrugsTotal)
+                {
+                    result.paymentStatus = PaymentStatus.NOT_PAID;
+                    invoiceData.paymentStatus = PaymentStatus.NOT_PAID;
+                }
+
+                result.ModifiedDate = opd.ModifiedDate;
+                result.ModifiedUser = opd.ModifiedUser;
+                result.Id = opd.Id;
+                result.ConsultantFee = opd.ConsultantFee;
+                result.HospitalFee = opd.HospitalFee;
+                result.ConsultantID = opd.ConsultantID;
+                result.RoomID = opd.RoomID;
+                result.AppoimentNo = opd.AppoimentNo;
+                dbContext.SaveChanges();
+
+                return dbContext.OPD.Find(opd.Id);
+            }
+        }
+
         public Model.OPD UpdatePaidStatus(Model.OPD opd)
         {
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
@@ -99,8 +139,8 @@ namespace HospitalMgrSystem.Service.OPD
                     opdDrug.Id = invoiceItems[0].ItemID;
                     foreach (var item in invoiceItems)
                     {
-           
-                        if(item.billingItemsType == BillingItemsType.Drugs)
+
+                        if (item.billingItemsType == BillingItemsType.Drugs)
                         {
                             HospitalMgrSystem.Model.OPDDrugus result = (from p in dbContext.OPDDrugus where p.Id == item.ItemID select p).SingleOrDefault();
                             if (result != null)
@@ -201,7 +241,7 @@ namespace HospitalMgrSystem.Service.OPD
                     {
                         if (opd.Id == item.ServiceID)
                         {
-                            opd.TotalAmount =0;
+                            opd.TotalAmount = 0;
                         }
                     }
                 }
