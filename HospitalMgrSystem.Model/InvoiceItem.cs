@@ -16,8 +16,8 @@ namespace HospitalMgrSystem.Model
         public decimal price { get; set; }
         public decimal qty { get; set; }
         public decimal Discount { get; set; }
-        public decimal Total { get; set; }
-        public ItemInvoiceStatus itemInvoiceStatus { get; set; }
+        public decimal Total { get; set; }  // Total < OPDDrugs + HospitalFee ? PaidStatus = NEED_TO_PAY : PaidStatus = NOT_PAID
+        public ItemInvoiceStatus itemInvoiceStatus { get; set; } // Billed
         public CommonStatus Status { get; set; }
         public int CreateUser { get; set; }
         public int ModifiedUser { get; set; }
