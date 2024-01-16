@@ -64,12 +64,12 @@ namespace HospitalMgrSystemUI.Controllers
                 {
                     try
                     {
-                        PreID = "OPD" + PreID;
+                        // PreID = "OPD" + PreID;
                         if (PreID != null)
                         {
-                            cashierDto.PreID= PreID ;
+                            cashierDto.PreID = PreID;
                         }
-                        if (_CashierDto !=null && _CashierDto.PreID != null)
+                        if (_CashierDto != null && _CashierDto.PreID != null)
                         {
                             cashierDto.PreID = _CashierDto.PreID;
                         }
@@ -96,7 +96,7 @@ namespace HospitalMgrSystemUI.Controllers
             CashierDto cashierDto = new CashierDto();
             using (var httpClient = new HttpClient())
             {
-               
+
                 try
                 {
 
@@ -147,10 +147,10 @@ namespace HospitalMgrSystemUI.Controllers
                     cashierDto.invoiceType = InvoiceType.OPD;
                     cashierDto.customerID = opd.PatientID;
                     cashierDto.OPDDrugusList = GetOPDDrugus(number, ItemInvoiceStatus.Add);
-                    cashierDto.OPDDrugusListInvoiced= GetOPDDrugus(number, ItemInvoiceStatus.BILLED);
+                    cashierDto.OPDDrugusListInvoiced = GetOPDDrugus(number, ItemInvoiceStatus.BILLED);
                     cashierDto.OPDInvestigationList = GetOPDInvestigation(number, ItemInvoiceStatus.Add);
                     cashierDto.OPDItemList = GetOPDItems(number, ItemInvoiceStatus.Add);
-                    cashierDto.invoice= new CashierService().GetInvoiceByServiceIDAndInvoiceType(number, InvoiceType.OPD);
+                    cashierDto.invoice = new CashierService().GetInvoiceByServiceIDAndInvoiceType(number, InvoiceType.OPD);
                     if (cashierDto.OPDDrugusList.Count > 0)
                     {
                         foreach (var item in cashierDto.OPDDrugusList)
@@ -159,7 +159,7 @@ namespace HospitalMgrSystemUI.Controllers
                             subtotal = subtotal + itemAmount;
                             billingItemDtoList.Add(new BillingItemDto()
                             {
-                                BillingItemID = item.Id,                             
+                                BillingItemID = item.Id,
                                 billingItemsType = BillingItemsType.Drugs,
                                 billingItemsTypeName = item.billingItemsType.ToString(),
                                 billingItemName = item.Drug.DrugName,
@@ -241,7 +241,7 @@ namespace HospitalMgrSystemUI.Controllers
                     cashierDto.consaltantName = cashierDto.channel != null && cashierDto.channel.ChannelingSchedule != null && cashierDto.channel.ChannelingSchedule.Consultant != null && cashierDto.channel.ChannelingSchedule.Consultant.Name != null ? cashierDto.channel.ChannelingSchedule.Consultant.Name : string.Empty;
                     cashierDto.patientContactNo = cashierDto.channel != null && cashierDto.channel.Patient != null && cashierDto.channel.Patient.FullName != null ? cashierDto.channel.Patient.TelephoneNumber : string.Empty;
                     cashierDto.customerName = cashierDto.channel != null && cashierDto.channel.Patient != null && cashierDto.channel.Patient.FullName != null ? cashierDto.channel.Patient.FullName : string.Empty;
-                    cashierDto.patientAge= cashierDto.channel != null && cashierDto.channel.Patient != null && cashierDto.channel.Patient.FullName != null ? cashierDto.channel.Patient.Age : 0;
+                    cashierDto.patientAge = cashierDto.channel != null && cashierDto.channel.Patient != null && cashierDto.channel.Patient.FullName != null ? cashierDto.channel.Patient.Age : 0;
                     cashierDto.patientSex = cashierDto.channel != null && cashierDto.channel.Patient != null && cashierDto.channel.Patient.FullName != null ? (SexStatus)cashierDto.channel.Patient.Sex : SexStatus.Non;
                     cashierDto.hospitalFee = cashierDto.channel.ChannelingSchedule.HospitalFee;
                     cashierDto.consaltantFee = cashierDto.channel.ChannelingSchedule.ConsultantFee;
@@ -256,7 +256,7 @@ namespace HospitalMgrSystemUI.Controllers
                 if (cashierDto.invoice != null)
                 {
                     cashierDto.invoiceID = cashierDto.invoice.Id;
-                   // cashierDto.customerName=cashierDto.invoice.CustomerName;
+                    // cashierDto.customerName=cashierDto.invoice.CustomerName;
                     cashierDto.paymentList = new CashierService().GetAllPaymentsByInvoiceID(cashierDto.invoice.Id);
                     foreach (var item in cashierDto.paymentList)
                     {
@@ -269,7 +269,7 @@ namespace HospitalMgrSystemUI.Controllers
                     bool consaltantFeeBilled = false;
                     foreach (var item in cashierDto.InvoiceItemList)
                     {
-                         if(item.billingItemsType == BillingItemsType.Hospital)
+                        if (item.billingItemsType == BillingItemsType.Hospital)
                         {
                             hospitalFeeBilled = true;
                             billedItemDtoList.Add(new BillingItemDto()
@@ -366,7 +366,7 @@ namespace HospitalMgrSystemUI.Controllers
                 cashierDto.PreID = input;
                 cashierDto.sufID = number;
                 cashierDto.preSubtotal = subtotal;
-                cashierDto.subtotal = subtotal- cashierDto.totalPaymentPaidAmount;
+                cashierDto.subtotal = subtotal - cashierDto.totalPaymentPaidAmount;
                 cashierDto.discount = discount;
                 cashierDto.preTotal = cashierDto.preSubtotal - discount;
                 cashierDto.total = cashierDto.subtotal - discount;
@@ -495,7 +495,7 @@ namespace HospitalMgrSystemUI.Controllers
                 return null;
             }
         }
-        private List<InvoiceItem> GetInvoiceItemsAlldetails(int id, InvoiceType prefix,int number)
+        private List<InvoiceItem> GetInvoiceItemsAlldetails(int id, InvoiceType prefix, int number)
         {
             try
             {
@@ -518,7 +518,7 @@ namespace HospitalMgrSystemUI.Controllers
                             billingItemDtoList.Add(new InvoiceItem()
                             {
                                 InvoiceId = id,
-                                ItemID=item.Id,
+                                ItemID = item.Id,
                                 itemInvoiceStatus = ItemInvoiceStatus.BILLED,
                                 billingItemsType = BillingItemsType.Drugs,
                                 qty = item.Qty,
@@ -532,7 +532,7 @@ namespace HospitalMgrSystemUI.Controllers
                     billingItemDtoList.Add(new InvoiceItem()
                     {
                         InvoiceId = id,
-                        ItemID =1,
+                        ItemID = 1,
                         itemInvoiceStatus = ItemInvoiceStatus.BILLED,
                         billingItemsType = BillingItemsType.Hospital,
                         qty = 1,
@@ -644,7 +644,7 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
 
-                Invoice invoice= new Invoice();
+                Invoice invoice = new Invoice();
                 List<InvoiceItem> invoiceItems = new List<InvoiceItem>();
                 Payment payments = new Payment();
                 try
@@ -660,7 +660,7 @@ namespace HospitalMgrSystemUI.Controllers
                     invoice.CreateDate = DateTime.Now;
                     invoice.ModifiedDate = DateTime.Now;
                     invoice.ServiceID = _CashierDto.sufID;
-                    Invoice resInvoice = new CashierService().AddInvoice(invoice);                      
+                    Invoice resInvoice = new CashierService().AddInvoice(invoice);
                     if (resInvoice != null && resInvoice.paymentStatus != PaymentStatus.PAID)
                     {
                         if (resInvoice.InvoiceType == InvoiceType.OPD)
@@ -675,7 +675,7 @@ namespace HospitalMgrSystemUI.Controllers
                         {
                             _CashierDto.PreID = "CHE" + resInvoice.ServiceID;
                         }
-                       
+
 
                         // _CashierDto.invoice = new CashierService().AddInvoiceItems(invoiceItems);
                         payments.InvoiceID = resInvoice.Id;
@@ -703,7 +703,7 @@ namespace HospitalMgrSystemUI.Controllers
 
                             resInvoice.paymentStatus = PaymentStatus.PAID;
                             Invoice upInvoice = new CashierService().UpdatePaidStatus(resInvoice);
-            
+
 
                         }
                         else
@@ -721,7 +721,7 @@ namespace HospitalMgrSystemUI.Controllers
                     InvoiceItem hospitalItem = new InvoiceItem();
                     hospitalItem.itemInvoiceStatus = ItemInvoiceStatus.BILLED;
                     hospitalItem.billingItemsType = BillingItemsType.Hospital;
-                    hospitalItem.ItemID = (int) DefaultStatus.IS_DEFAULT;
+                    hospitalItem.ItemID = (int)DefaultStatus.IS_DEFAULT;
                     hospitalItem.Discount = 0;
                     hospitalItem.price = _CashierDto.hospitalFee;
                     hospitalItem.qty = 1;
@@ -744,15 +744,15 @@ namespace HospitalMgrSystemUI.Controllers
                     _CashierDto.cash = payments.CashAmount;
                     _CashierDto.credit = payments.CreditAmount;
                     _CashierDto.debit = payments.DdebitAmount;
-                    _CashierDto.cheque = payments.ChequeAmount; 
-                    _CashierDto.giftCard= payments.GiftCardAmount;
+                    _CashierDto.cheque = payments.ChequeAmount;
+                    _CashierDto.giftCard = payments.GiftCardAmount;
 
                     Invoice InvoiceItem = new CashierService().AddInvoiceItems(invoiceItems);
                     if (resInvoice.InvoiceType == InvoiceType.OPD)
                     {
                         new OPDService().UpdateOPDDrugInvoiceStatus(invoiceItems);
                     }
-                       
+
 
                     //PrintRecept();
                     //var pdfContent = new ViewAsPdf("_PartialViewInvoice", _CashierDto)
@@ -768,7 +768,7 @@ namespace HospitalMgrSystemUI.Controllers
                     cashierDtoToPrint = GetCashierAlldetails(cashierDtoToPrint.PreID);
                     cashierDtoToPrint.cashierRemoveBillingItemDtoList = GetCashierAllRemoveddetails(cashierDtoToPrint.PreID);
 
-                    return RedirectToAction("Index",new { PreID = cashierDtoToPrint.PreID });
+                    return RedirectToAction("Index", new { PreID = cashierDtoToPrint.PreID });
 
                 }
                 catch (Exception ex)
@@ -777,7 +777,7 @@ namespace HospitalMgrSystemUI.Controllers
                 }
             }
         }
-        public IActionResult RemoveItem(int Id, HospitalMgrSystem.Model.Enums.InvoiceType InvoiceType, HospitalMgrSystem.Model.Enums.BillingItemsType BillingItemsType,string PreID)
+        public IActionResult RemoveItem(int Id, InvoiceType InvoiceType, BillingItemsType BillingItemsType, string PreID)
         {
             using (var httpClient = new HttpClient())
             {
@@ -795,7 +795,10 @@ namespace HospitalMgrSystemUI.Controllers
 
                         if (BillingItemsType == BillingItemsType.Drugs)
                         {
-                            new OPDService().RemoveOPDDrugus(Id);                        
+                            OPDService oPDService = new OPDService();
+                            oPDService.RemoveOPDDrugus(Id);
+                            CashierDto cashierData = GetCashierAlldetails(PreID);
+                            oPDService.UpdatePaymentStatus(Id, cashierData.subtotal);
                         }
 
                         if (BillingItemsType == BillingItemsType.Investigation)
@@ -809,7 +812,7 @@ namespace HospitalMgrSystemUI.Controllers
 
                         new CashierService().RemoveInvoiceItems(removeInvoiceItem);
                     }
-                    return RedirectToAction("Index",new { PreID = PreID });
+                    return RedirectToAction("Index", new { PreID = PreID });
                 }
                 catch (Exception ex)
                 {
@@ -1010,7 +1013,7 @@ namespace HospitalMgrSystemUI.Controllers
             }
         }
 
-        public IActionResult DeleteOPDDrug(int Id,int OPDID)
+        public IActionResult DeleteOPDDrug(int Id, int OPDID)
         {
             using (var httpClient = new HttpClient())
             {
@@ -1390,7 +1393,7 @@ namespace HospitalMgrSystemUI.Controllers
 
                 row = dt.NewRow();
                 row["ItemID"] = i;
-                row["ItemName"] = item.billingItemName +" ("+item.billingItemsTypeName+")";
+                row["ItemName"] = item.billingItemName + " (" + item.billingItemsTypeName + ")";
                 row["ItemQty"] = (int)Math.Floor(item.qty);
                 row["ItemPrice"] = item.price * (int)Math.Floor(item.qty);
                 dt.Rows.Add(row);
@@ -1406,7 +1409,7 @@ namespace HospitalMgrSystemUI.Controllers
             rowLast["ItemPrice"] = total;
             dt.Rows.Add(rowLast);
 
-            decimal paidamount= _CashierDto.cash + _CashierDto.credit + _CashierDto.debit + _CashierDto.cheque + _CashierDto.giftCard;
+            decimal paidamount = _CashierDto.cash + _CashierDto.credit + _CashierDto.debit + _CashierDto.cheque + _CashierDto.giftCard;
             DataRow rowCash;
             rowCash = dt.NewRow();
             rowCash["ItemID"] = "";
@@ -1415,7 +1418,7 @@ namespace HospitalMgrSystemUI.Controllers
             rowCash["ItemPrice"] = paidamount;
             dt.Rows.Add(rowCash);
 
-            decimal balance = total- paidamount;
+            decimal balance = total - paidamount;
             DataRow rowBalance;
             rowBalance = dt.NewRow();
             rowBalance["ItemID"] = "";
@@ -1449,10 +1452,10 @@ namespace HospitalMgrSystemUI.Controllers
             DataRow row;
 
             row = dt.NewRow();
-            row["name"] =  "Name: "+_CashierDto.customerName;
-            row["drName"] = "Doctor: "+ _CashierDto.customerName;
-            row["billNo"] =  "Bill No: INV23"+_CashierDto.invoiceID;
-            row["date"] = "Date :"+ DateTime.Now;
+            row["name"] = "Name: " + _CashierDto.customerName;
+            row["drName"] = "Doctor: " + _CashierDto.customerName;
+            row["billNo"] = "Bill No: INV23" + _CashierDto.invoiceID;
+            row["date"] = "Date :" + DateTime.Now;
 
             dt.Rows.Add(row);
 
