@@ -785,7 +785,7 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
 
-                    if (InvoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
+                    if (InvoiceType == InvoiceType.OPD)
                     {
                         _CashierDto.PreID = PreID;
                         InvoiceItem removeInvoiceItem = new InvoiceItem();
@@ -793,16 +793,16 @@ namespace HospitalMgrSystemUI.Controllers
                         removeInvoiceItem.billingItemsType = BillingItemsType;
                         removeInvoiceItem.ItemID = Id;
 
-                        if (BillingItemsType == HospitalMgrSystem.Model.Enums.BillingItemsType.Drugs)
+                        if (BillingItemsType == BillingItemsType.Drugs)
                         {
                             new OPDService().RemoveOPDDrugus(Id);                        
                         }
 
-                        if (BillingItemsType == HospitalMgrSystem.Model.Enums.BillingItemsType.Investigation)
+                        if (BillingItemsType == BillingItemsType.Investigation)
                         {
                             new OPDService().RemoveOPDInvestigation(Id);
                         }
-                        if (BillingItemsType == HospitalMgrSystem.Model.Enums.BillingItemsType.Items)
+                        if (BillingItemsType == BillingItemsType.Items)
                         {
                             new OPDService().RemoveOPDItems(Id);
                         }

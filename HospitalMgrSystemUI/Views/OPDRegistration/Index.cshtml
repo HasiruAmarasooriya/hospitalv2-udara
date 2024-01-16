@@ -552,7 +552,7 @@
             var sex = $('#dropSex').val();
             var age = $('#txtAge').val();
             var doctortID = parseInt($('#dropDoctor').val());
-            var opdID = $('#opid').val();
+            var opdID = $('#opdIndexNumber').val();
             var opdType = document.getElementById('dropDoctor').value == 82 ? 0 : 1;
 
             var patientObject = {
@@ -579,6 +579,7 @@
             var jsonOb = JSON.stringify(opdDtoObject);
             // console.log(jsonOb);
             console.log(opdDtoObject);
+            console.log(@Model.opdId);
 
             $.ajax({
                 url: '/OPDRegistration/AddNewOPD', // Adjust the URL based on your actual route

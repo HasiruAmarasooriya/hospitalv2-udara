@@ -15,7 +15,7 @@
     </div>
     <div class="modal-body" id="newOpdFrm">
         <form asp-action="AddNewOPD" method="post">
-            <input type="hidden" id="opid" asp-for="opdId">
+            <input type="text" id="opdIndexNumber" asp-for="opdId">
             <div class="row">
 
                 <div class="col-md-3">
@@ -44,7 +44,7 @@
                             <option value="0">Select one</option>
                             <option value="1">Male</option>
                             <option value="2">Female</option>
-
+                                
                         </select>
                     </div>
                 </div>
@@ -87,6 +87,12 @@
                         <label for="companyName">OPD Doctor</label>
                         <select class="form-control ddlSearchList" id="dropDoctor" onchange="handleOPDTypeChange()">
                             <option value="1">Please Select</option>
+                            @{
+                                if (Model.opd.ConsultantID > 0)
+                                {
+                                    <option value="@Model.opd.ConsultantID">@Model.opd.consultant.Name</option>
+                                }
+                            }
                             @foreach (var item in Model.consultantList)
                             {
                                 <option value="@item.Id">@item.Name</option>
