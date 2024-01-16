@@ -15,7 +15,7 @@
     </div>
     <div class="modal-body" id="newOpdFrm">
         <form asp-action="AddNewOPD" method="post">
-            <input type="text" id="opdIndexNumber" asp-for="opdId">
+            <input type="hidden" id="opdIndexNumber" asp-for="opdId">
             <div class="row">
 
                 <div class="col-md-3">
@@ -44,7 +44,7 @@
                             <option value="0">Select one</option>
                             <option value="1">Male</option>
                             <option value="2">Female</option>
-                                
+
                         </select>
                     </div>
                 </div>
@@ -61,44 +61,57 @@
 
             <div class="row">
                 @* <div class="col-md-12 font-bold">
-                    <div>Please Select the OPD type</div>
+                <div>Please Select the OPD type</div>
                 </div>
 
                 <div class="col-md-6">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="OPDType" id="Doctor" value="1" onclick="handleOPDTypeChange()" checked>
-                        <label class="form-check-label" for="Doctor">
-                            OPD
-                        </label>
-                    </div>
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="OPDType" id="Doctor" value="1" onclick="handleOPDTypeChange()" checked>
+                <label class="form-check-label" for="Doctor">
+                OPD
+                </label>
+                </div>
                 </div>
 
                 <div class="col-md-6">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="OPDType" id="Investigation" value="0" onclick="handleOPDTypeChange()">
-                        <label class="form-check-label" for="Investigation">
-                            Investigation Only
-                        </label>
-                    </div>
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="OPDType" id="Investigation" value="0" onclick="handleOPDTypeChange()">
+                <label class="form-check-label" for="Investigation">
+                Investigation Only
+                </label>
+                </div>
                 </div> *@
 
                 <div class="col-md-6" id="doctorFields">
                     <div class="form-group">
                         <label for="companyName">OPD Doctor</label>
-                        <select class="form-control ddlSearchList" id="dropDoctor" onchange="handleOPDTypeChange()">
-                            <option value="1">Please Select</option>
-                            @{
-                                if (Model.opd.ConsultantID > 0)
-                                {
-                                    <option value="@Model.opd.ConsultantID">@Model.opd.consultant.Name</option>
-                                }
-                            }
-                            @foreach (var item in Model.consultantList)
+
+                        @{
+                            if (Model.opdId == 0)
                             {
-                                <option value="@item.Id">@item.Name</option>
+                                <select class="form-control ddlSearchList" id="dropDoctor" onchange="handleOPDTypeChange()">
+                                    <option value="1">Please Select</option>
+                                    @{
+                                        if (Model.opd.ConsultantID > 0)
+                                        {
+                                            <option value="@Model.opd.ConsultantID">@Model.opd.consultant.Name</option>
+                                        }
+                                    }
+                                    @foreach (var item in Model.consultantList)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                    <option value="82">Investigation</option>
+                                </select>
                             }
-                            <option value="82">Investigation</option>
-                        </select>
+                            else
+                            {
+                                <input class="form-control" type="text" id="selectedDoctorId" value="@Model.opd.consultant.Name" style="text-align:left;" placeholder="Consultant Name" name="@Model.opd.ConsultantID" disabled />
+                            }
+
+                        }
+
+
                     </div>
                 </div>
                 <div class="col-md-6" id="investigationFields">
@@ -182,9 +195,9 @@
     </div>
 
     <div class="text-left mx-3">
-        <div>
+        @* <div>
             Total: <input id="total" class="form-control" type="text" placeholder="Your Total will Appear Here" readonly>
-        </div>
+        </div> *@
         <div class="mt-4 text-right">
             <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Close</button>
             <button type="button" class="btn waves-effect btn-primary ms-2" onclick="submitDrugusItems()">
@@ -249,12 +262,38 @@
                                     </td>
                                 </tr>
                             }
+
+                            
+                        }
+
+                        @{
+                            var subTotal = totalAmount + Model.opd.HospitalFee;
                         }
 
                     </tbody>
                 </table>
-                <div>
-                    Total: <input id="total" class="form-control" value="@totalAmount" type="text" placeholder="Your Total will Appear Here" readonly>
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="companyName">Total: </label>
+                            <input id="total" class="form-control" value="@totalAmount" type="text" placeholder="Your Total will Appear Here"  readonly>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="companyName">Hospital Fee: </label>
+                            <input id="hospitalCharges" class="form-control" type="text" asp-for="opd.HospitalFee" placeholder="Your Hopital Charges will Appear Here" readonly>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="companyName">Sub Total: </label>
+                            <input id="subTotal" class="form-control" value="@subTotal" type="text" placeholder="Your Sub Total will Appear Here" readonly>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
