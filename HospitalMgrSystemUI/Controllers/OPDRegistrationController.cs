@@ -290,20 +290,16 @@ namespace HospitalMgrSystemUI.Controllers
         }
 
         //Create user modify user details should be include
-        public IActionResult DeleteOPD()
+        public IActionResult DeleteOPD(int Id)
         {
-            using (var httpClient = new HttpClient())
+            try
             {
-
-                try
-                {
-                    new OPDService().DeleteOPD(_OPDDto.opd);
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    return RedirectToAction("Index");
-                }
+                new OPDService().DeleteOPD(Id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index");
             }
         }
         public IActionResult searchPateint(string SearchValue)

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -70,23 +71,27 @@ namespace HospitalMgrSystem.Service.OPD
 
                 Model.OPD result = (from p in dbContext.OPD where p.Id == opd.Id select p).SingleOrDefault();
                 Invoice invoiceData = (from p in dbContext.Invoices where p.ServiceID == opd.Id && p.InvoiceType == InvoiceType.OPD select p).SingleOrDefault();
-                List<InvoiceItem> invoiceItemData = (from p in dbContext.InvoiceItems where p.InvoiceId == invoiceData.Id select p).ToList();
-                List<OPDDrugus> oPDDrugus = (from p in dbContext.OPDDrugus where p.opdId == opd.Id select p).ToList();
-
-                var invoiceItemDataTotal = invoiceItemData.Sum(o => o.Total);
-                var previousDrugsTotal = oPDDrugus.Sum(o => o.Amount);
-
-                var drugsTotal = 0;
-                foreach (var drugItem in oPDDrugs)
+                
+                if (invoiceData != null)
                 {
-                    // Invoice table eketh update karanna
-                    previousDrugsTotal += drugItem.Amount;
-                }
+                    List<InvoiceItem> invoiceItemData = (from p in dbContext.InvoiceItems where p.InvoiceId == invoiceData.Id select p).ToList();
+                    List<OPDDrugus> oPDDrugus = (from p in dbContext.OPDDrugus where p.opdId == opd.Id select p).ToList();
 
-                if (invoiceItemDataTotal < previousDrugsTotal)
-                {
-                    result.paymentStatus = PaymentStatus.NOT_PAID;
-                    invoiceData.paymentStatus = PaymentStatus.NOT_PAID;
+                    var invoiceItemDataTotal = invoiceItemData.Sum(o => o.Total);
+                    var previousDrugsTotal = oPDDrugus.Sum(o => o.Amount);
+
+                    var drugsTotal = 0;
+                    foreach (var drugItem in oPDDrugs)
+                    {
+                        // Invoice table eketh update karanna
+                        previousDrugsTotal += drugItem.Amount;
+                    }
+
+                    if (invoiceItemDataTotal < previousDrugsTotal)
+                    {
+                        result.paymentStatus = PaymentStatus.NOT_PAID;
+                        invoiceData.paymentStatus = PaymentStatus.NOT_PAID;
+                    }
                 }
 
                 result.ModifiedDate = opd.ModifiedDate;
@@ -266,15 +271,13 @@ namespace HospitalMgrSystem.Service.OPD
             return mtList;
         }
 
-        public Model.OPD DeleteOPD(Model.OPD opd)
+        public Model.OPD DeleteOPD(int Id)
         {
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
-            {
-                HospitalMgrSystem.Model.OPD result = (from p in dbContext.OPD where p.Id == opd.Id select p).SingleOrDefault();
-                result.Status = CommonStatus.Delete;
-                dbContext.SaveChanges();
-                return result;
-            }
+            using DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext();
+            Model.OPD result = (from p in dbContext.OPD where p.Id == Id select p).SingleOrDefault();
+            result.Status = CommonStatus.Delete;
+            dbContext.SaveChanges();
+            return result;
         }
 
         public List<Model.OPD> SearchOPD(string value)
@@ -289,7 +292,7 @@ namespace HospitalMgrSystem.Service.OPD
             List<Model.OPDDrugus> mtList = new List<Model.OPDDrugus>();
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.OPDDrugus.Include(c => c.Drug).Include(c => c.opd).Where(c => c.Status == Model.Enums.CommonStatus.Active && c.opdId == id).ToList<Model.OPDDrugus>();
+                mtList = dbContext.OPDDrugus.Include(c => c.Drug).Include(c => c.opd).Where(c => c.Status == Model.Enums.CommonStatus.Active && c.opdId == id && c.IsRefund == 0).ToList<Model.OPDDrugus>();
 
             }
             return mtList;
@@ -342,13 +345,35 @@ namespace HospitalMgrSystem.Service.OPD
         {
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
-                Model.OPDDrugus result = (from p in dbContext.OPDDrugus where p.Id == Id select p).SingleOrDefault();
-                result.itemInvoiceStatus = Model.Enums.ItemInvoiceStatus.Remove;
+                OPDDrugus result = (from p in dbContext.OPDDrugus where p.Id == Id select p).SingleOrDefault();
+                result.itemInvoiceStatus = ItemInvoiceStatus.Remove;
                 result.IsRefund = 1;
                 dbContext.SaveChanges();
                 return result;
             }
         }
+
+        public Model.OPDDrugus UpdatePaymentStatus(int Id, decimal cashierSubTotal)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                OPDDrugus result = (from p in dbContext.OPDDrugus where p.Id == Id select p).SingleOrDefault();
+                Model.OPD opdData = (from p in dbContext.OPD where p.Id == result.opdId select p).SingleOrDefault();
+                Invoice invoiceData = (from p in dbContext.Invoices where p.ServiceID == opdData.Id && p.InvoiceType == InvoiceType.OPD select p).SingleOrDefault();
+
+                if (cashierSubTotal < 0)
+                {
+                    opdData.paymentStatus = PaymentStatus.NEED_TO_PAY;
+                    invoiceData.paymentStatus = PaymentStatus.NEED_TO_PAY;
+                }
+
+                result.itemInvoiceStatus = ItemInvoiceStatus.Remove;
+                result.IsRefund = 1;
+                dbContext.SaveChanges();
+                return result;
+            }
+        }
+
         public Model.OPDDrugus AddOPDDrugus(int Id)
         {
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())

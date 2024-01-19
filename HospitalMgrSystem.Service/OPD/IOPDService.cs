@@ -12,7 +12,7 @@ namespace HospitalMgrSystem.Service.OPD
         public HospitalMgrSystem.Model.OPD CreateOPD(HospitalMgrSystem.Model.OPD opd);
         public List<Model.OPD> GetAllOPDByStatus();
         public Model.OPD GetAllOPDByID(int? id);
-        public HospitalMgrSystem.Model.OPD DeleteOPD(HospitalMgrSystem.Model.OPD opd);
+        public Model.OPD DeleteOPD(int opdId);
         public List<Model.OPD> SearchOPD(string value);
         #endregion
 

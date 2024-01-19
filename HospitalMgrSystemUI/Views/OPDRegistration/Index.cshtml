@@ -72,7 +72,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="companyName">Session</label>
-                                <select class="form-control ddlSearchList" id="dropSex" asp-for="sessionType">
+                                <select class="form-control ddlSearchList" id="dropSessionType" asp-for="sessionType">
                                     <option value="-1">All</option>
                                     <option value="0">Morning</option>
                                     <option value="1">Day</option>
@@ -83,7 +83,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="companyName">Paid Status</label>
-                                <select class="form-control ddlSearchList" id="dropSex" asp-for="paidStatus">
+                                <select class="form-control ddlSearchList" id="dropPaidStatus" asp-for="paidStatus">
                                     <option value="-1">All</option>
                                     <option value="0">PAID</option>
                                     <option value="1">PARTIAL PAID</option>
@@ -173,6 +173,20 @@
                                                 @item.consaltantName
                                             }
                                         </td>
+                                        @* @{
+                                            string sex = "";
+                                            if (item.Sex == HospitalMgrSystem.Model.Enums.SexStatus.Male)
+                                            {
+                                                sex = "Male";
+                                            }
+                                            else if (item.Sex == HospitalMgrSystem.Model.Enums.SexStatus.Female)
+                                            {
+                                                sex = "Female";
+                                            } else
+                                            {
+                                                sex = "Non";
+                                            }
+                                        } *@
                                         <td>
                                             @item.Sex
                                         </td>
@@ -188,14 +202,7 @@
                                         <td>
                                             @if (Model != null)
                                             {
-                                                @* @using (Html.BeginForm("Index", "Cashier", new { PreID = @item.Id }, FormMethod.Post))
-                                    {
-
-                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
-
-                                    } *@
-
-                                                <a href="/Cashier?PreID=@item.Id"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
+                                                <a href="/Cashier?PreID=OPD+@item.Id"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
                                             }
 
                                         </td>
@@ -496,7 +503,19 @@
             var amount = qty * price;
             total = total + amount;
 
-            document.getElementById("total").value = total;
+            let newTotal = parseInt($("#total").val());
+            newTotal += amount;
+            $("#total").val(newTotal);
+
+            var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
+            var doctortID = parseInt(docId);
+            let hospitalCharges = doctortID == 82 ? 0 : 700;
+            $("#hospitalCharges").val(hospitalCharges)
+
+            let subTotal = newTotal + hospitalCharges;
+            $("#subTotal").val(subTotal);
+
+            // document.getElementById("total").value = total;
 
             console.log(total);
 
@@ -533,6 +552,11 @@
                 var rowIndex = this.closest("tr").rowIndex;
                 drugusList.splice(rowIndex - 1, 1);
                 tableBody.deleteRow(rowIndex - 1);
+
+                // Update the total
+                let total = $("#total").val()
+                total -= amount;
+                $("#total").val(total);
             };
             cell5.appendChild(deleteButton);
 
@@ -551,9 +575,12 @@
             var contactNo = $('#txtMobileNumber').val();
             var sex = $('#dropSex').val();
             var age = $('#txtAge').val();
-            var doctortID = parseInt($('#dropDoctor').val());
+            // selectedDoctorId
+
+            var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
+            var doctortID = parseInt(docId);
             var opdID = $('#opdIndexNumber').val();
-            var opdType = document.getElementById('dropDoctor').value == 82 ? 0 : 1;
+            var opdType = parseInt(docId) == 82 ? 0 : 1;
 
             var patientObject = {
                 Id: patientID,
@@ -579,7 +606,7 @@
             var jsonOb = JSON.stringify(opdDtoObject);
             // console.log(jsonOb);
             console.log(opdDtoObject);
-            console.log(@Model.opdId);
+            
 
             $.ajax({
                 url: '/OPDRegistration/AddNewOPD', // Adjust the URL based on your actual route
