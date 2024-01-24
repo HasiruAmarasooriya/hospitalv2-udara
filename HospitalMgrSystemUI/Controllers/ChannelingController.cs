@@ -2,6 +2,8 @@
 using HospitalMgrSystem.Service.Channeling;
 using HospitalMgrSystem.Service.ChannelingSchedule;
 using HospitalMgrSystem.Service.Consultant;
+using HospitalMgrSystem.Service.Default;
+using HospitalMgrSystem.Service.Drugs;
 using HospitalMgrSystem.Service.Patients;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -36,10 +38,18 @@ namespace HospitalMgrSystemUI.Controllers
         //}
         public ActionResult CreateChanneling(int Id)
         {
-            ChannelingDto _channelingDto = new ChannelingDto();
-            _channelingDto.listConsultants = LoadConsultant();
-            _channelingDto.PatientList = LoadPatient();
-            _channelingDto.listChannelingSchedule = LoadChannelingShedule();
+            OPDDto oPDChannelingDto = new OPDDto();
+            oPDChannelingDto.listConsultants = LoadConsultant();
+            oPDChannelingDto.PatientList = LoadPatient();
+            oPDChannelingDto.listChannelingSchedule = LoadChannelingShedule();
+            oPDChannelingDto.Drugs = DrugsSearch();
+
+            decimal consaltantFee = new DefaultService().GetDefailtConsaltantPrice();
+            decimal hospitalFee = new DefaultService().GetDefailtHospitalPrice();
+            OPD opdObject = new OPD();
+            opdObject.ConsultantFee = consaltantFee;
+            opdObject.HospitalFee = hospitalFee;
+
             if (Id > 0)
             {
                 using (var httpClient = new HttpClient())
@@ -47,8 +57,8 @@ namespace HospitalMgrSystemUI.Controllers
                     try
                     {
 
-                        _channelingDto.channeling = LoadChannelingByID(Id);
-                        return PartialView("_PartialAddChanneling", _channelingDto);
+                        oPDChannelingDto.channeling = LoadChannelingByID(Id);
+                        return PartialView("_PartialAddChanneling", oPDChannelingDto);
                     }
                     catch (Exception ex)
                     {
@@ -57,7 +67,24 @@ namespace HospitalMgrSystemUI.Controllers
                 }
 
             }
-            return PartialView("_PartialAddChanneling", _channelingDto);
+            oPDChannelingDto.opd = opdObject;
+            return PartialView("_PartialAddChanneling", oPDChannelingDto);
+        }
+
+        public List<Drug> DrugsSearch()
+        {
+            List<Drug> drugs = new List<Drug>();
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+
+                    drugs = new DrugsService().GetAllDrugsByStatus();
+
+                }
+                catch (Exception ex) { }
+            }
+            return drugs;
         }
 
         private List<Consultant> LoadConsultant()

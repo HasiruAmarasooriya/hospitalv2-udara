@@ -7,7 +7,7 @@ namespace HospitalMgrSystem.WebAPI.Controllers
     [ApiController]
     public class ChannelingSheduleController : Controller
     {
-        private readonly HospitalMgrSystem.Service.ChannelingSchedule.IChannelingSchedule _channelingService;
+        private readonly Service.ChannelingSchedule.IChannelingSchedule _channelingService;
 
         public ChannelingSheduleController(HospitalMgrSystem.Service.ChannelingSchedule.IChannelingSchedule channelingService)
         {

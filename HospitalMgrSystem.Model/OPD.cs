@@ -37,6 +37,8 @@ namespace HospitalMgrSystem.Model
         public int CreatedUser { get; set; }
         public int ModifiedUser { get; set; }
         public Shift shift { get; set; }
+        public InvoiceType invoiceType { get; set; }
+        public int schedularId { get; set; }
 
         [NotMapped]
         public decimal? TotalAmount { get; set; }

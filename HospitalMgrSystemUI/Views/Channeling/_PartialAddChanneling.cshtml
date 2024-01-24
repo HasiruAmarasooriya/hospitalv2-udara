@@ -2,12 +2,176 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model ChannelingDto;
+@model OPDDto;
 @{
 
 }
 @inject IConfiguration Configuration
 <script type="text/javascript">
+    var drugusList = [];
+
+    function submitChanneling() {
+        var fullName = $('#dropPatient option:selected').text();
+        var patientID = $('#dropPatient').val();
+        var contactNo = $('#txtMobileNumber').val();
+        var sex = $('#dropSex').val();
+        var age = $('#txtAge').val();
+        // selectedDoctorId
+
+        var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
+        var doctortID = parseInt(docId);
+        var opdID = $('#opdIndexNumber').val();
+        var opdType = parseInt(docId) == 82 ? 0 : 1;
+
+        var patientObject = {
+            Id: patientID,
+            FullName: fullName,
+            MobileNumber: contactNo,
+            Age: age,
+            Sex: sex
+        };
+
+        var opdObject = {
+            Id: opdID,
+            ConsultantID: doctortID
+        };
+
+        var opdDtoObject = {
+            patient: patientObject,
+            OPDDrugusList: drugusList,
+            opd: opdObject,
+            OpdType: opdType,
+        };
+
+        var jsonOb = JSON.stringify(opdDtoObject);
+        // console.log(jsonOb);
+        console.log(opdDtoObject);
+    }
+
+    function select_onchange_patient(value) {
+        var settings = {
+            url: "/OPDRegistration/LoadPatientsAjax/" + value,
+            "method": "GET",
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            var data = response;
+            if (data != null) {
+                $('#txtMobileNumber').val(data.mobileNumber);
+                $('#dropSex').val(data.sex);
+                $('#txtAge').val(data.age);
+            }
+        });
+    }
+
+    function addDrugusItem() {
+        // var opdID = document.getElementById("opid").value;
+        var drugId = document.getElementById("drugus").value;
+        var qty = document.getElementById("txtQty").value;
+        var price = document.getElementById("txtPrice").value;
+        var amount = qty * price;
+        total = total + amount;
+
+        let newTotal = parseInt($("#total").val());
+        newTotal += amount;
+        $("#total").val(newTotal);
+
+        var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
+        var doctortID = parseInt(docId);
+        let hospitalCharges = doctortID == 82 ? 0 : 700;
+        $("#hospitalCharges").val(hospitalCharges)
+
+        let subTotal = newTotal + hospitalCharges;
+        $("#subTotal").val(subTotal);
+
+        // document.getElementById("total").value = total;
+
+        console.log(total);
+
+        // Create a new drugus item and add it to the list
+        var drugusItem = {
+            DrugId: drugId,
+            Qty: qty,
+            Price: price,
+            Amount: amount
+
+        };
+        drugusList.push(drugusItem);
+
+        // Append the item to the table
+        var tableBody = document.getElementById("tblBodyPayments2");
+        var newRow = tableBody.insertRow();
+        var cell1 = newRow.insertCell(0);
+        var cell2 = newRow.insertCell(1);
+        var cell3 = newRow.insertCell(2);
+        var cell4 = newRow.insertCell(3);
+        var cell5 = newRow.insertCell(4);
+
+        cell1.innerHTML = document.getElementById("drugus").options[document.getElementById("drugus").selectedIndex].text;
+        cell2.innerHTML = qty;
+        cell3.innerHTML = price;
+        cell4.innerHTML = amount;
+
+        // Add a delete button for each row
+        var deleteButton = document.createElement("button");
+        deleteButton.className = "btn waves-effect waves-light btn-xs btn-danger";
+        deleteButton.innerHTML = "<i class='fa fa-trash'></i>";
+        deleteButton.onclick = function () {
+            // Find the closest row and delete it
+            var rowIndex = this.closest("tr").rowIndex;
+            drugusList.splice(rowIndex - 1, 1);
+            tableBody.deleteRow(rowIndex - 1);
+
+            // Update the total
+            let total = $("#total").val()
+            total -= amount;
+            $("#total").val(total);
+        };
+        cell5.appendChild(deleteButton);
+
+        // Clear input fields
+        document.getElementById("drugus").value = "0";
+        document.getElementById("txtQty").value = "0.00";
+        document.getElementById("txtPrice").value = "0.00";
+        document.getElementById("txtAmount").value = "0.00";
+    }
+
+    function select_onchange_drug(value) {
+        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+        var itenNo = document.getElementById("drugus").value;
+        var settings = {
+            "url": commonUrl + "Drugs/GetAllDrugByID?Id=" + itenNo,
+            "method": "GET",
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            console.log(response.price);
+            document.getElementById("txtPrice").value = response.price.toFixed(2);
+
+            var qty = document.getElementById("txtQty").value;
+            var price = document.getElementById("txtPrice").value;
+            amount = qty * price;
+            document.getElementById("txtAmount").value = amount.toFixed(2);
+
+        });
+    }
+
+    function select_onchange_qty(value) {
+        var qty = document.getElementById("txtQty").value;
+        var price = document.getElementById("txtPrice").value;
+        amount = qty * price;
+        document.getElementById("txtAmount").value = amount.toFixed(2);
+    }
 
 
     function select_onchange_shedule(value) {
@@ -30,11 +194,6 @@
             var hospitalFee = response.hospitalFee; // Assuming the hospital fee is present in the response
             document.getElementById("HospitalFee").value = hospitalFee;
 
-
-
-
-
-
             //var dateInput = document.getElementById('date-format');
             //dateInput.value = response.dateTime;
 
@@ -48,16 +207,6 @@
                 second: 'numeric'
             };
             dateInput.value = response.dateTime.toLocaleString(undefined, options);
-
-
-
-
-
-
-
-
-
-
 
             const select = document.querySelector('#dropNoOfAppoinment');
 
@@ -74,8 +223,6 @@
 
             $.ajax(settings2).done(function (response) {
                 console.log(response);
-
-
 
                 while (select.options.length > 1) {
                     select.remove(1);
@@ -99,15 +246,8 @@
                         option.text = i;
                         select.add(option);
                     }
-
                 }
-
-
             });
-
-
-
-
         });
     }
 
@@ -122,8 +262,6 @@
                 "Content-Type": "application/json"
             },
         };
-
-
 
         $.ajax(settings).done(function (response) {
             console.log(response);
@@ -161,32 +299,58 @@
         <h4 class="modal-title" id="myLargeModalLabel">Add/EditChanneling</h4>
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     </div>
-    <form asp-action="AddNewChannel" method="post">
-        <input type="hidden"  asp-for="channeling.Id">
+    <form>
+        <input type="hidden" id="opdIndexNumber" asp-for="opdId">
         <div class="modal-body">
             <div class="row">
 
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="companyName">PatientName</label>
-                        <select class="form-control ddlSearchList" asp-for="channeling.PatientID" id="dropPatient" >
-                            <option value="">Select one</option>
-                            @foreach (var item in Model.PatientList)
-                            {
-                                <option value="@item.Id">@item.FullName</option>
-                            }
-                        </select>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="companyName">Patient</label>
+                            <select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="opd.PatientID" id="dropPatient">
+                                <option value="-2">Select one</option>
+                                @foreach (var item in Model.patientsList)
+                                {
+                                    <option value="@item.Id">@item.FullName (@item.MobileNumber)</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="companyName">Mobile Number </label>
+                            <input class="form-control " type="text" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="companyName">Sex</label>
+                            <select class="form-control ddlSearchList" id="dropSex" asp-for="opd.patient.Sex">
+                                <option value="0">Select one</option>
+                                <option value="1">Male</option>
+                                <option value="2">Female</option>
+
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="companyName">Age</label>
+                            <input class="form-control " type="text" id="txtAge" placeholder="Age" asp-for="opd.patient.Age" />
+                        </div>
                     </div>
                 </div>
-
-
 
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Doctor Name</label>
                         <select class="form-control ddlSearchList" id="dropDoctor" onchange="javascript:select_onchange_doctor(this.value);" asp-for="channeling.ChannelingSchedule.ConsultantId">
                             <option value="">Select one</option>
-                            @foreach (var item in Model.listConsultants)
+                            @foreach (var item in Model.consultantList)
                             {
                                 <option value="@item.Id">@item.Name</option>
                             }
@@ -209,62 +373,196 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Doctor Fee:</label>
-                        <input class="form-control " type="text" asp-for="channeling.ChannelingSchedule.ConsultantFee" style="text-align:right;" id="DoctorFeee"  placeholder="Amount"  />
+                        <input class="form-control " type="text" asp-for="channeling.ChannelingSchedule.ConsultantFee" style="text-align:right;" id="DoctorFeee" placeholder="Amount" />
                     </div>
-
-
-
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Hospital Fee:</label>
-                        <input class="form-control " type="text" asp-for="channeling.ChannelingSchedule.HospitalFee" style="text-align:right;" id="HospitalFee"  placeholder="Amount"  />
+                        <input class="form-control " type="text" asp-for="channeling.ChannelingSchedule.HospitalFee" style="text-align:right;" id="HospitalFee" placeholder="Amount" />
                     </div>
-
                 </div>
 
             </div>
 
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label for="companyName">Channeling Date</label>
-                        <input type="text" id="date-format" asp-for="channeling.ChannelingSchedule.DateTime" asp-format="{0:dd.MM.yyyy hh:mm}" class="form-control" placeholder="Saturday 24 June 2017 - 21:44">
+                        <label for="companyName">No Of Appoinment </label>
+                        <select class="form-control ddlSearchList" id="dropNoOfAppoinment" asp-for="channeling.AppointmentNo">
 
+                            @if (Model != null)
+                            {
+                                if (Model.channeling != null)
+                                {
+                                    @if (Model.channeling.AppointmentNo > 0)
+                                    {
+                                        <option>@Model.channeling.AppointmentNo</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option>Select one</option>
+                                }
+
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="companyName">Name</label>
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_drug(this.value);" id="drugus" asp-for="opdDrugus.DrugId">
+                            <option value="0">Select Drug</option>
+                            @foreach (var item in Model.Drugs)
+                            {
+                                <option value="@item.Id">@item.DrugName - @item.DrugsCategory.Category</option>
+                            }
+                        </select>
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label for="companyName">No Of Appoinment </label>
-                        <select class="form-control ddlSearchList" id="dropNoOfAppoinment" asp-for="channeling.AppointmentNo">
-                            
-                            @if (Model != null) {
-                                if (Model.channeling != null){
-                                @if (Model.channeling.AppointmentNo>0)
-                                {
-                                    <option>@Model.channeling.AppointmentNo</option>
-                               }
-                                }else{
-                                    <option>Select one</option>
-                                }
-                            
-                            }
-                               
-                            
-                        </select>
+                        <label for="companyName">Qty </label>
+                        <input class="form-control " type="text" style="text-align:right;" onkeyup="javascript:select_onchange_qty();" value="0.00" id="txtQty" placeholder="Qty" />
                     </div>
                 </div>
 
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Price</label>
+                        <input class="form-control " type="text" style="text-align:right;" id="txtPrice" value="0.00" placeholder="Price" />
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Amount</label>
+                        <input class="form-control " type="text" style="text-align:right;" id="txtAmount" value="0.00" placeholder="Amount" disabled />
+                    </div>
+                </div>
 
             </div>
 
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group text-center">
+                        <br>
+                        <button type="button" class="btn btn-success waves-effect" style="width:100%" onclick="addDrugusItem()">Add</button>
+                    </div>
+                </div>
+            </div>
 
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table id="myTable2" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th data-orderable="true">Drugus Name</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Amount</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblBodyPayments2">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
+
         <div class="modal-footer">
             <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+            <button type="submit" class="btn  waves-effect btn-primary" onclick="submitChanneling()"><i class="fa fa-save"></i>&nbsp;Save</button>
+        </div>
+
+        <div class="modal-footer">
+            <hr>
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table id="myTable" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th data-orderable="true">Drugus Name</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBodyPayments">
+                            @{
+                                decimal totalAmount = 0;
+                            }
+                            @if (Model != null && Model.OPDDrugusList != null)
+                            {
+
+                                @foreach (var item in Model.OPDDrugusList)
+                                {
+                                    <tr>
+                                        @{
+                                            totalAmount = totalAmount + item.Amount;
+                                        }
+                                        <td>@item.Drug.DrugName</td>
+
+                                        <td>@item.Qty</td>
+
+                                        <td>@item.Price</td>
+
+                                        <td>@item.Amount</td>
+
+                                        <td>
+                                            @if (Model != null)
+                                            {
+                                                @using (Html.BeginForm("DeleteOPDDrug", "OPDRegistration", new { Id = @item.Id }, FormMethod.Post))
+                                                {
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+
+                            @{
+                                var subTotal = totalAmount + Model.opd.HospitalFee;
+                            }
+                        </tbody>
+                    </table>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="companyName">Total: </label>
+                                <input id="total" class="form-control" value="@totalAmount" type="text" placeholder="Your Total will Appear Here" readonly>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="companyName">Hospital Fee: </label>
+                                <input id="hospitalCharges" class="form-control" type="text" asp-for="opd.HospitalFee" placeholder="Your Hopital Charges will Appear Here" readonly>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="companyName">Sub Total: </label>
+                                <input id="subTotal" class="form-control" value="@subTotal" type="text" placeholder="Your Sub Total will Appear Here" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </form>
 </div>

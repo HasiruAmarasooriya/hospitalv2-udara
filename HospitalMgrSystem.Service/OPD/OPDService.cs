@@ -40,7 +40,7 @@ namespace HospitalMgrSystem.Service.OPD
         #region OPD Management 
         public Model.OPD CreateOPD(Model.OPD opd)
         {
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
                 if (opd.Id == 0)
                 {
@@ -49,7 +49,7 @@ namespace HospitalMgrSystem.Service.OPD
                 }
                 else
                 {
-                    HospitalMgrSystem.Model.OPD result = (from p in dbContext.OPD where p.Id == opd.Id select p).SingleOrDefault();
+                    Model.OPD result = (from p in dbContext.OPD where p.Id == opd.Id select p).SingleOrDefault();
                     result.ModifiedDate = opd.ModifiedDate;
                     result.ModifiedUser = opd.ModifiedUser;
                     result.Id = opd.Id;
@@ -66,12 +66,12 @@ namespace HospitalMgrSystem.Service.OPD
 
         public Model.OPD UpdateOPDStatus(Model.OPD opd, List<OPDDrugus> oPDDrugs)
         {
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
 
                 Model.OPD result = (from p in dbContext.OPD where p.Id == opd.Id select p).SingleOrDefault();
                 Invoice invoiceData = (from p in dbContext.Invoices where p.ServiceID == opd.Id && p.InvoiceType == InvoiceType.OPD select p).SingleOrDefault();
-                
+
                 if (invoiceData != null)
                 {
                     List<InvoiceItem> invoiceItemData = (from p in dbContext.InvoiceItems where p.InvoiceId == invoiceData.Id select p).ToList();
@@ -102,6 +102,7 @@ namespace HospitalMgrSystem.Service.OPD
                 result.ConsultantID = opd.ConsultantID;
                 result.RoomID = opd.RoomID;
                 result.AppoimentNo = opd.AppoimentNo;
+                result.invoiceType = opd.invoiceType;
                 dbContext.SaveChanges();
 
                 return dbContext.OPD.Find(opd.Id);
@@ -187,9 +188,9 @@ namespace HospitalMgrSystem.Service.OPD
         public List<Model.OPD> GetAllOPDByStatus()
         {
             List<Model.OPD> mtList = new List<Model.OPD>();
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.OPD.Include(c => c.patient).Include(c => c.consultant).Include(c => c.room).Where(o => o.Status == 0).OrderByDescending(o => o.Id).ToList<Model.OPD>();
+                mtList = dbContext.OPD.Include(c => c.patient).Include(c => c.consultant).Include(c => c.room).Where(o => o.Status == 0 && o.invoiceType == InvoiceType.OPD).OrderByDescending(o => o.Id).ToList();
 
             }
             return mtList;
