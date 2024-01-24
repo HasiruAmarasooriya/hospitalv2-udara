@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HospitalMgrSystem.Model.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,7 @@ namespace HospitalMgrSystem.Model
         public int ModifiedUser { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
+        public CashierStatus CashierStatus { get; set; }
 
     }
 }
