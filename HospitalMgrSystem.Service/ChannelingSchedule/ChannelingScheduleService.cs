@@ -79,18 +79,18 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
             }
         }
 
-        public List<HospitalMgrSystem.Model.ChannelingSchedule> SheduleGetByConsultantId(int id)
+        public List<Model.ChannelingSchedule> SheduleGetByConsultantId(int id)
         {
             List<Model.ChannelingSchedule> mtList = new List<Model.ChannelingSchedule>();
             DateTime currentTime = DateTime.Now; // Get the current time
 
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
                 mtList = dbContext.ChannelingSchedule
                     .Include(c => c.Consultant)
                     .Include(c => c.Consultant.Specialist)
                     .Where(o => o.ConsultantId == id && o.DateTime >= currentTime)
-                    .ToList<Model.ChannelingSchedule>();
+                    .ToList();
             }
 
             return mtList;
