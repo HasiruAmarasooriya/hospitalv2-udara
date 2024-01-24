@@ -195,6 +195,7 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.ModifiedDate = DateTime.Now;
                     oPDDto.opd.HospitalFee = oPDDto.OpdType == 1 ? hospitalFee : 0;
                     oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
+                    oPDDto.opd.invoiceType = InvoiceType.OPD;
                     oPDDto.opd.ConsultantFee = 0;
 
                     if (oPDDto.opd.Id > 0)
@@ -403,7 +404,7 @@ namespace HospitalMgrSystemUI.Controllers
                             FullName = item.patient.FullName,
                             MobileNumber = item.patient.MobileNumber,
                             DateTime = item.DateTime,
-                            Sex = (HospitalMgrSystem.Model.Enums.SexStatus)item.patient.Sex,
+                            Sex = (SexStatus)item.patient.Sex,
                             Status = item.Status,
                             paymentStatus = item.paymentStatus
                         });

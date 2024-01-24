@@ -22,7 +22,7 @@ namespace HospitalMgrSystemUI.Models
         public int OpdType { get; set; }
 
         public OPD? opd { get; set; }
-        public Patient? patient { get; set; }   
+        public Patient? patient { get; set; }
         public Drug? Drug { get; set; }
         public Investigation? investigation { get; set; }
         public Shift isNightShift { get; set; }
@@ -33,7 +33,7 @@ namespace HospitalMgrSystemUI.Models
 
         public List<Patient>? patientsList { get; set; }
         public List<Consultant>? consultantList { get; set; }
-        
+
         public List<OPD>? listopd { get; set; }
         public List<OPDTbDto>? listOPDTbDto { get; set; }
         public List<Drug>? Drugs { get; set; }
@@ -43,5 +43,18 @@ namespace HospitalMgrSystemUI.Models
         public List<OPDDrugus>? OPDDrugusList { get; set; }
         public List<OPDInvestigation>? OPDInvestigationList { get; set; }
         public List<OPDItem>? OPDItemList { get; set; }
+
+        #region ChannelingSchema
+        public int chID { get; set; }
+        public List<Patient> PatientList { get; set; }
+        public List<Channeling> ChannelingList { get; set; }
+        public List<Consultant> listConsultants { get; set; }
+
+        public List<ChannelingSchedule> listChannelingSchedule { get; set; }
+        public int PatientID { get; set; }
+        public int ConsultantID { get; set; }
+        public Channeling channeling { get; set; }
+        public int ChannelingScheduleID { get; set; }
+        #endregion
     }
 }
