@@ -12,6 +12,7 @@ namespace HospitalMgrSystem.Model.Enums
         Items,
         Investigation,
         Consultant,
-        Hospital
+        Hospital,
+        OTHER
     }
 }

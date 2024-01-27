@@ -1,0 +1,55 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@{
+    Layout = null;
+}
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/Edit Patient</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form asp-action="CreateNewPatient" method="post">
+        <div class="modal-body">
+            <input type="hidden" id="custId">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Date</label>
+                        <input class="form-control " type="text" id="txtMobileNumber" placeholder="Mobile Number" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Cashier Name</label>
+                        <input class="form-control " type="text" id="txtMobileNumber" placeholder="Mobile Number" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Start Amount</label>
+                        <input class="form-control " type="text" id="txtTelephoneNumber" placeholder="Telephone Number" />
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">End Amount</label>
+                        <textarea id="txtAddress" class="form-control " cols="40" rows="5" placeholder="Address"></textarea>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">End</button>
+            <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Start</button>
+        </div>
+    </form>
+</div>
+<!-- /.modal-content -->

@@ -10,6 +10,10 @@ namespace HospitalMgrSystem.Model.Enums
     {
         ADM,
         OPD,
-        CHE
+        CHE,
+        OTHER_INCOME,
+        OTHER_EXPENSES,
+        CASHIER_TRANSFER_IN,
+        CASHIER_TRANSFER_OUT
     }
 }

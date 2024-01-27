@@ -11,6 +11,8 @@ namespace HospitalMgrSystem.Model.Enums
       
         Add,
         Remove,
-        BILLED
+        BILLED,
+        IN,
+        OUT
     }
 }
