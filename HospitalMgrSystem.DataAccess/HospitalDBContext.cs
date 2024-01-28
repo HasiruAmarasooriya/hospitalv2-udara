@@ -46,6 +46,9 @@ namespace HospitalMgrSystem.DataAccess
         public DbSet<OPDScheduler> OPDScheduler { get; set; }
         public DbSet<stockTransaction> stockTransaction { get; set; }
         public DbSet<NightShift> NightShifts { get; set; }
+        public DbSet<CashierSession> CashierSessions { get; set; }
+
+        public DbSet<OtherTransactions> OtherTransactions { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var connectionString = "server=cebdbserver.database.windows.net;Database=KUMUDU; User Id=cebuser; Password=Anubaba@1234";

@@ -342,13 +342,15 @@ namespace HospitalMgrSystem.Service.OPD
                 return result;
             }
         }
-        public Model.OPDDrugus RemoveOPDDrugus(int Id)
+        public Model.OPDDrugus RemoveOPDDrugus(int Id,int userId)
         {
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
                 OPDDrugus result = (from p in dbContext.OPDDrugus where p.Id == Id select p).SingleOrDefault();
                 result.itemInvoiceStatus = ItemInvoiceStatus.Remove;
                 result.IsRefund = 1;
+                result.ModifiedDate = DateTime.Now;
+                result.ModifiedUser= userId;
                 dbContext.SaveChanges();
                 return result;
             }
@@ -372,6 +374,25 @@ namespace HospitalMgrSystem.Service.OPD
                 result.IsRefund = 1;
                 dbContext.SaveChanges();
                 return result;
+            }
+        }
+
+
+        public Model.Invoice UpdatePaymentStatusForHospitalAndConsaltantFee(int invoiceID, int opdID)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+
+                Model.OPD opdData = (from p in dbContext.OPD where p.Id == opdID select p).SingleOrDefault();
+                Invoice invoiceData = (from p in dbContext.Invoices where p.Id == invoiceID select p).SingleOrDefault();
+
+                if (invoiceData != null && opdData != null)
+                {
+                    opdData.paymentStatus = PaymentStatus.NEED_TO_PAY;
+                    invoiceData.paymentStatus = PaymentStatus.NEED_TO_PAY;
+                }
+                dbContext.SaveChanges();
+                return invoiceData;
             }
         }
 

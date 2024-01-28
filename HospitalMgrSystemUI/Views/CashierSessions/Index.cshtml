@@ -1,6 +1,7 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+@model CashierSessionDto
 @{
     ViewBag.Title = "Standings";
 }
@@ -21,10 +22,10 @@
 }
     <div class="row page-titles">
         <div class="col-md-5 col-8 align-self-center">
-            <h3 class="text-themecolor m-b-0 m-t-0">Manage Patient Details</h3>
+            <h3 class="text-themecolor m-b-0 m-t-0">Manage Cashier Session</h3>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                <li class="breadcrumb-item active">Manage Patient Details</li>
+                <li class="breadcrumb-item active">Manage Cashier Session</li>
             </ol>
         </div>
 
@@ -34,7 +35,7 @@
                     <div class="spark-chart form-material">
                     </div>
                     <div class="spark-chart form-material">
-                        <button type="button" id="btnCreateShift" class="btn waves-effect waves-light btn-block btn-info" onclick="ShowShiftDetails()"><i class="mdi mdi-account-plus"></i>&nbsp;Add New Patient</button>
+                        <button type="button" id="btnCreateShift" class="btn waves-effect waves-light btn-block btn-info" onclick="ShowShiftDetails()"><i class="mdi mdi-account-plus"></i>&nbsp;Add New</button>
                     </div>
                 </div>
             </div>
@@ -45,7 +46,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Patient Details</h4>
+                    <h4 class="card-title">Cashier Session</h4>
 
 
                     <div class="table-responsive">
@@ -54,17 +55,37 @@
                                 <tr>
 
                                     <th data-orderable="true">SNo</th>
-                                    <th>NIC/Passport</th>
-                                    <th>Full Name</th>
-                                    <th>Age</th>
-                                    <th>Sex</th>
-                                    <th>Mobile Number</th>
-                                    <th>Telephone Number</th>
-                                    <th>View</th>
-                                    <th>Delete</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+      
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Starting Balence</th>
+                                    <th>End Balence</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="tblBodyPayments">
+                            <tbody id="tblBodyCashierSession">
+                            @foreach (var item in Model.CashierSessions)
+                            {
+                                <tr>
+
+                                    <td>@item.Id</td>
+                                    <td>@item.User.FullName (@item.User.Id)</td>
+                                    <td>@item.cashierSessionStatus</td>
+                                    <td>@item.StartingTime</td>
+                                    <td>@item.EndTime</td>
+                                    <td>
+                                        @item.StartBalence
+                                    </td>
+                                    <td>
+                                        @item.EndBalence
+                                    </td>
+                                    <td>
+                                        <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
+                                    </td>
+                                </tr>
+                            }
                             </tbody>
                         </table>
 

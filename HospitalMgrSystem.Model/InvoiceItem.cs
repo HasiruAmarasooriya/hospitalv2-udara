@@ -1,6 +1,7 @@
 ﻿using HospitalMgrSystem.Model.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,9 @@ namespace HospitalMgrSystem.Model
     {
         public int Id { get; set; }
         public int InvoiceId { get; set; }
+
+        [ForeignKey("InvoiceId")]
+        public Invoice? invoice { get; set; }
         public int ItemID { get; set; }
         public BillingItemsType billingItemsType { get; set; }
         public decimal price { get; set; }

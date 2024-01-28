@@ -389,7 +389,7 @@
                                                                 @if (Model != null)
                                                                 {
 
-                                                                    @using (Html.BeginForm("RemoveItem", "Cashier", new { Id = @item.BillingItemID, InvoiceType = Model.invoiceType, BillingItemsType = @item.billingItemsType, PreID = Model.PreID }, FormMethod.Post))
+                                                                    @using (Html.BeginForm("RemoveItem", "Cashier", new { Id = @item.BillingItemID, InvoiceType = Model.invoiceType, BillingItemsType = @item.billingItemsType, PreID = Model.PreID ,InvoiceID =Model.invoiceID }, FormMethod.Post))
                                                                     {
 
                                                                         <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>Refund</button>
@@ -661,11 +661,48 @@
                                 <td style="border-bottom: 1px solid white;"><span class="label label-success">GIFT CARD</span></td>
                                 <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="giftCard" id="giftcardID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
                             </tr>
+                            @if(Model != null){
+                            @if (Model.invoiceID != 0 || Model.total < 0)
+                            {
+                                    <tr class="table-danger">
+                                        <td style="border-bottom: 1px solid white;">Total Refund</td>
+                                        <td style="border-bottom: 1px solid white;">
+                                            <b><input class="form-control danger" type="number" id="giftcardID" placeholder="" value="@(Model.total * -1)" disabled /></b>
+                                        </td>
+                                    </tr>
+                            }
+                            }
+      
                         </table>
+                         <center>
+                            @if (Model != null)
+                            {
+                                @if (Model.invoiceID == 0 || Model.totalDueAmount > 0)
+                                {
+                                    <button type="submit" class="btn btn-success">END SALE</button>
+                                }
 
-                        <center><button type="submit" class="btn btn-success">END SALE</button></center>
-                    </form>
 
+                            }
+                         </center>
+                         </form>
+                        <center>
+                        @if (Model != null)
+                        {
+                            @if (Model.invoiceID != 0 && Model.total < 0)
+                            {
+                                @using (Html.BeginForm("Refund", "Cashier", new { Id = Model.invoiceID, Refund =Model.total }, FormMethod.Post))
+                                {
+                                
+                                    <button id='link_copy' type="submit" class='btn waves-effect waves-light  btn-danger'>Refund</button>
+
+                                }
+                            }
+
+                        }
+                    </center>
+           
+        
                 </div>
             </div>
         </div>

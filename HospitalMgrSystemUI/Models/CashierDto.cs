@@ -35,6 +35,8 @@ namespace HospitalMgrSystemUI.Models
         public decimal hospitalFee { get; set; }
         public decimal consaltantFee { get; set; }
 
+        public decimal refunfAmount { get; set; }
+
         public decimal defaultAmountOPD { get; set; }
         public OPD opd { get; set; }
         public Invoice invoice { get; set; }

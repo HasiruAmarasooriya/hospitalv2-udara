@@ -1,6 +1,7 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+@model OtherTransactionsDto
 @{
     ViewBag.Title = "Standings";
 }
@@ -21,10 +22,10 @@
 }
     <div class="row page-titles">
         <div class="col-md-5 col-8 align-self-center">
-            <h3 class="text-themecolor m-b-0 m-t-0">Manage Patient Details</h3>
+            <h3 class="text-themecolor m-b-0 m-t-0">Manage Other Income & Expenses </h3>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                <li class="breadcrumb-item active">Manage Patient Details</li>
+                <li class="breadcrumb-item active">Manage Other Income & Expenses</li>
             </ol>
         </div>
 
@@ -34,7 +35,7 @@
                     <div class="spark-chart form-material">
                     </div>
                     <div class="spark-chart form-material">
-                        <button type="button" id="btnCreateShift" class="btn waves-effect waves-light btn-block btn-info" onclick="ShowShiftDetails()"><i class="mdi mdi-account-plus"></i>&nbsp;Add New Patient</button>
+                        <button type="button" id="btnCreateShift" class="btn waves-effect waves-light btn-block btn-info" onclick="ShowShiftDetails()"><i class="mdi mdi-account-plus"></i>&nbsp;Add New</button>
                     </div>
                 </div>
             </div>
@@ -45,7 +46,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Patient Details</h4>
+                    <h4 class="card-title">Transaction</h4>
 
 
                     <div class="table-responsive">
@@ -54,19 +55,61 @@
                                 <tr>
 
                                     <th data-orderable="true">SNo</th>
-                                    <th>NIC/Passport</th>
-                                    <th>Full Name</th>
-                                    <th>Age</th>
-                                    <th>Sex</th>
-                                    <th>Mobile Number</th>
-                                    <th>Telephone Number</th>
+                                    <th>Description</th>
+                                    <th>In/Out</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Aproved By</th>
+                                    <th>Action</th>
+                                    <th>Action</th>
                                     <th>View</th>
-                                    <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody id="tblBodyPayments">
-      
-                        </tbody>
+                            @foreach (var item in Model.otherTransactionsList)
+                            {
+                                <tr>
+
+                                    <td>@item.Id</td>
+                                    <td>@item.Description</td>
+                                    <td>@item.InvoiceType</td>
+                                    <td>@item.Amount</td>
+                                    <td>@item.CreateDate</td>
+                                    <td>@item.otherTransactionsStatus</td>
+                                    <td>
+                                        @item.ApprovedBy.FullName
+                                    </td>
+                                    <td>
+                                        @if (Model != null)
+                                        {
+
+                                            @using (Html.BeginForm("ApproveOtherIncome", "OtherIncome", new { Id = @item.Id }, FormMethod.Post))
+                                            {
+
+                                                <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-success'>Approve</button>
+
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (Model != null)
+                                        {
+
+                                            @using (Html.BeginForm("CompleteOtherIncome", "OtherIncome", new { Id = @item.Id }, FormMethod.Post))
+                                            {
+
+                                                <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-success'>Done</button>
+
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+                                        <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
+                                    </td>
+                                </tr>
+                            }
+                             </tbody>
                     </table>
 
                 </div>
