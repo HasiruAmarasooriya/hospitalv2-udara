@@ -63,7 +63,7 @@ namespace HospitalMgrSystem.Service.Cashier
 
             }
         }
-        public Model.Invoice AddInvoiceItems(List<Model.InvoiceItem> invoiceItems)
+        public Model.Invoice AddInvoiceItems(List<Model.InvoiceItem> invoiceItems,int userID)
         {
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
@@ -75,11 +75,16 @@ namespace HospitalMgrSystem.Service.Cashier
                         foreach (var item in invoiceItems)
                         {
                             item.InvoiceId = invoice.Id;
+                            item.CreateDate = DateTime.Now;
+                            item.ModifiedDate = DateTime.Now;
+                            item.CreateUser = userID;
+                            item.ModifiedUser = userID;
                             HospitalMgrSystem.Model.InvoiceItem result = (from p in dbContext.InvoiceItems where p.InvoiceId == invoice.Id  && p.billingItemsType== item.billingItemsType && p.ItemID == item.ItemID select p).SingleOrDefault();
                             if (result != null)
                             {
                                 result.price = item.price; // Update only the "Price" column
-
+                                result.ModifiedDate = item.ModifiedDate;
+                                result.ModifiedUser = item.ModifiedUser;
                                 result.qty = item.qty; // Optional, set the ModifiedDate if needed
                                 result.Discount = item.Discount; // Optional, set the ModifiedDate if needed
                                 result.Total = item.Total; // Optional, set the ModifiedDate if needed
@@ -120,6 +125,8 @@ namespace HospitalMgrSystem.Service.Cashier
                     {
         
                         result.itemInvoiceStatus = ItemInvoiceStatus.Remove; // Optional, set the ModifiedDate if needed
+                        result.ModifiedUser = invoiceItems.ModifiedUser;
+                        result.ModifiedDate = invoiceItems.ModifiedDate;
                         dbContext.SaveChanges();
                     }
 
@@ -192,6 +199,49 @@ namespace HospitalMgrSystem.Service.Cashier
 
             }
             return mtList;
+        }
+
+        public Invoice GetInvoiceByInvoiceID(int invoiceID)
+        {
+
+            Invoice invoice = new Invoice();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                HospitalMgrSystem.Model.Invoice result = (from p in dbContext.Invoices where p.Id == invoiceID select p).SingleOrDefault();
+                invoice = result;
+
+            }
+            return invoice;
+        }
+
+
+        public Model.InvoiceItem GetInvoiceItemByItemIdAndBillingItemTypeAndInvoiceIDAndInvoiceStatus(Model.InvoiceItem invoiceItems)
+        {
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+
+                InvoiceItem invoiceItem = new InvoiceItem();
+                try
+                {
+
+                    HospitalMgrSystem.Model.InvoiceItem result = (from p in dbContext.InvoiceItems where p.InvoiceId == invoiceItems.InvoiceId && p.billingItemsType == invoiceItems.billingItemsType && p.ItemID == invoiceItems.ItemID select p).SingleOrDefault();
+                    if (result != null)
+                    {
+                        invoiceItem = result;
+
+                    }
+
+                    return invoiceItem;
+
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+
+
+
+            }
         }
     }
 }

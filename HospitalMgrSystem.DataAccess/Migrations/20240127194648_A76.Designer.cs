@@ -4,6 +4,7 @@ using HospitalMgrSystem.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HospitalMgrSystem.DataAccess.Migrations
 {
     [DbContext(typeof(HospitalDBContext))]
-    partial class HospitalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240127194648_A76")]
+    partial class A76
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -847,8 +850,6 @@ namespace HospitalMgrSystem.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InvoiceId");
-
                     b.ToTable("InvoiceItems");
                 });
 
@@ -1405,9 +1406,6 @@ namespace HospitalMgrSystem.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BillingType")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("CashAmount")
                         .HasColumnType("decimal(18,2)");
 
@@ -1441,14 +1439,7 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.Property<int>("ModifiedUser")
                         .HasColumnType("int");
 
-                    b.Property<int>("sessionID")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("InvoiceID");
-
-                    b.HasIndex("sessionID");
 
                     b.ToTable("Payments");
                 });
@@ -1784,17 +1775,6 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.Navigation("InvestigationCategory");
                 });
 
-            modelBuilder.Entity("HospitalMgrSystem.Model.InvoiceItem", b =>
-                {
-                    b.HasOne("HospitalMgrSystem.Model.Invoice", "invoice")
-                        .WithMany()
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("invoice");
-                });
-
             modelBuilder.Entity("HospitalMgrSystem.Model.Item", b =>
                 {
                     b.HasOne("HospitalMgrSystem.Model.ItemCategory", "ItemCategory")
@@ -1939,25 +1919,6 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.Navigation("Convener");
 
                     b.Navigation("cashierSession");
-                });
-
-            modelBuilder.Entity("HospitalMgrSystem.Model.Payment", b =>
-                {
-                    b.HasOne("HospitalMgrSystem.Model.Invoice", "invoice")
-                        .WithMany()
-                        .HasForeignKey("InvoiceID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HospitalMgrSystem.Model.CashierSession", "cashierSession")
-                        .WithMany()
-                        .HasForeignKey("sessionID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("cashierSession");
-
-                    b.Navigation("invoice");
                 });
 
             modelBuilder.Entity("HospitalMgrSystem.Model.stockTransaction", b =>
