@@ -356,24 +356,37 @@ namespace HospitalMgrSystem.Service.OPD
             }
         }
 
-        public Model.OPDDrugus UpdatePaymentStatus(int Id, decimal cashierSubTotal)
+        public Model.OPDDrugus UpdatePaymentStatus(int Id, decimal cashierSubTotal, InvoiceType invoiceType)
         {
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
+                Invoice invoiceData = new Invoice();
                 OPDDrugus result = (from p in dbContext.OPDDrugus where p.Id == Id select p).SingleOrDefault();
                 Model.OPD opdData = (from p in dbContext.OPD where p.Id == result.opdId select p).SingleOrDefault();
-                Invoice invoiceData = (from p in dbContext.Invoices where p.ServiceID == opdData.Id && p.InvoiceType == InvoiceType.OPD select p).SingleOrDefault();
-
-                if (cashierSubTotal < 0)
+                if(invoiceType == InvoiceType.OPD)
                 {
-                    opdData.paymentStatus = PaymentStatus.NEED_TO_PAY;
-                    invoiceData.paymentStatus = PaymentStatus.NEED_TO_PAY;
+                    invoiceData = (from p in dbContext.Invoices where p.ServiceID == opdData.Id && p.InvoiceType == InvoiceType.OPD select p).SingleOrDefault();
+                }
+                if (invoiceType == InvoiceType.CHE)
+                {
+                    invoiceData = (from p in dbContext.Invoices where p.ServiceID == opdData.Id && p.InvoiceType == InvoiceType.CHE select p).SingleOrDefault();
+                }
+                if(invoiceData != null)
+                {
+                    if (cashierSubTotal < 0)
+                    {
+                        opdData.paymentStatus = PaymentStatus.NEED_TO_PAY;
+                        invoiceData.paymentStatus = PaymentStatus.NEED_TO_PAY;
+                    }
+
+                    result.itemInvoiceStatus = ItemInvoiceStatus.Remove;
+                    result.IsRefund = 1;
+                    dbContext.SaveChanges();
+                    return result;
                 }
 
-                result.itemInvoiceStatus = ItemInvoiceStatus.Remove;
-                result.IsRefund = 1;
-                dbContext.SaveChanges();
-                return result;
+                return null;
+
             }
         }
 
