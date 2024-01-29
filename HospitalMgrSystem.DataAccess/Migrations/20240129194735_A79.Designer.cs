@@ -4,6 +4,7 @@ using HospitalMgrSystem.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HospitalMgrSystem.DataAccess.Migrations
 {
     [DbContext(typeof(HospitalDBContext))]
-    partial class HospitalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240129194735_A79")]
+    partial class A79
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1070,7 +1073,7 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.Property<int>("schedularId")
                         .HasColumnType("int");
 
-                    b.Property<int>("shiftID")
+                    b.Property<int>("shift")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1080,8 +1083,6 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.HasIndex("PatientID");
 
                     b.HasIndex("RoomID");
-
-                    b.HasIndex("shiftID");
 
                     b.ToTable("OPD");
                 });
@@ -1903,15 +1904,7 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HospitalMgrSystem.Model.NightShiftSession", "nightShiftSession")
-                        .WithMany()
-                        .HasForeignKey("shiftID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("consultant");
-
-                    b.Navigation("nightShiftSession");
 
                     b.Navigation("patient");
 

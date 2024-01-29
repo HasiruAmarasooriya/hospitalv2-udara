@@ -36,7 +36,10 @@ namespace HospitalMgrSystem.Model
         public CommonStatus Status { get; set; }
         public int CreatedUser { get; set; }
         public int ModifiedUser { get; set; }
-        public Shift shift { get; set; }
+        public int shiftID { get; set; }
+
+        [ForeignKey("shiftID")]
+        public NightShiftSession? nightShiftSession { get; set; }
         public InvoiceType invoiceType { get; set; }
         public int schedularId { get; set; }
 

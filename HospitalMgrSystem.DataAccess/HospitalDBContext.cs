@@ -49,6 +49,8 @@ namespace HospitalMgrSystem.DataAccess
         public DbSet<CashierSession> CashierSessions { get; set; }
 
         public DbSet<OtherTransactions> OtherTransactions { get; set; }
+
+        public DbSet<NightShiftSession> NtShiftSessions { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var connectionString = "server=cebdbserver.database.windows.net;Database=KUMUDU; User Id=cebuser; Password=Anubaba@1234";

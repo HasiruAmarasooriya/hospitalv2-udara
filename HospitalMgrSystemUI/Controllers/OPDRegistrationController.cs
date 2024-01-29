@@ -16,6 +16,9 @@ using HospitalMgrSystem.Service.Default;
 using HospitalMgrSystem.Service.OPDSchedule;
 using System.Security.Cryptography;
 using HospitalMgrSystem.Model.Enums;
+using HospitalMgrSystem.Service.CashierSession;
+using HospitalMgrSystem.Service.NightShiftSession;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -39,8 +42,104 @@ namespace HospitalMgrSystemUI.Controllers
 
         public IActionResult ChangeShift()
         {
+            List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
+            var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+            int userId = Convert.ToInt32(userIdCookie);
+            NightShiftSessionList = GetActiveShiftSession();
+
+ 
+            if (NightShiftSessionList.Count > 0)
+            {
+
+
+                NightShiftSessionList[0].shiftSessionStatus = ShiftSessionStatus.END;
+                NightShiftSessionList[0].EndTime = DateTime.Now;
+                NightShiftSessionList[0].ModifiedDate = DateTime.Now;
+                NightShiftSessionList[0].ModifiedUser = userId;
+                new NightShiftSessionService().CreateNightShiftSession(NightShiftSessionList[0]);
+
+                if (NightShiftSessionList[0].shift == Shift.NIGHT_SHIFT)
+                {
+
+                    NightShiftSession nightShiftSession = new NightShiftSession();
+
+                    nightShiftSession.userID = userId;
+                    nightShiftSession.StartingTime = DateTime.Now;
+                    nightShiftSession.EndTime = DateTime.Now;
+                    nightShiftSession.shiftSessionStatus = ShiftSessionStatus.START;
+                    nightShiftSession.shift = Shift.DAY_SHIFT;
+                    nightShiftSession.Status = CommonStatus.Active;
+                    nightShiftSession.CreateDate = DateTime.Now;
+                    nightShiftSession.CreateUser = userId;
+                    nightShiftSession.ModifiedDate = DateTime.Now;
+                    nightShiftSession.ModifiedUser = userId;
+
+                    new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
+                }
+                else
+                {
+
+                    NightShiftSession nightShiftSession = new NightShiftSession();
+
+                    nightShiftSession.userID = userId;
+                    nightShiftSession.StartingTime = DateTime.Now;
+                    nightShiftSession.EndTime = DateTime.Now;
+                    nightShiftSession.shiftSessionStatus = ShiftSessionStatus.START;
+                    nightShiftSession.shift = Shift.NIGHT_SHIFT;
+                    nightShiftSession.Status = CommonStatus.Active;
+                    nightShiftSession.CreateDate = DateTime.Now;
+                    nightShiftSession.CreateUser = userId;
+                    nightShiftSession.ModifiedDate = DateTime.Now;
+                    nightShiftSession.ModifiedUser = userId;
+
+                    new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
+                }
+            }
+            else
+            {
+                bool session = new NightShiftSessionService().checkIsNightShift();
+                if (session)
+                {
+
+                    NightShiftSession nightShiftSession = new NightShiftSession();
+
+                    nightShiftSession.userID = userId;
+                    nightShiftSession.StartingTime = DateTime.Now;
+                    nightShiftSession.EndTime = DateTime.Now;
+                    nightShiftSession.shiftSessionStatus = ShiftSessionStatus.START;
+                    nightShiftSession.shift = Shift.DAY_SHIFT;
+                    nightShiftSession.Status = CommonStatus.Active;
+                    nightShiftSession.CreateDate = DateTime.Now;
+                    nightShiftSession.CreateUser = userId;
+                    nightShiftSession.ModifiedDate = DateTime.Now;
+                    nightShiftSession.ModifiedUser = userId;
+
+                    new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
+                }
+                else
+                {
+
+                    NightShiftSession nightShiftSession = new NightShiftSession();
+
+                    nightShiftSession.userID = userId;
+                    nightShiftSession.StartingTime = DateTime.Now;
+                    nightShiftSession.EndTime = DateTime.Now;
+                    nightShiftSession.shiftSessionStatus = ShiftSessionStatus.START;
+                    nightShiftSession.shift = Shift.NIGHT_SHIFT;
+                    nightShiftSession.Status = CommonStatus.Active;
+                    nightShiftSession.CreateDate = DateTime.Now;
+                    nightShiftSession.CreateUser = userId;
+                    nightShiftSession.ModifiedDate = DateTime.Now;
+                    nightShiftSession.ModifiedUser = userId;
+
+                    new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
+                }
+
+            }
             OPDService oPDService = new OPDService();
             oPDService.UpdateShift();
+
+
             return RedirectToAction("Index");
         }
 
@@ -204,6 +303,16 @@ namespace HospitalMgrSystemUI.Controllers
                     }
                     else
                     {
+                        List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
+                        NightShiftSessionList = GetActiveShiftSession();
+                        if(NightShiftSessionList.Count > 0)
+                        {
+                            oPDDto.opd.shiftID = NightShiftSessionList[0].Id;
+                            if (NightShiftSessionList[0].shift == Shift.NIGHT_SHIFT)
+                            {
+                                oPDDto.opd.isOnOPD = 1;
+                            }
+                        }
                         OPDobj = new OPDService().CreateOPD(oPDDto.opd);
                     }
 
@@ -550,7 +659,21 @@ namespace HospitalMgrSystemUI.Controllers
         }
 
 
+        private List<NightShiftSession> GetActiveShiftSession()
+        {
+            List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
 
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    NightShiftSessionList = new NightShiftSessionService().GetACtiveNtShiftSessions();
+
+                }
+                catch (Exception ex) { }
+            }
+            return NightShiftSessionList;
+        }
 
 
 
