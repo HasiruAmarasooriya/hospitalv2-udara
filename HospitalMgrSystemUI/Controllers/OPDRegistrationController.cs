@@ -190,12 +190,12 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.RoomID = 1;
                     oPDDto.opd.ModifiedUser = Convert.ToInt32(userIdCookie);
                     oPDDto.opd.CreatedUser = Convert.ToInt32(userIdCookie);
-                    oPDDto.opd.AppoimentNo = 0;
+                    oPDDto.opd.AppoimentNo = oPDDto.opd.AppoimentNo == null ? 0 : oPDDto.opd.AppoimentNo;
                     oPDDto.opd.CreateDate = DateTime.Now;
                     oPDDto.opd.ModifiedDate = DateTime.Now;
                     oPDDto.opd.HospitalFee = oPDDto.OpdType == 1 ? hospitalFee : 0;
                     oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
-                    oPDDto.opd.invoiceType = InvoiceType.OPD;
+                    oPDDto.opd.invoiceType = oPDDto.opd.invoiceType == null ? InvoiceType.OPD : InvoiceType.CHE;
                     oPDDto.opd.ConsultantFee = 0;
 
                     if (oPDDto.opd.Id > 0)
