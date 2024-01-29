@@ -202,24 +202,87 @@ namespace HospitalMgrSystemUI.Controllers
             return channelingSchedule;
         }
 
-        public IActionResult AddNewChannel()
+        public IActionResult AddNewChannel([FromBody] OPDDto oPDDto)
         {
-            using (var httpClient = new HttpClient())
-            {
+            var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
 
-                try
+            try
+            {
+                Patient patient = new Patient();
+
+                oPDDto.patient.CreateUser = Convert.ToInt32(userIdCookie);
+                oPDDto.patient.ModifiedUser = Convert.ToInt32(userIdCookie);
+                patient = CreatePatient(oPDDto.patient);
+                if (patient != null)
                 {
-                    channelingDto.channeling.CreateDate = DateTime.Now;
-                    channelingDto.channeling.ModifiedDate = DateTime.Now;
-                    channelingDto.channeling.ChannelingSchedule = null;
-                    Channeling ConsultantLists = new ChannelingService().CreateChanneling(channelingDto.channeling);
-                    return RedirectToAction("Index");
+
+                    decimal hospitalFee = new DefaultService().GetDefailtHospitalPrice();
+                    decimal consultantFee = new DefaultService().GetDefailtConsaltantPrice();
+                    OPD OPDobj = new OPD();
+                    oPDDto.opd.PatientID = patient.Id;
+                    oPDDto.opd.DateTime = DateTime.Now;
+                    oPDDto.opd.RoomID = 1;
+                    oPDDto.opd.ModifiedUser = Convert.ToInt32(userIdCookie);
+                    oPDDto.opd.CreatedUser = Convert.ToInt32(userIdCookie);
+                    oPDDto.opd.AppoimentNo = oPDDto.opd.AppoimentNo;
+                    oPDDto.opd.CreateDate = DateTime.Now;
+                    oPDDto.opd.ModifiedDate = DateTime.Now;
+                    oPDDto.opd.HospitalFee = oPDDto.OpdType == 1 ? hospitalFee : 0;
+                    oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
+                    oPDDto.opd.invoiceType = InvoiceType.CHE;
+                    oPDDto.opd.ConsultantFee = consultantFee;
+
+                    if (oPDDto.opd.Id > 0)
+                    {
+                        OPDobj = new OPDService().UpdateOPDStatus(oPDDto.opd, oPDDto.OPDDrugusList);
+                    }
+                    else
+                    {
+                        OPDobj = new OPDService().CreateOPD(oPDDto.opd);
+                    }
+
+                    if (OPDobj != null)
+                    {
+                        foreach (var drugusItem in oPDDto.OPDDrugusList)
+                        {
+                            drugusItem.opdId = OPDobj.Id;
+                            drugusItem.itemInvoiceStatus = ItemInvoiceStatus.Add;
+                            drugusItem.Amount = drugusItem.Qty * drugusItem.Price;
+                            drugusItem.IsRefund = 0;
+                            new OPDService().CreateOPDDrugus(drugusItem);
+                        }
+                    }
+
                 }
-                catch (Exception ex)
-                {
-                    return RedirectToAction("Index");
-                }
+
+                return RedirectToAction("Index");
             }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+        public Patient CreatePatient(Patient patientObj)
+        {
+            try
+            {
+                patientObj.CreateDate = DateTime.Now;
+                patientObj.ModifiedDate = DateTime.Now;
+                if (patientObj != null)
+                {
+                    PatientService patientService = new PatientService();
+                    Patient resPatient = patientService.CreatePatient(patientObj);
+                    return resPatient;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
         }
 
         public IActionResult DeleteChanneling()
