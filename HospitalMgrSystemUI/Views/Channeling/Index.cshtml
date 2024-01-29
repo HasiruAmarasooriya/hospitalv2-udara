@@ -2,7 +2,7 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model ChannelingDto
+@model OPDDto
 @{
 
 }
@@ -81,8 +81,6 @@
                     <table id="basic-2" class="display">
                         <thead>
                             <tr>
-
-
                                 <th>Channeling ID</th>
                                 <th>Patient</th>
                                 <th>Appoinment No</th>
@@ -96,18 +94,18 @@
                         </thead>
                         <tbody id="">
                             @if(Model!=null){
-                                @foreach (var item in Model.ChannelingList)
+                                @foreach (var item in Model.listOPDTbDto)
                                 {
                                     <tr>
 
                                         <td>@item.Id</td>
-                                        <td>@item.Patient.FullName</td>
-                                        <td>@item.AppointmentNo</td>
-                                        <td>@item.ChannelingSchedule.Consultant.Name</td>
-                                        <td>@item.ChannelingSchedule.DateTime</td>
+                                        <td>@item.FullName</td>
+                                        <td>@item.AppoimentNo</td>
+                                        <td>@item.consaltantName</td>
+                                        <td>@item.DateTime</td>
                                         <td>@item.Status</td>
                                         <td>
-                                            <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id,@item.ChannelingSchedule.Id);><i class='fa fa-eye'></i></button>  &nbsp;
+                                            <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
                                         </td>
                                         <td>
                                             <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>  &nbsp;
@@ -122,12 +120,8 @@
                                     </tr>
                                 }
                             }
-                           
-
-
                         </tbody>
                     </table>
-
                 </div>
             </div>
         </div>
@@ -180,7 +174,6 @@
                         placeholder: 'Select one',
                         allowClear: true,
                     });
-
                 },
                 failure: function (response) {
                     alert(response.responseText);
