@@ -1,9 +1,11 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.Enums;
 using HospitalMgrSystem.Service.Channeling;
 using HospitalMgrSystem.Service.ChannelingSchedule;
 using HospitalMgrSystem.Service.Consultant;
 using HospitalMgrSystem.Service.Default;
 using HospitalMgrSystem.Service.Drugs;
+using HospitalMgrSystem.Service.OPD;
 using HospitalMgrSystem.Service.Patients;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -24,9 +26,9 @@ namespace HospitalMgrSystemUI.Controllers
         public Channeling myChannelling { get; set; }
         public IActionResult Index()
         {
-            ChannelingDto _channelingDto = new ChannelingDto();
-            _channelingDto.ChannelingList = GetAllChannelingByStatus();
-            return View(_channelingDto);
+            OPDDto oPDDto = new OPDDto();
+            oPDDto.listOPDTbDto = GetAllChannelingByStatus();
+            return View(oPDDto);
         }
 
         //public ActionResult onChangePatient(string id)
@@ -57,7 +59,9 @@ namespace HospitalMgrSystemUI.Controllers
                     try
                     {
 
-                        oPDChannelingDto.channeling = LoadChannelingByID(Id);
+                        oPDChannelingDto.opd = LoadChannelingByID(Id);
+                        oPDChannelingDto.OPDDrugusList = GetChannelingDrugus(Id);
+                        oPDChannelingDto.opdId = Id;
                         return PartialView("_PartialAddChanneling", oPDChannelingDto);
                     }
                     catch (Exception ex)
@@ -69,6 +73,22 @@ namespace HospitalMgrSystemUI.Controllers
             }
             oPDChannelingDto.opd = opdObject;
             return PartialView("_PartialAddChanneling", oPDChannelingDto);
+        }
+
+        private List<OPDDrugus> GetChannelingDrugus(int id)
+        {
+            List<OPDDrugus> oPDDrugus = new List<OPDDrugus>();
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    oPDDrugus = new OPDService().GetOPDDrugus(id);
+
+                }
+                catch (Exception ex) { }
+            }
+            return oPDDrugus;
         }
 
         public List<Drug> DrugsSearch()
@@ -127,20 +147,42 @@ namespace HospitalMgrSystemUI.Controllers
             return channelingSchedule;
         }
 
-        private List<Channeling> GetAllChannelingByStatus()
+        private List<OPDTbDto> GetAllChannelingByStatus()
         {
-            List<Channeling> channelingSchedule = new List<Channeling>();
-
+            List<OPD> opd = new List<OPD>();
+            List<OPDTbDto> oPDTbDto = new List<OPDTbDto>();
             using (var httpClient = new HttpClient())
             {
                 try
                 {
-                    channelingSchedule = new ChannelingService().GetAllChannelingByStatus();
+                    opd = new ChannelingService().GetAllChannelingByStatus();
+                    var result = opd;
+
+                    foreach (var item in result)
+                    {
+                        oPDTbDto.Add(new OPDTbDto()
+                        {
+                            Id = item.Id,
+                            roomName = item.room.Name,
+                            consaltantName = item.consultant.Name,
+                            FullName = item.patient.FullName,
+                            MobileNumber = item.patient.MobileNumber,
+                            DateTime = item.DateTime,
+                            Sex = (SexStatus)item.patient.Sex,
+                            Status = item.Status,
+                            AppoimentNo = item.AppoimentNo,
+                            paymentStatus = item.paymentStatus,
+                            schedularId = item.schedularId
+                        });
+                    }
 
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                    return null;
+                }
             }
-            return channelingSchedule;
+            return oPDTbDto;
         }
 
         [HttpGet("GetSheduleGetById")]
@@ -198,15 +240,15 @@ namespace HospitalMgrSystemUI.Controllers
             }
         }
 
-        private Channeling LoadChannelingByID(int id)
+        private OPD LoadChannelingByID(int id)
         {
-            Channeling channeling = new Channeling();
+            OPD channeling = new OPD();
 
             using (var httpClient = new HttpClient())
             {
                 try
                 {
-                    channeling = new ChannelingService().GetChannelByID(id);
+                    channeling = new ChannelingService().GetChannelByIDNew(id);
 
                 }
                 catch (Exception ex) { }
