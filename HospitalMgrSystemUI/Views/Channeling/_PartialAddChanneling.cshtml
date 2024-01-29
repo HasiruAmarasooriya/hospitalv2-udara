@@ -16,6 +16,7 @@
         var contactNo = $('#txtMobileNumber').val();
         var sex = $('#dropSex').val();
         var age = $('#txtAge').val();
+        var appoinmentNumber = $('#dropNoOfAppoinment').val();
         // selectedDoctorId
 
         var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
@@ -33,7 +34,9 @@
 
         var opdObject = {
             Id: opdID,
-            ConsultantID: doctortID
+            ConsultantID: doctortID,
+            invoiceType: 2,
+            AppoimentNo: appoinmentNumber,
         };
 
         var opdDtoObject = {
@@ -46,6 +49,24 @@
         var jsonOb = JSON.stringify(opdDtoObject);
         // console.log(jsonOb);
         console.log(opdDtoObject);
+
+        $.ajax({
+            url: '/OPDRegistration/AddNewOPD', // Adjust the URL based on your actual route
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(opdDtoObject),
+            success: function (data) {
+                drugusList = [];
+                document.getElementById("tblBodyPayments2").innerHTML = "";
+                // Handle success, e.g., redirect to another page
+                window.location.href = '/Channeling/Index';
+
+            },
+            error: function (error) {
+                // Handle error
+                console.error('Error submitting drugus items:', error);
+            }
+        });
     }
 
     function select_onchange_patient(value) {
@@ -176,7 +197,7 @@
 
     function select_onchange_shedule(value) {
         const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
-        var selectedDate = document.getElementById("date-format").value;
+        // var selectedDate = document.getElementById("date-format").value;
         var settings = {
             "url": commonUrl + "ChannelingShedule/GetSheduleGetById?Id=" + value,
             "method": "GET",
@@ -197,7 +218,7 @@
             //var dateInput = document.getElementById('date-format');
             //dateInput.value = response.dateTime;
 
-            var dateInput = document.getElementById('date-format');
+            // var dateInput = document.getElementById('date-format');
             var options = {
                 year: 'numeric',
                 month: '2-digit',
@@ -206,7 +227,7 @@
                 minute: 'numeric',
                 second: 'numeric'
             };
-            dateInput.value = response.dateTime.toLocaleString(undefined, options);
+            // dateInput.value = response.dateTime.toLocaleString(undefined, options);
 
             const select = document.querySelector('#dropNoOfAppoinment');
 
@@ -253,7 +274,7 @@
 
     function select_onchange_doctor(value) {
         const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
-        var selectedDate = document.getElementById("date-format").value;
+        // var selectedDate = document.getElementById("date-format").value;
         var settings = {
             "url": commonUrl + "ChannelingShedule/GetAllSheduleGetByConsultantId?Id=" + value,
             "method": "GET",
@@ -303,54 +324,53 @@
         <input type="hidden" id="opdIndexNumber" asp-for="opdId">
         <div class="modal-body">
             <div class="row">
-
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="companyName">Patient</label>
-                            <select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="opd.PatientID" id="dropPatient">
-                                <option value="-2">Select one</option>
-                                @foreach (var item in Model.patientsList)
-                                {
-                                    <option value="@item.Id">@item.FullName (@item.MobileNumber)</option>
-                                }
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="companyName">Mobile Number </label>
-                            <input class="form-control " type="text" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" />
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="companyName">Sex</label>
-                            <select class="form-control ddlSearchList" id="dropSex" asp-for="opd.patient.Sex">
-                                <option value="0">Select one</option>
-                                <option value="1">Male</option>
-                                <option value="2">Female</option>
-
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="companyName">Age</label>
-                            <input class="form-control " type="text" id="txtAge" placeholder="Age" asp-for="opd.patient.Age" />
-                        </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="companyName">Patient</label>
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="opd.PatientID" id="dropPatient">
+                            <option value="-2">Select one</option>
+                            @foreach (var item in Model.PatientList)
+                            {
+                                <option value="@item.Id">@item.FullName (@item.MobileNumber)</option>
+                            }
+                        </select>
                     </div>
                 </div>
 
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="companyName">Mobile Number </label>
+                        <input class="form-control " type="text" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" />
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="companyName">Sex</label>
+                        <select class="form-control ddlSearchList" id="dropSex" asp-for="opd.patient.Sex">
+                            <option value="0">Select one</option>
+                            <option value="1">Male</option>
+                            <option value="2">Female</option>
+
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="companyName">Age</label>
+                        <input class="form-control " type="text" id="txtAge" placeholder="Age" asp-for="opd.patient.Age" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Doctor Name</label>
                         <select class="form-control ddlSearchList" id="dropDoctor" onchange="javascript:select_onchange_doctor(this.value);" asp-for="channeling.ChannelingSchedule.ConsultantId">
                             <option value="">Select one</option>
-                            @foreach (var item in Model.consultantList)
+                            @foreach (var item in Model.listConsultants)
                             {
                                 <option value="@item.Id">@item.Name</option>
                             }
@@ -481,7 +501,7 @@
 
         <div class="modal-footer">
             <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn  waves-effect btn-primary" onclick="submitChanneling()"><i class="fa fa-save"></i>&nbsp;Save</button>
+            <button type="button" class="btn  waves-effect btn-primary" onclick="submitChanneling()"><i class="fa fa-save"></i>&nbsp;Save</button>
         </div>
 
         <div class="modal-footer">

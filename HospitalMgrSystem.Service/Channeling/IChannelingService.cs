@@ -9,7 +9,7 @@ namespace HospitalMgrSystem.Service.Channeling
     public interface IChannelingService
     {
         public HospitalMgrSystem.Model.Channeling CreateChanneling(HospitalMgrSystem.Model.Channeling channeling);
-        public List<Model.Channeling> GetAllChannelingByStatus();
+        public List<Model.OPD> GetAllChannelingByStatus();
         //public HospitalMgrSystem.Model.Channeling ChannelingGetById(int Id);
 
         public List<Model.Channeling> ChannelingGetBySheduleId(int id);

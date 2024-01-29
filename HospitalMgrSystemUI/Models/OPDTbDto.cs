@@ -20,5 +20,6 @@ namespace HospitalMgrSystemUI.Models
         public CommonStatus Status { get; set; }
         public decimal? TotalAmount { get; set; }
         public PaymentStatus paymentStatus { get; set; }
+        public int schedularId { get; set; }
     }
 }
