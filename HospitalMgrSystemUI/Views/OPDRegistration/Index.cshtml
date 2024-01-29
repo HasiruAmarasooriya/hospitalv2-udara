@@ -174,19 +174,19 @@
                                             }
                                         </td>
                                         @* @{
-                                            string sex = "";
-                                            if (item.Sex == HospitalMgrSystem.Model.Enums.SexStatus.Male)
-                                            {
-                                                sex = "Male";
-                                            }
-                                            else if (item.Sex == HospitalMgrSystem.Model.Enums.SexStatus.Female)
-                                            {
-                                                sex = "Female";
-                                            } else
-                                            {
-                                                sex = "Non";
-                                            }
-                                        } *@
+                                string sex = "";
+                                if (item.Sex == HospitalMgrSystem.Model.Enums.SexStatus.Male)
+                                {
+                                sex = "Male";
+                                }
+                                else if (item.Sex == HospitalMgrSystem.Model.Enums.SexStatus.Female)
+                                {
+                                sex = "Female";
+                                } else
+                                {
+                                sex = "Non";
+                                }
+                                } *@
                                         <td>
                                             @item.Sex
                                         </td>
@@ -230,14 +230,14 @@
                                 }
                             }
 
-@*                            @if (totalAmount != null)
+                            @*                            @if (totalAmount != null)
                             {
-                                <tr>
-                                    <td colspan="3"></td>
-                                    <td colspan="2">Total Amount</td>
-                                    <td colspan="2">@totalAmount</td>
-                                    <td colspan="3"></td>
-                                </tr>
+                            <tr>
+                            <td colspan="3"></td>
+                            <td colspan="2">Total Amount</td>
+                            <td colspan="2">@totalAmount</td>
+                            <td colspan="3"></td>
+                            </tr>
                             }*@
 
 
@@ -606,7 +606,7 @@
             var jsonOb = JSON.stringify(opdDtoObject);
             // console.log(jsonOb);
             console.log(opdDtoObject);
-            
+
 
             $.ajax({
                 url: '/OPDRegistration/AddNewOPD', // Adjust the URL based on your actual route
@@ -714,7 +714,7 @@
 
         });
         function ShowQR(id) {
-
+            console.log(id)
             $.ajax({
                 type: "POST",
                 url: "/OPDRegistration/OpenQR/" + id,

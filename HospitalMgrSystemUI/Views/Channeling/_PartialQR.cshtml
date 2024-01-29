@@ -2,16 +2,27 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model ChannelingDto;
+@model OPDDto;
 @{
     Layout = null;
 }
 @inject IConfiguration Configuration
 <script type="text/javascript">
-    generateQRCode(200)
+    var opdId = @Html.Raw(Json.Serialize(Model.opdId));
+    var fullName = @Html.Raw(Json.Serialize(Model.opd.patient.FullName));
+    var age = @Html.Raw(Json.Serialize(Model.opd.patient.Age));
+    var sex = @Html.Raw(Json.Serialize(Model.opd.patient.Sex == 1 ? "Male" : Model.sex == 2 ? "Female" : "None"));
+    var telephoneNumber = @Html.Raw(Json.Serialize(Model.opd.patient.MobileNumber));
+
     function generateQRCode(size) {
-        var chID = @Html.Raw(Json.Serialize(Model.chID));
-        var data = "CHE"+chID.toString();
+
+        // Concatenate the variables to form the data
+        var data = "CHE" + opdId.toString() + "\n" +
+            "Name: " + fullName + "\n" +
+            "Age: " + age + "\n" +
+            "Sex: " + sex + "\n" +
+            "Telephone: " + telephoneNumber;
+
         const qrcode = new QRCode(document.getElementById("qrcode"), {
             text: data,
             width: size,
@@ -20,17 +31,41 @@
     }
 
     function printQRCode() {
-        
-    const printWindow = window.open("", "Print QR Code", "width=400,height=400");
-        printWindow.document.write('<div style="text-align: center;">Kumudu Hospital</div>');
+        var currentDate = new Date();
+
+        const printWindow = window.open("", "Print QR Code", "width=400,height=400");
+
+        printWindow.document.write('<div style="text-align: center; font-weight: bold;">Kumudu Hospital</div>');
+        printWindow.document.write('<div style="text-align: center; font-weight: bold;">(PVT) LTD</div>');
+        printWindow.document.write('<div style="text-align: center;">' + currentDate.toLocaleString() + '</div>');
+
+        // QR Code image with reduced size
+        var imageSize = 100; // Set your desired image size here
         printWindow.document.write('<div style="text-align: center; margin: 5px; padding: 5px;">');
-        printWindow.document.write('<img  src="' + document.getElementById("qrcode").getElementsByTagName("img")[0].src + '">');
+        printWindow.document.write('<img src="' + document.getElementById("qrcode").getElementsByTagName("img")[0].src + '" width="' + imageSize + '" height="' + imageSize + '">');
         printWindow.document.write('</div>');
-        printWindow.document.write('<div style="text-align: center;">CHE' + @Html.Raw(Json.Serialize(Model.chID)) + '</div>');
+
+        // Variables data in a table
+        printWindow.document.write('<div style="text-align: center;">');
+        printWindow.document.write('<table style="margin: auto;">');
+        printWindow.document.write('<tr><td>CHE:</td><td>' + opdId + '</td></tr>');
+        printWindow.document.write('<tr><td>Name:</td><td>' + fullName + '</td></tr>');
+        printWindow.document.write('<tr><td>Age:</td><td>' + age + '</td></tr>');
+        printWindow.document.write('<tr><td>Sex:</td><td>' + sex + '</td></tr>');
+        printWindow.document.write('<tr><td>Telephone:</td><td>' + telephoneNumber + '</td></tr>');
+        printWindow.document.write('</table>');
+        printWindow.document.write('</div>');
+
         printWindow.document.close();
         printWindow.print();
 
     }
+
+    function closeModal() {
+        $('#modalQR').modal('hide');
+    }
+
+    generateQRCode(200)
 
 </script>
 <div class="modal-content">

@@ -321,10 +321,11 @@ namespace HospitalMgrSystemUI.Controllers
 
         public ActionResult OpenQR(int Id)
         {
-            ChannelingDto channelingDto = new ChannelingDto();
-            channelingDto.chID = Id;
+            OPDDto opdDto = new OPDDto();
+            opdDto.opd = new OPDService().GetAllOPDByID(Id);
+            opdDto.opdId = Id;
 
-            return PartialView("_PartialQR", channelingDto);
+            return PartialView("_PartialQR", opdDto);
         }
     }
 }
