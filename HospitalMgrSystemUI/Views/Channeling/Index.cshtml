@@ -89,6 +89,7 @@
                                 <th>Status</th>
                                 <th>View</th>
                                 <th>QR</th>
+                                <th>View Cashier</th>
                                 <th>Delete</th>
                             </tr>
                         </thead>
@@ -109,6 +110,13 @@
                                         </td>
                                         <td>
                                             <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>  &nbsp;
+                                        </td>
+                                        <td>
+                                            @if (Model != null)
+                                            {
+                                                <a href="/Cashier?PreID=CHE+@item.Id"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
+                                            }
+
                                         </td>
                                         <td>
                                             @using (Html.BeginForm("DeleteChanneling", "Channeling", new { Id = @item.Id }, FormMethod.Post))
