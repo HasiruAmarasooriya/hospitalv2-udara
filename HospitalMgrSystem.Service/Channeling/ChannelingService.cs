@@ -38,12 +38,12 @@ namespace HospitalMgrSystem.Service.Channeling
             }
         }
 
-        public List<Model.Channeling> GetAllChannelingByStatus()
+        public List<Model.OPD> GetAllChannelingByStatus()
         {
-            List<Model.Channeling> mtList = new List<Model.Channeling>();
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            List<Model.OPD> mtList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.Channels.Include(c => c.Patient).Include(c => c.ChannelingSchedule.Consultant).Where(o => o.Status == 0).OrderByDescending(o => o.Id).ToList<Model.Channeling>();
+                mtList = dbContext.OPD.Include(c => c.patient).Include(c => c.consultant).Include(c => c.room).Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE).OrderByDescending(o => o.Id).ToList();
 
             }
             return mtList;
@@ -76,14 +76,26 @@ namespace HospitalMgrSystem.Service.Channeling
         }
         public Model.Channeling GetChannelByID(int id)
         {
-
-
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
                 //result = (from p in dbContext.Channels where p.Id == id select p).SingleOrDefault();
                 HospitalMgrSystem.Model.Channeling result = dbContext.Channels.Include(c => c.Patient).Include(c => c.ChannelingSchedule.Consultant).Where(o => o.Status == 0 && o.Id == id).SingleOrDefault();
                 return result;
             }
+        }
+
+        public Model.OPD GetChannelByIDNew(int id)
+        {
+            Model.OPD opd = new Model.OPD();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                opd = dbContext.OPD
+             .Include(o => o.patient) // Load the Patient related to OPD
+             .Include(o => o.consultant) // Load the Consultant related to OPD
+             .SingleOrDefault(o => o.Id == id);
+
+            }
+            return opd;
         }
 
     }
