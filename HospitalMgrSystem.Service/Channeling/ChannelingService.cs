@@ -51,12 +51,12 @@ namespace HospitalMgrSystem.Service.Channeling
 
 
 
-        public List<Model.Channeling> ChannelingGetBySheduleId(int id)
+        public List<Model.OPD> ChannelingGetBySheduleId(int id)
         {
-            List<Model.Channeling> mtList = new List<Model.Channeling>();
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            List<Model.OPD> mtList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.Channels.Where(o => o.ChannelingScheduleID == id && o.Status == 0).ToList<Model.Channeling>();
+                mtList = dbContext.OPD.Where(o => o.schedularId == id && o.Status == 0 && o.invoiceType == InvoiceType.CHE).ToList();
 
             }
             return mtList;

@@ -55,6 +55,8 @@ namespace HospitalMgrSystemUI.Models
         public int ConsultantID { get; set; }
         public Channeling channeling { get; set; }
         public int ChannelingScheduleID { get; set; }
+
+        public ChannelingSchedule channelingSchedule { get; set; }
         #endregion
     }
 }

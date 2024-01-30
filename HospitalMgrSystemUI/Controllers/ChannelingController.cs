@@ -5,6 +5,7 @@ using HospitalMgrSystem.Service.ChannelingSchedule;
 using HospitalMgrSystem.Service.Consultant;
 using HospitalMgrSystem.Service.Default;
 using HospitalMgrSystem.Service.Drugs;
+using HospitalMgrSystem.Service.NightShiftSession;
 using HospitalMgrSystem.Service.OPD;
 using HospitalMgrSystem.Service.Patients;
 using HospitalMgrSystemUI.Models;
@@ -62,6 +63,7 @@ namespace HospitalMgrSystemUI.Controllers
                         oPDChannelingDto.opd = LoadChannelingByID(Id);
                         oPDChannelingDto.OPDDrugusList = GetChannelingDrugus(Id);
                         oPDChannelingDto.opdId = Id;
+                        oPDChannelingDto.channelingSchedule = new ChannelingScheduleService().SheduleGetById(oPDChannelingDto.opd.schedularId);
                         return PartialView("_PartialAddChanneling", oPDChannelingDto);
                     }
                     catch (Exception ex)
@@ -206,6 +208,11 @@ namespace HospitalMgrSystemUI.Controllers
         {
             var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
 
+            List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
+            NightShiftSessionList = GetActiveShiftSession();
+
+
+
             try
             {
                 Patient patient = new Patient();
@@ -231,6 +238,7 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
                     oPDDto.opd.invoiceType = InvoiceType.CHE;
                     oPDDto.opd.ConsultantFee = consultantFee;
+                    oPDDto.opd.shiftID = NightShiftSessionList[0].Id;
 
                     if (oPDDto.opd.Id > 0)
                     {
@@ -261,6 +269,22 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 return RedirectToAction("Index");
             }
+        }
+
+        private List<NightShiftSession> GetActiveShiftSession()
+        {
+            List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    NightShiftSessionList = new NightShiftSessionService().GetACtiveNtShiftSessions();
+
+                }
+                catch (Exception ex) { }
+            }
+            return NightShiftSessionList;
         }
 
         public Patient CreatePatient(Patient patientObj)
