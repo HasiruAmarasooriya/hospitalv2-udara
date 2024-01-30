@@ -16,6 +16,8 @@ namespace HospitalMgrSystemUI.Models
         public SexStatus patientSex { get; set; }
         public string patientContactNo { get; set; }
         public InvoiceType invoiceType { get; set; }
+
+        public UserRole userRole { get; set; }
         public int ID { get; set; }
         public decimal subtotal { get; set; }
         public decimal preSubtotal { get; set; }

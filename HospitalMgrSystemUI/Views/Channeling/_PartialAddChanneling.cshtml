@@ -247,6 +247,7 @@
             var appointmentCount = response.noOfAppointment;
 
             $.ajax(settings2).done(function (response) {
+                console.log("appoinment");
                 console.log(response);
 
                 while (select.options.length > 1) {

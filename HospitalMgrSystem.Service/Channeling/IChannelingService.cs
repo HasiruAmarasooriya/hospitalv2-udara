@@ -13,6 +13,6 @@ namespace HospitalMgrSystem.Service.Channeling
         //public HospitalMgrSystem.Model.Channeling ChannelingGetById(int Id);
 
         public List<Model.OPD> ChannelingGetBySheduleId(int id);
-        public HospitalMgrSystem.Model.Channeling DeleteChanneling(int id);
+        public HospitalMgrSystem.Model.OPD DeleteChanneling(int id);
     }
 }

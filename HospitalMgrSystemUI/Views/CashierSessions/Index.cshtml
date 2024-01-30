@@ -124,4 +124,24 @@
             });
 
         }
+
+    function select_onchange_payments() {
+
+
+        var col1 = document.getElementById("col1").value || 0;// 1
+        var col2 = document.getElementById("col2").value || 0;// 2
+        var col3 = document.getElementById("col3").value || 0;// 5
+        var col4 = document.getElementById("col4").value || 0;// 10
+        var col5 = document.getElementById("col5").value || 0;// 20
+        var col6 = document.getElementById("col6").value || 0;// 50
+        var col7 = document.getElementById("col7").value || 0;// 100
+        var col8 = document.getElementById("col8").value || 0;// 500
+        var col9 = document.getElementById("col9").value || 0;// 1000
+        var col10 = document.getElementById("col10").value || 0;// 5000
+
+        var paymentSubTotal = parseFloat(col1) * 1 + parseFloat(col2) * 2 + parseFloat(col3) * 5+ parseFloat(col4) * 10 + parseFloat(col5) *  20+ parseFloat(col6) * 50 + parseFloat(col7) * 100 + parseFloat(col8) * 500 + parseFloat(col9) * 1000 + parseFloat(col10) * 5000;
+
+        document.getElementById("totalPaidAmountID").value = paymentSubTotal;
+        document.getElementById("txtEndBalence").value = paymentSubTotal;
+    }
     </script>

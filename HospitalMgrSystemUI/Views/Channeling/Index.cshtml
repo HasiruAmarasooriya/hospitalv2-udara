@@ -165,13 +165,31 @@
 
                     $("#AddShiftModel").modal('show');
 
+                    //$('#dropPatient').select2({
+                    //    width: '100%',
+                    //    height: "auto !important",
+                    //    dropdownCssClass: "bigdrop",
+                    //    dropdownParent: $('#AddShiftModel'),
+                    //    placeholder: 'Select one', 
+                    //    allowClear: true, 
+                    //});
+
+                    //patient dropdown
                     $('#dropPatient').select2({
                         width: '100%',
                         height: "auto !important",
                         dropdownCssClass: "bigdrop",
+                        placeholder: 'Select one',
                         dropdownParent: $('#AddShiftModel'),
-                        placeholder: 'Select one', 
-                        allowClear: true, 
+                        allowClear: false,
+                        tags: true,
+                        createTag: function (params) {
+                            return params.term.trim() !== '' ? {
+                                id: 0,
+                                text: params.term,
+                                newTag: true
+                            } : null;
+                        }
                     });
 
                     $('#dropDoctor').select2({
@@ -180,7 +198,15 @@
                         dropdownCssClass: "bigdrop",
                         dropdownParent: $('#AddShiftModel'),
                         placeholder: 'Select one',
-                        allowClear: true,
+                        allowClear: false,
+                    });
+
+                    //drug dropdown
+                    $("#drugus").select2({
+                        width: '100%',
+                        height: "auto !important",
+                        dropdownCssClass: "bigdrop",
+                        dropdownParent: $('#AddShiftModel')
                     });
                 },
                 failure: function (response) {

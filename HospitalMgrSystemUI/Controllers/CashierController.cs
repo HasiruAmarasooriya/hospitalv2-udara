@@ -90,6 +90,7 @@ namespace HospitalMgrSystemUI.Controllers
                         }
                         cashierDto = GetCashierAlldetails(cashierDto.PreID);
                         cashierDto.cashierRemoveBillingItemDtoList = GetCashierAllRemoveddetails(cashierDto.PreID);
+                        cashierDto.userRole = user.userRole;
                         return View(cashierDto);
                     }
                     catch (Exception ex)
@@ -1337,6 +1338,56 @@ namespace HospitalMgrSystemUI.Controllers
 
                         resInvoice.paymentStatus = PaymentStatus.PAID;
                         Invoice upInvoice = new CashierService().UpdatePaidStatus(resInvoice);
+                    }
+
+
+
+                    //update payment status on OPD
+
+                    return RedirectToAction("Index", new { PreID = _CashierDto.PreID });
+                }
+                catch (Exception ex)
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+        }
+
+        public IActionResult MarkAsPaid(int Id)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+                CashierDto cashierDto = new CashierDto();
+                try
+                {
+                    List<CashierSession> CashierSessionList = new List<CashierSession>();
+                    CashierSessionList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
+                    Invoice resInvoice = new CashierService().GetInvoiceByInvoiceID(Id);
+                    if (resInvoice != null && resInvoice.paymentStatus == PaymentStatus.OPD)
+                    {
+                        if (resInvoice.InvoiceType == InvoiceType.OPD)
+                        {
+                            _CashierDto.PreID = "OPD" + resInvoice.ServiceID;
+                        }
+                        if (CashierSessionList.Count > 0)
+                        {
+                            new CashierService().UpdateSessionIDOnPayments(resInvoice.Id, CashierSessionList[0].Id, Convert.ToInt32(userIdCookie));
+
+                            if (resInvoice.InvoiceType == InvoiceType.OPD)
+                            {
+                                OPD updateOPD = new OPD();
+                                updateOPD.Id = resInvoice.ServiceID;
+                                updateOPD.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                updateOPD.paymentStatus = PaymentStatus.PAID;
+                                OPD upOpd = new OPDService().UpdatePaidStatus(updateOPD);
+                            }
+
+                            resInvoice.paymentStatus = PaymentStatus.PAID;
+                            Invoice upInvoice = new CashierService().UpdatePaidStatus(resInvoice);
+
+                        }
+
                     }
 
 

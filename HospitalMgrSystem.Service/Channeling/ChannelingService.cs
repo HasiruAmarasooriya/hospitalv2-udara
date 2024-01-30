@@ -62,13 +62,13 @@ namespace HospitalMgrSystem.Service.Channeling
             return mtList;
         }
 
-        public Model.Channeling DeleteChanneling(int id)
+        public Model.OPD DeleteChanneling(int id)
         {
 
 
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
-                HospitalMgrSystem.Model.Channeling result = (from p in dbContext.Channels where p.Id == id select p).SingleOrDefault();
+                HospitalMgrSystem.Model.OPD result = (from p in dbContext.OPD where p.Id == id select p).SingleOrDefault();
                 result.Status = CommonStatus.Inactive;
                 dbContext.SaveChanges();
                 return result;

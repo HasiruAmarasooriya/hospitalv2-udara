@@ -24,6 +24,17 @@ namespace HospitalMgrSystem.Service.CashierSession
                     HospitalMgrSystem.Model.CashierSession result = (from p in dbContext.CashierSessions where p.Id == cashierSession.Id select p).SingleOrDefault();
                     result.EndBalence = cashierSession.EndBalence;
                     result.EndTime = cashierSession.EndTime;
+                    result.col1 = cashierSession.col1;
+                    result.col2 = cashierSession.col2;
+                    result.col3 = cashierSession.col3;
+                    result.col4 = cashierSession.col4;
+                    result.col5 = cashierSession.col5;
+                    result.col6 = cashierSession.col6;
+                    result.col7 = cashierSession.col7;
+                    result.col8 = cashierSession.col8;
+                    result.col9 = cashierSession.col9;
+                    result.col10 = cashierSession.col10;
+
                     result.cashierSessionStatus = cashierSession.cashierSessionStatus;
                     result.ModifiedUser = cashierSession.ModifiedUser;
                     result.ModifiedDate = cashierSession.ModifiedDate;

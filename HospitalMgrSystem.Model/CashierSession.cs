@@ -31,5 +31,16 @@ namespace HospitalMgrSystem.Model
         public DateTime CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
+        public int col1 { get; set; } // 1
+        public int col2 { get; set; } // 2
+        public int col3 { get; set; } // 5
+        public int col4 { get; set; } // 10
+        public int col5 { get; set; } // 20
+        public int col6 { get; set; } // 50
+        public int col7 { get; set; } // 100
+        public int col8 { get; set; } // 500
+        public int col9 { get; set; } // 1000
+        public int col10 { get; set; }// 5000
+
     }
 }

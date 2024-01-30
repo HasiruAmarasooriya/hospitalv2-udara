@@ -4,6 +4,7 @@ using HospitalMgrSystem.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HospitalMgrSystem.DataAccess.Migrations
 {
     [DbContext(typeof(HospitalDBContext))]
-    partial class HospitalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240130163659_A82")]
+    partial class A82
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -339,36 +342,6 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("cashierSessionStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int>("col1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("col10")
-                        .HasColumnType("int");
-
-                    b.Property<int>("col2")
-                        .HasColumnType("int");
-
-                    b.Property<int>("col3")
-                        .HasColumnType("int");
-
-                    b.Property<int>("col4")
-                        .HasColumnType("int");
-
-                    b.Property<int>("col5")
-                        .HasColumnType("int");
-
-                    b.Property<int>("col6")
-                        .HasColumnType("int");
-
-                    b.Property<int>("col7")
-                        .HasColumnType("int");
-
-                    b.Property<int>("col8")
-                        .HasColumnType("int");
-
-                    b.Property<int>("col9")
                         .HasColumnType("int");
 
                     b.Property<int>("userID")

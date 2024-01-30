@@ -253,7 +253,26 @@ namespace HospitalMgrSystemUI.Controllers
                     {
                         foreach (var drugusItem in oPDDto.OPDDrugusList)
                         {
-                            drugusItem.opdId = OPDobj.Id;
+                            OPD responseOPD = new OPD();
+                            OPD OPDobjScans = new OPD();
+                            OPDobjScans.PatientID = patient.Id;
+                            OPDobjScans.DateTime = DateTime.Now;
+                            OPDobjScans.RoomID = 1;
+                            OPDobjScans.ModifiedUser = Convert.ToInt32(userIdCookie);
+                            OPDobjScans.CreatedUser = Convert.ToInt32(userIdCookie);
+                            OPDobjScans.AppoimentNo = oPDDto.opd.AppoimentNo;
+                            OPDobjScans.CreateDate = DateTime.Now;
+                            OPDobjScans.ModifiedDate = DateTime.Now;
+                            OPDobjScans.HospitalFee = oPDDto.OpdType == 1 ? hospitalFee : 0;
+                            OPDobjScans.paymentStatus = PaymentStatus.NOT_PAID;
+                            OPDobjScans.invoiceType = InvoiceType.CHE;
+                            OPDobjScans.ConsultantFee = consultantFee;
+                            OPDobjScans.ConsultantID = oPDDto.opd.ConsultantID;
+                            OPDobjScans.shiftID = NightShiftSessionList[0].Id;
+                            OPDobjScans.schedularId = oPDDto.opd.schedularId;
+                            responseOPD = new OPDService().CreateOPD(OPDobjScans);
+
+                            drugusItem.opdId = responseOPD.Id;
                             drugusItem.itemInvoiceStatus = ItemInvoiceStatus.Add;
                             drugusItem.Amount = drugusItem.Qty * drugusItem.Price;
                             drugusItem.IsRefund = 0;

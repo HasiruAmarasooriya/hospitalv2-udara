@@ -22,7 +22,7 @@ namespace HospitalMgrSystem.Model
         public User? Convener { get; set; }
         public InvoiceType InvoiceType { get; set; }    
         public decimal Amount { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public int? ApprovedByID { get; set; }
 
         [ForeignKey("ApprovedByID")]

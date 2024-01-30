@@ -187,7 +187,43 @@ namespace HospitalMgrSystem.Service.Cashier
             }
             return mtList;
         }
+        public bool UpdateSessionIDOnPayments(int invoiceId,int NewSessionID,int ModifiedUser)
+        {
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                try
+                {
+                    if(invoiceId != null)
+                    {
+                        List<Model.Payment> mtList = new List<Model.Payment>();
 
+                            mtList = dbContext.Payments.Where(c => c.InvoiceID == invoiceId).ToList<Model.Payment>();
+                            foreach (var item in mtList)
+                            {
+
+                                HospitalMgrSystem.Model.Payment result = (from p in dbContext.Payments where p.Id == item.Id select p).SingleOrDefault();
+                                if (result != null)
+                                {
+                                    result.sessionID = NewSessionID; 
+                                    result.ModifiedDate = DateTime.Now; 
+                                    result.ModifiedUser = ModifiedUser; 
+                                    dbContext.SaveChanges();
+                                }
+
+                            }
+                    }
+
+                    return true;
+              
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+
+
+            }
+        }
 
         public List<Model.InvoiceItem> GetInvoiceItemByInvoicedID(int invoiceID)
         {

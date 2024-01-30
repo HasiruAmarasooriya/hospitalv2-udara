@@ -680,9 +680,29 @@
                          <center>
                             @if (Model != null)
                             {
+
                                 @if (Model.invoiceID == 0 || Model.totalDueAmount > 0)
                                 {
-                                    <button type="submit" class="btn btn-success">END SALE</button>
+                                    @if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.CASHIER)
+                                    {
+                                        <button type="submit" class="btn btn-success">END SALE</button>
+
+                                    }
+                                    @if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.OPDNURSE)
+                                    {
+                                        @if (Model.opd != null){
+                                            @if (Model.opd.nightShiftSession != null)
+                                            {
+                                                @if (Model.opd.nightShiftSession.shift == HospitalMgrSystem.Model.Enums.Shift.NIGHT_SHIFT)
+                                                {
+                                                    <button type="submit" class="btn btn-success">END SALE</button>
+                                                }
+                                            }
+                                        }
+                             
+
+                                    }
+                                   
                                 }
 
 
@@ -703,6 +723,30 @@
                             }
 
                         }
+
+                        @if (Model != null)
+                        {
+                            @if (Model.invoiceID != 0)
+                            {
+                                @if (Model.invoice.paymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.OPD){
+
+                                    @if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.CASHIER)
+                                    {
+                                        @using (Html.BeginForm("MarkAsPaid", "Cashier", new { Id = Model.invoiceID }, FormMethod.Post))
+                                        {
+
+                                            <button id='link_copy' type="submit" class='btn waves-effect waves-light  btn-danger'>Mark as paid</button>
+
+                                        }
+                                    
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
                     </center>
            
         

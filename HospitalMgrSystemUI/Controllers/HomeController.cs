@@ -1,4 +1,6 @@
-﻿using HospitalMgrSystemUI.Models;
+﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Service.User;
+using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -22,8 +24,12 @@ namespace HospitalMgrSystemUI.Controllers
         {
             
             var userNameCookie = HttpContext.Request.Cookies["UserNameCookie"];
+            var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+            int userID = Convert.ToInt32(userIdCookie);
             if (!string.IsNullOrEmpty(userNameCookie))
             {
+
+                User user = GetUserById(userID);
                 return View();
             }
             else
@@ -42,6 +48,22 @@ namespace HospitalMgrSystemUI.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private User GetUserById(int id)
+        {
+            User user = new User();
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    user = new UserService().GetUserByID(id);
+
+                }
+                catch (Exception ex) { }
+            }
+            return user;
         }
     }
 }
