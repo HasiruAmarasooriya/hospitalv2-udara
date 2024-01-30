@@ -19,11 +19,7 @@
     function generateQRCode(size) {
 
         // Concatenate the variables to form the data
-        var data = "OPD" + opdId.toString() + "\n" +
-            "Name: " + fullName + "\n" +
-            "Age: " + age + "\n" +
-            "Sex: " + sex + "\n" +
-            "Telephone: " + telephoneNumber;
+        var data = "OPD" + opdId.toString();
 
         const qrcode = new QRCode(document.getElementById("qrcode"), {
             text: data,
