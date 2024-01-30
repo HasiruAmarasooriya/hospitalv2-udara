@@ -246,13 +246,14 @@ namespace HospitalMgrSystemUI.Controllers
 
         public IActionResult filterForm()
         {
+            // If session type is not -1
             if (_OPDDto.paidStatus != -1)
             {
                 try
                 {
                     OPDDto oPDDto = new OPDDto();
                     List<OPDTbDto> oPDTbDto = new List<OPDTbDto>();
-                    var result = new OPDService().GetAllOPDByAndDateRangePaidStatus(_OPDDto.StartTime, _OPDDto.EndTime);
+                    var result = new OPDService().GetAllOPDByAndDateRangePaidStatus(_OPDDto.StartTime, _OPDDto.EndTime, (PaymentStatus)_OPDDto.paidStatus);
 
                     foreach (var item in result)
                     {
@@ -281,6 +282,7 @@ namespace HospitalMgrSystemUI.Controllers
                 }
             }
 
+            // Get all OPD by date range
             try
             {
                 OPDDto oPDDto = new OPDDto();
