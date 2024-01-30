@@ -224,7 +224,7 @@ namespace HospitalMgrSystem.Service.OPD
             return mtList;
         }
 
-        public List<Model.OPD> GetAllOPDByAndDateRangePaidStatus(DateTime startDate, DateTime endDate)
+        public List<Model.OPD> GetAllOPDByAndDateRangePaidStatus(DateTime startDate, DateTime endDate, PaymentStatus paymentStatus)
         {
             List<Model.OPD> mtList = new List<Model.OPD>();
             // List<Model.OPD> invoiceList = new List<Model.OPD>();
@@ -234,7 +234,7 @@ namespace HospitalMgrSystem.Service.OPD
                     .Include(c => c.patient)
                     .Include(c => c.consultant)
                     .Include(c => c.room)
-                    .Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.PAID)
+                    .Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == paymentStatus)
                     .OrderByDescending(o => o.Id)
                     .ToList<Model.OPD>();
 
