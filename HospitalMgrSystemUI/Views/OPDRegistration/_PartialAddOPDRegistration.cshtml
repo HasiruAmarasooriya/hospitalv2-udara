@@ -18,7 +18,7 @@
             <input type="hidden" id="opdIndexNumber" asp-for="opdId">
             <div class="row">
 
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Patient</label>
                         <select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="opd.PatientID" id="dropPatient">
@@ -31,13 +31,13 @@
 
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Mobile Number </label>
                         <input class="form-control " type="text" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" />
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Sex</label>
                         <select class="form-control ddlSearchList" id="dropSex" asp-for="opd.patient.Sex">
@@ -48,7 +48,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Age</label>
                         <input class="form-control " type="text" id="txtAge" placeholder="Age" asp-for="opd.patient.Age" />
