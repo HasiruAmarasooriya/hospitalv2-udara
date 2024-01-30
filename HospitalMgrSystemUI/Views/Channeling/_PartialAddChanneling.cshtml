@@ -17,6 +17,7 @@
         var sex = $('#dropSex').val();
         var age = $('#txtAge').val();
         var appoinmentNumber = $('#dropNoOfAppoinment').val();
+        var schedularId = $('#dropShedule').val();
         // selectedDoctorId
 
         var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
@@ -37,6 +38,7 @@
             ConsultantID: doctortID,
             invoiceType: 2,
             AppoimentNo: appoinmentNumber,
+            schedularId: schedularId,
         };
 
         var opdDtoObject = {
@@ -240,6 +242,8 @@
                 },
             };
 
+            console.log(response);
+
             var appointmentCount = response.noOfAppointment;
 
             $.ajax(settings2).done(function (response) {
@@ -256,7 +260,7 @@
 
                     for (var x = 0; x < appointmentCount2.length; x++) {
                         var secondVal = i
-                        if (i == appointmentCount2[x].appointmentNo) {
+                        if (i == appointmentCount2[x].appoimentNo) {
                             isMatch = true;
                         }
 
@@ -368,39 +372,56 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Doctor Name</label>
-                        <select class="form-control ddlSearchList" id="dropDoctor" onchange="javascript:select_onchange_doctor(this.value);" asp-for="channeling.ChannelingSchedule.ConsultantId">
-                            <option value="">Select one</option>
-                            @foreach (var item in Model.listConsultants)
+                        @{
+                            if (Model.opdId == 0)
                             {
-                                <option value="@item.Id">@item.Name</option>
+                                <select class="form-control ddlSearchList" id="dropDoctor" onchange="javascript:select_onchange_doctor(this.value);" asp-for="channeling.ChannelingSchedule.ConsultantId">
+                                    <option value="">Select one</option>
+                                    @foreach (var item in Model.listConsultants)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                </select>
                             }
-                        </select>
+                            else
+                            {
+                                <input class="form-control" type="text" id="selectedDoctorId" value="@Model.opd.consultant.Name" style="text-align:right;" placeholder="Consultant Name" name="@Model.opd.consultant.Id" disabled />
+                            }
+                        }
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Channeling Shedule</label>
-                        <select class="form-control ddlSearchList" id="dropShedule" onchange="javascript:select_onchange_shedule(this.value);" asp-for="channeling.ChannelingScheduleID">
-                            <option>Select one</option>
-                            @foreach (var item in Model.listChannelingSchedule)
+                        @{
+                            if (Model.opdId == 0)
                             {
-                                <option value="@item.Id">@item.DateTime</option>
+                                <select class="form-control ddlSearchList" id="dropShedule" onchange="javascript:select_onchange_shedule(this.value);" asp-for="channeling.ChannelingScheduleID">
+                                    <option>Select one</option>
+                                    @foreach (var item in Model.listChannelingSchedule)
+                                    {
+                                        <option value="@item.Id">@item.DateTime</option>
+                                    }
+                                </select>
+                            } else
+                            {
+                                <input class="form-control" type="text" id="dropShedule" value="@Model.channelingSchedule.DateTime" style="text-align:right;" placeholder="Schedule Time" disabled />
                             }
-                        </select>
+                        }
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Doctor Fee:</label>
-                        <input class="form-control " type="text" asp-for="channeling.ChannelingSchedule.ConsultantFee" style="text-align:right;" id="DoctorFeee" placeholder="Amount" />
+                        <input disabled class="form-control" type="text" asp-for="channeling.ChannelingSchedule.ConsultantFee" style="text-align:right;" id="DoctorFeee" placeholder="Amount" />
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Hospital Fee:</label>
-                        <input class="form-control " type="text" asp-for="channeling.ChannelingSchedule.HospitalFee" style="text-align:right;" id="HospitalFee" placeholder="Amount" />
+                        <input disabled class="form-control " type="text" asp-for="channeling.ChannelingSchedule.HospitalFee" style="text-align:right;" id="HospitalFee" placeholder="Amount" />
                     </div>
                 </div>
 
@@ -409,25 +430,33 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label for="companyName">No Of Appoinment </label>
-                        <select class="form-control ddlSearchList" id="dropNoOfAppoinment" asp-for="channeling.AppointmentNo">
-
-                            @if (Model != null)
+                        <label for="companyName">Appoinment Number</label>
+                        @{
+                            if (Model.opdId == 0)
                             {
-                                if (Model.channeling != null)
-                                {
-                                    @if (Model.channeling.AppointmentNo > 0)
-                                    {
-                                        <option>@Model.channeling.AppointmentNo</option>
-                                    }
-                                }
-                                else
-                                {
-                                    <option>Select one</option>
-                                }
+                                <select class="form-control ddlSearchList" id="dropNoOfAppoinment" asp-for="channeling.AppointmentNo">
 
+                                    @if (Model != null)
+                                    {
+                                        if (Model.channeling != null)
+                                        {
+                                            @if (Model.channeling.AppointmentNo > 0)
+                                            {
+                                                <option>@Model.channeling.AppointmentNo</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option>Select one</option>
+                                        }
+
+                                    }
+                                </select>
+                            } else
+                            {
+                                <input class="form-control" type="text" id="dropNoOfAppoinment" value="@Model.opd.AppoimentNo" style="text-align:right;" placeholder="Appoinment Number" disabled />
                             }
-                        </select>
+                        }
                     </div>
                 </div>
             </div>
