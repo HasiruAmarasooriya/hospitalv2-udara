@@ -27,6 +27,7 @@ using Azure.Core;
 using static iTextSharp.text.pdf.AcroFields;
 using HospitalMgrSystem.Service.CashierSession;
 using HospitalMgrSystem.Service.User;
+using HospitalMgrSystem.Service.NightShiftSession;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -70,7 +71,7 @@ namespace HospitalMgrSystemUI.Controllers
                         int userID = Convert.ToInt32(userIdCookie);
 
                         User user = GetUserById(userID);
-                        if(user.userRole == UserRole.ADMIN)
+                        if(user.userRole == UserRole.CASHIER || user.userRole == UserRole.ADMIN)
                         {
                             if (GetActiveCashierSession(userID).Count == 0)
                             {
@@ -980,6 +981,32 @@ namespace HospitalMgrSystemUI.Controllers
                 Payment payments = new Payment();
                 try
                 {
+                    if (_CashierDto.totalDueAmount <= 0)
+                    {
+
+              
+                    bool isNightShift = false;
+                    User user = new User();
+                    user = GetUserById(Convert.ToInt32(userIdCookie));
+                    if (user != null)
+                    {
+                        if(user.userRole == UserRole.OPDNURSE)
+                        {
+                            if((HospitalMgrSystem.Model.Enums.InvoiceType)_CashierDto.invoiceType == InvoiceType.OPD)
+                            {
+                                OPD opdForSession = new OPD();
+                                opdForSession= new OPDService().GetAllOPDByID(_CashierDto.sufID);
+                                if(opdForSession != null)
+                                {
+                                    if (opdForSession.nightShiftSession.shift == Shift.NIGHT_SHIFT )
+                                    {
+                                        isNightShift = true;
+                                    } 
+                                }
+                            }
+                        }
+
+                    }
                     invoice.Id = _CashierDto.invoiceID;
                     invoice.CustomerID = _CashierDto.customerID;
                     invoice.CustomerName = _CashierDto.customerName;
@@ -1049,7 +1076,15 @@ namespace HospitalMgrSystemUI.Controllers
                                 OPD updateOPD = new OPD();
                                 updateOPD.Id = _CashierDto.sufID;
                                 updateOPD.ModifiedUser = Convert.ToInt32(userIdCookie);
-                                updateOPD.paymentStatus = PaymentStatus.PAID;
+                                    if (isNightShift)
+                                    {
+                                        updateOPD.paymentStatus = PaymentStatus.OPD;
+                                    }
+                                    else
+                                    {
+                                        updateOPD.paymentStatus = PaymentStatus.PAID;
+                                    }
+                              
                                 OPD upOpd = new OPDService().UpdatePaidStatus(updateOPD);
                             }
 
@@ -1061,8 +1096,15 @@ namespace HospitalMgrSystemUI.Controllers
                                 updateOPD.paymentStatus = PaymentStatus.PAID;
                                 OPD upOpd = new OPDService().UpdatePaidStatus(updateOPD);
                             }
-
-                            resInvoice.paymentStatus = PaymentStatus.PAID;
+                            if (isNightShift)
+                            {
+                                resInvoice.paymentStatus = PaymentStatus.OPD;
+                            }
+                            else
+                            {
+                                resInvoice.paymentStatus = PaymentStatus.PAID;
+                            }
+                           
                             Invoice upInvoice = new CashierService().UpdatePaidStatus(resInvoice);
 
 
@@ -1134,7 +1176,8 @@ namespace HospitalMgrSystemUI.Controllers
                     cashierDtoToPrint.cashierRemoveBillingItemDtoList = GetCashierAllRemoveddetails(cashierDtoToPrint.PreID);
 
                     return RedirectToAction("Index", new { PreID = cashierDtoToPrint.PreID });
-
+                    }
+                    return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {
@@ -1754,6 +1797,22 @@ namespace HospitalMgrSystemUI.Controllers
                 catch (Exception ex) { }
             }
             return user;
+        }
+
+        private List<NightShiftSession> GetActiveShiftSession()
+        {
+            List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    NightShiftSessionList = new NightShiftSessionService().GetACtiveNtShiftSessions();
+
+                }
+                catch (Exception ex) { }
+            }
+            return NightShiftSessionList;
         }
 
 

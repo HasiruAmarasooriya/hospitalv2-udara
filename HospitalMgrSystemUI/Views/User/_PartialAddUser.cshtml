@@ -56,7 +56,21 @@
                         </div>
                     </div>
                 }
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="companyName">User Role</label>
+                        <select class="form-control ddlSearchList" id="dropSex" asp-for="user.userRole">
+                            <option value="0">ADMIN</option>
+                            <option value="1">HOSPITAL_MANAGER</option>
+                            <option value="2">ACCOUNTANT</option>
+                            <option value="3">OPDNURSE</option>
+                            <option value="4">RECEPTIONIST</option>
+                            <option value="5">X_RAY_TECHNICIAN</option>
+                            <option value="6">CASHIER</option>
 
+                        </select>
+                    </div>
+                </div>
 
 
             </div>

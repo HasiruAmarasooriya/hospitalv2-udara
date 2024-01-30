@@ -75,6 +75,25 @@ namespace HospitalMgrSystemUI.Controllers
                     nightShiftSession.ModifiedUser = userId;
 
                     new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
+
+                    CashierSession newCashierSession = new CashierSession();
+                    List<CashierSession> mtList = new List<CashierSession>();
+                    mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
+                    if (mtList.Count > 0)
+                    {
+                        newCashierSession.Id = mtList[0].Id;
+                        newCashierSession.userID = Convert.ToInt32(userIdCookie);
+                        newCashierSession.StartingTime = DateTime.Now;
+                        newCashierSession.StartBalence = 0;
+                        newCashierSession.EndBalence = 0;
+                        newCashierSession.EndTime = DateTime.Now;
+                        newCashierSession.cashierSessionStatus = CashierSessionStatus.END;
+                        newCashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
+                        newCashierSession.ModifiedDate = DateTime.Now;
+
+                        newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
+
+                    }
                 }
                 else
                 {
@@ -93,6 +112,30 @@ namespace HospitalMgrSystemUI.Controllers
                     nightShiftSession.ModifiedUser = userId;
 
                     new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
+
+                    CashierSession newCashierSession = new CashierSession();
+                    List<CashierSession> mtList = new List<CashierSession>();
+                    mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
+                    if (mtList.Count == 0)
+                    {
+
+                        newCashierSession.userID = Convert.ToInt32(userIdCookie);
+                        newCashierSession.StartingTime = DateTime.Now;
+                        newCashierSession.StartBalence = 0;
+                        newCashierSession.EndBalence = 0;
+                        newCashierSession.EndTime = DateTime.Now;
+                        newCashierSession.CreateUser = Convert.ToInt32(userIdCookie);
+                        newCashierSession.CreateDate = DateTime.Now;
+                        newCashierSession.cashierSessionStatus = CashierSessionStatus.START;
+                        newCashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
+                        newCashierSession.ModifiedDate = DateTime.Now;
+
+                        newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
+
+                    }
+
+
+
                 }
             }
             else
@@ -115,6 +158,25 @@ namespace HospitalMgrSystemUI.Controllers
                     nightShiftSession.ModifiedUser = userId;
 
                     new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
+
+                    CashierSession newCashierSession = new CashierSession();
+                    List<CashierSession> mtList = new List<CashierSession>();
+                    mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
+                    if (mtList.Count > 0)
+                    {
+                        newCashierSession.Id = mtList[0].Id;
+                        newCashierSession.userID = Convert.ToInt32(userIdCookie);
+                        newCashierSession.StartingTime = DateTime.Now;
+                        newCashierSession.StartBalence = 0;
+                        newCashierSession.EndBalence = 0;
+                        newCashierSession.EndTime = DateTime.Now;
+                        newCashierSession.cashierSessionStatus = CashierSessionStatus.END;
+                        newCashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
+                        newCashierSession.ModifiedDate = DateTime.Now;
+
+                        newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
+
+                    }
                 }
                 else
                 {
@@ -133,6 +195,27 @@ namespace HospitalMgrSystemUI.Controllers
                     nightShiftSession.ModifiedUser = userId;
 
                     new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
+
+                    CashierSession newCashierSession = new CashierSession();
+                    List<CashierSession> mtList = new List<CashierSession>();
+                    mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
+                    if (mtList.Count == 0)
+                    {
+
+                        newCashierSession.userID = Convert.ToInt32(userIdCookie);
+                        newCashierSession.StartingTime = DateTime.Now;
+                        newCashierSession.StartBalence = 0;
+                        newCashierSession.EndBalence = 0;
+                        newCashierSession.EndTime = DateTime.Now;
+                        newCashierSession.CreateUser = Convert.ToInt32(userIdCookie);
+                        newCashierSession.CreateDate = DateTime.Now;
+                        newCashierSession.cashierSessionStatus = CashierSessionStatus.START;
+                        newCashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
+                        newCashierSession.ModifiedDate = DateTime.Now;
+
+                        newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
+
+                    }
                 }
 
             }
@@ -675,7 +758,21 @@ namespace HospitalMgrSystemUI.Controllers
             return NightShiftSessionList;
         }
 
+        private List<CashierSession> GetActiveCashierSession(int id)
+        {
+            List<CashierSession> CashierSessionList = new List<CashierSession>();
 
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    CashierSessionList = new CashierSessionService().GetACtiveCashierSessions(id);
+
+                }
+                catch (Exception ex) { }
+            }
+            return CashierSessionList;
+        }
 
 
     }

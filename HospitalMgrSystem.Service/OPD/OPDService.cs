@@ -179,6 +179,7 @@ namespace HospitalMgrSystem.Service.OPD
                 opd = dbContext.OPD
              .Include(o => o.patient) // Load the Patient related to OPD
              .Include(o => o.consultant) // Load the Consultant related to OPD
+               .Include(o => o.nightShiftSession) // Load the nightShiftSession
              .SingleOrDefault(o => o.Id == id);
 
             }

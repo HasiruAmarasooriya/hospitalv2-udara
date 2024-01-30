@@ -388,6 +388,7 @@
                                                             <td>
                                                                 @if (Model != null)
                                                                 {
+                                                                    @if (Model.invoice.InvoiceType != HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
 
                                                                     @using (Html.BeginForm("RemoveItem", "Cashier", new { Id = @item.BillingItemID, InvoiceType = Model.invoiceType, BillingItemsType = @item.billingItemsType, PreID = Model.PreID ,InvoiceID =Model.invoiceID }, FormMethod.Post))
                                                                     {
