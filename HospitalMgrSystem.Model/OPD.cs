@@ -45,6 +45,19 @@ namespace HospitalMgrSystem.Model
 
         [NotMapped]
         public decimal? TotalAmount { get; set; }
+        [NotMapped]
+        public decimal? TotalPaidAmount { get; set; }
+
+        [NotMapped]
+        public decimal? deviation { get; set; }
+
+        [NotMapped]
+        public User? issuedUser { get; set; }
+        [NotMapped]
+        public User? cashier { get; set; }
+
+        [NotMapped]
+        public int? invoiceID { get; set; }
 
         [NotMapped]
         public int OpdType { get; set; }

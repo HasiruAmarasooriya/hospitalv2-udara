@@ -11,10 +11,10 @@
 
 
     var opdId = @Html.Raw(Json.Serialize(Model.opdId));
-    var fullName = @Html.Raw(Json.Serialize(Model.opd.patient.FullName));
-    var age = @Html.Raw(Json.Serialize(Model.opd.patient.Age));
-    var sex = @Html.Raw(Json.Serialize(Model.opd.patient.Sex == 1 ? "Male" : Model.sex == 2 ? "Female" : "None"));
-    var telephoneNumber = @Html.Raw(Json.Serialize(Model.opd.patient.MobileNumber));
+    var fullName = @Html.Raw(Json.Serialize(Model.name));
+    var age = @Html.Raw(Json.Serialize(Model.age));
+    var sex = @Html.Raw(Json.Serialize(Model.sex == 1 ? "Male" : Model.sex == 2 ? "Female" : "None"));
+    var telephoneNumber = @Html.Raw(Json.Serialize(Model.phone));
 
     function generateQRCode(size) {
 
@@ -60,7 +60,7 @@
     }
 
     function closeModal() {
-        $('#modalQR').modal('hide');
+        $('#AddShiftModel').modal('hide');
     }
 
     generateQRCode(200)

@@ -224,10 +224,44 @@ namespace HospitalMgrSystem.Service.OPD
             return mtList;
         }
 
+        //public List<Model.OPD> GetAllOPDByAndDateRangePaidStatus(DateTime startDate, DateTime endDate, PaymentStatus paymentStatus)
+        //{
+        //    List<Model.OPD> mtList = new List<Model.OPD>();
+        //    // List<Model.OPD> invoiceList = new List<Model.OPD>();
+        //    using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+        //    {
+        //        mtList = dbContext.OPD
+        //            .Include(c => c.patient)
+        //            .Include(c => c.consultant)
+        //            .Include(c => c.room)
+        //            .Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == paymentStatus)
+        //            .OrderByDescending(o => o.Id)
+        //            .ToList<Model.OPD>();
+
+        //        // invoiceList = dbContext.Invoices.Where(o => o.InvoiceType == InvoiceType.OPD && o.ServiceID == mtList[0].Id).Select(r => r.SubTotal).ToList<Model.OPD>();
+        //        var opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
+        //        var invoiceList = dbContext.Invoices.Where(o => o.InvoiceType == InvoiceType.OPD && opdIds.Contains(o.ServiceID)).ToList();
+
+        //        foreach (var item in invoiceList)
+        //        {
+        //            foreach (var opd in mtList)
+        //            {
+        //                if (opd.Id == item.ServiceID)
+        //                {
+        //                    opd.TotalAmount = 0;
+        //                }
+        //            }
+        //        }
+
+        //    }
+        //    return mtList;
+        //}
+
+
         public List<Model.OPD> GetAllOPDByAndDateRangePaidStatus(DateTime startDate, DateTime endDate, PaymentStatus paymentStatus)
         {
             List<Model.OPD> mtList = new List<Model.OPD>();
-            // List<Model.OPD> invoiceList = new List<Model.OPD>();
+            List<Model.OPD> newmtList = new List<Model.OPD>();
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
                 mtList = dbContext.OPD
@@ -238,24 +272,29 @@ namespace HospitalMgrSystem.Service.OPD
                     .OrderByDescending(o => o.Id)
                     .ToList<Model.OPD>();
 
-                // invoiceList = dbContext.Invoices.Where(o => o.InvoiceType == InvoiceType.OPD && o.ServiceID == mtList[0].Id).Select(r => r.SubTotal).ToList<Model.OPD>();
                 var opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
                 var invoiceList = dbContext.Invoices.Where(o => o.InvoiceType == InvoiceType.OPD && opdIds.Contains(o.ServiceID)).ToList();
 
                 foreach (var item in invoiceList)
                 {
-                    foreach (var opd in mtList)
+                    Model.OPD opdObj = new Model.OPD();
+                    opdObj = mtList.Where(o => o.Id == item.ServiceID).SingleOrDefault();
+
+                    var invoiceItemList = dbContext.InvoiceItems.Where(o => o.InvoiceId == item.Id && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED).ToList();
+                    opdObj.TotalAmount = 0;
+                    foreach (var invoiceItem in invoiceItemList)
                     {
-                        if (opd.Id == item.ServiceID)
-                        {
-                            opd.TotalAmount = 0;
-                        }
+                        opdObj.TotalAmount = opdObj.TotalAmount + invoiceItem.Total;
+
                     }
+
+                    newmtList.Add(opdObj);
                 }
 
             }
-            return mtList;
+            return newmtList;
         }
+
 
         public List<Model.OPD> GetAllOPDByAndDateRangePaidStatusAndOnOPD(DateTime startDate, DateTime endDate)
         {

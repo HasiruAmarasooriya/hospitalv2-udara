@@ -455,8 +455,29 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.CreateDate = DateTime.Now;
                     oPDDto.opd.ModifiedDate = DateTime.Now;
                     oPDDto.opd.HospitalFee = oPDDto.opd.OpdType == 1 ? hospitalFee : 0;
+                    oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
+                    oPDDto.opd.invoiceType = InvoiceType.OPD;
                     oPDDto.opd.ConsultantFee = 0;
-                    OPDobj = new OPDService().CreateOPD(oPDDto.opd);
+
+
+                    if (oPDDto.opd.Id > 0)
+                    {
+                        OPDobj = new OPDService().UpdateOPDStatus(oPDDto.opd, oPDDto.OPDDrugusList);
+                    }
+                    else
+                    {
+                        List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
+                        NightShiftSessionList = GetActiveShiftSession();
+                        if (NightShiftSessionList.Count > 0)
+                        {
+                            oPDDto.opd.shiftID = NightShiftSessionList[0].Id;
+                            if (NightShiftSessionList[0].shift == Shift.NIGHT_SHIFT)
+                            {
+                                oPDDto.opd.isOnOPD = 1;
+                            }
+                        }
+                        OPDobj = new OPDService().CreateOPD(oPDDto.opd);
+                    }
 
                     if (OPDobj != null)
                     {
@@ -471,6 +492,7 @@ namespace HospitalMgrSystemUI.Controllers
                             drugusItem.opdId = OPDobj.Id;
                             drugusItem.itemInvoiceStatus = ItemInvoiceStatus.Add;
                             drugusItem.Amount = drugusItem.Qty * drugusItem.Price;
+                            drugusItem.IsRefund = 0;
                             new OPDService().CreateOPDDrugus(drugusItem);
                         }
                     }

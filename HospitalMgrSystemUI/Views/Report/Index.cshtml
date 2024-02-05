@@ -2,7 +2,7 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-
+@model Report;
 @{
 }
 @inject IConfiguration Configuration
@@ -41,19 +41,19 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="companyName">Start Date</label>
-                                    <input type="text" id="date-format-start" asp-format="{0:yyyy.MM.dd}" class="form-control"  placeholder="">
+                                    <input type="text" id="date-format-start" asp-format="{0:yyyy.MM.dd}" class="form-control" asp-for="StartTime"  placeholder="">
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="companyName">End Date</label>
-                                    <input type="text" id="date-format-end" asp-format="{0:yyyy.MM.dd}" class="form-control"  placeholder="">
+                                    <input type="text" id="date-format-end" asp-format="{0:yyyy.MM.dd}" class="form-control" asp-for="EndTime" placeholder="">
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="companyName">Invoiced Type</label>
-                                    <select class="form-control ddlSearchList" id="dropSessionType" >
+                                    <select class="form-control ddlSearchList" id="dropSessionType">
                                         <option value="0">OPD</option>
                                         <option value="1">Channeling</option>
                                         <option value="2">Other</option>
@@ -122,6 +122,28 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            @if (Model.listopd != null)
+                            {
+
+                                @foreach (var item in Model.listopd)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.invoiceID</td>
+                                        <td>@item.paymentStatus</td>
+                                        <td>@item.nightShiftSession.shift</td>
+                                        <td>@item.cashier.FullName</td>
+                                        <td>@item.issuedUser.FullName</td>
+                                        <td>@item.TotalAmount</td>
+                                        <td>@item.TotalPaidAmount</td>
+                                        <td>@item.deviation</td>
+                                        <td>
+                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                        </td>           
+                                    </tr>
+
+                                }
+                            }
                             </tbody>
                     </table>
 
