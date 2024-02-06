@@ -115,14 +115,34 @@ namespace HospitalMgrSystemUI.Controllers
 
                 try
                 {
-
                     cashierDto.PreID = cashierDtoPar.PreID;
-
 
                     cashierDto = GetCashierAlldetails(cashierDto.PreID);
                     cashierDto.cashierRemoveBillingItemDtoList = GetCashierAllRemoveddetails(cashierDto.PreID);
 
                     return PartialView("_PartialViewInvoice", cashierDto);
+                }
+                catch (Exception ex)
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+        }
+        
+        public ActionResult PrintBill([FromBody] CashierDto cashierDtoPar)
+        {
+            CashierDto cashierDto = new CashierDto();
+            using (var httpClient = new HttpClient())
+            {
+
+                try
+                {
+                    cashierDto.PreID = cashierDtoPar.PreID;
+
+                    cashierDto = GetCashierAlldetails(cashierDto.PreID);
+                    cashierDto.cashierRemoveBillingItemDtoList = GetCashierAllRemoveddetails(cashierDto.PreID);
+
+                    return PartialView("_PartialReceipt", cashierDto);
                 }
                 catch (Exception ex)
                 {
