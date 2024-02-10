@@ -150,6 +150,7 @@ namespace HospitalMgrSystemUI.Controllers
                 }
             }
         }
+
         private CashierDto GetCashierAlldetails(string preID)
         {
             try
