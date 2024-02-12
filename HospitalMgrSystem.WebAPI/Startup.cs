@@ -23,6 +23,7 @@ using HospitalMgrSystem.Service.Investigation;
 using HospitalMgrSystem.Service.Item;
 using HospitalMgrSystem.Service.ChannelingSchedule;
 using HospitalMgrSystem.Service.Channeling;
+using HospitalMgrSystem.Service.SMS;
 
 namespace HospitalMgrSystem.WebAPI
 {
@@ -57,7 +58,7 @@ namespace HospitalMgrSystem.WebAPI
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IChannelingSchedule, ChannelingScheduleService>();
             services.AddScoped<IChannelingService, ChannelingService>();
-
+            services.AddScoped<ISMSService, SMSService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

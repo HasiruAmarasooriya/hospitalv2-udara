@@ -4,6 +4,7 @@ using HospitalMgrSystem.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HospitalMgrSystem.DataAccess.Migrations
 {
     [DbContext(typeof(HospitalDBContext))]
-    partial class HospitalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240210114101_A86")]
+    partial class A86
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1593,8 +1596,9 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.Property<decimal>("CampaignCost")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("CampaignID")
-                        .HasColumnType("int");
+                    b.Property<string>("CampaignID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -1619,31 +1623,6 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.HasIndex("sceduleID");
 
                     b.ToTable("SMSCampaign");
-                });
-
-            modelBuilder.Entity("HospitalMgrSystem.Model.SMSmsg", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("messageString1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("messageString2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("messageString3")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("messageString4")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SMSmsg");
                 });
 
             modelBuilder.Entity("HospitalMgrSystem.Model.Specialist", b =>
