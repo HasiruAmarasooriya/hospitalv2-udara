@@ -17,10 +17,9 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 
 
 
-        public HospitalMgrSystem.Model.ChannelingSchedule CreateChannelingSchedule(HospitalMgrSystem.Model.ChannelingSchedule channelingSchedule)
+        public Model.ChannelingSchedule CreateChannelingSchedule(Model.ChannelingSchedule channelingSchedule)
         {
-
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
                 if (channelingSchedule.Id == 0)
                 {
@@ -29,7 +28,7 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                 }
                 else
                 {
-                    HospitalMgrSystem.Model.ChannelingSchedule result = (from p in dbContext.ChannelingSchedule where p.Id == channelingSchedule.Id select p).SingleOrDefault();
+                    Model.ChannelingSchedule result = (from p in dbContext.ChannelingSchedule where p.Id == channelingSchedule.Id select p).SingleOrDefault();
                     result.HospitalFee = channelingSchedule.HospitalFee;
                     result.OtherFee = channelingSchedule.OtherFee;
                     result.ConsultantFee = channelingSchedule.ConsultantFee;
@@ -37,15 +36,12 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                     result.DateTime = channelingSchedule.DateTime;
                     result.NoOfAppointment = channelingSchedule.NoOfAppointment;
                     result.Status = channelingSchedule.Status;
+                    result.scheduleStatus = channelingSchedule.scheduleStatus;
 
                     dbContext.SaveChanges();
                 }
                 return dbContext.ChannelingSchedule.Find(channelingSchedule.Id);
             }
-
-
-
-
         }
 
 

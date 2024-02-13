@@ -21,5 +21,6 @@ namespace HospitalMgrSystem.Model
         public decimal HospitalFee { get; set; }
         public decimal OtherFee { get; set; }
         public CommonStatus Status { get; set; }
+        public ChannellingScheduleStatus scheduleStatus { get; set; }
     }
 }
