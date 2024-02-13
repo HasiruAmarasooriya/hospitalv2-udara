@@ -36,16 +36,17 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 try
                 {
-                    channelingSheduleDto.ChannelingScheduleList=new ChannelingScheduleService().SheduleGetByStatus();
+                    channelingSheduleDto.ChannelingScheduleList = new ChannelingScheduleService().SheduleGetByStatus();
                     return View(channelingSheduleDto);
 
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     return View();
 
                 }
             }
-           
+
         }
 
         public ActionResult CreateChannelShedule(int Id)
@@ -71,10 +72,10 @@ namespace HospitalMgrSystemUI.Controllers
 
             }
 
-                return PartialView("_PartialAddChannelingShedule", channelingSheduleDto);
+            return PartialView("_PartialAddChannelingShedule", channelingSheduleDto);
 
 
-           
+
         }
 
         private List<Specialist> LoadSpecialists()
@@ -130,7 +131,7 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 try
                 {
-                   channelingSchedule = new ChannelingScheduleService().SheduleGetById(id);
+                    channelingSchedule = new ChannelingScheduleService().SheduleGetById(id);
 
                 }
                 catch (Exception ex) { }
@@ -140,13 +141,16 @@ namespace HospitalMgrSystemUI.Controllers
 
         public IActionResult AddNewChannelingShedule()
         {
-            ChannelingSchedule channelingSchedule = new ChannelingSchedule();
             using (var httpClient = new HttpClient())
             {
                 try
                 {
-                    viewChannelingSchedule.ChannelingSchedule.Consultant=null;
-                    channelingSchedule = new ChannelingScheduleService().CreateChannelingSchedule(viewChannelingSchedule.ChannelingSchedule);
+                    if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.NOT_ACTIVE || viewChannelingSchedule.ChannelingSchedule.scheduleStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.ACTIVE)
+                    {
+                        List<OPD> oPDsforSchedularId = new OPDService().GetAllOPDBySchedularID(viewChannelingSchedule.ChannelingSchedule.Id);
+                    }
+                    viewChannelingSchedule.ChannelingSchedule.Consultant = null;
+                    ChannelingSchedule channelingSchedule = new ChannelingScheduleService().CreateChannelingSchedule(viewChannelingSchedule.ChannelingSchedule);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
