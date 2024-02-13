@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HospitalMgrSystem.Model
+namespace HospitalMgrSystem.Model.Enums
 {
     public enum ChannellingScheduleStatus
     {
         NOT_ACTIVE,
-        SESSION_START,
-        SESSION_END,
-        SESSION_CANCEL,
+        ACTIVE,
+        SESSION_START, // Doctor awa
+        SESSION_END, // Doctor giyaa
+        SESSION_CANCEL, // Doctor cancel (doctor enne naa)
         PENDING
     }
 }
