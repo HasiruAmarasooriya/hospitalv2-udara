@@ -345,7 +345,7 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="companyName">Mobile Number </label>
-                        <input class="form-control " type="text" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" />
+                        <input class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" type="tel" maxlength="10" minlength="10" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" required />
                     </div>
                 </div>
 
@@ -404,7 +404,8 @@
                                         <option value="@item.Id">@item.DateTime</option>
                                     }
                                 </select>
-                            } else
+                            }
+                            else
                             {
                                 <input class="form-control" type="text" id="dropShedule" value="@Model.channelingSchedule.DateTime" style="text-align:right;" placeholder="Schedule Time" disabled />
                             }
@@ -453,7 +454,8 @@
 
                                     }
                                 </select>
-                            } else
+                            }
+                            else
                             {
                                 <input class="form-control" type="text" id="dropNoOfAppoinment" value="@Model.opd.AppoimentNo" style="text-align:right;" placeholder="Appoinment Number" disabled />
                             }
