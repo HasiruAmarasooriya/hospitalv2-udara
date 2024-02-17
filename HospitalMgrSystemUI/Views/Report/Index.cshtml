@@ -21,110 +21,112 @@
         }
     </style>
 }
-    <div class="row page-titles">
-        <div class="col-md-5 col-8 align-self-center">
-            <h3 class="text-themecolor m-b-0 m-t-0">Summary Reports</h3>
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                <li class="breadcrumb-item active">Summary Reports</li>
-            </ol>
-        </div>
+<div class="row page-titles">
+    <div class="col-md-5 col-8 align-self-center">
+        <h3 class="text-themecolor m-b-0 m-t-0">Summary Reports</h3>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">Summary Reports</li>
+        </ol>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="modal-body">
-                    <form asp-action="filterForm" method="post">
-                        <input type="hidden" id="opid" >
-                        <div class="row">
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="modal-body">
+                <form asp-action="filterForm" method="post">
+                    <input type="hidden" id="opid">
+                    <div class="row">
 
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="companyName">Start Date</label>
-                                    <input type="text" id="date-format-start" asp-format="{0:yyyy.MM.dd}" class="form-control" asp-for="StartTime"  placeholder="">
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="companyName">End Date</label>
-                                    <input type="text" id="date-format-end" asp-format="{0:yyyy.MM.dd}" class="form-control" asp-for="EndTime" placeholder="">
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="companyName">Invoiced Type</label>
-                                    <select class="form-control ddlSearchList" id="dropSessionType">
-                                        <option value="0">OPD</option>
-                                        <option value="1">Channeling</option>
-                                        <option value="2">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-               
-
-                        </div>
-
-
-
-                        <div class="modal-footer d-flex justify-content-between">
-                            <div class="spark-chart form-material">
-                                <ol class="list-unstyled d-flex">
-                                    <li class="mr-2">
-                                        <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Today</button>
-                                    </li>
-
-                                    <li class="mr-2">
-                                        <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Yesterday</button>
-                                    </li>
-                                    <li class="mr-2">
-                                        <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Week</button>
-                                    </li>
-                                    <li class="mr-2">
-                                        <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Month</button>
-                                    </li>
-                                </ol>
-                            </div>
-                            <div>
-                                <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal" onclick="handleClear()">&nbsp;Clear</button>
-                                <button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Filter</button>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="companyName">Start Date</label>
+                                <input type="text" id="date-format-start" asp-format="{0:yyyy.MM.dd}" class="form-control" asp-for="StartTime" placeholder="">
                             </div>
                         </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="companyName">End Date</label>
+                                <input type="text" id="date-format-end" asp-format="{0:yyyy.MM.dd}" class="form-control" asp-for="EndTime" placeholder="">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="companyName">Invoiced Type</label>
+                                <select class="form-control ddlSearchList" id="dropSessionType" asp-for="InvoicedType">
+                                    <option value="0">OPD</option>
+                                    <option value="1">Channeling</option>
+                                    <option value="2">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="modal-footer d-flex justify-content-between">
+                        <div class="spark-chart form-material">
+                            <ol class="list-unstyled d-flex">
+                                <li class="mr-2">
+                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Today</button>
+                                </li>
 
-
-
-                    </form>
-                </div>
-
+                                <li class="mr-2">
+                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Yesterday</button>
+                                </li>
+                                <li class="mr-2">
+                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Week</button>
+                                </li>
+                                <li class="mr-2">
+                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Month</button>
+                                </li>
+                            </ol>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal" onclick="handleClear()">&nbsp;Clear</button>
+                            <button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Filter</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">OPD Paid</h4>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead class="table-success">
-                                <tr>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                @{
 
-                                    <th>No</th>
-                                    <th>Invoice ID</th>
-                                    <th>OPD ID</th>
-                                    <th>Shift</th>
-                                    <th>Cashier</th>
-                                    <th>Issued By</th>
-                                    <th>Total Amount</th>
-                                    <th>Total Paid Amount</th>
-                                    <th>Deviation</th>
-                                    <th>Action 1</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    if (Model.listopd != null)
+                    {
+                        <h4 class="card-title">OPD Paid</h4>
+                    }
+
+                    if (Model.listChanneling != null)
+                    {
+                        <h4 class="card-title">Channeling Paid</h4>
+                    }
+
+                }
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="table-success">
+                            <tr>
+                                <th>No</th>
+                                <th>Invoice ID</th>
+                                <th>OPD ID</th>
+                                <th>Shift</th>
+                                <th>Cashier</th>
+                                <th>Issued By</th>
+                                <th>Total Amount</th>
+                                <th>Total Paid Amount</th>
+                                <th>Deviation</th>
+                                <th>Action 1</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                             @if (Model.listopd != null)
                             {
-
                                 @foreach (var item in Model.listopd)
                                 {
                                     <tr>
@@ -139,116 +141,296 @@
                                         <td>@item.deviation</td>
                                         <td>
                                             <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>           
+                                        </td>
                                     </tr>
-
                                 }
                             }
-                            </tbody>
+
+                            @if (Model.listChanneling != null)
+                            {
+                                @foreach (var item in Model.listChanneling)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.invoiceID</td>
+                                        <td>@item.paymentStatus</td>
+                                        <td>@item.nightShiftSession.shift</td>
+                                        <td>@item.cashier.FullName</td>
+                                        <td>@item.issuedUser.FullName</td>
+                                        <td>@item.TotalAmount</td>
+                                        <td>@item.TotalPaidAmount</td>
+                                        <td>@item.deviation</td>
+                                        <td>
+                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                <br>
+
+                @{
+
+                    if (Model.listopd != null)
+                    {
+                        <h4 class="card-title">OPD Need to Pay</h4>
+                    }
+
+                    if (Model.listChanneling != null)
+                    {
+                        <h4 class="card-title">Channeling Need to Pay</h4>
+                    }
+
+                }
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="table-danger">
+                            <tr>
+                                <th>No</th>
+                                <th>Invoice ID</th>
+                                <th>OPD ID</th>
+                                <th>Cashier</th>
+                                <th>Issued By</th>
+                                <th>Total Amount</th>
+                                <th>Total Paid Amount</th>
+                                <th>Deviation</th>
+                                <th>Action 1</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.listNeedToPayOPD != null)
+                            {
+                                @foreach (var item in Model.listNeedToPayOPD)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.invoiceID</td>
+                                        <td>@item.paymentStatus</td>
+                                        <td>@item.cashier.FullName</td>
+                                        <td>@item.issuedUser.FullName</td>
+                                        <td>@item.TotalAmount</td>
+                                        <td>@item.TotalPaidAmount</td>
+                                        <td>@item.deviation</td>
+                                        <td>
+                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+
+                            @if (Model.listNeedToPayChanneling != null)
+                            {
+                                @foreach (var item in Model.listNeedToPayChanneling)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.invoiceID</td>
+                                        <td>@item.paymentStatus</td>
+                                        <td>@item.cashier.FullName</td>
+                                        <td>@item.issuedUser.FullName</td>
+                                        <td>@item.TotalAmount</td>
+                                        <td>@item.TotalPaidAmount</td>
+                                        <td>@item.deviation</td>
+                                        <td>
+                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+
+                <h4 class="card-title">OPD Night Shift</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="table-danger">
+                            <tr>
+                                <th>No</th>
+                                <th>Invoice ID</th>
+                                <th>OPD ID</th>
+                                <th>Cashier</th>
+                                <th>Issued By</th>
+                                <th>Total Amount</th>
+                                <th>Total Paid Amount</th>
+                                <th>Deviation</th>
+                                <th>Action 1</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.listNightShiftOPD != null)
+                            {
+
+                                @foreach (var item in Model.listNightShiftOPD)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.invoiceID</td>
+                                        <td>@item.paymentStatus</td>
+                                        <td>@item.cashier.FullName</td>
+                                        <td>@item.issuedUser.FullName</td>
+                                        <td>@item.TotalAmount</td>
+                                        <td>@item.TotalPaidAmount</td>
+                                        <td>@item.deviation</td>
+                                        <td>
+                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <br>
+
+                @{
+
+                    if (Model.listopd != null)
+                    {
+                        <h4 class="card-title">OPD Not Paid</h4>
+                    }
+
+                    if (Model.listChanneling != null)
+                    {
+                        <h4 class="card-title">Channeling Not Paid</h4>
+                    }
+
+                }
+                
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="table-danger">
+                            <tr>
+                                <th>No</th>
+                                <th>Patient Name</th>
+                                <th>Consultant</th>
+                                <th>Contact Number</th>
+                                <th>Date Time</th>
+                                <th>Action 1</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.listNotPaidOPD != null)
+                            {
+
+                                @foreach (var item in Model.listNotPaidOPD)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.patient.FullName</td>
+                                        <td>@item.consultant.Name</td>
+                                        <td>@item.patient.MobileNumber</td>
+                                        <td>@item.DateTime</td>
+                                        <td>
+                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+
+                            @if (Model.listNotPaidChanneling != null)
+                            {
+
+                                @foreach (var item in Model.listNotPaidChanneling)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.patient.FullName</td>
+                                        <td>@item.consultant.Name</td>
+                                        <td>@item.patient.MobileNumber</td>
+                                        <td>@item.DateTime</td>
+                                        <td>
+                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
                     </table>
 
                 </div>
-                    <br>
-                    <h4 class="card-title">OPD Partial Paid</h4>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead class="table-danger">
-                                <tr>
 
-                                    <th>No</th>
-                                    <th>Invoice ID</th>
-                                    <th>OPD ID</th>
-                                    <th>Cashier</th>
-                                    <th>Issued By</th>
-                                    <th>Total Amount</th>
-                                    <th>Total Paid Amount</th>
-                                     <th>Deviation</th>
-                                    <th>Action 1</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                <h4 class="card-title">OPD Drugs</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="table-success">
+                            <tr>
+                                <th>Drug ID</th>
+                                <th>Drug Name</th>
+                                <th>Drug Total Quantity</th>
+                                <th>Drug Total Price</th>
+                                <th>Action 1</th>
+                            </tr>
+                        <tbody>
+                                @if (Model.listopdGrugs != null)
+                                {
 
-                    </div>
-                    <br>
+                                    @foreach (var item in Model.listopdGrugs)
+                                    {
+                                    <tr>
+                                        <td>@item.DrugId</td>
+                                        <td>@item.Drug.DrugName</td>
+                                        <td>@item.Qty</td>
+                                        <td>@item.Amount</td>
+                                        <td>
+                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                        </td>
+                                    </tr>
 
-                    <h4 class="card-title">OPD Need to Pay</h4>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead class="table-danger">
-                                <tr>
-
-                                    <th>No</th>
-                                    <th>Invoice ID</th>
-                                    <th>OPD ID</th>
-                                    <th>Cashier</th>
-                                    <th>Issued By</th>
-                                    <th>Total Amount</th>
-                                    <th>Total Paid Amount</th>
-                                    <th>Deviation</th>
-                                    <th>Action 1</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-
-                    </div>
-                    <br>
-                    <h4 class="card-title">OPD Night Shift</h4>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead class="table-danger">
-                                <tr>
-
-                                    <th>No</th>
-                                    <th>Invoice ID</th>
-                                    <th>OPD ID</th>
-                                    <th>Cashier</th>
-                                    <th>Issued By</th>
-                                    <th>Total Amount</th>
-                                    <th>Total Paid Amount</th>
-                                    <th>Deviation</th>
-                                    <th>Action 1</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-
-                    </div>
-                    <br>
-                    <h4 class="card-title">OPD Not Paid</h4>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead class="table-danger">
-                                <tr>
-
-                                    <th>No</th>
-                                    <th>OPD ID</th>
-                                    <th>Cashier</th>
-                                    <th>Issued By</th>
-                                    <th>Total Amount</th>
-                                    <th>Action 1</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-
-                    </div>
+                                    }
+                                }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title" style="text-align: center;">Summary</h3>
-                    <div class="table-responsive">
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title" style="text-align: center;">Summary</h3>
+                <div class="table-responsive">
+                    @if (Model.StartTime != null && Model.EndTime != null && Model.paymentData != null)
+                    {
+
+                        <table class="table">
+                            <thead class="table-success">
+                                <tr>
+                                    <th style="text-align: right; width:50%">From:</th>
+                                    <th style="text-align: left;">@Model.StartTime</th>
+                                </tr>
+                                <tr>
+                                    <th style="text-align: right; width:50%">To:</th>
+                                    <th style="text-align: left;">@Model.EndTime</th>
+                                </tr>
+                                <tr>
+                                    <th style="text-align: right; width:50%">Total Amount:</th>
+                                    <th style="text-align: left;">@Model.paymentData.TotalAmount LKR</th>
+                                </tr>
+                                <tr>
+                                    <th style="text-align: right;">Total Refund:</th>
+                                    <th style="text-align: left;">@Model.paymentData.TotalRefund LKR</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-primary">
+                                <tr>
+                                    <th style="text-align: right;">Total Paid Amount:</th>
+                                    <th style="text-align: left;">@Model.paymentData.TotalPaidAmount LKR</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
                         <table class="table">
                             <thead class="table-success">
                                 <tr>
@@ -280,13 +462,12 @@
                                 </tr>
                             </tbody>
                         </table>
-
-                    </div>
-                    
+                    }
                 </div>
             </div>
         </div>
     </div>
+</div>
 <div id="AddShiftModel" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-lg" id="AddEditContainerModel">
     </div>
@@ -334,7 +515,7 @@
             });
 
         });
-    
+
     </script>
 
 

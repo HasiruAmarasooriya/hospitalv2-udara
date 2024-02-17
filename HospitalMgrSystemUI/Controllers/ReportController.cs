@@ -23,18 +23,39 @@ namespace HospitalMgrSystemUI.Controllers
 
         public IActionResult filterForm()
         {
-                try
-                {
-                    Report oPDDto = new Report();
-                    oPDDto.listopd = new ReportsService().GetAllOPDByAndDateRangePaidStatus(_OPDDto.StartTime, _OPDDto.EndTime, PaymentStatus.PAID);
-                    return View("Index", oPDDto);
+            try
+            {
+                Report oPDDto = new Report();
 
-                }
-                catch (Exception ex)
+                if (_OPDDto.InvoicedType == 0)
                 {
-                    return RedirectToAction("Index");
+                    oPDDto.listopd = new ReportsService().GetAllOPDByAndDateRangePaidStatus(_OPDDto.StartTime, _OPDDto.EndTime, PaymentStatus.PAID);
+                    oPDDto.listNeedToPayOPD = new ReportsService().GetAllOPDByDateRangeAndNeedToPayStatus(_OPDDto.StartTime, _OPDDto.EndTime);
+                    oPDDto.listNightShiftOPD = new ReportsService().GetAllOPDByDateRangeAndNightShiftStatus(_OPDDto.StartTime, _OPDDto.EndTime);
+                    oPDDto.listNotPaidOPD = new ReportsService().GetAllOPDByDateRangeAndNotPaidStatus(_OPDDto.StartTime, _OPDDto.EndTime);
+                    oPDDto.listopdGrugs = new ReportsService().GetAllOPDGrugsByDateRangePaidStatus(_OPDDto.StartTime, _OPDDto.EndTime);
+                    oPDDto.paymentData = new ReportsService().GetAllPaymentsData(_OPDDto.StartTime, _OPDDto.EndTime);
+                } 
+
+                if (_OPDDto.InvoicedType == 1)
+                {
+                    oPDDto.listChanneling = new ReportsService().GetAllChannelingByDateRangePaidStatus(_OPDDto.StartTime, _OPDDto.EndTime);
+                    oPDDto.listNeedToPayChanneling = new ReportsService().GetAllChannelingByDateRangeAndNeedToPayStatus(_OPDDto.StartTime, _OPDDto.EndTime);
+                    oPDDto.listNotPaidChanneling = new ReportsService().GetAllChannelingByDateRangeAndNotPaidStatus(_OPDDto.StartTime, _OPDDto.EndTime);
                 }
-           
+                
+                oPDDto.StartTime = _OPDDto.StartTime;
+                oPDDto.EndTime = _OPDDto.EndTime;
+                oPDDto.InvoicedType = _OPDDto.InvoicedType;
+
+                return View("Index", oPDDto);
+
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index");
+            }
+
         }
     }
 }

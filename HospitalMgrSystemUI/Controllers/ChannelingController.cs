@@ -211,8 +211,6 @@ namespace HospitalMgrSystemUI.Controllers
             List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
             NightShiftSessionList = GetActiveShiftSession();
 
-
-
             try
             {
                 Patient patient = new Patient();
@@ -220,6 +218,21 @@ namespace HospitalMgrSystemUI.Controllers
                 oPDDto.patient.CreateUser = Convert.ToInt32(userIdCookie);
                 oPDDto.patient.ModifiedUser = Convert.ToInt32(userIdCookie);
                 patient = CreatePatient(oPDDto.patient);
+
+                if (oPDDto.patient.MobileNumber == null || oPDDto.patient.MobileNumber.Length != 10)
+                {
+                    return RedirectToAction("Index");
+                }
+
+                // Validate phone number format and characters
+                foreach (char c in oPDDto.patient.MobileNumber)
+                {
+                    if (!char.IsDigit(c))
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
+
                 if (patient != null)
                 {
 
@@ -335,7 +348,7 @@ namespace HospitalMgrSystemUI.Controllers
 
                 try
                 {
-                     new ChannelingService().DeleteChanneling(myChannelling.Id);
+                    new ChannelingService().DeleteChanneling(myChannelling.Id);
 
                     return RedirectToAction("Index");
                 }

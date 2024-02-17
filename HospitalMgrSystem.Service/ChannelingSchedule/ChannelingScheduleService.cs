@@ -29,32 +29,65 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                 else
                 {
                     Model.ChannelingSchedule result = (from p in dbContext.ChannelingSchedule where p.Id == channelingSchedule.Id select p).SingleOrDefault();
-                    result.HospitalFee = channelingSchedule.HospitalFee;
-                    result.OtherFee = channelingSchedule.OtherFee;
-                    result.ConsultantFee = channelingSchedule.ConsultantFee;
-                    result.ConsultantId = channelingSchedule.ConsultantId;
-                    result.DateTime = channelingSchedule.DateTime;
-                    result.NoOfAppointment = channelingSchedule.NoOfAppointment;
-                    result.Status = channelingSchedule.Status;
-                    result.scheduleStatus = channelingSchedule.scheduleStatus;
+                    
+                    if (channelingSchedule.NoOfAppointment >= result.NoOfAppointment)
+                    {
+                        result.NoOfAppointment = channelingSchedule.NoOfAppointment;
+                        result.Status = channelingSchedule.Status;
+                        result.scheduleStatus = channelingSchedule.scheduleStatus;
 
-                    dbContext.SaveChanges();
+                        dbContext.SaveChanges();
+                    }
+
                 }
                 return dbContext.ChannelingSchedule.Find(channelingSchedule.Id);
             }
         }
 
 
-        public List<HospitalMgrSystem.Model.ChannelingSchedule> SheduleGetByStatus()
+        public List<Model.ChannelingSchedule> SheduleGetByStatus()
         {
             List<Model.ChannelingSchedule> mtList = new List<Model.ChannelingSchedule>();
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
                 mtList = dbContext.ChannelingSchedule
                      .Include(c => c.Consultant)
                      .Include(c => c.Consultant.Specialist)
                      .Include(c => c.Consultant)
-                    .Where(o => o.Status == 0).ToList<Model.ChannelingSchedule>();
+                    .Where(o => o.Status == 0)
+                    .OrderByDescending(o => o.DateTime)
+                    .ToList();
+
+                var bookedChannelCount = dbContext.OPD
+                    .Where(o => o.invoiceType == InvoiceType.CHE)
+                    .GroupBy(o => o.schedularId)
+                    .Select(g => new { ScheduleId = g.Key, Count = g.Count() })
+                    .ToList();
+
+                var bookedAndPaidCount = dbContext.OPD
+                    .Where(o => o.invoiceType == InvoiceType.CHE && o.paymentStatus == PaymentStatus.PAID)
+                    .GroupBy(o => o.schedularId)
+                    .Select(g => new { ScheduleId = g.Key, Count = g.Count() })
+                    .ToList();
+
+                foreach (var item in mtList)
+                {
+                    foreach (var bookedItem in bookedChannelCount)
+                    {
+                        if (item.Id == bookedItem.ScheduleId)
+                        {
+                            item.booked = bookedItem.Count;
+                        }
+                    }
+
+                    foreach (var bookedItem in bookedAndPaidCount)
+                    {
+                        if (item.Id == bookedItem.ScheduleId)
+                        {
+                            item.paid = bookedItem.Count;
+                        }
+                    }
+                }
 
             }
             return mtList;

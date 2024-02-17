@@ -83,10 +83,11 @@
                             <tr>
                                 <th>Channeling ID</th>
                                 <th>Patient</th>
+                                <th>Contact Number</th>
                                 <th>Appoinment No</th>
                                 <th>Consultant</th>
                                 <th>Shedule</th>
-                                <th>Status</th>
+                                <th>Payment Status</th>
                                 <th>View</th>
                                 <th>QR</th>
                                 <th>View Cashier</th>
@@ -101,10 +102,11 @@
 
                                         <td>@item.Id</td>
                                         <td>@item.FullName</td>
+                                        <td>@item.MobileNumber</td>
                                         <td>@item.AppoimentNo</td>
                                         <td>@item.consaltantName</td>
                                         <td>@item.DateTime</td>
-                                        <td>@item.Status</td>
+                                        <td>@item.paymentStatus</td>
                                         <td>
                                             <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
                                         </td>

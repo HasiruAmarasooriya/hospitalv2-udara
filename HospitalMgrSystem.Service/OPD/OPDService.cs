@@ -360,18 +360,21 @@ namespace HospitalMgrSystem.Service.OPD
             }
             return mtList;
         }
-        public Model.OPDDrugus CreateOPDDrugus(Model.OPDDrugus opdDrugus)
+        public OPDDrugus CreateOPDDrugus(OPDDrugus opdDrugus)
         {
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
                 if (opdDrugus.Id == 0)
                 {
+                    opdDrugus.CreateDate = DateTime.Now;
+                    opdDrugus.ModifiedDate = DateTime.Now;
                     dbContext.OPDDrugus.Add(opdDrugus);
                     dbContext.SaveChanges();
                 }
                 else
                 {
-                    HospitalMgrSystem.Model.OPDDrugus result = (from p in dbContext.OPDDrugus where p.Id == opdDrugus.Id select p).SingleOrDefault();
+                    OPDDrugus result = (from p in dbContext.OPDDrugus where p.Id == opdDrugus.Id select p).SingleOrDefault();
+                    result.ModifiedDate = DateTime.Now;
                     result.opdId = opdDrugus.opdId;
                     result.DrugId = opdDrugus.DrugId;
                     result.Amount = opdDrugus.Amount;

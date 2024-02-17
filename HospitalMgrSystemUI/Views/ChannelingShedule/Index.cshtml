@@ -87,6 +87,7 @@
                                 <th>Date</th>
                                 <th>Consultant Name</th>
                                 <th>Active Appointment</th>
+                                <th>Paid Appointment</th>
                                 <th>Hospital Fee</th>
                                 <th>Doctor Fee</th>
                                 <th>Status</th>
@@ -102,7 +103,8 @@
 
                                         <td>@channelingShedule.DateTime</td>
                                         <td>@channelingShedule.Consultant.Name</td>
-                                        <td>@channelingShedule.NoOfAppointment</td>
+                                        <td>@channelingShedule.booked / @channelingShedule.NoOfAppointment</td>
+                                        <td>@channelingShedule.paid</td>
                                         <td>@channelingShedule.ConsultantFee</td>
                                         <td>@channelingShedule.HospitalFee</td>
                                         <td>@channelingShedule.scheduleStatus</td>
