@@ -239,7 +239,7 @@ namespace HospitalMgrSystem.Service.SMS
                     _SMSCampaign.maskBlockedUser = 0;
                     _SMSCampaign.CreateDate = DateTime.Now;
                     _SMSCampaign.CreateUser = 0;
-                    _SMSCampaign.sceduleID = 54;
+                    _SMSCampaign.sceduleID = 64;
                     smsCampaign = createSMSCampaign(_SMSCampaign);
 
 
@@ -248,10 +248,11 @@ namespace HospitalMgrSystem.Service.SMS
                     {
                         msisdn = new List<MobileNumber>
                         {
+                            new MobileNumber { mobile = "0710101773" },
                             new MobileNumber { mobile = "0702869830" }
                         },
                         sourceAddress = "Kumudu hos ",
-                        message = "This is a test message",
+                        message = "රෝගීන් පර්ක්ෂා කිරීම අවසන් විය ",
                         transaction_id = smsCampaign.Id,
                         payment_method = 0,
                         push_notification_url = ""

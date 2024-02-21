@@ -55,6 +55,7 @@ namespace HospitalMgrSystem.DataAccess
         public DbSet<SMSAPILogin> SMSAPILogin { get; set; }
         public DbSet<SMSCampaign> SMSCampaign { get; set; }
         public DbSet<SMSmsg> SMSmsg { get; set; }
+        public DbSet<Scan> ChannelingItems { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var connectionString = "server=cebdbserver.database.windows.net;Database=KUMUDU; User Id=cebuser; Password=Anubaba@1234";

@@ -13,6 +13,7 @@ namespace HospitalMgrSystem.Model
         public int Id { get; set; }
         //OPD Shedular need to be add here
         //Payment Status
+        public string? Description { get; set; }
         public PaymentStatus paymentStatus { get; set; }
         public int PatientID { get; set; }
         [ForeignKey("PatientID")]

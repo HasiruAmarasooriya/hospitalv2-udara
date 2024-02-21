@@ -72,6 +72,18 @@ namespace HospitalMgrSystem.Service.NightShiftSession
             return mtList;
         }
 
+        public List<Model.NightShiftSession> GetACtiveNtShiftSessionsByUserID(int userID,Shift shift)
+        {
+            List<Model.NightShiftSession> mtList = new List<Model.NightShiftSession>();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.NtShiftSessions.Include(c => c.User).Where(o => o.Status == 0 && o.shiftSessionStatus == Model.Enums.ShiftSessionStatus.START && o.userID == userID && o.shift == shift).OrderByDescending(o => o.Id).ToList<Model.NightShiftSession>();
+
+            }
+            return mtList;
+        }
+
+
 
         public bool checkIsNightShift()
         {

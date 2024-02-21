@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HospitalMgrSystem.Model.Enums;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,5 +81,17 @@ namespace HospitalMgrSystem.Service.CashierSession
             }
             return mtList;
         }
+
+        public List<Model.CashierSession> GetAllNightsiftActiveCashierSession()
+        {
+            List<Model.CashierSession> mtList = new List<Model.CashierSession>();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.CashierSessions.Include(c => c.User).Where(o => o.Status == 0 && o.cashierSessionStatus == Model.Enums.CashierSessionStatus.START && o.UserRole == UserRole.OPDNURSE ).OrderByDescending(o => o.Id).ToList<Model.CashierSession>();
+
+            }
+            return mtList;
+        }
+
     }
 }

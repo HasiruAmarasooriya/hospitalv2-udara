@@ -50,187 +50,290 @@ namespace HospitalMgrSystemUI.Controllers
  
             if (NightShiftSessionList.Count > 0)
             {
-
-
-                NightShiftSessionList[0].shiftSessionStatus = ShiftSessionStatus.END;
-                NightShiftSessionList[0].EndTime = DateTime.Now;
-                NightShiftSessionList[0].ModifiedDate = DateTime.Now;
-                NightShiftSessionList[0].ModifiedUser = userId;
-                new NightShiftSessionService().CreateNightShiftSession(NightShiftSessionList[0]);
-
-                if (NightShiftSessionList[0].shift == Shift.NIGHT_SHIFT)
+                //if opd user already has OPD session (Day or night)
+                foreach (NightShiftSession item in NightShiftSessionList)
                 {
 
-                    NightShiftSession nightShiftSession = new NightShiftSession();
+                        item.shiftSessionStatus = ShiftSessionStatus.END;
+                        item.EndTime = DateTime.Now;
+                        item.ModifiedDate = DateTime.Now;
+                        item.ModifiedUser = userId;
+                        //mark as current shit over
+                        new NightShiftSessionService().CreateNightShiftSession(item);
 
-                    nightShiftSession.userID = userId;
-                    nightShiftSession.StartingTime = DateTime.Now;
-                    nightShiftSession.EndTime = DateTime.Now;
-                    nightShiftSession.shiftSessionStatus = ShiftSessionStatus.START;
-                    nightShiftSession.shift = Shift.DAY_SHIFT;
-                    nightShiftSession.Status = CommonStatus.Active;
-                    nightShiftSession.CreateDate = DateTime.Now;
-                    nightShiftSession.CreateUser = userId;
-                    nightShiftSession.ModifiedDate = DateTime.Now;
-                    nightShiftSession.ModifiedUser = userId;
-
-                    new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
-
-                    CashierSession newCashierSession = new CashierSession();
-                    List<CashierSession> mtList = new List<CashierSession>();
-                    mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
-                    if (mtList.Count > 0)
-                    {
-                        newCashierSession.Id = mtList[0].Id;
-                        newCashierSession.userID = Convert.ToInt32(userIdCookie);
-                        newCashierSession.StartingTime = DateTime.Now;
-                        newCashierSession.StartBalence = 0;
-                        newCashierSession.EndBalence = 0;
-                        newCashierSession.EndTime = DateTime.Now;
-                        newCashierSession.cashierSessionStatus = CashierSessionStatus.END;
-                        newCashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
-                        newCashierSession.ModifiedDate = DateTime.Now;
-
-                        newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
-
-                    }
-                }
-                else
-                {
-
-                    NightShiftSession nightShiftSession = new NightShiftSession();
-
-                    nightShiftSession.userID = userId;
-                    nightShiftSession.StartingTime = DateTime.Now;
-                    nightShiftSession.EndTime = DateTime.Now;
-                    nightShiftSession.shiftSessionStatus = ShiftSessionStatus.START;
-                    nightShiftSession.shift = Shift.NIGHT_SHIFT;
-                    nightShiftSession.Status = CommonStatus.Active;
-                    nightShiftSession.CreateDate = DateTime.Now;
-                    nightShiftSession.CreateUser = userId;
-                    nightShiftSession.ModifiedDate = DateTime.Now;
-                    nightShiftSession.ModifiedUser = userId;
-
-                    new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
-
-                    CashierSession newCashierSession = new CashierSession();
-                    List<CashierSession> mtList = new List<CashierSession>();
-                    mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
-                    if (mtList.Count == 0)
-                    {
-
-                        newCashierSession.userID = Convert.ToInt32(userIdCookie);
-                        newCashierSession.StartingTime = DateTime.Now;
-                        newCashierSession.StartBalence = 0;
-                        newCashierSession.EndBalence = 0;
-                        newCashierSession.EndTime = DateTime.Now;
-                        newCashierSession.CreateUser = Convert.ToInt32(userIdCookie);
-                        newCashierSession.CreateDate = DateTime.Now;
-                        newCashierSession.cashierSessionStatus = CashierSessionStatus.START;
-                        newCashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
-                        newCashierSession.ModifiedDate = DateTime.Now;
-
-                        newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
-
-                    }
+                    if (item.userID == userId) {
 
 
+                        // then create new session
+                        if (item.shift == Shift.NIGHT_SHIFT)
+                        {
+                            // if previous shift equal to night shift, new shift, mark as Day shift
+                            NightShiftSession nightShiftSession = new NightShiftSession();
 
-                }
-            }
-            else
-            {
-                bool session = new NightShiftSessionService().checkIsNightShift();
-                if (session)
-                {
+                            nightShiftSession.userID = userId;
+                            nightShiftSession.StartingTime = DateTime.Now;
+                            nightShiftSession.EndTime = DateTime.Now;
+                            nightShiftSession.shiftSessionStatus = ShiftSessionStatus.START;
+                            nightShiftSession.shift = Shift.DAY_SHIFT;
+                            nightShiftSession.Status = CommonStatus.Active;
+                            nightShiftSession.CreateDate = DateTime.Now;
+                            nightShiftSession.CreateUser = userId;
+                            nightShiftSession.ModifiedDate = DateTime.Now;
+                            nightShiftSession.ModifiedUser = userId;
 
-                    NightShiftSession nightShiftSession = new NightShiftSession();
+                            //create day shift
+                            new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
 
-                    nightShiftSession.userID = userId;
-                    nightShiftSession.StartingTime = DateTime.Now;
-                    nightShiftSession.EndTime = DateTime.Now;
-                    nightShiftSession.shiftSessionStatus = ShiftSessionStatus.START;
-                    nightShiftSession.shift = Shift.DAY_SHIFT;
-                    nightShiftSession.Status = CommonStatus.Active;
-                    nightShiftSession.CreateDate = DateTime.Now;
-                    nightShiftSession.CreateUser = userId;
-                    nightShiftSession.ModifiedDate = DateTime.Now;
-                    nightShiftSession.ModifiedUser = userId;
+                            CashierSession newCashierSession = new CashierSession();
+                            List<CashierSession> mtList = new List<CashierSession>();
 
-                    new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
+                            //previous all night shift  cashier sessions update as end
+                            mtList = GetAllNightsiftActiveCashierSession();
+                            if (mtList.Count > 0)
+                            {
+                                foreach (CashierSession cashierSessionItem in mtList)
+                                {
+                                    newCashierSession.Id = cashierSessionItem.Id;
+                                    newCashierSession.EndBalence = 0;
+                                    newCashierSession.EndTime = DateTime.Now;
+                                    newCashierSession.cashierSessionStatus = CashierSessionStatus.END;
+                                    newCashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                    newCashierSession.ModifiedDate = DateTime.Now;
+                                    newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
+                                }
 
-                    CashierSession newCashierSession = new CashierSession();
-                    List<CashierSession> mtList = new List<CashierSession>();
-                    mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
-                    if (mtList.Count > 0)
-                    {
-                        newCashierSession.Id = mtList[0].Id;
-                        newCashierSession.userID = Convert.ToInt32(userIdCookie);
-                        newCashierSession.StartingTime = DateTime.Now;
-                        newCashierSession.StartBalence = 0;
-                        newCashierSession.EndBalence = 0;
-                        newCashierSession.EndTime = DateTime.Now;
-                        newCashierSession.cashierSessionStatus = CashierSessionStatus.END;
-                        newCashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
-                        newCashierSession.ModifiedDate = DateTime.Now;
 
-                        newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
+                            }
+                        }
+                        else
+                        {
+
+                            NightShiftSession nightShiftSession = new NightShiftSession();
+
+                            nightShiftSession.userID = userId;
+                            nightShiftSession.StartingTime = DateTime.Now;
+                            nightShiftSession.EndTime = DateTime.Now;
+                            nightShiftSession.shiftSessionStatus = ShiftSessionStatus.START;
+                            nightShiftSession.shift = Shift.NIGHT_SHIFT;
+                            nightShiftSession.Status = CommonStatus.Active;
+                            nightShiftSession.CreateDate = DateTime.Now;
+                            nightShiftSession.CreateUser = userId;
+                            nightShiftSession.ModifiedDate = DateTime.Now;
+                            nightShiftSession.ModifiedUser = userId;
+
+                            new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
+
+                            CashierSession newCashierSession = new CashierSession();
+                            List<CashierSession> mtList = new List<CashierSession>();
+                            mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
+                            if (mtList.Count == 0)
+                            {
+
+                                newCashierSession.userID = Convert.ToInt32(userIdCookie);
+                                newCashierSession.StartingTime = DateTime.Now;
+                                newCashierSession.StartBalence = 0;
+                                newCashierSession.EndBalence = 0;
+                                newCashierSession.EndTime = DateTime.Now;
+                                newCashierSession.CreateUser = Convert.ToInt32(userIdCookie);
+                                newCashierSession.CreateDate = DateTime.Now;
+                                newCashierSession.cashierSessionStatus = CashierSessionStatus.START;
+                                newCashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                newCashierSession.ModifiedDate = DateTime.Now;
+                                newCashierSession.UserRole = UserRole.OPDNURSE;
+                                newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
+
+                            }
+
+
+
+                        }
+
 
                     }
+
                 }
-                else
-                {
 
-                    NightShiftSession nightShiftSession = new NightShiftSession();
-
-                    nightShiftSession.userID = userId;
-                    nightShiftSession.StartingTime = DateTime.Now;
-                    nightShiftSession.EndTime = DateTime.Now;
-                    nightShiftSession.shiftSessionStatus = ShiftSessionStatus.START;
-                    nightShiftSession.shift = Shift.NIGHT_SHIFT;
-                    nightShiftSession.Status = CommonStatus.Active;
-                    nightShiftSession.CreateDate = DateTime.Now;
-                    nightShiftSession.CreateUser = userId;
-                    nightShiftSession.ModifiedDate = DateTime.Now;
-                    nightShiftSession.ModifiedUser = userId;
-
-                    new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
-
-                    CashierSession newCashierSession = new CashierSession();
-                    List<CashierSession> mtList = new List<CashierSession>();
-                    mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
-                    if (mtList.Count == 0)
-                    {
-
-                        newCashierSession.userID = Convert.ToInt32(userIdCookie);
-                        newCashierSession.StartingTime = DateTime.Now;
-                        newCashierSession.StartBalence = 0;
-                        newCashierSession.EndBalence = 0;
-                        newCashierSession.EndTime = DateTime.Now;
-                        newCashierSession.CreateUser = Convert.ToInt32(userIdCookie);
-                        newCashierSession.CreateDate = DateTime.Now;
-                        newCashierSession.cashierSessionStatus = CashierSessionStatus.START;
-                        newCashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
-                        newCashierSession.ModifiedDate = DateTime.Now;
-
-                        newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
-
-                    }
-                }
 
             }
+            //else
+            //{
+            //    //if opd user 0  OPD session (Day or night)
+            //    bool session = new NightShiftSessionService().checkIsNightShift();
+            //    if (session)
+            //    {
+
+            //        NightShiftSession nightShiftSession = new NightShiftSession();
+
+            //        nightShiftSession.userID = userId;
+            //        nightShiftSession.StartingTime = DateTime.Now;
+            //        nightShiftSession.EndTime = DateTime.Now;
+            //        nightShiftSession.shiftSessionStatus = ShiftSessionStatus.START;
+            //        nightShiftSession.shift = Shift.DAY_SHIFT;
+            //        nightShiftSession.Status = CommonStatus.Active;
+            //        nightShiftSession.CreateDate = DateTime.Now;
+            //        nightShiftSession.CreateUser = userId;
+            //        nightShiftSession.ModifiedDate = DateTime.Now;
+            //        nightShiftSession.ModifiedUser = userId;
+
+            //        new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
+
+            //        CashierSession newCashierSession = new CashierSession();
+            //        List<CashierSession> mtList = new List<CashierSession>();
+            //        mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
+            //        if (mtList.Count > 0)
+            //        {
+            //            newCashierSession.Id = mtList[0].Id;
+            //            newCashierSession.userID = Convert.ToInt32(userIdCookie);
+            //            newCashierSession.StartingTime = DateTime.Now;
+            //            newCashierSession.StartBalence = 0;
+            //            newCashierSession.EndBalence = 0;
+            //            newCashierSession.EndTime = DateTime.Now;
+            //            newCashierSession.cashierSessionStatus = CashierSessionStatus.END;
+            //            newCashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
+            //            newCashierSession.ModifiedDate = DateTime.Now;
+
+            //            newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
+
+            //        }
+            //    }
+            //    else
+            //    {
+
+            //        NightShiftSession nightShiftSession = new NightShiftSession();
+
+            //        nightShiftSession.userID = userId;
+            //        nightShiftSession.StartingTime = DateTime.Now;
+            //        nightShiftSession.EndTime = DateTime.Now;
+            //        nightShiftSession.shiftSessionStatus = ShiftSessionStatus.START;
+            //        nightShiftSession.shift = Shift.NIGHT_SHIFT;
+            //        nightShiftSession.Status = CommonStatus.Active;
+            //        nightShiftSession.CreateDate = DateTime.Now;
+            //        nightShiftSession.CreateUser = userId;
+            //        nightShiftSession.ModifiedDate = DateTime.Now;
+            //        nightShiftSession.ModifiedUser = userId;
+
+            //        new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
+
+            //        CashierSession newCashierSession = new CashierSession();
+            //        List<CashierSession> mtList = new List<CashierSession>();
+            //        mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
+            //        if (mtList.Count == 0)
+            //        {
+
+            //            newCashierSession.userID = Convert.ToInt32(userIdCookie);
+            //            newCashierSession.StartingTime = DateTime.Now;
+            //            newCashierSession.StartBalence = 0;
+            //            newCashierSession.EndBalence = 0;
+            //            newCashierSession.EndTime = DateTime.Now;
+            //            newCashierSession.CreateUser = Convert.ToInt32(userIdCookie);
+            //            newCashierSession.CreateDate = DateTime.Now;
+            //            newCashierSession.cashierSessionStatus = CashierSessionStatus.START;
+            //            newCashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
+            //            newCashierSession.ModifiedDate = DateTime.Now;
+            //            newCashierSession.UserRole = UserRole.OPDNURSE;
+            //            newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
+
+            //        }
+            //    }
+
+            //}
+
+            //change shift
             OPDService oPDService = new OPDService();
             oPDService.UpdateShift();
 
 
             return RedirectToAction("Index");
         }
+        public void CreateFirstShift()
+        {
+            List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
+            var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+            int userId = Convert.ToInt32(userIdCookie);
+            bool session = new NightShiftSessionService().checkIsNightShift();
+            if (session)
+            {
+                NightShiftSessionList = GetACtiveNtShiftSessionsByUserID(userId,Shift.NIGHT_SHIFT);
+            }
+            else
+            {
+                NightShiftSessionList = GetACtiveNtShiftSessionsByUserID(userId,Shift.DAY_SHIFT);
+            }
+         
 
+            if (NightShiftSessionList.Count == 0)
+            {
+               
+                if (!session)
+                {
+                    // if Day shift 
+                    NightShiftSession nightShiftSession = new NightShiftSession();
+
+                    nightShiftSession.userID = userId;
+                    nightShiftSession.StartingTime = DateTime.Now;
+                    nightShiftSession.EndTime = DateTime.Now;
+                    nightShiftSession.shiftSessionStatus = ShiftSessionStatus.START;
+                    nightShiftSession.shift = Shift.DAY_SHIFT;
+                    nightShiftSession.Status = CommonStatus.Active;
+                    nightShiftSession.CreateDate = DateTime.Now;
+                    nightShiftSession.CreateUser = userId;
+                    nightShiftSession.ModifiedDate = DateTime.Now;
+                    nightShiftSession.ModifiedUser = userId;
+
+                    //create day shift
+                    new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
+
+                }
+                else
+                {
+
+                    NightShiftSession nightShiftSession = new NightShiftSession();
+
+                    nightShiftSession.userID = userId;
+                    nightShiftSession.StartingTime = DateTime.Now;
+                    nightShiftSession.EndTime = DateTime.Now;
+                    nightShiftSession.shiftSessionStatus = ShiftSessionStatus.START;
+                    nightShiftSession.shift = Shift.NIGHT_SHIFT;
+                    nightShiftSession.Status = CommonStatus.Active;
+                    nightShiftSession.CreateDate = DateTime.Now;
+                    nightShiftSession.CreateUser = userId;
+                    nightShiftSession.ModifiedDate = DateTime.Now;
+                    nightShiftSession.ModifiedUser = userId;
+
+                    new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
+
+                    CashierSession newCashierSession = new CashierSession();
+                    List<CashierSession> mtList = new List<CashierSession>();
+                    mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
+                    if (mtList.Count == 0)
+                    {
+
+                        newCashierSession.userID = Convert.ToInt32(userIdCookie);
+                        newCashierSession.StartingTime = DateTime.Now;
+                        newCashierSession.StartBalence = 0;
+                        newCashierSession.EndBalence = 0;
+                        newCashierSession.EndTime = DateTime.Now;
+                        newCashierSession.CreateUser = Convert.ToInt32(userIdCookie);
+                        newCashierSession.CreateDate = DateTime.Now;
+                        newCashierSession.cashierSessionStatus = CashierSessionStatus.START;
+                        newCashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
+                        newCashierSession.ModifiedDate = DateTime.Now;
+                        newCashierSession.UserRole = UserRole.OPDNURSE;
+                        newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
+
+                    }
+                }
+
+            }
+
+
+        }
         #endregion
 
         #region OPD Management 
         public IActionResult Index(int isPop)
         {
+            CreateFirstShift();
             OPDDto oPDDto = new OPDDto();
             oPDDto.StartTime = DateTime.Now;
             oPDDto.EndTime = DateTime.Now;
@@ -378,6 +481,7 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.CreateDate = DateTime.Now;
                     oPDDto.opd.ModifiedDate = DateTime.Now;
                     oPDDto.opd.HospitalFee = oPDDto.OpdType == 1 ? hospitalFee : 0;
+                    oPDDto.opd.Description = oPDDto.OpdType == 1 ? "OPD" : "Other";
                     oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
                     oPDDto.opd.invoiceType = InvoiceType.OPD;
                     oPDDto.opd.ConsultantFee = 0;
@@ -561,7 +665,7 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 try
                 {
-                    opdSchedulers = new OPDSchedulerService().GetTodayActiveOPDSchedulers();
+                    opdSchedulers = new OPDSchedulerService().GetActiveOPDSchedulers();
                     if (opdSchedulers != null)
                     {
                         foreach (var opdScheduler in opdSchedulers)
@@ -782,6 +886,22 @@ namespace HospitalMgrSystemUI.Controllers
             return NightShiftSessionList;
         }
 
+        private List<NightShiftSession> GetACtiveNtShiftSessionsByUserID(int id , Shift shift)
+        {
+            List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    NightShiftSessionList = new NightShiftSessionService().GetACtiveNtShiftSessionsByUserID(id, shift);
+
+                }
+                catch (Exception ex) { }
+            }
+            return NightShiftSessionList;
+        }
+
         private List<CashierSession> GetActiveCashierSession(int id)
         {
             List<CashierSession> CashierSessionList = new List<CashierSession>();
@@ -791,6 +911,23 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     CashierSessionList = new CashierSessionService().GetACtiveCashierSessions(id);
+
+                }
+                catch (Exception ex) { }
+            }
+            return CashierSessionList;
+        }
+
+
+        private List<CashierSession> GetAllNightsiftActiveCashierSession()
+        {
+            List<CashierSession> CashierSessionList = new List<CashierSession>();
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    CashierSessionList = new CashierSessionService().GetAllNightsiftActiveCashierSession();
 
                 }
                 catch (Exception ex) { }

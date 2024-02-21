@@ -57,6 +57,14 @@ namespace HospitalMgrSystemUI.Models
         public int ChannelingScheduleID { get; set; }
 
         public ChannelingSchedule channelingSchedule { get; set; }
+
+        public int isVOGScan { get; set; }
+        public int isCardioScan { get; set; }
+        public int isExerciseBook { get; set; }
+
+        public Scan? vogScan { get; set; }
+        public Scan? echoScan { get; set; }
+        public Drug? exerciseBook { get; set; }
         #endregion
     }
 }

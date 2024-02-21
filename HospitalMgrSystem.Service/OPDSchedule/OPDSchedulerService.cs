@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.Enums;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,6 +56,39 @@ namespace HospitalMgrSystem.Service.OPDSchedule
             return oPDScheduler;
         }
 
+
+        public void UpdateIsActive()
+        {
+            List<Model.OPDScheduler> mtList = new List<Model.OPDScheduler>();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                    mtList = dbContext.OPDScheduler
+                        .Include(o => o.Consultant)
+                        .Where(o => o.Status == Model.Enums.CommonStatus.Active && o.isActiveSession == 1)
+                        .ToList();
+
+                if(mtList.Count > 0)
+                {
+                    foreach (OPDScheduler oPDScheduler in mtList)
+                    {
+                        HospitalMgrSystem.Model.OPDScheduler result = (from p in dbContext.OPDScheduler where p.Id == oPDScheduler.Id select p).SingleOrDefault();
+
+                        result.OPDSchedulerStatus = OPDScheduleStatus.Inactive;
+                        result.endTime =DateTime.Now;
+                        result.isActiveSession = 0;
+                        result.ModifiedUser = oPDScheduler.ModifiedUser;
+                        result.ModifiedDate = oPDScheduler.ModifiedDate;
+                        dbContext.SaveChanges();
+
+                    }
+                }
+
+
+
+            }
+
+        }
+
         public List<Model.OPDScheduler> GetAllOPDSchedulerDByStatus()
         {
             List<Model.OPDScheduler> mtList = new List<Model.OPDScheduler>();
@@ -92,6 +127,21 @@ namespace HospitalMgrSystem.Service.OPDSchedule
                 opdSchedulers = dbContext.OPDScheduler
                     .Include(o => o.Consultant)
                     .Where(o => o.cDate == currentDate && o.Status == Model.Enums.CommonStatus.Active && o.isActiveSession == 1)
+                    .ToList();
+            }
+
+            return opdSchedulers;
+        }
+
+        public List<Model.OPDScheduler> GetActiveOPDSchedulers()
+        {
+            List<Model.OPDScheduler> opdSchedulers = new List<Model.OPDScheduler>();
+
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                opdSchedulers = dbContext.OPDScheduler
+                    .Include(o => o.Consultant)
+                    .Where(o =>  o.Status == Model.Enums.CommonStatus.Active && o.isActiveSession == 1)
                     .ToList();
             }
 

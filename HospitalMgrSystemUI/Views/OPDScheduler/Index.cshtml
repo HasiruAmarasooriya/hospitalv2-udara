@@ -55,7 +55,6 @@
                                     <th>No</th>  
                                     <th>Session</th>
                                     <th>Doctor</th>
-                                    <th>Status</th>
                                     <th>Arrival time</th>
                                     <th>Departure time</th>
                                     <th>Action 1</th>
@@ -66,40 +65,77 @@
                             @if (Model.OPDSchedulerList != null)
                             { @foreach (var item in Model.OPDSchedulerList)
                                 {
-                                    <tr>
+                                    @if(item.isActiveSession == 1){
+                                        <tr class="bg-success">
 
 
 
-                                        <td>@item.Id</td>
+                                            <td>@item.Id</td>
 
-                                        <td>@item.OPDSession</td>
-                                        <td>
-                                            @if (item.Consultant != null)
-                                            {
-                                                @item.Consultant.Name
-                                            }
-                                        </td>
-                                        <td>@item.OPDSchedulerStatus</td>
-                                        <td>@item.startTime</td>
-                                        <td>@item.endTime</td>
-                                        <td>
-                                            <input type="hidden" id="date-format-@item.Id" asp-for="cDate" value="@item.cDate.ToString("yyyy-MM-dd")">
-                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
-                                        </td>
-                                        <td>
-                                            @if (Model != null)
-                                            {
-
-                                                @using (Html.BeginForm("DeleteOPD", "OPDRegistration", new { Id = @item.Id }, FormMethod.Post))
+                                            <td>@item.OPDSession</td>
+                                            <td>
+                                                @if (item.Consultant != null)
+                                                {
+                                                    @item.Consultant.Name
+                                                }
+                                            </td>
+                                            <td>@item.startTime</td>
+                                            <td>-</td>
+                                            <td>
+                                                <input type="hidden" id="date-format-@item.Id" asp-for="cDate" value="@item.cDate.ToString("yyyy-MM-dd")">
+                                                <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
+                                            </td>
+                                            <td>
+                                                @if (Model != null)
                                                 {
 
-                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+                                                    @using (Html.BeginForm("DeleteOPD", "OPDRegistration", new { Id = @item.Id }, FormMethod.Post))
+                                                    {
 
+                                                        <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+
+                                                    }
                                                 }
-                                            }
 
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    }else{
+                                        <tr>
+
+
+
+                                            <td>@item.Id</td>
+
+                                            <td>@item.OPDSession</td>
+                                            <td>
+                                                @if (item.Consultant != null)
+                                                {
+                                                    @item.Consultant.Name
+                                                }
+                                            </td>
+                                            <td>@item.startTime</td>
+                                            <td>@item.endTime</td>
+                                            <td>
+                                                <input type="hidden" id="date-format-@item.Id" asp-for="cDate" value="@item.cDate.ToString("yyyy-MM-dd")">
+                                                <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
+                                            </td>
+                                            <td>
+                                                @if (Model != null)
+                                                {
+
+                                                    @using (Html.BeginForm("DeleteOPD", "OPDRegistration", new { Id = @item.Id }, FormMethod.Post))
+                                                    {
+
+                                                        <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+
+                                                    }
+                                                }
+
+                                            </td>
+                                        </tr>
+                                    
+                                    }
+
                                 } }
 
                         </tbody>

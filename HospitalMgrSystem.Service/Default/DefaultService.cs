@@ -44,5 +44,29 @@ namespace HospitalMgrSystem.Service.Default
             }
             return nightShift.IsNightShift;
         }
+
+        public Scan GetScanChannelingFee(int ID)
+        {
+            Model.Scan scanFee = new Model.Scan();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                scanFee = dbContext.ChannelingItems.First(o => o.Id == ID);
+
+            }
+            return scanFee;
+        }
+
+        public Drug GetExerciseBookFee()
+        {
+            Model.Drug exbFee = new Model.Drug();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                exbFee = dbContext.Drugs.First(o => o.Id == 564);
+
+            }
+            return exbFee;
+        }
+
+
     }
 }

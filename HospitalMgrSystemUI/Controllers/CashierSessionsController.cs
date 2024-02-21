@@ -68,8 +68,8 @@ namespace HospitalMgrSystemUI.Controllers
                                 viewCashierSessionDto.cashierSession.ModifiedDate = DateTime.Now;
                                 viewCashierSessionDto.cashierSession.Deviation = 0;
                                 viewCashierSessionDto.cashierSession.cashierSessionStatus = CashierSessionStatus.END;
-
-                                cashierSession = new CashierSessionService().CreateCashierSession(viewCashierSessionDto.cashierSession);
+                                viewCashierSessionDto.cashierSession.UserRole = UserRole.CASHIER;
+                                 cashierSession = new CashierSessionService().CreateCashierSession(viewCashierSessionDto.cashierSession);
                            
 
                         }
@@ -88,7 +88,7 @@ namespace HospitalMgrSystemUI.Controllers
                             viewCashierSessionDto.cashierSession.cashierSessionStatus = CashierSessionStatus.START;
                             viewCashierSessionDto.cashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
                             viewCashierSessionDto.cashierSession.ModifiedDate = DateTime.Now;
-
+                            viewCashierSessionDto.cashierSession.UserRole = UserRole.CASHIER;
                             cashierSession = new CashierSessionService().CreateCashierSession(viewCashierSessionDto.cashierSession);
 
                             }

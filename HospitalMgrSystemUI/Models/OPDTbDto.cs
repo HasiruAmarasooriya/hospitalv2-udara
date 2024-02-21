@@ -11,6 +11,7 @@ namespace HospitalMgrSystemUI.Models
         public string FullName { get; set; }
         public string roomName { get; set; }
         public string consaltantName { get; set; }
+        public string? Description { get; set; }
         public SexStatus Sex { get; set; }
         public string MobileNumber { get; set; }
         public int AppoimentNo { get; set; }

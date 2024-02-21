@@ -28,14 +28,22 @@ namespace HospitalMgrSystemUI.Controllers
         {
             try
             {
-                foreach (OPDScheduler oPDScheduler in oPDSchedulers)
+                var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+                int userId = Convert.ToInt32(userIdCookie);
+                if(oPDSchedulers.Count > 0)
                 {
-                    OPDSchedulerService oPDSchedulerService = new OPDSchedulerService();
-                    oPDScheduler.CreateUser = 0;
-                    oPDScheduler.CreateDate = DateTime.Now;
-                    oPDScheduler.ModifiedUser = 0;
-                    oPDScheduler.ModifiedDate = DateTime.Now;
-                    oPDSchedulerService.CreateOPDSchedule(oPDScheduler);
+                    DeactivateAllActiveSessions();
+                    foreach (OPDScheduler oPDScheduler in oPDSchedulers)
+                    {
+                        OPDSchedulerService oPDSchedulerService = new OPDSchedulerService();
+                        oPDScheduler.CreateUser = userId;
+                        oPDScheduler.CreateDate = DateTime.Now;
+                        oPDScheduler.ModifiedUser = userId;
+                        oPDScheduler.ModifiedDate = DateTime.Now;
+
+                        oPDSchedulerService.CreateOPDSchedule(oPDScheduler);
+                    }
+
                 }
 
                 return RedirectToAction("Index");
@@ -155,6 +163,23 @@ namespace HospitalMgrSystemUI.Controllers
                 catch (Exception ex) { }
             }
             return oPDSchedulers;
+        }
+
+        private void DeactivateAllActiveSessions()
+        {
+           
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                 
+                    new OPDSchedulerService().UpdateIsActive();
+
+                }
+                catch (Exception ex) { }
+            }
+
         }
 
     }
