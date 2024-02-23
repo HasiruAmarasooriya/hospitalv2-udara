@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using HospitalMgrSystem.Service.ChannelingSchedule;
 using HospitalMgrSystem.Service.OPD;
+using HospitalMgrSystem.Service.SMS;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -139,7 +140,7 @@ namespace HospitalMgrSystemUI.Controllers
             return channelingSchedule;
         }
 
-        public IActionResult AddNewChannelingShedule()
+        public async Task<IActionResult> AddNewChannelingSheduleAsync()
         {
             using (var httpClient = new HttpClient())
             {
@@ -147,7 +148,18 @@ namespace HospitalMgrSystemUI.Controllers
                 {
                     if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.NOT_ACTIVE && viewChannelingSchedule.ChannelingSchedule.scheduleStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.ACTIVE)
                     {
-                        List<OPD> oPDsforSchedularId = new OPDService().GetAllOPDBySchedularID(viewChannelingSchedule.ChannelingSchedule.Id);
+                        ChannelingSMS channelingSMS = new ChannelingSMS();  
+
+                        channelingSMS.channeling = new OPDService().GetAllOPDBySchedularID(viewChannelingSchedule.ChannelingSchedule.Id);
+                        channelingSMS.channelingSchedule = LoadChannelingSheduleByID(viewChannelingSchedule.ChannelingSchedule.Id);
+                        channelingSMS.ChannellingScheduleStatus = viewChannelingSchedule.ChannelingSchedule.scheduleStatus;
+
+                         // Add temp mobile number to last record
+                         channelingSMS.channeling[channelingSMS.channeling.Count - 1].patient.MobileNumber = "0710101773";
+
+                        SMSService sMSService = new SMSService();
+                        await sMSService.SendSMSToken(channelingSMS);
+                        
                     }
 
                     viewChannelingSchedule.ChannelingSchedule.Consultant = null;

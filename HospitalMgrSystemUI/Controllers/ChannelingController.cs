@@ -50,6 +50,7 @@ namespace HospitalMgrSystemUI.Controllers
             oPDChannelingDto.vogScan = new DefaultService().GetScanChannelingFee(2);
             oPDChannelingDto.echoScan = new DefaultService().GetScanChannelingFee(3);
             oPDChannelingDto.exerciseBook = new DefaultService().GetExerciseBookFee();
+            oPDChannelingDto.listChannelingItems = LoadChannelingItems();
 
             decimal consaltantFee = new DefaultService().GetDefailtConsaltantPrice();
             decimal hospitalFee = new DefaultService().GetDefailtHospitalPrice();
@@ -141,6 +142,25 @@ namespace HospitalMgrSystemUI.Controllers
             return null;
         }
 
+        private List<Scan> LoadChannelingItems()
+        {
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    List<Scan> channelingItems = new ChannelingService().LoadChannelingItems();
+
+                    return channelingItems;
+
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+        }
+
         private List<ChannelingSchedule> LoadChannelingShedule()
         {
             List<ChannelingSchedule> channelingSchedule = new List<ChannelingSchedule>();
@@ -174,7 +194,7 @@ namespace HospitalMgrSystemUI.Controllers
                         {
                             Id = item.Id,
                             roomName = item.room.Name,
-                            Description =item.Description,
+                            Description = item.Description,
                             consaltantName = item.consultant.Name,
                             FullName = item.patient.FullName,
                             MobileNumber = item.patient.MobileNumber,
@@ -225,13 +245,13 @@ namespace HospitalMgrSystemUI.Controllers
                 ChannelingSchedule channelingSchedule = new ChannelingSchedule();
                 Patient patient = new Patient();
 
-                if(oPDDto == null || oPDDto.opd == null || oPDDto.patient == null)
+                if (oPDDto == null || oPDDto.opd == null || oPDDto.patient == null)
                 {
                     return RedirectToAction("Index");
                 }
 
                 channelingSchedule = ChannelingScheduleGetByID(oPDDto.opd.schedularId);
-                if (channelingSchedule == null )
+                if (channelingSchedule == null)
                 {
                     return RedirectToAction("Index");
                 }
@@ -284,7 +304,7 @@ namespace HospitalMgrSystemUI.Controllers
                         OPDobj = new OPDService().CreateOPD(oPDDto.opd);
                     }
 
-                    if(oPDDto.isVOGScan == 1)
+                    if (oPDDto.isVOGScan == 1)
                     {
                         Scan vogScan = new Scan();
                         vogScan = new DefaultService().GetScanChannelingFee(2);
@@ -365,7 +385,7 @@ namespace HospitalMgrSystemUI.Controllers
                         Exercise.Amount = drugScan.Price;
                         Exercise.IsRefund = 0;
                         Exercise.DrugId = drugScan.Id;
-                        Exercise.Type =0;
+                        Exercise.Type = 0;
                         Exercise.Qty = 1;
                         Exercise.Price = drugScan.Price;
                         Exercise.billingItemsType = BillingItemsType.Items;

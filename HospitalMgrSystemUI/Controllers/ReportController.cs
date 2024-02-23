@@ -42,6 +42,7 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.listChanneling = new ReportsService().GetAllChannelingByDateRangePaidStatus(_OPDDto.StartTime, _OPDDto.EndTime);
                     oPDDto.listNeedToPayChanneling = new ReportsService().GetAllChannelingByDateRangeAndNeedToPayStatus(_OPDDto.StartTime, _OPDDto.EndTime);
                     oPDDto.listNotPaidChanneling = new ReportsService().GetAllChannelingByDateRangeAndNotPaidStatus(_OPDDto.StartTime, _OPDDto.EndTime);
+                    oPDDto.paymentData = new ReportsService().GetAllPaymentsData(_OPDDto.StartTime, _OPDDto.EndTime);
                 }
                 
                 oPDDto.StartTime = _OPDDto.StartTime;
