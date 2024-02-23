@@ -6,11 +6,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using HospitalMgrSystem.Model;
 
 namespace HospitalMgrSystem.Service.Channeling
 {
     public class ChannelingService : IChannelingService
     {
+        public List<Scan> LoadChannelingItems()
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                return dbContext.ChannelingItems.ToList();
+            }
+        }
+
         public Model.Channeling CreateChanneling(Model.Channeling channeling)
         {
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
