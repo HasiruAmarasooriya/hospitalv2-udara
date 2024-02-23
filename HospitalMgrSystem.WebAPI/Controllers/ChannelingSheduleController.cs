@@ -84,6 +84,20 @@ namespace HospitalMgrSystem.WebAPI.Controllers
             }
         }
 
+        [HttpGet("GetChannelingItemById")]
+        public ActionResult<Scan> GetChannelingItemById(int Id)
+        {
+            Scan chanelingItem = _channelingService.GetChannelingItemById(Id);
+            if (chanelingItem == null)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return Ok(chanelingItem);
+            }
+        }
+
         [HttpPost("DeleteChannelingShedule")]
         public ActionResult<ChannelingSchedule> DeleteChannelingShedule(ChannelingSchedule channelingSchedule)
         {
