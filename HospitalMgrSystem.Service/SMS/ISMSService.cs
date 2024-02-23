@@ -13,5 +13,6 @@ namespace HospitalMgrSystem.Service.SMS
         public Task<string> SendSMSToken(ChannelingSMS channelingSMS);
 
         public Task<string> SendSMSToken();
+        public string generateMessageBodyForChannelingSchedule(ChannelingSMS channelingSMS);
     }
 }
