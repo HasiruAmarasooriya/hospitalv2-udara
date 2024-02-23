@@ -15,5 +15,6 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 
         public Model.ChannelingSchedule SheduleGetById(int id);
         public HospitalMgrSystem.Model.ChannelingSchedule DeleteChannelingShedule(int id);
+        public Model.Scan GetChannelingItemById(int id);
     }
 }

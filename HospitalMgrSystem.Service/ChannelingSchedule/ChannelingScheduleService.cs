@@ -60,9 +60,15 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 
                 var bookedChannelCount = dbContext.OPD
                     .Where(o => o.invoiceType == InvoiceType.CHE)
+                    .GroupBy(o => new { o.schedularId, o.AppoimentNo })
+                    .Select(g => new { ScheduleId = g.Key.schedularId, Count = g.Count() })
+                    .ToList();
+
+                /*var bookedChannelCount = dbContext.OPD
+                    .Where(o => o.invoiceType == InvoiceType.CHE)
                     .GroupBy(o => o.schedularId)
                     .Select(g => new { ScheduleId = g.Key, Count = g.Count() })
-                    .ToList();
+                    .ToList();*/
 
                 var bookedAndPaidCount = dbContext.OPD
                     .Where(o => o.invoiceType == InvoiceType.CHE && o.paymentStatus == PaymentStatus.PAID)
@@ -137,6 +143,15 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                                                                      select p).SingleOrDefault();
                 result.Status = 0;
                 dbContext.SaveChanges();
+                return result;
+            }
+        }
+
+        public Model.Scan GetChannelingItemById(int id)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                Model.Scan result = (from p in dbContext.ChannelingItems where p.Id == id select p).SingleOrDefault();
                 return result;
             }
         }

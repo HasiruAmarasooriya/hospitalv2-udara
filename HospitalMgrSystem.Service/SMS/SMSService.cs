@@ -31,30 +31,30 @@ namespace HospitalMgrSystem.Service.SMS
                 // Check for existing valid token
                 var existingToken = dbContext.SMSAPILogin.FirstOrDefault(t => t.Token != null && t.ExpirationTime > DateTime.Now);
 
-            if (existingToken != null)
-            {
+                if (existingToken != null)
+                {
                     _smsApiLogin.Id = existingToken.Id; // Use existing an Id property
                     return existingToken; // Use existing valid token
-            }
-            else
-            {
-                    _smsApiLogin.Id = 0; 
-             }
+                }
+                else
+                {
+                    _smsApiLogin.Id = 0;
+                }
 
-            // Token expired or absent, proceed with acquiring a new one
-            var request = new
-            {
-                username = "kumuduhos",
-                password = "Kumuduhos@1234567"
-            };
+                // Token expired or absent, proceed with acquiring a new one
+                var request = new
+                {
+                    username = "kumuduhos",
+                    password = "Kumuduhos@1234567"
+                };
 
-            var jsonRequest = JsonSerializer.Serialize(request);
-            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+                var jsonRequest = JsonSerializer.Serialize(request);
+                var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync("https://e-sms.dialog.lk/api/v1/login", content);
+                var response = await _httpClient.PostAsync("https://e-sms.dialog.lk/api/v1/login", content);
 
-            if (response.IsSuccessStatusCode)
-            {
+                if (response.IsSuccessStatusCode)
+                {
                     var responseContent = await response.Content.ReadAsStringAsync();
                     var responseObject = JsonSerializer.Deserialize<TokenResponse>(responseContent);
                     if (responseObject != null)
@@ -64,59 +64,59 @@ namespace HospitalMgrSystem.Service.SMS
                         int expiration = responseObject.Expiration;
 
                         // Now you can use token, status, and expiration as needed
-            
-                    if (status == "success")
-                    {
-                       // Get expiration time(handle potential null / negative values)
-                        var expirationSeconds = expiration;
-                        if (expirationSeconds > 0)
+
+                        if (status == "success")
                         {
-                            // Calculate expiration date/time using UTC for consistency
-                            var currentDateTime = DateTime.Now;
-                            var expirationTimeSpan = TimeSpan.FromSeconds(expirationSeconds);
-                            var expirationDateTime = currentDateTime.Add(expirationTimeSpan);
-
-                            _smsApiLogin.Comment = "";
-                            _smsApiLogin.Expiration = expiration;
-                            _smsApiLogin.ExpirationTime = expirationDateTime;
-                            _smsApiLogin.RemainingCount =0;
-                            _smsApiLogin.Token = token;
-                            _smsApiLogin.CreateDate = DateTime.Now;
-                            _smsApiLogin.CreateUser = 1;
-
-                            if (_smsApiLogin.Id != 0)
+                            // Get expiration time(handle potential null / negative values)
+                            var expirationSeconds = expiration;
+                            if (expirationSeconds > 0)
                             {
-                                HospitalMgrSystem.Model.SMSAPILogin result = (from p in dbContext.SMSAPILogin where p.Id == _smsApiLogin.Id select p).SingleOrDefault();
-                                result.Token = token;
-                                result.Expiration = expiration;
-                                result.RemainingCount = 0;
-                                result.Comment = ""; 
-                                result.ExpirationTime = expirationDateTime;
-                                result.CreateDate = _smsApiLogin.CreateDate;
-                                result.CreateUser = _smsApiLogin.CreateUser;
+                                // Calculate expiration date/time using UTC for consistency
+                                var currentDateTime = DateTime.Now;
+                                var expirationTimeSpan = TimeSpan.FromSeconds(expirationSeconds);
+                                var expirationDateTime = currentDateTime.Add(expirationTimeSpan);
+
+                                _smsApiLogin.Comment = "";
+                                _smsApiLogin.Expiration = expiration;
+                                _smsApiLogin.ExpirationTime = expirationDateTime;
+                                _smsApiLogin.RemainingCount = 0;
+                                _smsApiLogin.Token = token;
+                                _smsApiLogin.CreateDate = DateTime.Now;
+                                _smsApiLogin.CreateUser = 1;
+
+                                if (_smsApiLogin.Id != 0)
+                                {
+                                    HospitalMgrSystem.Model.SMSAPILogin result = (from p in dbContext.SMSAPILogin where p.Id == _smsApiLogin.Id select p).SingleOrDefault();
+                                    result.Token = token;
+                                    result.Expiration = expiration;
+                                    result.RemainingCount = 0;
+                                    result.Comment = "";
+                                    result.ExpirationTime = expirationDateTime;
+                                    result.CreateDate = _smsApiLogin.CreateDate;
+                                    result.CreateUser = _smsApiLogin.CreateUser;
                                 }
+                                else
+                                {
+                                    dbContext.SMSAPILogin.Add(_smsApiLogin);
+
+                                }
+                                await dbContext.SaveChangesAsync();
+
+                                return _smsApiLogin;
+                            }
                             else
                             {
-                                dbContext.SMSAPILogin.Add(_smsApiLogin);
-      
+                                Console.WriteLine("Invalid or non-positive expiration received.");
+                                return null;
                             }
-                            await dbContext.SaveChangesAsync();
 
-                            return _smsApiLogin;
+
                         }
                         else
                         {
-                            Console.WriteLine("Invalid or non-positive expiration received.");
+                            Console.WriteLine($"Login failed with status: {token}");
                             return null;
                         }
-
-
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Login failed with status: {token}");
-                        return null;
-                    }
 
                     }
                     else
@@ -124,53 +124,83 @@ namespace HospitalMgrSystem.Service.SMS
                         return null;
                     }
                 }
-            else
-            {
-                Console.WriteLine($"HTTP error: {response.StatusCode}");
-                return null;
-            }
+                else
+                {
+                    Console.WriteLine($"HTTP error: {response.StatusCode}");
+                    return null;
+                }
 
             }
         }
 
+        public string generateMessageBodyForChannelingSchedule(ChannelingSMS channelingSMS)
+        {
 
+            string message = "";
 
+            if (channelingSMS.ChannellingScheduleStatus == Model.Enums.ChannellingScheduleStatus.SESSION_START)
+            {
+                message = "KUMUDU HOSPITAL(PVT)LTD\n"
+                    + channelingSMS.channelingSchedule.Consultant.Name
+                    + "\nThe Session was Started at "
+                    + channelingSMS.channelingSchedule.DateTime
+                    + "\nරෝගීන් පරීක්ෂා කරන කාලය ආරම්භ විය"
+                    + "\nTEL: 066 22 22 244 || 066 22 30 027"
+                    + "\nwww.kumuduhospital.lk";
+            }
 
+            if (channelingSMS.ChannellingScheduleStatus == Model.Enums.ChannellingScheduleStatus.SESSION_END)
+            {
+                message = "KUMUDU HOSPITAL(PVT)LTD\n"
+                    + channelingSMS.channelingSchedule.Consultant.Name
+                    + "\nThe Session was Started at "
+                    + channelingSMS.channelingSchedule.DateTime
+                    + "\nරෝගීන් පර්ක්ෂා කිරීම අවසන් විය"
+                    + "\nTEL: 066 22 22 244 || 066 22 30 027"
+                    + "\nwww.kumuduhospital.lk";
+            }
+
+            return message;
+
+        }
 
         public async Task<string> SendSMSToken(ChannelingSMS channelingSMS)
         {
-
-            Model.SMSAPILogin _smsApiLogin = new Model.SMSAPILogin();
-            Model.SMSCampaign _SMSCampaign = new Model.SMSCampaign();
+            SMSAPILogin _smsApiLogin = new SMSAPILogin();
+            SMSCampaign _SMSCampaign = new SMSCampaign();
 
             using (var httpClient = new HttpClient())
             {
-                _smsApiLogin =await GetAccessToken();
+                _smsApiLogin = await GetAccessToken();
                 if (_smsApiLogin != null && _smsApiLogin != null)
                 {
-                    Model.SMSCampaign smsCampaign = new Model.SMSCampaign();
-                    _SMSCampaign.CampaignID =0;
+                    SMSCampaign smsCampaign = new SMSCampaign();
+                    _SMSCampaign.CampaignID = 0;
                     _SMSCampaign.CampaignCost = 0;
                     _SMSCampaign.duplicateNo = 0;
                     _SMSCampaign.invaliedNo = 0;
                     _SMSCampaign.maskBlockedUser = 0;
-                    _SMSCampaign.CreateDate =DateTime.Now;
+                    _SMSCampaign.CreateDate = DateTime.Now;
                     _SMSCampaign.CreateUser = 0;
+                    _SMSCampaign.sceduleID = channelingSMS.channelingSchedule.Id;
 
                     smsCampaign = createSMSCampaign(_SMSCampaign);
 
-           
+                    var mobileNumbers = new List<MobileNumber>();
+                    foreach (var item in channelingSMS.channeling)
+                    {
+                        mobileNumbers.Add(new MobileNumber { mobile = item.patient.MobileNumber });
+                    }
+
+                    var messageBody = generateMessageBodyForChannelingSchedule(channelingSMS);
 
                     var request = new SMSTokenRequest
                     {
-                        msisdn = new List<MobileNumber>
-                        {
-                            new MobileNumber { mobile = "0702869830" }
-                        },
-                        sourceAddress = "Kumudu Hospital",
-                        message = "This is a test message",
+                        msisdn = mobileNumbers,
+                        sourceAddress = "Kumudu hos ",
+                        message = messageBody,
                         transaction_id = smsCampaign.Id,
-                        payment_method = 4,
+                        payment_method = 0,
                         push_notification_url = ""
                     };
 
@@ -197,7 +227,7 @@ namespace HospitalMgrSystem.Service.SMS
                             smsCampaign.duplicateNo = responseObject.data.duplicatesRemoved;
                             smsCampaign.invaliedNo = responseObject.data.invalidNumbers;
                             smsCampaign.maskBlockedUser = responseObject.data.mask_blocked_numbers;
-        
+
                             // Handle success case
                             return $"Campaign ID: {campaignId}, Campaign Cost: {campaignCost}";
                         }
@@ -268,7 +298,8 @@ namespace HospitalMgrSystem.Service.SMS
 
                     if (response.IsSuccessStatusCode)
                     {
-                        try {
+                        try
+                        {
                             var responseContent = await response.Content.ReadAsStringAsync();
                             var responseObject = JsonSerializer.Deserialize<ApiResponse>(responseContent);
 
@@ -297,7 +328,7 @@ namespace HospitalMgrSystem.Service.SMS
 
 
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             throw ex;
                         }
