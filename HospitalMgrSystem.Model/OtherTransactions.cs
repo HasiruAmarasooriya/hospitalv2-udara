@@ -20,6 +20,11 @@ namespace HospitalMgrSystem.Model
 
         [ForeignKey("ConvenerID")]
         public User? Convener { get; set; }
+
+        public int? BeneficiaryID { get; set; }
+
+        [ForeignKey("BeneficiaryID")]
+        public User? Beneficiary { get; set; }
         public InvoiceType InvoiceType { get; set; }    
         public decimal Amount { get; set; }
         public string? Description { get; set; }

@@ -64,6 +64,8 @@ namespace HospitalMgrSystemUI.Models
         public int isCardioScan { get; set; }
         public int isExerciseBook { get; set; }
 
+        public int scanId { get; set; }
+
         public Scan? vogScan { get; set; }
         public Scan? echoScan { get; set; }
         public Drug? exerciseBook { get; set; }

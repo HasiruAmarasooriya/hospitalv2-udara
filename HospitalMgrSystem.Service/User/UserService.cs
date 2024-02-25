@@ -113,6 +113,17 @@ namespace HospitalMgrSystem.Service.User
             }
             return mtList;
         }
+
+        public List<Model.User> GetUsersByRole(UserRole userRole)
+        {
+            List<Model.User> mtList = new List<Model.User>();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.Users.Where(o => o.Status == 0 && o.userRole == userRole).ToList<Model.User>();
+
+            }
+            return mtList;
+        }
         public HospitalMgrSystem.Model.User DeleteUser(HospitalMgrSystem.Model.User user)
         {
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())

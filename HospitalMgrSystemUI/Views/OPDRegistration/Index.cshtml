@@ -316,6 +316,15 @@
             }
         });
 
+        document.addEventListener('keydown', function (event) {
+            // You can change 'Enter' to any key you want to trigger the function
+            if (event.key === 'Escape') {
+                // Call your function for Escape key
+                 handleClear();
+            } 
+        });
+
+
         function handleClear() {
             window.location.href = '/OPDRegistration/';
         }
@@ -631,9 +640,11 @@
             var contactNo = $('#txtMobileNumber').val();
             var sex = $('#dropSex').val();
             var age = $('#txtAge').val();
-            var doctortID = $('#dropDoctor').val();
-            var opdID = $('#opid').val();
-            var opdType = $("input[type='radio'][name='OPDType']:checked").val();
+
+            var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
+            var doctortID = parseInt(docId);
+            var opdID = $('#opdIndexNumber').val();
+            var opdType = parseInt(docId) == 82 ? 0 : 1;
 
             var patientObject = {
                 Id: patientID,
@@ -666,12 +677,8 @@
                     drugusList = [];
                     document.getElementById("tblBodyPayments2").innerHTML = "";
                     var opdId = @Html.Raw(Json.Serialize(Model.opdId));
-                    console.log(opdId);
-                    // Handle success, e.g., redirect to another page
-                    // window.location.href = '/OPDRegistration/Index';
-                    $("#AddEditContainerModel").html(data);
-                    $("#AddShiftModel").modal('show');
 
+                    $("#AddEditContainerModel").html(data);
                 },
                 error: function (error) {
                     // Handle error

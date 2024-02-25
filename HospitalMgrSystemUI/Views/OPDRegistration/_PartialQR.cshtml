@@ -17,7 +17,7 @@
     var telephoneNumber = @Html.Raw(Json.Serialize(Model.phone));
 
     function generateQRCode(size) {
-
+        console.log("generate QR");
         // Concatenate the variables to form the data
         var data = "OPD" + opdId.toString();
 
@@ -57,11 +57,23 @@
         printWindow.document.close();
         printWindow.print();
 
+
+        // Reload the page after printing
+        printWindow.onafterprint = function () {
+            console.log("Reload the page after printing");
+            printWindow.close();
+            location.reload();
+        };
+
     }
 
-    function closeModal() {
-        $('#AddShiftModel').modal('hide');
-    }
+    document.addEventListener('keydown', function (event) {
+        // You can change 'Enter' to any key you want to trigger the function
+        if (event.key === 'Enter') {
+            // Call your function here
+            printQRCode();
+        }
+    });
 
     generateQRCode(200)
 
@@ -76,7 +88,7 @@
         <div id="qrcode" class="d-flex justify-content-center"></div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal" onclick="closeModal()">Close</button>
+        <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Close</button>
         <button type="submit" class="btn  waves-effect btn-primary" onclick=printQRCode();><i class="fa fa-save"></i>&nbsp;Print</button>
     </div>
 

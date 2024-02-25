@@ -10,9 +10,11 @@ using HospitalMgrSystem.Service.OPD;
 using HospitalMgrSystem.Service.Patients;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Utilities.Encoders;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Numerics;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -25,6 +27,9 @@ namespace HospitalMgrSystemUI.Controllers
 
         [BindProperty]
         public Channeling myChannelling { get; set; }
+
+        [BindProperty]
+        public OPDDto _OPDDto { get; set; }
         public IActionResult Index()
         {
             OPDDto oPDDto = new OPDDto();
@@ -243,6 +248,7 @@ namespace HospitalMgrSystemUI.Controllers
             try
             {
                 ChannelingSchedule channelingSchedule = new ChannelingSchedule();
+                Scan ScanObj = new Scan();
                 Patient patient = new Patient();
 
                 if (oPDDto == null || oPDDto.opd == null || oPDDto.patient == null)
@@ -254,6 +260,13 @@ namespace HospitalMgrSystemUI.Controllers
                 if (channelingSchedule == null)
                 {
                     return RedirectToAction("Index");
+                }
+
+
+                
+                if (oPDDto.scanId != 0)
+                {
+                    ScanObj = ScanGetByID(oPDDto.scanId);
                 }
 
                 oPDDto.patient.CreateUser = Convert.ToInt32(userIdCookie);
@@ -294,6 +307,13 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.invoiceType = InvoiceType.CHE;
                     oPDDto.opd.ConsultantFee = consultantFee;
                     oPDDto.opd.shiftID = NightShiftSessionList[0].Id;
+
+                    if( ScanObj != null && ScanObj.Id != 0)
+                    {
+                        oPDDto.opd.Description = ScanObj.ItemName;
+                        oPDDto.opd.HospitalFee = ScanObj.HospitalFee;
+                        oPDDto.opd.ConsultantFee = ScanObj.DoctorFee;
+                    }
 
                     if (oPDDto.opd.Id > 0)
                     {
@@ -438,7 +458,243 @@ namespace HospitalMgrSystemUI.Controllers
                 return RedirectToAction("Index");
             }
         }
+        public IActionResult AddNewChannelWithQR([FromBody] OPDDto oPDDto)
+        {
+            var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
 
+            List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
+            NightShiftSessionList = GetActiveShiftSession();
+
+            try
+            {
+                ChannelingSchedule channelingSchedule = new ChannelingSchedule();
+                Scan ScanObj = new Scan();
+                Patient patient = new Patient();
+
+                if (oPDDto == null || oPDDto.opd == null || oPDDto.patient == null)
+                {
+                    return RedirectToAction("Index");
+                }
+
+                channelingSchedule = ChannelingScheduleGetByID(oPDDto.opd.schedularId);
+                if (channelingSchedule == null)
+                {
+                    return RedirectToAction("Index");
+                }
+
+
+
+                if (oPDDto.scanId != 0)
+                {
+                    ScanObj = ScanGetByID(oPDDto.scanId);
+                }
+
+                oPDDto.patient.CreateUser = Convert.ToInt32(userIdCookie);
+                oPDDto.patient.ModifiedUser = Convert.ToInt32(userIdCookie);
+                patient = CreatePatient(oPDDto.patient);
+
+                if (oPDDto.patient.MobileNumber == null || oPDDto.patient.MobileNumber.Length != 10)
+                {
+                    return RedirectToAction("Index");
+                }
+
+                // Validate phone number format and characters
+                foreach (char c in oPDDto.patient.MobileNumber)
+                {
+                    if (!char.IsDigit(c))
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
+
+                string name = patient.FullName;
+                var age = patient.Age;
+                var phone = patient.MobileNumber;
+                var sex = patient.Sex;
+
+                if (patient != null)
+                {
+
+                    decimal hospitalFee = channelingSchedule.HospitalFee;
+                    decimal consultantFee = channelingSchedule.ConsultantFee;
+                    OPD OPDobj = new OPD();
+                    oPDDto.opd.PatientID = patient.Id;
+                    oPDDto.opd.DateTime = DateTime.Now;
+                    oPDDto.opd.RoomID = 1;
+                    oPDDto.opd.Description = "Channelling";
+                    oPDDto.opd.ModifiedUser = Convert.ToInt32(userIdCookie);
+                    oPDDto.opd.CreatedUser = Convert.ToInt32(userIdCookie);
+                    oPDDto.opd.AppoimentNo = oPDDto.opd.AppoimentNo;
+                    oPDDto.opd.CreateDate = DateTime.Now;
+                    oPDDto.opd.ModifiedDate = DateTime.Now;
+                    oPDDto.opd.HospitalFee = oPDDto.OpdType == 1 ? hospitalFee : 0;
+                    oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
+                    oPDDto.opd.invoiceType = InvoiceType.CHE;
+                    oPDDto.opd.ConsultantFee = consultantFee;
+                    oPDDto.opd.shiftID = NightShiftSessionList[0].Id;
+
+                    if (ScanObj != null && ScanObj.Id != 0)
+                    {
+                        oPDDto.opd.Description = ScanObj.ItemName;
+                        oPDDto.opd.HospitalFee = ScanObj.HospitalFee;
+                        oPDDto.opd.ConsultantFee = ScanObj.DoctorFee;
+                    }
+
+                    if (oPDDto.opd.Id > 0)
+                    {
+                        OPDobj = new OPDService().UpdateOPDStatus(oPDDto.opd, oPDDto.OPDDrugusList);
+                    }
+                    else
+                    {
+                        OPDobj = new OPDService().CreateOPD(oPDDto.opd);
+                    }
+
+                    if (OPDobj != null)
+                    {
+                        _OPDDto.opdId = OPDobj.Id;
+                        _OPDDto.name = name;
+                        _OPDDto.age = age;
+                        _OPDDto.sex = sex;
+                        _OPDDto.phone = phone;
+
+                    }
+
+                    if (oPDDto.isVOGScan == 1)
+                    {
+                        Scan vogScan = new Scan();
+                        vogScan = new DefaultService().GetScanChannelingFee(2);
+                        OPD responseOPD = new OPD();
+                        OPD OPDobjScans = new OPD();
+                        OPDobjScans.PatientID = patient.Id;
+                        OPDobjScans.DateTime = DateTime.Now;
+                        OPDobjScans.RoomID = 1;
+                        OPDobjScans.Description = "VOG Scan";
+                        OPDobjScans.ModifiedUser = Convert.ToInt32(userIdCookie);
+                        OPDobjScans.CreatedUser = Convert.ToInt32(userIdCookie);
+                        OPDobjScans.AppoimentNo = oPDDto.opd.AppoimentNo;
+                        OPDobjScans.CreateDate = DateTime.Now;
+                        OPDobjScans.ModifiedDate = DateTime.Now;
+                        OPDobjScans.ConsultantFee = vogScan.DoctorFee;
+                        OPDobjScans.HospitalFee = vogScan.HospitalFee;
+                        OPDobjScans.paymentStatus = PaymentStatus.NOT_PAID;
+                        OPDobjScans.invoiceType = InvoiceType.CHE;
+                        OPDobjScans.ConsultantID = oPDDto.opd.ConsultantID;
+                        OPDobjScans.shiftID = NightShiftSessionList[0].Id;
+                        OPDobjScans.schedularId = oPDDto.opd.schedularId;
+                        responseOPD = new OPDService().CreateOPD(OPDobjScans);
+
+                    }
+
+                    if (oPDDto.isCardioScan == 1)
+                    {
+                        Scan ecoScan = new Scan();
+                        ecoScan = new DefaultService().GetScanChannelingFee(3);
+                        OPD responseOPD = new OPD();
+                        OPD OPDobjScans = new OPD();
+                        OPDobjScans.PatientID = patient.Id;
+                        OPDobjScans.DateTime = DateTime.Now;
+                        OPDobjScans.RoomID = 1;
+                        OPDobjScans.Description = "Echo Test";
+                        OPDobjScans.ModifiedUser = Convert.ToInt32(userIdCookie);
+                        OPDobjScans.CreatedUser = Convert.ToInt32(userIdCookie);
+                        OPDobjScans.AppoimentNo = oPDDto.opd.AppoimentNo;
+                        OPDobjScans.CreateDate = DateTime.Now;
+                        OPDobjScans.ModifiedDate = DateTime.Now;
+                        OPDobjScans.ConsultantFee = ecoScan.DoctorFee;
+                        OPDobjScans.HospitalFee = ecoScan.HospitalFee;
+                        OPDobjScans.paymentStatus = PaymentStatus.NOT_PAID;
+                        OPDobjScans.invoiceType = InvoiceType.CHE;
+                        OPDobjScans.ConsultantID = oPDDto.opd.ConsultantID;
+                        OPDobjScans.shiftID = NightShiftSessionList[0].Id;
+                        OPDobjScans.schedularId = oPDDto.opd.schedularId;
+                        responseOPD = new OPDService().CreateOPD(OPDobjScans);
+                    }
+
+                    if (oPDDto.isExerciseBook == 1)
+                    {
+                        Drug drugScan = new Drug();
+                        drugScan = new DefaultService().GetExerciseBookFee();
+                        OPD responseOPD = new OPD();
+                        OPD OPDobjScans = new OPD();
+                        OPDobjScans.PatientID = patient.Id;
+                        OPDobjScans.DateTime = DateTime.Now;
+                        OPDobjScans.RoomID = 1;
+                        OPDobjScans.Description = "Exercise Book";
+                        OPDobjScans.ModifiedUser = Convert.ToInt32(userIdCookie);
+                        OPDobjScans.CreatedUser = Convert.ToInt32(userIdCookie);
+                        OPDobjScans.AppoimentNo = oPDDto.opd.AppoimentNo;
+                        OPDobjScans.CreateDate = DateTime.Now;
+                        OPDobjScans.ModifiedDate = DateTime.Now;
+                        OPDobjScans.ConsultantFee = 0;
+                        OPDobjScans.HospitalFee = 0;
+                        OPDobjScans.paymentStatus = PaymentStatus.NOT_PAID;
+                        OPDobjScans.invoiceType = InvoiceType.CHE;
+                        OPDobjScans.ConsultantID = oPDDto.opd.ConsultantID;
+                        OPDobjScans.shiftID = NightShiftSessionList[0].Id;
+                        OPDobjScans.schedularId = oPDDto.opd.schedularId;
+                        responseOPD = new OPDService().CreateOPD(OPDobjScans);
+
+                        OPDDrugus Exercise = new OPDDrugus();
+                        Exercise.opdId = responseOPD.Id;
+                        Exercise.itemInvoiceStatus = ItemInvoiceStatus.Add;
+                        Exercise.Amount = drugScan.Price;
+                        Exercise.IsRefund = 0;
+                        Exercise.DrugId = drugScan.Id;
+                        Exercise.Type = 0;
+                        Exercise.Qty = 1;
+                        Exercise.Price = drugScan.Price;
+                        Exercise.billingItemsType = BillingItemsType.Items;
+                        Exercise.Status = CommonStatus.Active;
+                        Exercise.CreateUser = Convert.ToInt32(userIdCookie);
+                        Exercise.ModifiedUser = Convert.ToInt32(userIdCookie);
+                        Exercise.CreateDate = DateTime.Now;
+                        Exercise.ModifiedDate = DateTime.Now;
+
+                        new OPDService().CreateOPDDrugus(Exercise);
+                    }
+
+
+
+                    if (OPDobj != null || oPDDto.OPDDrugusList != null)
+                    {
+                        foreach (var drugusItem in oPDDto.OPDDrugusList)
+                        {
+                            OPD responseOPD = new OPD();
+                            OPD OPDobjScans = new OPD();
+                            OPDobjScans.PatientID = patient.Id;
+                            OPDobjScans.DateTime = DateTime.Now;
+                            OPDobjScans.RoomID = 1;
+                            OPDobjScans.ModifiedUser = Convert.ToInt32(userIdCookie);
+                            OPDobjScans.CreatedUser = Convert.ToInt32(userIdCookie);
+                            OPDobjScans.AppoimentNo = oPDDto.opd.AppoimentNo;
+                            OPDobjScans.CreateDate = DateTime.Now;
+                            OPDobjScans.ModifiedDate = DateTime.Now;
+                            OPDobjScans.HospitalFee = oPDDto.OpdType == 1 ? hospitalFee : 0;
+                            OPDobjScans.paymentStatus = PaymentStatus.NOT_PAID;
+                            OPDobjScans.invoiceType = InvoiceType.CHE;
+                            OPDobjScans.ConsultantFee = consultantFee;
+                            OPDobjScans.ConsultantID = oPDDto.opd.ConsultantID;
+                            OPDobjScans.shiftID = NightShiftSessionList[0].Id;
+                            OPDobjScans.schedularId = oPDDto.opd.schedularId;
+                            responseOPD = new OPDService().CreateOPD(OPDobjScans);
+
+                            drugusItem.opdId = responseOPD.Id;
+                            drugusItem.itemInvoiceStatus = ItemInvoiceStatus.Add;
+                            drugusItem.Amount = drugusItem.Qty * drugusItem.Price;
+                            drugusItem.IsRefund = 0;
+                            new OPDService().CreateOPDDrugus(drugusItem);
+                        }
+                    }
+
+                }
+
+                return PartialView("_PartialQR", _OPDDto);
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index");
+            }
+        }
         private List<NightShiftSession> GetActiveShiftSession()
         {
             List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
@@ -525,6 +781,22 @@ namespace HospitalMgrSystemUI.Controllers
                 catch (Exception ex) { }
             }
             return channelingSchedule;
+        }
+
+        private Scan ScanGetByID(int id)
+        {
+            Scan scanObj = new Scan();
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    scanObj = new ChannelingScheduleService().GetChannelingItemById(id);
+
+                }
+                catch (Exception ex) { }
+            }
+            return scanObj;
         }
 
         public ActionResult OpenQR(int Id)

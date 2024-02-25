@@ -10,7 +10,8 @@ namespace HospitalMgrSystem.Model.Enums
     {
         Requested,
         Approved,
-        Completed
+        Completed,
+        Cashier_In
 
     }
 }

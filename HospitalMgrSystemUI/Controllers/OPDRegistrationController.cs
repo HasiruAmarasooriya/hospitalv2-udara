@@ -559,6 +559,7 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.CreateDate = DateTime.Now;
                     oPDDto.opd.ModifiedDate = DateTime.Now;
                     oPDDto.opd.HospitalFee = oPDDto.opd.OpdType == 1 ? hospitalFee : 0;
+                    oPDDto.opd.Description = oPDDto.OpdType == 1 ? "OPD" : "Other";
                     oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
                     oPDDto.opd.invoiceType = InvoiceType.OPD;
                     oPDDto.opd.ConsultantFee = 0;

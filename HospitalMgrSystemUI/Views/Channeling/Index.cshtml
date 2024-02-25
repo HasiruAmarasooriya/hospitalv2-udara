@@ -84,6 +84,7 @@
                                 <th>Channeling ID</th>
                                 <th>Patient</th>
                                 <th>Contact Number</th>
+                                <th>Payment Status</th>
                                 <th>Appoinment No</th>
                                 <th>Description</th>
                                 <th>Consultant</th>
@@ -104,6 +105,7 @@
                                         <td>@item.Id</td>
                                         <td>@item.FullName</td>
                                         <td>@item.MobileNumber</td>
+                                        <td>@item.paymentStatus</td>
                                         <td>@item.AppoimentNo</td>
                                         <td>@item.Description</td>
                                         <td>@item.consaltantName</td>
@@ -223,7 +225,13 @@
 
         }
 
-
+        document.addEventListener('keydown', function (event) {
+            // You can change 'Enter' to any key you want to trigger the function
+            if (event.key === 'Escape') {
+                // Call your function for Escape key
+                window.location.href = '/Channeling/';
+            }
+        });
         //function matchCustom(params, data) {
         //    // If there are no search terms, return all of the data
         //    if ($.trim(params.term) === '') {

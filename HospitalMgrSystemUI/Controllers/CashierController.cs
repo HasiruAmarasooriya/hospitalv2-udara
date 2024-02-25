@@ -1357,6 +1357,15 @@ namespace HospitalMgrSystemUI.Controllers
                             OPD upOpd = new OPDService().UpdatePaidStatus(updateOPD);
                         }
 
+                        if (resInvoice.InvoiceType == InvoiceType.CHE)
+                        {
+                            OPD updateOPD = new OPD();
+                            updateOPD.Id = resInvoice.ServiceID;
+                            updateOPD.ModifiedUser = Convert.ToInt32(userIdCookie);
+                            updateOPD.paymentStatus = PaymentStatus.PAID;
+                            OPD upOpd = new OPDService().UpdatePaidStatus(updateOPD);
+                        }
+
                         resInvoice.paymentStatus = PaymentStatus.PAID;
                         Invoice upInvoice = new CashierService().UpdatePaidStatus(resInvoice);
                     }

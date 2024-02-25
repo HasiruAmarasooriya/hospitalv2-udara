@@ -179,7 +179,7 @@ namespace HospitalMgrSystem.Service.Report
                     .Include(c => c.patient)
                     .Include(c => c.consultant)
                     .Include(c => c.room)
-                    .Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NOT_PAID)
+                    .Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NOT_PAID && o.invoiceType == InvoiceType.CHE)
                     .OrderByDescending(o => o.Id)
                     .ToList();
             }
@@ -249,7 +249,7 @@ namespace HospitalMgrSystem.Service.Report
                     .Include(c => c.patient)
                     .Include(c => c.consultant)
                     .Include(c => c.room)
-                    .Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NOT_PAID)
+                    .Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NOT_PAID && o.invoiceType == InvoiceType.OPD)
                     .OrderByDescending(o => o.Id)
                     .ToList();
             }

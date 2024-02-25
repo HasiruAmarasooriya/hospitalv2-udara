@@ -53,6 +53,22 @@ namespace HospitalMgrSystem.Service.OtherTransactions
             }
         }
 
+        public Model.OtherTransactions updateOtherCompletedCashierIn(Model.OtherTransactions otherTransactions)
+        {
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                if (otherTransactions.Id != 0)
+                {
+
+                    HospitalMgrSystem.Model.OtherTransactions result = (from p in dbContext.OtherTransactions where p.Id == otherTransactions.Id select p).SingleOrDefault();
+                    result.ApprovedByID = otherTransactions.ApprovedByID;
+                    result.otherTransactionsStatus = OtherTransactionsStatus.Cashier_In;
+                    dbContext.SaveChanges();
+                }
+                return otherTransactions;
+            }
+        }
+
         public Model.OtherTransactions CompleteeOtherTransactions(Model.OtherTransactions otherTransactions)
         {
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
@@ -91,5 +107,17 @@ namespace HospitalMgrSystem.Service.OtherTransactions
                 return result;
             }
         }
+
+        public List<Model.OtherTransactions> GetAllCashierOutTransactionsByBenificaryID(int benificaryID)
+        {
+            List<Model.OtherTransactions> mtList = new List<Model.OtherTransactions>();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.OtherTransactions.Include(c => c.Convener).Include(c => c.Beneficiary).Include(c => c.ApprovedBy).Include(c => c.cashierSession).Where(o => o.Status == 0 && o.BeneficiaryID == benificaryID && o.otherTransactionsStatus != OtherTransactionsStatus.Cashier_In && o.InvoiceType == InvoiceType.CASHIER_TRANSFER_OUT).OrderByDescending(o => o.Id).ToList<Model.OtherTransactions>();
+
+            }
+            return mtList;
+        }
+
     }
 }

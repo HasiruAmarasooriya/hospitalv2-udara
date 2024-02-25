@@ -16,6 +16,19 @@
 
     };
 
+    document.addEventListener('keydown', function(event) {
+    // You can change 'Enter' to any key you want to trigger the function
+    if (event.key === 'Enter') {
+        // Call your function here
+        PrintInvoice();
+    }
+
+    if (event.key === 'Escape') {
+        // Call your function for Escape key
+        ClearCashier();
+    } 
+    });
+
 
     // $(window).load(function () {
     //     // Extract the PreID from the URL
@@ -341,7 +354,9 @@
             openPrintWindow();
         }
     }
-
+    function ClearCashier() {
+        window.location.href = '/Cashier/Index';
+    }
 </script>
 
 <div class="row page-titles">
@@ -366,7 +381,7 @@
                                     <button type="submit" class="btn waves-effect waves-light  btn-info">Scan</button>
                                 </div>
                                 <div class="ml-auto p-2">
-                                    <button type="button" class="btn btn-danger">CANCEL SALE</button>
+                                    <button type="button" class="btn btn-danger" onclick=ClearCashier();>CANCEL SALE</button>
                                     @if (Model != null && Model.PreID != null)
                                     {
                                         <input type="hidden" id="opid" asp-for="PreID" value="@Model.PreID">

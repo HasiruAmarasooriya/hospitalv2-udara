@@ -74,7 +74,6 @@
 
 
                                     <th>Consultant Full Name</th>
-                                    <th>Age</th>
                                     <th>Specialist</th>
                                     <th>Contact Number</th>
                                     <th>Edit</th>
@@ -85,10 +84,7 @@
                                 @foreach (var item in Model.listConsultants)
                                 {
                                     <tr>
-
-
                                         <td>@item.Name</td>
-                                        <td>@item.Age</td>
                                         <td>@if (item.Specialist != null)
                                         { @item.Specialist.Name } </td>
                                         <td>@item.ContectNumber</td>
