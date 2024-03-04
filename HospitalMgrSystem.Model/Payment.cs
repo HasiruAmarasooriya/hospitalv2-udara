@@ -31,6 +31,16 @@ namespace HospitalMgrSystem.Model
 
         [ForeignKey("sessionID")]
         public CashierSession? cashierSession { get; set; }
+        [NotMapped]
+        public decimal TotalAmountOld { get; set; }
+        [NotMapped]
+        public decimal TotalAmountNeedToPay { get; set; }
+
+        [NotMapped]
+        public decimal TotalAmountRefunded { get; set; }
+
+        [NotMapped]
+        public decimal TotalNotPaidAmount { get; set; }
 
         [NotMapped]
         public decimal TotalAmount { get; set; }

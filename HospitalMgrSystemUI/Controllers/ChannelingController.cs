@@ -805,7 +805,17 @@ namespace HospitalMgrSystemUI.Controllers
             opdDto.opd = new OPDService().GetAllOPDByID(Id);
             opdDto.opdId = Id;
 
-            return PartialView("_PartialQR", opdDto);
+            string name = opdDto.opd.patient.FullName;
+            var age = opdDto.opd.patient.Age;
+            var phone = opdDto.opd.patient.MobileNumber;
+            var sex = opdDto.opd.patient.Sex;
+
+            _OPDDto.opdId = Id;
+            _OPDDto.name = name;
+            _OPDDto.age = age;
+            _OPDDto.sex = sex;
+            _OPDDto.phone = phone;
+            return PartialView("_PartialQR", _OPDDto);
         }
     }
 }

@@ -122,10 +122,14 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
                 mtList = dbContext.ChannelingSchedule
-                    .Include(c => c.Consultant)
-                    .Include(c => c.Consultant.Specialist)
-                    .Where(o => o.ConsultantId == id && o.DateTime >= currentTime)
-                    .ToList();
+             .Include(c => c.Consultant)
+             .Include(c => c.Consultant.Specialist)
+             .Where(o => o.ConsultantId == id &&
+                         o.scheduleStatus != ChannellingScheduleStatus.NOT_ACTIVE &&
+                         o.scheduleStatus != ChannellingScheduleStatus.SESSION_CANCEL &&
+                         o.scheduleStatus != ChannellingScheduleStatus.SESSION_END &&
+                         o.Status == CommonStatus.Active)
+             .ToList();
             }
 
             return mtList;

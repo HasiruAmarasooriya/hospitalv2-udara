@@ -279,9 +279,9 @@
                     var printWindow = window.open('', '_blank', 'width=600,height=600,location=no,menubar=no');
                     printWindow.document.open();
                     printWindow.document.write(response);
-                    //printWindow.document.getElementsByTagName('body')[0].style.setProperty('width', '600px'); // Set the width as needed
-                    //printWindow.document.getElementsByTagName('body')[0].style.setProperty('margin', '0'); // Remove any margins
                     printWindow.document.close();
+                    var customHeight = 110 * 3.779528; // Convert millimeters to pixels (1mm = 3.779528 pixels)
+                    printWindow.resizeTo(600, customHeight);
                     printWindow.print();
                     printWindow.close();
                 },

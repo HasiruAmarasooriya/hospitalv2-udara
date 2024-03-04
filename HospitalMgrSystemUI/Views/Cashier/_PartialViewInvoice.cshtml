@@ -137,20 +137,18 @@
             {
                 <table>
                     <tr>
-                        @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
+@*                        @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
                         {
                             <th>No.</th>
                             <th>Item</th>
                             <th>Price</th>
                             <th>Qty</th>
                             <th>Total</th>
-                        }
+                        }*@
 
                         @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
                         {
-                            @*   <th>No.</th>*@
-                            @*                            <th>Doctor Fee</th>
-                <th colspan="3">Hospital Fee</th>*@
+
                         }
                         @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
                         {
@@ -160,23 +158,42 @@
                     @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
                     {
                         var rowNumber = 1;
-                        @foreach (var item in Model.OPDDrugusListInvoiced)
+                        decimal itemAmmount = 0;
+                        decimal hospitalFee = 0;
+                        @foreach (var item in Model.cashierBilledItemDtoList)
                         {
-                            <tr>
-                                <td>@rowNumber</td>
-                                <td>
-                                    <div>
-                                        <h6 style="margin: 2px; padding: 2px; font-size: 10px; text-align: left;">@item.Drug.DrugName </h6>
-                                        @*                         <p style="margin: 0; padding: 0; font-size: 8px;">(@item.billingItemsTypeName)</p>*@
-                                    </div>
-                                </td>
+                            @if(item.amount > 0){
+                @*                <tr>
+                                    <td>@rowNumber</td>
+                                    <td>
+                                        <div>
+                                            <h6 style="margin: 2px; padding: 2px; font-size: 10px; text-align: left;">@item.billingItemName </h6>*@
+                                            @*                         <p style="margin: 0; padding: 0; font-size: 8px;">(@item.billingItemsTypeName)</p>*@
+                @*                        </div>
+                                    </td>
 
-                                <td>@item.Price.ToString("0.#")</td>
-                                <td>@item.Qty.ToString("0.#")</td>
-                                <td class="text-end">@item.Amount.ToString("0.#")</td>
-                            </tr>
-                            rowNumber++;
+                                    <td>@item.price.ToString("0.#")</td>
+                                    <td>@item.qty.ToString("0.#")</td>
+                                    <td class="text-end">@item.amount.ToString("0.#")</td>
+                                </tr>*@
+                                if (item.billingItemsType == HospitalMgrSystem.Model.Enums.BillingItemsType.Hospital){
+                                    hospitalFee = item.amount;
+                                }else{
+                                    itemAmmount = itemAmmount + item.amount;
+                                }
+                                rowNumber++;
+                            }
+
                         }
+
+                        <tr>
+                            <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: left;">Other Items</td>
+                            <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">@itemAmmount LKR</td>
+                        </tr>
+                        <tr style="margin-left: auto;">
+                            <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: left;">Hospital Fee</td>
+                            <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">@hospitalFee LKR</td>
+                        </tr>
                     }
                     @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
                     {
@@ -217,25 +234,40 @@
         </div>*@
                 <table id="total-section" style="margin-left: auto;">
                     <tr>
-                        <td style="text-align: left;">Subtotal:</td>
+                        <td style="text-align: left;">Net total:</td>
                         <td style="text-align: right;">@Model.preSubtotal.ToString("0.00") LKR</td>
                     </tr>
-                    <tr>
-                        <td style="text-align: left;">Discount:</td>
-                        <td style="text-align: right;">@Model.discount.ToString("0.00") LKR</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left;">Total Amount:</td>
-                        <td style="text-align: right;">@Model.preTotal.ToString("0.00") LKR</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left;">Cash Payment:</td>
-                        <td style="text-align: right;">@Model.totalPaymentPaidAmount.ToString("0.00") LKR</td>
-                    </tr>
-                    <tr>
+
+                    
+                        
+                        @if (Model != null)
+                        {
+                            decimal totalCash = 0;
+                            decimal totalBlence = 0;
+ 
+                            @if (Model.paymentList != null)
+                            { @foreach (var item in Model.paymentList)
+                                {
+                                 @if(item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.BALENCE)
+                                    totalBlence = totalBlence + item.CashAmount;
+                                 @if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.CASHIER)
+                                    totalCash = totalCash + item.CashAmount + item.CreditAmount + item.DdebitAmount + item.ChequeAmount + item.GiftCardAmount;
+   
+                                }
+
+                            }
+                        
+                        <tr>
+                            <td style="text-align: left;">Cash Payment:</td>
+                            <td style="text-align: right;">@totalCash.ToString("0.00") LKR</td>
+                        </tr>
+                        <tr>
                         <td style="text-align: left;">Balance:</td>
-                        <td style="text-align: right;">@Model.total.ToString("0.00") LKR</td>
-                    </tr>
+                            <td style="text-align: right;">@(Math.Abs(totalBlence).ToString("0.00")) LKR</td>
+                        </tr>
+                        }
+
+           
                 </table>
 
 
@@ -244,12 +276,14 @@
 
             }
             <hr>
-            <div id="barcode">
+      @*      <div id="barcode">*@
                 @*<div id="qrcode" class="d-flex justify-content-center"></div>*@
-                <img src="https://png.pngtree.com/png-clipart/20220424/original/pngtree-black-and-white-icons-of-barcode-numbers-png-image_7554658.png" alt="Barcode" width="150">
-            </div>
+@*                <img src="https://png.pngtree.com/png-clipart/20220424/original/pngtree-black-and-white-icons-of-barcode-numbers-png-image_7554658.png" alt="Barcode" width="150">
+            </div>*@
         }
-        <p>Thank you for your cooperation</p>
+        <p>Payment Successfully Completed !</p>
+        <h3>Prevention is Better Than Cure</h3>
+        <h5>Thank You For Cooperation</h5>
     </div>
 
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>

@@ -60,32 +60,62 @@
                                 </select>
                             </div>
                         </div>
+                         <div class="col-md-6">
+                             <br/>
+                            <div class="form-group">
+                                <div class="spark-chart form-material">
+                                        <ol class="list-unstyled d-flex">
+
+                                                <li class="mr-2">
+                                                            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal" onclick="handleClear()">&nbsp;Clear</button>
+                                                </li>
+
+                                                <li class="mr-2">
+                                                            <button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Filter</button>
+                                                </li>
+                                        </ol>
+                                </div>     
+                            </div>
+                        </div>
                     </div>
 
+                </form>
+                @using (Html.BeginForm("customSearch", "Report", new { value = 1 }, FormMethod.Post))
+                {
                     <div class="modal-footer d-flex justify-content-between">
+
+                        <div class="form-group">
+                            <label for="companyName">Invoiced Type</label>
+                            <select class="form-control ddlSearchList" id="dropSessionType" asp-for="InvoicedType">
+                                <option value="0">OPD</option>
+                                <option value="1">Channeling</option>
+                                <option value="2">Other</option>
+                            </select>
+                        </div>
                         <div class="spark-chart form-material">
                             <ol class="list-unstyled d-flex">
-                                <li class="mr-2">
-                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Today</button>
-                                </li>
 
-                                <li class="mr-2">
-                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Yesterday</button>
-                                </li>
-                                <li class="mr-2">
-                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Week</button>
-                                </li>
-                                <li class="mr-2">
-                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Month</button>
-                                </li>
+                                    <li class="mr-2">
+                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Today</button>
+                                    </li>
+
+                                    <li class="mr-2">
+                                        <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Yesterday</button>
+                                    </li>
+
+                                    <li class="mr-2">
+                                        <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Week</button>
+                                    </li>
+
+                                    <li class="mr-2">
+                                        <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Month</button>
+                                    </li>
+                             
                             </ol>
                         </div>
-                        <div>
-                            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal" onclick="handleClear()">&nbsp;Clear</button>
-                            <button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Filter</button>
-                        </div>
+                    
                     </div>
-                </form>
+                }
             </div>
         </div>
     </div>
@@ -118,136 +148,100 @@
                                 <th>Shift</th>
                                 <th>Cashier</th>
                                 <th>Issued By</th>
-                                <th>Total Amount</th>
-                                <th>Total Paid Amount</th>
-                                <th>Deviation</th>
-                                <th>Action 1</th>
+                                <th>Issued Date</th>
+                                <th style="text-align: right;">Total Amount</th>
+                                <th style="text-align: right;">Total Paid Amount</th>
+                                <th style="text-align: right;">Deviation</th>
+                               @* <th>Action 1</th>*@
                             </tr>
                         </thead>
                         <tbody>
                             @if (Model.listopd != null)
                             {
+                                
+                                int i = 1;
+                                decimal totalAmountOfTotalAmount = 0;
+                                decimal totalAmountOfTotalPaidAmount = 0;
+                                decimal totaldeviation = 0;
                                 @foreach (var item in Model.listopd)
                                 {
                                     <tr>
-                                        <td>@item.Id</td>
+                                        <td>@i</td>
                                         <td>@item.invoiceID</td>
-                                        <td>@item.paymentStatus</td>
+                                        <td>@item.Id</td>
                                         <td>@item.nightShiftSession.shift</td>
                                         <td>@item.cashier.FullName</td>
                                         <td>@item.issuedUser.FullName</td>
-                                        <td>@item.TotalAmount</td>
-                                        <td>@item.TotalPaidAmount</td>
-                                        <td>@item.deviation</td>
-                                        <td>
+                                        <td>@item.CreateDate</td>
+                                        <td style="text-align: right;">@item.TotalAmount</td>
+                                        <td style="text-align: right;">@item.TotalPaidAmount</td>
+                                        <td style="text-align: right;">@item.deviation</td>
+@*                                        <td>
                                             <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>
+                                        </td>*@
                                     </tr>
+
+                                    totalAmountOfTotalAmount = totalAmountOfTotalAmount + (item.TotalAmount ?? 0m);
+                                    totalAmountOfTotalPaidAmount = totalAmountOfTotalPaidAmount + (item.TotalPaidAmount ?? 0m);
+                                    totaldeviation = totaldeviation + (item.deviation ?? 0m);
+                                    
+                                   i++;
                                 }
+                                <tr class="table-success">
+                                    <td colspan="7">Total</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalAmount</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
+                                    <td style="text-align: right;">@totaldeviation</td>
+                                </tr>
                             }
 
                             @if (Model.listChanneling != null)
                             {
+                                int i = 1;
+                                decimal totalAmountOfTotalAmount = 0;
+                                decimal totalAmountOfTotalPaidAmount = 0;
+                                decimal totaldeviation = 0;
                                 @foreach (var item in Model.listChanneling)
                                 {
                                     <tr>
-                                        <td>@item.Id</td>
+                                        <td>@i</td>
                                         <td>@item.invoiceID</td>
-                                        <td>@item.paymentStatus</td>
+                                        <td>@item.Id</td>
                                         <td>@item.nightShiftSession.shift</td>
                                         <td>@item.cashier.FullName</td>
                                         <td>@item.issuedUser.FullName</td>
-                                        <td>@item.TotalAmount</td>
-                                        <td>@item.TotalPaidAmount</td>
-                                        <td>@item.deviation</td>
-                                        <td>
+                                        <td>@item.CreateDate</td>
+                                        <td style="text-align: right;">@item.TotalAmount</td>
+                                        <td style="text-align: right;">@item.TotalPaidAmount</td>
+                                        <td style="text-align: right;">@item.deviation</td>
+@*                                        <td>
                                             <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>
+                                        </td>*@
                                     </tr>
+
+                                    totalAmountOfTotalAmount = totalAmountOfTotalAmount + (item.TotalAmount ?? 0m);
+                                    totalAmountOfTotalPaidAmount = totalAmountOfTotalPaidAmount + (item.TotalPaidAmount ?? 0m);
+                                    totaldeviation = totaldeviation + (item.deviation ?? 0m);
+
+                                    i++;
                                 }
+                                <tr class="table-success">
+                                    <td colspan="7">Total</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalAmount</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
+                                    <td style="text-align: right;">@totaldeviation</td>
+                                </tr>
                             }
                         </tbody>
                     </table>
                 </div>
+
                 <br>
-                <br>
-
-                @{
-
-                    if (Model.listopd != null)
-                    {
-                        <h4 class="card-title">OPD Need to Pay</h4>
-                    }
-
-                    if (Model.listChanneling != null)
-                    {
-                        <h4 class="card-title">Channeling Need to Pay</h4>
-                    }
-
-                }
-
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead class="table-danger">
-                            <tr>
-                                <th>No</th>
-                                <th>Invoice ID</th>
-                                <th>OPD ID</th>
-                                <th>Cashier</th>
-                                <th>Issued By</th>
-                                <th>Total Amount</th>
-                                <th>Total Paid Amount</th>
-                                <th>Deviation</th>
-                                <th>Action 1</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.listNeedToPayOPD != null)
-                            {
-                                @foreach (var item in Model.listNeedToPayOPD)
-                                {
-                                    <tr>
-                                        <td>@item.Id</td>
-                                        <td>@item.invoiceID</td>
-                                        <td>@item.paymentStatus</td>
-                                        <td>@item.cashier.FullName</td>
-                                        <td>@item.issuedUser.FullName</td>
-                                        <td>@item.TotalAmount</td>
-                                        <td>@item.TotalPaidAmount</td>
-                                        <td>@item.deviation</td>
-                                        <td>
-                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-
-                            @if (Model.listNeedToPayChanneling != null)
-                            {
-                                @foreach (var item in Model.listNeedToPayChanneling)
-                                {
-                                    <tr>
-                                        <td>@item.Id</td>
-                                        <td>@item.invoiceID</td>
-                                        <td>@item.paymentStatus</td>
-                                        <td>@item.cashier.FullName</td>
-                                        <td>@item.issuedUser.FullName</td>
-                                        <td>@item.TotalAmount</td>
-                                        <td>@item.TotalPaidAmount</td>
-                                        <td>@item.deviation</td>
-                                        <td>
-                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                <br>
-
+                @if (Model.listNightShiftOPD != null)
+                {
                 <h4 class="card-title">OPD Night Shift</h4>
                 <div class="table-responsive">
+
                     <table class="table">
                         <thead class="table-danger">
                             <tr>
@@ -256,39 +250,59 @@
                                 <th>OPD ID</th>
                                 <th>Cashier</th>
                                 <th>Issued By</th>
-                                <th>Total Amount</th>
-                                <th>Total Paid Amount</th>
-                                <th>Deviation</th>
-                                <th>Action 1</th>
+                                <th>Issued Date</th>
+                                <th style="text-align: right;">Total Amount</th>
+                                <th style="text-align: right;">Total Paid Amount</th>
+                                <th style="text-align: right;">Deviation</th>
+@*                                <th>Action 1</th>*@
                             </tr>
                         </thead>
                         <tbody>
-                            @if (Model.listNightShiftOPD != null)
-                            {
+                              @{
+                                int i = 1;
+                                decimal totalAmountOfTotalAmount = 0;
+                                decimal totalAmountOfTotalPaidAmount = 0;
+                                decimal totaldeviation = 0;
+                              }
 
                                 @foreach (var item in Model.listNightShiftOPD)
                                 {
                                     <tr>
-                                        <td>@item.Id</td>
+                                        <td>@i</td>
                                         <td>@item.invoiceID</td>
-                                        <td>@item.paymentStatus</td>
+                                        <td>@item.Id</td>
                                         <td>@item.cashier.FullName</td>
                                         <td>@item.issuedUser.FullName</td>
-                                        <td>@item.TotalAmount</td>
-                                        <td>@item.TotalPaidAmount</td>
-                                        <td>@item.deviation</td>
-                                        <td>
+                                        <td>@item.CreateDate</td>
+                                        <td style="text-align: right;">@item.TotalAmount</td>
+                                        <td style="text-align: right;">@item.TotalPaidAmount</td>
+                                        <td style="text-align: right;">@item.deviation</td>
+@*                                        <td>
                                             <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>
+                                        </td>*@
                                     </tr>
+                    
+                                    totalAmountOfTotalAmount = totalAmountOfTotalAmount + (item.TotalAmount ?? 0m);
+                                    totalAmountOfTotalPaidAmount = totalAmountOfTotalPaidAmount + (item.TotalPaidAmount ?? 0m);
+                                    totaldeviation = totaldeviation + (item.deviation ?? 0m);
+                                    i++;
+                                    
+
                                 }
-                            }
+                                <tr class="table-danger">
+                                    <td colspan="6">Total</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalAmount</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
+                                    <td style="text-align: right;">@totaldeviation</td>
+                                </tr>
+                           
                         </tbody>
                     </table>
+                           
                 </div>
+                 }
 
                 <br>
-
                 @{
 
                     if (Model.listopd != null)
@@ -308,54 +322,204 @@
                         <thead class="table-danger">
                             <tr>
                                 <th>No</th>
+                                <th>OPD ID</th>
                                 <th>Patient Name</th>
                                 <th>Consultant</th>
                                 <th>Contact Number</th>
-                                <th>Date Time</th>
-                                <th>Action 1</th>
+                                 <th>Issued By</th>
+                                <th>Issued Date</th>
+                                <th style="text-align: right;">Total Amount</th>
+                                @*<th>Action 1</th>*@
                             </tr>
                         </thead>
                         <tbody>
                             @if (Model.listNotPaidOPD != null)
                             {
-
+                                int i = 1;
+                                decimal totalAmountOfTotalAmount = 0;
                                 @foreach (var item in Model.listNotPaidOPD)
                                 {
                                     <tr>
+                                        <td>@i</td>
                                         <td>@item.Id</td>
                                         <td>@item.patient.FullName</td>
                                         <td>@item.consultant.Name</td>
                                         <td>@item.patient.MobileNumber</td>
-                                        <td>@item.DateTime</td>
-                                        <td>
+                                        <td>@item.issuedUser.FullName</td>
+                                        <td>@item.CreateDate</td>
+                                        <td style="text-align: right;">@item.TotalAmount</td>
+@*                                        <td>
                                             <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>
+                                        </td>*@
                                     </tr>
+                                    i++;
+                                    totalAmountOfTotalAmount = totalAmountOfTotalAmount + (item.TotalAmount ?? 0m);
                                 }
+                                <tr class="table-danger">
+                                    <td colspan="7">Total</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalAmount</td>
+                                </tr>
                             }
 
                             @if (Model.listNotPaidChanneling != null)
                             {
+                                int i = 1;
+                                decimal totalAmountOfTotalAmount = 0;
 
                                 @foreach (var item in Model.listNotPaidChanneling)
                                 {
                                     <tr>
+                                        <td>@i</td>
                                         <td>@item.Id</td>
                                         <td>@item.patient.FullName</td>
                                         <td>@item.consultant.Name</td>
                                         <td>@item.patient.MobileNumber</td>
-                                        <td>@item.DateTime</td>
-                                        <td>
+                                        <td>@item.issuedUser.FullName</td>
+                                        <td>@item.CreateDate</td>
+                                        <td style="text-align: right;">@item.TotalAmount</td>
+@*                                        <td>
                                             <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>
+                                        </td>*@
                                     </tr>
+                                    i++;
+                                    totalAmountOfTotalAmount = totalAmountOfTotalAmount + (item.TotalAmount ?? 0m);
                                 }
+                                <tr class="table-danger">
+                                    <td colspan="7">Total</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalAmount</td>
+                                </tr>
                             }
                         </tbody>
                     </table>
 
                 </div>
 
+                <br>
+
+                @{
+
+                    if (Model.listopd != null)
+                    {
+                        <h4 class="card-title">To be refunded - OPD</h4>
+                    }
+
+                    if (Model.listChanneling != null)
+                    {
+                        <h4 class="card-title">To be refunded - Channeling </h4>
+                    }
+
+                }
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="table-danger">
+                            <tr>
+                                <th>No</th>
+                                <th>Invoice ID</th>
+                                <th>OPD ID</th>
+                                <th>Cashier</th>
+                                <th>Issued By</th>
+                                <th>Issued Date</th>
+                                <th style="text-align: right;">Total Old Paid Amount</th>
+                                <th style="text-align: right;">Total Paid Amount</th>
+                                <th style="text-align: right;">Total Refund</th>                  
+                                <th style="text-align: right;">To be refunded</th>
+@*                                <th>Action 1</th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.listNeedToPayOPD != null)
+                            {
+                                int i = 1;
+                                decimal totalAmountOfTotalOldAmount = 0;
+                                decimal totalAmountOfTotalPaidAmount = 0;
+                                decimal totalAmountOfTotalRefund = 0;
+                                decimal totalAmountOfTotalNeedToRefund = 0;
+
+                                @foreach (var item in Model.listNeedToPayOPD)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@item.invoiceID</td>
+                                        <td>@item.Id</td>               
+                                        <td>@item.cashier.FullName</td>
+                                        <td>@item.issuedUser.FullName</td>
+                                        <td>@item.CreateDate</td>
+                                        <td style="text-align: right;">@item.TotalOldAmount</td>
+                                        <td style="text-align: right;">@item.TotalPaidAmount</td>
+                                        <td style="text-align: right;">@item.TotalRefund</td>
+                                        <td style="text-align: right;">@item.TotalNeedToRefund</td>
+@*                                        <td>
+                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                        </td>*@
+                                    </tr>
+
+                                    totalAmountOfTotalOldAmount = totalAmountOfTotalOldAmount + (item.TotalOldAmount ?? 0m);
+                                    totalAmountOfTotalPaidAmount = totalAmountOfTotalPaidAmount + (item.TotalPaidAmount ?? 0m);
+                                    totalAmountOfTotalRefund = totalAmountOfTotalRefund + (item.TotalRefund ?? 0m);
+                                    totalAmountOfTotalNeedToRefund = totalAmountOfTotalNeedToRefund + (item.TotalNeedToRefund ?? 0m);
+                                    i++;
+                                }
+
+                                <tr class="table-danger">
+                                    <td colspan="6">Total</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalOldAmount</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalRefund</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalNeedToRefund</td>
+                                </tr>
+                            }
+
+                            @if (Model.listNeedToPayChanneling != null)
+                            {
+                                    int i = 1;
+                                    decimal totalAmountOfTotalOldAmount = 0;
+                                    decimal totalAmountOfTotalPaidAmount = 0;
+                                    decimal totalAmountOfTotalRefund = 0;
+                                    decimal totalAmountOfTotalNeedToRefund = 0;
+                                @foreach (var item in Model.listNeedToPayChanneling)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@item.invoiceID</td>
+                                        <td>@item.Id</td>
+                                        <td>@item.cashier.FullName</td>
+                                        <td>@item.issuedUser.FullName</td>
+                                        <td>@item.CreateDate</td>
+                                        <td style="text-align: right;">@item.TotalOldAmount</td>
+                                        <td style="text-align: right;">@item.TotalPaidAmount</td>
+                                        <td style="text-align: right;">@item.TotalRefund</td>
+                                        <td style="text-align: right;">@item.TotalNeedToRefund</td>
+@*                                        <td>
+                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                        </td>*@
+                                    </tr>
+                                    totalAmountOfTotalOldAmount = totalAmountOfTotalOldAmount + (item.TotalOldAmount ?? 0m);
+                                    totalAmountOfTotalPaidAmount = totalAmountOfTotalPaidAmount + (item.TotalPaidAmount ?? 0m);
+                                    totalAmountOfTotalRefund = totalAmountOfTotalRefund + (item.TotalRefund ?? 0m);
+                                    totalAmountOfTotalNeedToRefund = totalAmountOfTotalNeedToRefund + (item.TotalNeedToRefund ?? 0m);
+                                    i++;
+
+                                }
+                                 <tr class="table-danger">
+                                    <td colspan="6">Total</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalOldAmount</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalRefund</td>
+                                    <td style="text-align: right;">@totalAmountOfTotalNeedToRefund</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+
+
+
+
+
+                @if (Model.listopdGrugs != null)
+                {
                 <h4 class="card-title">OPD Drugs</h4>
                 <div class="table-responsive">
                     <table class="table">
@@ -368,8 +532,7 @@
                                 <th>Action 1</th>
                             </tr>
                         <tbody>
-                                @if (Model.listopdGrugs != null)
-                                {
+
 
                                     @foreach (var item in Model.listopdGrugs)
                                     {
@@ -384,10 +547,12 @@
                                     </tr>
 
                                     }
-                                }
+                        
                         </tbody>
                     </table>
                 </div>
+                
+            }
             </div>
         </div>
     </div>
@@ -413,12 +578,12 @@
                                     <th style="text-align: left;">@Model.EndTime</th>
                                 </tr>
                                 <tr>
-                                    <th style="text-align: right; width:50%">Total Amount:</th>
-                                    <th style="text-align: left;">@Model.paymentData.TotalAmount LKR</th>
+                                    <th style="text-align: right;">Total Amount:</th>
+                                    <th style="text-align: left;">@Model.paymentData.TotalAmountOld LKR</th>
                                 </tr>
                                 <tr>
-                                    <th style="text-align: right;">Total Refund:</th>
-                                    <th style="text-align: left;">@Model.paymentData.TotalRefund LKR</th>
+                                    <th style="text-align: right;">Total Refunded Amount:</th>
+                                    <th style="text-align: left;">@Model.paymentData.TotalAmountRefunded LKR</th>
                                 </tr>
                             </thead>
                             <tbody class="table-primary">

@@ -45,6 +45,14 @@ namespace HospitalMgrSystem.Model
         public int schedularId { get; set; }
 
         [NotMapped]
+        public decimal? TotalRefund { get; set; }
+
+        [NotMapped]
+        public decimal? TotalNeedToRefund { get; set; }
+        [NotMapped]
+        public decimal? TotalOldAmount { get; set; }
+
+        [NotMapped]
         public decimal? TotalAmount { get; set; }
         [NotMapped]
         public decimal? TotalPaidAmount { get; set; }
