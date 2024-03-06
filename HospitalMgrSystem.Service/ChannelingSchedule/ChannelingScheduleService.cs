@@ -1,6 +1,7 @@
 ﻿using HospitalMgrSystem.Model.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,70 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 
 
         private object dbContext;
+
+        public List<Model.ChannelingSchedule> GetAllChannelingScheduleByDateTime(DateTime startDate, DateTime endDate)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule
+                    .Include(c => c.Consultant)
+                    .Include(c => c.Consultant.Specialist)
+                    .Include(c => c.Consultant)
+                    .Where(o => o.Status == 0 && o.DateTime >= startDate && o.DateTime <= endDate)
+                    .OrderByDescending(o => o.DateTime)
+                    .ToList();
+
+                return schedularIdList;
+            }
+        }
+
+        public List<Model.ChannelingSchedule> GetAllChannelingScheduleByDateTimeWithSpeciality(DateTime startDate, DateTime endDate, int specialistId)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule
+                    .Include(c => c.Consultant)
+                    .Include(c => c.Consultant.Specialist)
+                    .Include(c => c.Consultant)
+                    .Where(o => o.Status == 0 && o.DateTime >= startDate && o.DateTime <= endDate && o.Consultant.SpecialistId == specialistId)
+                    .OrderByDescending(o => o.DateTime)
+                    .ToList();
+
+                return schedularIdList;
+            }
+        }
+
+        public List<Model.ChannelingSchedule> GetAllChannelingScheduleByDateTimeWithStatus(DateTime startDate, DateTime endDate, ChannellingScheduleStatus channellingScheduleStatus)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule
+                    .Include(c => c.Consultant)
+                    .Include(c => c.Consultant.Specialist)
+                    .Include(c => c.Consultant)
+                    .Where(o => o.Status == 0 && o.DateTime >= startDate && o.DateTime <= endDate && o.scheduleStatus == channellingScheduleStatus)
+                    .OrderByDescending(o => o.DateTime)
+                    .ToList();
+
+                return schedularIdList;
+            }
+        }
+
+        public List<Model.ChannelingSchedule> GetAllChannelingScheduleByDateTimeWithSpecialityAndStatus(DateTime startDate, DateTime endDate, ChannellingScheduleStatus channellingScheduleStatus, int specialistId)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule
+                    .Include(c => c.Consultant)
+                    .Include(c => c.Consultant.Specialist)
+                    .Include(c => c.Consultant)
+                    .Where(o => o.Status == 0 && o.DateTime >= startDate && o.DateTime <= endDate && o.scheduleStatus == channellingScheduleStatus && o.Consultant.SpecialistId == specialistId)
+                    .OrderByDescending(o => o.DateTime)
+                    .ToList();
+
+                return schedularIdList;
+            }
+        }
 
 
 
@@ -29,7 +94,7 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                 else
                 {
                     Model.ChannelingSchedule result = (from p in dbContext.ChannelingSchedule where p.Id == channelingSchedule.Id select p).SingleOrDefault();
-                    
+
                     if (channelingSchedule.NoOfAppointment >= result.NoOfAppointment)
                     {
                         result.NoOfAppointment = channelingSchedule.NoOfAppointment;
@@ -76,6 +141,12 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                     .Select(g => new { ScheduleId = g.Key, Count = g.Count() })
                     .ToList();
 
+                var refundCount = dbContext.OPD
+                    .Where(o => o.invoiceType == InvoiceType.CHE && o.paymentStatus == PaymentStatus.NEED_TO_PAY)
+                    .GroupBy(o => o.schedularId)
+                    .Select(g => new { ScheduleId = g.Key, Count = g.Count() })
+                    .ToList();
+
                 foreach (var item in mtList)
                 {
                     foreach (var bookedItem in bookedChannelCount)
@@ -91,6 +162,14 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                         if (item.Id == bookedItem.ScheduleId)
                         {
                             item.paid = bookedItem.Count;
+                        }
+                    }
+
+                    foreach (var bookedItem in refundCount)
+                    {
+                        if (item.Id == bookedItem.ScheduleId)
+                        {
+                            item.refund = bookedItem.Count;
                         }
                     }
                 }
