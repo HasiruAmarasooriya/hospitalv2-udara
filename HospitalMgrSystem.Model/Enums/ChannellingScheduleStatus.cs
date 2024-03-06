@@ -13,6 +13,7 @@ namespace HospitalMgrSystem.Model.Enums
         SESSION_START, // Doctor awa
         SESSION_END, // Doctor giyaa
         SESSION_CANCEL, // Doctor cancel (doctor enne naa)
-        PENDING
+        PENDING,
+        ALL
     }
 }
