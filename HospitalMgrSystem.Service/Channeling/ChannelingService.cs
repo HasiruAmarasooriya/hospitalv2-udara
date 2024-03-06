@@ -47,12 +47,249 @@ namespace HospitalMgrSystem.Service.Channeling
             }
         }
 
+        public List<Model.OPD> GetAllChannelingByDateTime(DateTime startDate, DateTime endDate)
+        {
+            List<Model.OPD> mtList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule.ToList();
+
+                mtList = dbContext.OPD
+                    .Include(c => c.patient)
+                    .Include(c => c.consultant)
+                    .Include(c => c.room)
+                    .Include(c => c.consultant.Specialist)
+                    .Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.DateTime >= startDate && o.DateTime <= endDate)
+                    .OrderByDescending(o => o.Id)
+                    .ToList();
+
+                for (int i = 0; i < mtList.Count; i++)
+                {
+                    mtList[i].channelingScheduleData = schedularIdList.Where(o => o.Id == mtList[i].schedularId).SingleOrDefault();
+                }
+
+            }
+            return mtList;
+        }
+
+        public List<Model.Specialist> GetAllSpecialists()
+        {
+            List<Model.Specialist> mtList = new List<Model.Specialist>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.Specialists.ToList();
+            }
+            return mtList;
+        }
+
+        public List<Model.OPD> GetAllChannelingByDoctorSpeciality(DateTime startDate, DateTime endDate, int specialistId)
+        {
+            List<Model.OPD> mtList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule.ToList();
+
+                mtList = dbContext.OPD
+                    .Include(c => c.patient)
+                    .Include(c => c.consultant)
+                    .Include(c => c.room)
+                    .Include(c => c.consultant.Specialist)
+                    .Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.consultant.SpecialistId == specialistId && o.DateTime >= startDate && o.DateTime <= endDate)
+                    .OrderByDescending(o => o.Id)
+                    .ToList();
+
+                for (int i = 0; i < mtList.Count; i++)
+                {
+                    mtList[i].channelingScheduleData = schedularIdList.Where(o => o.Id == mtList[i].schedularId).SingleOrDefault();
+                }
+
+            }
+            return mtList;
+        }
+
+        public List<Model.OPD> GetAllChannelingByAllFilters(DateTime startDate, DateTime endDate, int specialistId, PaymentStatus paymentStatus, ChannellingScheduleStatus channellingScheduleStatus)
+        {
+            List<Model.OPD> mtList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule.Where(o => o.scheduleStatus == channellingScheduleStatus).ToList();
+
+                mtList = dbContext.OPD
+                    .Include(c => c.patient)
+                    .Include(c => c.consultant)
+                    .Include(c => c.room)
+                    .Include(c => c.consultant.Specialist)
+                    .Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.consultant.SpecialistId == specialistId && o.paymentStatus == paymentStatus && o.DateTime >= startDate && o.DateTime <= endDate)
+                    .OrderByDescending(o => o.Id)
+                    .ToList();
+
+                for (int i = 0; i < mtList.Count; i++)
+                {
+                    mtList[i].channelingScheduleData = schedularIdList.Where(o => o.Id == mtList[i].schedularId).SingleOrDefault();
+                }
+
+            }
+            return mtList;
+        }
+
+        public List<Model.OPD> GetAllChannelingByPaymentStatusAndChannelingScheduleStatus(DateTime startDate, DateTime endDate, PaymentStatus paymentStatus, ChannellingScheduleStatus channellingScheduleStatus)
+        {
+            List<Model.OPD> mtList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule.Where(o => o.scheduleStatus == channellingScheduleStatus).ToList();
+
+                mtList = dbContext.OPD
+                    .Include(c => c.patient)
+                    .Include(c => c.consultant)
+                    .Include(c => c.room)
+                    .Include(c => c.consultant.Specialist)
+                    .Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.paymentStatus == paymentStatus && o.DateTime >= startDate && o.DateTime <= endDate)
+                    .OrderByDescending(o => o.Id)
+                    .ToList();
+
+                for (int i = 0; i < mtList.Count; i++)
+                {
+                    mtList[i].channelingScheduleData = schedularIdList.Where(o => o.Id == mtList[i].schedularId).SingleOrDefault();
+                }
+
+            }
+            return mtList;
+        }
+
+        public List<Model.OPD> GetAllChannelingByDoctorSpecialityAndScheduleStatus(DateTime startDate, DateTime endDate, int specialistId, ChannellingScheduleStatus channellingScheduleStatus)
+        {
+            List<Model.OPD> mtList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule.Where(o => o.scheduleStatus == channellingScheduleStatus).ToList();
+
+                mtList = dbContext.OPD
+                    .Include(c => c.patient)
+                    .Include(c => c.consultant)
+                    .Include(c => c.room)
+                    .Include(c => c.consultant.Specialist)
+                    .Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.consultant.SpecialistId == specialistId && o.DateTime >= startDate && o.DateTime <= endDate)
+                    .OrderByDescending(o => o.Id)
+                    .ToList();
+
+                for (int i = 0; i < mtList.Count; i++)
+                {
+                    mtList[i].channelingScheduleData = schedularIdList.Where(o => o.Id == mtList[i].schedularId).SingleOrDefault();
+                }
+
+            }
+            return mtList;
+        }
+
+        public List<Model.OPD> GetAllChannelingBySpecialistIdAndPaymentStatus(DateTime startDate, DateTime endDate, PaymentStatus paymentStatus, int specialistId)
+        {
+            List<Model.OPD> mtList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                var channelingScheduleIds = dbContext.ChannelingSchedule
+                    .Select(o => o.Id)
+                    .ToList();
+
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule.ToList();
+
+                mtList = dbContext.OPD
+                    .Include(c => c.patient)
+                    .Include(c => c.consultant)
+                    .Include(c => c.room)
+                    .Include(c => c.consultant.Specialist)
+                    .Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.DateTime >= startDate && o.DateTime <= endDate && o.consultant.SpecialistId == specialistId && o.paymentStatus == paymentStatus && channelingScheduleIds.Contains(o.schedularId))
+                    .OrderByDescending(o => o.Id)
+                    .ToList();
+
+                for (int i = 0; i < mtList.Count; i++)
+                {
+                    mtList[i].channelingScheduleData = schedularIdList.Where(o => o.Id == mtList[i].schedularId).SingleOrDefault();
+                }
+
+            }
+            return mtList;
+        }
+
+        public List<Model.OPD> GetAllChannelingByPaymentStatus(DateTime startDate, DateTime endDate, PaymentStatus paymentStatus)
+        {
+            List<Model.OPD> mtList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                var channelingScheduleIds = dbContext.ChannelingSchedule
+                    .Select(o => o.Id)
+                    .ToList();
+
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule.ToList();
+
+                mtList = dbContext.OPD
+                    .Include(c => c.patient)
+                    .Include(c => c.consultant)
+                    .Include(c => c.room)
+                    .Include(c => c.consultant.Specialist)
+                    .Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == paymentStatus && channelingScheduleIds.Contains(o.schedularId))
+                    .OrderByDescending(o => o.Id)
+                    .ToList();
+
+                for (int i = 0; i < mtList.Count; i++)
+                {
+                    mtList[i].channelingScheduleData = schedularIdList.Where(o => o.Id == mtList[i].schedularId).SingleOrDefault();
+                }
+
+            }
+            return mtList;
+        }
+
+        public List<Model.OPD> GetAllChannelingByChannelingScheduleStatus(DateTime startDate, DateTime endDate, ChannellingScheduleStatus channellingScheduleStatus)
+        {
+            List<Model.OPD> mtList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                var channelingScheduleIds = dbContext.ChannelingSchedule
+                    .Where(o => o.scheduleStatus == channellingScheduleStatus)
+                    .Select(o => o.Id)
+                    .ToList();
+
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule.ToList();
+
+                mtList = dbContext.OPD
+                    .Include(c => c.patient)
+                    .Include(c => c.consultant)
+                    .Include(c => c.room)
+                    .Include(c => c.consultant.Specialist)
+                    .Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.DateTime >= startDate && o.DateTime <= endDate && channelingScheduleIds.Contains(o.schedularId))
+                    .OrderByDescending(o => o.Id)
+                    .ToList();
+
+                for (int i = 0; i < mtList.Count; i++)
+                {
+                    mtList[i].channelingScheduleData = schedularIdList.Where(o => o.Id == mtList[i].schedularId).SingleOrDefault();
+                }
+
+            }
+            return mtList;
+        }
+
         public List<Model.OPD> GetAllChannelingByStatus()
         {
             List<Model.OPD> mtList = new List<Model.OPD>();
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.OPD.Include(c => c.patient).Include(c => c.consultant).Include(c => c.room).Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE).OrderByDescending(o => o.Id).ToList();
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule.ToList();
+
+                mtList = dbContext.OPD
+                    .Include(c => c.patient)
+                    .Include(c => c.consultant)
+                    .Include(c => c.room)
+                    .Include(c => c.consultant.Specialist)
+                    .Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE)
+                    .OrderByDescending(o => o.Id)
+                    .ToList();
+
+                for (int i = 0; i < mtList.Count; i++)
+                {
+                    mtList[i].channelingScheduleData = schedularIdList.Where(o => o.Id == mtList[i].schedularId).SingleOrDefault();
+                }
 
             }
             return mtList;
