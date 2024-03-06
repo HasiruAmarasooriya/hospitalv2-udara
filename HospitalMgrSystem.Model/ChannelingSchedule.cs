@@ -28,5 +28,8 @@ namespace HospitalMgrSystem.Model
 
         [NotMapped]
         public int paid { get; set; }
+
+        [NotMapped]
+        public int refund { get; set; }
     }
 }
