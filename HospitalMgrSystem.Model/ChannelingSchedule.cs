@@ -24,6 +24,9 @@ namespace HospitalMgrSystem.Model
         public ChannellingScheduleStatus scheduleStatus { get; set; }
 
         [NotMapped]
+        public decimal totalAmount { get; set; }
+
+        [NotMapped]
         public int booked { get; set; }
 
         [NotMapped]
