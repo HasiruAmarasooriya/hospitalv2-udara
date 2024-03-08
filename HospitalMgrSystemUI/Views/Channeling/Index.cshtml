@@ -7,7 +7,7 @@
 
 }
 @inject IConfiguration Configuration
-@section Styles{
+@section Styles {
     <style>
         .select2-selection__rendered {
             line-height: 31px !important;
@@ -21,7 +21,7 @@
             height: 34px !important;
         }
     </style>
-    
+
 }
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
@@ -48,35 +48,116 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-body">
-            <h4 class="card-title">Channeling Details</h4>
-                    @*          @using (Html.BeginForm("Search", "Channel", new { value = 100 }, FormMethod.Post))
-                {
+            <div class="modal-body">
+                <form asp-action="FilterForm" method="post">
+                    <input type="hidden" id="opid" asp-for="opdId">
                     <div class="row">
-
                         <div class="col-md-2">
-                            <div class="form-group-sm ">
-                                <input class="form-control " type="text" name="txtSearch" id="txtSearch" placeholder="Search.." />
-                                <label for="StartShiftUtc">&nbsp;</label>
-
-                            </div>
-                        </div>
-                        <div class="col-md-2" id="divLoader">
-                            <div class="form-group-sm ">
-
-
-                                <button type="submit" class="btn btn btn-primary" id="btnfilter" data-toggle="tooltip" data-placement="top" title="Filter Records By Date Range"><i class="fa fa-filter"></i> &nbsp;Filter</button>
-
+                            <div class="form-group">
+                                <label for="companyName">Start Date</label>
+                                <input type="text" id="date-format-start" asp-format="{0:yyyy-MM-dd}" class="form-control" asp-for="StartTime" placeholder="">
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="form-group mt-4-q">
+                            <div class="form-group">
+                                <label for="companyName">End Date</label>
+                                <input type="text" id="date-format-end" asp-format="{0:yyyy-MM-dd}" class="form-control" asp-for="EndTime" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="companyName">Doctor Speciality</label>
+                                <select class="form-control ddlSearchList" id="dropPaidStatus" asp-for="SpecialistId">
+                                    <option value="-2">All</option>
+                                    @if (Model != null)
+                                    {
+                                        @foreach (var item in Model.listSpecialists)
+                                        {
+                                            <option value="@item.Id">@item.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="companyName">Paid Status</label>
+                                <select class="form-control ddlSearchList" id="dropPaidStatus" asp-for="paymentStatus">
+                                    <option value="5" selected>All</option>
+                                    <option value="0">PAID</option>
+                                    <option value="1">PARTIAL PAID</option>
+                                    <option value="2">NEED TO PAY</option>
+                                    <option value="3">OPD</option>
+                                    <option value="4">NOT PAID</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="companyName">Channeling Schedule Status</label>
+                                <select class="form-control ddlSearchList" id="dropPaidStatus" asp-for="channellingScheduleStatus">
+                                    <option value="6" selected>All</option>
+                                    <option value="0">NOT ACTIVE</option>
+                                    <option value="1">ACTIVE</option>
+                                    <option value="2">SESSION START</option>
+                                    <option value="3">SESSION END</option>
+                                    <option value="4">SESSION CANCEL</option>
+                                    <option value="5">PENDING</option>
+                                </select>
                             </div>
                         </div>
 
                     </div>
+
+                    <div class="modal-footer d-flex justify-content-between">
+                        <div></div>
+                        <div>
+                            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal" onclick="handleClear()">&nbsp;Clear</button>
+                            <button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Filter</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Channeling Details</h4>
+                @*          @using (Html.BeginForm("Search", "Channel", new { value = 100 }, FormMethod.Post))
+                {
+                <div class="row">
+
+                <div class="col-md-2">
+                <div class="form-group-sm ">
+                <input class="form-control " type="text" name="txtSearch" id="txtSearch" placeholder="Search.." />
+                <label for="StartShiftUtc">&nbsp;</label>
+
+                </div>
+                </div>
+                <div class="col-md-2" id="divLoader">
+                <div class="form-group-sm ">
+
+
+                <button type="submit" class="btn btn btn-primary" id="btnfilter" data-toggle="tooltip" data-placement="top" title="Filter Records By Date Range"><i class="fa fa-filter"></i> &nbsp;Filter</button>
+
+                </div>
+                </div>
+                <div class="col-md-2">
+                <div class="form-group mt-4-q">
+                </div>
+                </div>
+
+                </div>
                 }*@
-             @*   <div class="row"></div>*@
+                @*   <div class="row"></div>*@
                 <div class="table-responsive">
                     <table id="basic-2" class="display">
                         <thead>
@@ -84,12 +165,13 @@
                                 <th>Channeling ID</th>
                                 <th>Patient</th>
                                 <th>Contact Number</th>
-                                <th>Payment Status</th>
                                 <th>Appoinment No</th>
                                 <th>Description</th>
                                 <th>Consultant</th>
+                                <th>Specialist</th>
                                 <th>Shedule</th>
                                 <th>Payment Status</th>
+                                <th>Channeling Schedule Status</th>
                                 <th>View</th>
                                 <th>QR</th>
                                 <th>View Cashier</th>
@@ -97,7 +179,8 @@
                             </tr>
                         </thead>
                         <tbody id="">
-                            @if(Model!=null){
+                            @if (Model != null)
+                            {
                                 @foreach (var item in Model.listOPDTbDto)
                                 {
                                     <tr>
@@ -105,12 +188,13 @@
                                         <td>@item.Id</td>
                                         <td>@item.FullName</td>
                                         <td>@item.MobileNumber</td>
-                                        <td>@item.paymentStatus</td>
                                         <td>@item.AppoimentNo</td>
                                         <td>@item.Description</td>
                                         <td>@item.consaltantName</td>
+                                        <td>@item.specialistData.Name</td>
                                         <td>@item.DateTime</td>
                                         <td>@item.paymentStatus</td>
+                                        <td>@item.channelingScheduleData.scheduleStatus</td>
                                         <td>
                                             <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
                                         </td>
@@ -148,12 +232,44 @@
 </div>
 
 
-@section scripts{
+@section scripts {
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script>
-        //var patientsList;
-        function ShowShiftDetails(id,csID) {
+        $('body').on('focus', "#date-format", function () {
+
+            $('#date-format').bootstrapMaterialDatePicker({
+                time: true,
+                format: "YYYY-MM-DD hh:mm"
+
+            });
+
+        });
+
+        $('body').on('focus', "#date-format-start", function () {
+
+            $('#date-format-start').bootstrapMaterialDatePicker({
+                time: false,
+                format: "YYYY-MM-DD"
+
+            });
+
+        });
+        $('body').on('focus', "#date-format-end", function () {
+
+            $('#date-format-end').bootstrapMaterialDatePicker({
+                time: false,
+                format: "YYYY-MM-DD"
+
+            });
+
+        });
+
+        function handleClear() {
+            window.location.href = '/Channeling/';
+        }
+
+        function ShowShiftDetails(id, csID) {
 
             console.log(id);
 
@@ -165,7 +281,7 @@
                 dataType: "html",
                 success: function (response) {
                     $("#AddEditContainerModel").html(response);
-                    if (csID>0){
+                    if (csID > 0) {
                         select_onchange_shedule(csID)
                     }
 
@@ -176,8 +292,8 @@
                     //    height: "auto !important",
                     //    dropdownCssClass: "bigdrop",
                     //    dropdownParent: $('#AddShiftModel'),
-                    //    placeholder: 'Select one', 
-                    //    allowClear: true, 
+                    //    placeholder: 'Select one',
+                    //    allowClear: true,
                     //});
 
                     //patient dropdown

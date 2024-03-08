@@ -11,6 +11,8 @@ namespace HospitalMgrSystemUI.Models
         public string FullName { get; set; }
         public string roomName { get; set; }
         public string consaltantName { get; set; }
+        public int consaltantId { get; set; }
+        public Specialist specialistData { get; set; }
         public string? Description { get; set; }
         public SexStatus Sex { get; set; }
         public string MobileNumber { get; set; }
@@ -22,5 +24,6 @@ namespace HospitalMgrSystemUI.Models
         public decimal? TotalAmount { get; set; }
         public PaymentStatus paymentStatus { get; set; }
         public int schedularId { get; set; }
+        public ChannelingSchedule channelingScheduleData { get; set; }
     }
 }

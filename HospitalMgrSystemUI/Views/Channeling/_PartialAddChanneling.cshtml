@@ -133,9 +133,9 @@
             success: function (data) {
                 drugusList = [];
                 document.getElementById("tblBodyPayments2").innerHTML = "";
-                    var opdId = @Html.Raw(Json.Serialize(Model.opdId));
+                var opdId = @Html.Raw(Json.Serialize(Model.opdId));
 
-                    $("#AddEditContainerModel").html(data);
+                $("#AddEditContainerModel").html(data);
 
             },
             error: function (error) {
@@ -176,7 +176,7 @@
         isCheckedECO = 0;
         isCheckedEXE = 0;
 
-        channelingItemID=0;
+        channelingItemID = 0;
 
         while (tableBody.firstChild) {
             tableBody.removeChild(tableBody.firstChild);
@@ -424,34 +424,34 @@
                 tableBody.removeChild(tableBody.firstChild);
             }
 
-                var newRow = tableBody.insertRow();
-                var cell1 = newRow.insertCell(0);
-                var cell2 = newRow.insertCell(1);
-                var cell3 = newRow.insertCell(2);
-                var cell4 = newRow.insertCell(3);
+            var newRow = tableBody.insertRow();
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
 
-                var cheText = response.itemName;
-                cell1.innerHTML = cheText;
-                cell2.innerHTML = doctorFee;
-                cell3.innerHTML = hospitalFee;    
-                cell4.innerHTML = doctorFee + hospitalFee;
+            var cheText = response.itemName;
+            cell1.innerHTML = cheText;
+            cell2.innerHTML = doctorFee;
+            cell3.innerHTML = hospitalFee;
+            cell4.innerHTML = doctorFee + hospitalFee;
 
-                var total = 0;
-                var HospitalTotal = 0;
-                var DoctorTotal = 0;
+            var total = 0;
+            var HospitalTotal = 0;
+            var DoctorTotal = 0;
 
-                isCheckedVOG = 0;
-                isCheckedECO = 0;
-                isCheckedEXE = 0;
+            isCheckedVOG = 0;
+            isCheckedECO = 0;
+            isCheckedEXE = 0;
 
-                var chTotal = doctorFee + hospitalFee;
-                DoctorTotal = DoctorTotal + doctorFee;
-                HospitalTotal = HospitalTotal + hospitalFee;
-                total = total + chTotal;
+            var chTotal = doctorFee + hospitalFee;
+            DoctorTotal = DoctorTotal + doctorFee;
+            HospitalTotal = HospitalTotal + hospitalFee;
+            total = total + chTotal;
 
-                $("#total").val(DoctorTotal);
-                $("#hospitalCharges").val(HospitalTotal);
-                $("#subTotal").val(total);
+            $("#total").val(DoctorTotal);
+            $("#hospitalCharges").val(HospitalTotal);
+            $("#subTotal").val(total);
 
 
 
@@ -520,7 +520,7 @@
                 isCheckedVOG = 0;
                 isCheckedECO = 0;
                 isCheckedEXE = 0;
-                channelingItemID=0;
+                channelingItemID = 0;
 
                 var chTotal = doctorFee + hospitalFee;
                 DoctorTotal = DoctorTotal + doctorFee;
@@ -705,17 +705,17 @@
                         @{
                             if (Model.opdId == 0)
                             {
-                                        <select class="form-control ddlSearchList" id="dropDoctor" onchange="javascript:select_onchange_doctor(this.value);" asp-for="channeling.ChannelingSchedule.ConsultantId">
-                                            <option value="">Select one</option>
-                                            @foreach (var item in Model.listConsultants)
+                                <select class="form-control ddlSearchList" id="dropDoctor" onchange="javascript:select_onchange_doctor(this.value);" asp-for="channeling.ChannelingSchedule.ConsultantId">
+                                    <option value="">Select one</option>
+                                    @foreach (var item in Model.listConsultants)
                                     {
-                                                <option value="@item.Id">@item.Name</option>
+                                        <option value="@item.Id">@item.Specialist.Name - @item.Name</option>
                                     }
-                                        </select>
+                                </select>
                             }
                             else
                             {
-                                        <input class="form-control" type="text" id="selectedDoctorId" value="@Model.opd.consultant.Name" style="text-align:right;" placeholder="Consultant Name" name="@Model.opd.consultant.Id" disabled />
+                                <input class="form-control" type="text" id="selectedDoctorId" value="@Model.opd.consultant.Name" style="text-align:right;" placeholder="Consultant Name" name="@Model.opd.consultant.Id" disabled />
                             }
                         }
                     </div>
@@ -726,17 +726,17 @@
                         @{
                             if (Model.opdId == 0)
                             {
-                                        <select class="form-control ddlSearchList" id="dropShedule" onchange="javascript:select_onchange_shedule(this.value);" asp-for="channeling.ChannelingScheduleID">
-                                            <option>Select one</option>
-                                            @foreach (var item in Model.listChannelingSchedule)
+                                <select class="form-control ddlSearchList" id="dropShedule" onchange="javascript:select_onchange_shedule(this.value);" asp-for="channeling.ChannelingScheduleID">
+                                    <option>Select one</option>
+                                    @foreach (var item in Model.listChannelingSchedule)
                                     {
-                                                <option value="@item.Id">@item.DateTime</option>
+                                        <option value="@item.Id">@item.DateTime</option>
                                     }
-                                        </select>
+                                </select>
                             }
                             else
                             {
-                                        <input class="form-control" type="text" id="dropShedule" value="@Model.channelingSchedule.DateTime" style="text-align:right;" placeholder="Schedule Time" disabled />
+                                <input class="form-control" type="text" id="dropShedule" value="@Model.channelingSchedule.DateTime" style="text-align:right;" placeholder="Schedule Time" disabled />
                             }
                         }
                     </div>
@@ -748,17 +748,17 @@
                         @{
                             if (Model.opdId == 0)
                             {
-                                        <select class="form-control ddlSearchList" id="dropChannelingItems" onchange="javascript:select_onchange_channelingItems(this.value)" asp-for="channelingItem.Id" disabled>
-                                            <option>Select one</option>
-                                            @foreach (var item in Model.listChannelingItems)
+                                <select class="form-control ddlSearchList" id="dropChannelingItems" onchange="javascript:select_onchange_channelingItems(this.value)" asp-for="channelingItem.Id" disabled>
+                                    <option>Select one</option>
+                                    @foreach (var item in Model.listChannelingItems)
                                     {
-                                                <option value="@item.Id">@item.ItemName</option>
+                                        <option value="@item.Id">@item.ItemName</option>
                                     }
-                                        </select>
+                                </select>
                             }
                             else
                             {
-                                        <input class="form-control" type="text" id="dropChannelingItems" value="@Model.opd.Description" style="text-align:right;" placeholder="Item Name" disabled />
+                                <input class="form-control" type="text" id="dropChannelingItems" value="@Model.opd.Description" style="text-align:right;" placeholder="Item Name" disabled />
                             }
                         }
                     </div>
@@ -787,28 +787,28 @@
                         @{
                             if (Model.opdId == 0)
                             {
-                                        <select class="form-control ddlSearchList" id="dropNoOfAppoinment" asp-for="channeling.AppointmentNo">
+                                <select class="form-control ddlSearchList" id="dropNoOfAppoinment" asp-for="channeling.AppointmentNo">
 
-                                            @if (Model != null)
+                                    @if (Model != null)
                                     {
                                         if (Model.channeling != null)
                                         {
-                                                    @if (Model.channeling.AppointmentNo > 0)
+                                            @if (Model.channeling.AppointmentNo > 0)
                                             {
-                                                        <option>@Model.channeling.AppointmentNo</option>
+                                                <option>@Model.channeling.AppointmentNo</option>
                                             }
                                         }
                                         else
                                         {
-                                                    <option>Select one</option>
+                                            <option>Select one</option>
                                         }
 
                                     }
-                                        </select>
+                                </select>
                             }
                             else
                             {
-                                        <input class="form-control" type="text" id="dropNoOfAppoinment" value="@Model.opd.AppoimentNo" style="text-align:right;" placeholder="Appoinment Number" disabled />
+                                <input class="form-control" type="text" id="dropNoOfAppoinment" value="@Model.opd.AppoimentNo" style="text-align:right;" placeholder="Appoinment Number" disabled />
                             }
                         }
                     </div>
@@ -818,21 +818,21 @@
                         @{
                             if (Model.opdId == 0)
                             {
-                                        <label for="companyName">Add On</label>
+                                <label for="companyName">Add On</label>
 
-                                        <br>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="VOG Scan" onchange="handleCheckboxChange()">
-                                            <label class="form-check-label" for="inlineCheckbox1">VOG Scan</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="Echo Scan" onchange="handleCheckboxChange()">
-                                            <label class="form-check-label" for="inlineCheckbox2">Echo Scan</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Exercise Book" onchange="handleCheckboxChange()">
-                                            <label class="form-check-label" for="inlineCheckbox3">Exercise Book</label>
-                                        </div>
+                                <br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="VOG Scan" onchange="handleCheckboxChange()">
+                                    <label class="form-check-label" for="inlineCheckbox1">VOG Scan</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="Echo Scan" onchange="handleCheckboxChange()">
+                                    <label class="form-check-label" for="inlineCheckbox2">Echo Scan</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Exercise Book" onchange="handleCheckboxChange()">
+                                    <label class="form-check-label" for="inlineCheckbox3">Exercise Book</label>
+                                </div>
                             }
                         }
 
@@ -895,7 +895,7 @@
                                 <tr>
                                     <th data-orderable="true">Billing Item Name</th>
                                     <th>Doctor Fee</th>
-                                    <th>Hospital Fee</th>      
+                                    <th>Hospital Fee</th>
                                     <th>Total</th>
                                 </tr>
                             </thead>
@@ -991,7 +991,7 @@
 
         <div class="modal-footer">
             <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
-           
+
             <button type="button" class="btn  waves-effect btn-primary" onclick="submitChanneling()"><i class="fa fa-save"></i>&nbsp;Save</button>
             <button type="button" class="btn waves-effect btn-primary ms-2" onclick="submitChannelingWithQR()">
                 <i class='fa fa-print'></i>&nbsp;Print & Save

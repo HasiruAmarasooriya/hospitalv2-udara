@@ -51,11 +51,32 @@ namespace HospitalMgrSystem.Service.CashierSession
         public List<Model.CashierSession> GetAllCashierSession()
         {
             List<Model.CashierSession> mtList = new List<Model.CashierSession>();
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
                 mtList = dbContext.CashierSessions.Include(c => c.User).Where(o => o.Status == 0).OrderByDescending(o => o.Id).ToList<Model.CashierSession>();
+            
+                // Get sum of all payments as Total
+                var paymentsData = dbContext.Payments
+                    .GroupBy(c => c.sessionID)
+                    .Select(g => new
+                    {
+                        sessionID = g.Key,
+                        Total = g.Sum(c => c.CashAmount)
+                    }).ToList();
 
+                foreach (var item in mtList)
+                {
+                    foreach (var payment in paymentsData)
+                    {
+                        if (item.Id == payment.sessionID)
+                        {
+                            item.TotalAmount = payment.Total;
+                        }
+                    }
+                }
             }
+
             return mtList;
         }
 
@@ -87,7 +108,7 @@ namespace HospitalMgrSystem.Service.CashierSession
             List<Model.CashierSession> mtList = new List<Model.CashierSession>();
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.CashierSessions.Include(c => c.User).Where(o => o.Status == 0 && o.cashierSessionStatus == Model.Enums.CashierSessionStatus.START && o.UserRole == UserRole.OPDNURSE ).OrderByDescending(o => o.Id).ToList<Model.CashierSession>();
+                mtList = dbContext.CashierSessions.Include(c => c.User).Where(o => o.Status == 0 && o.cashierSessionStatus == Model.Enums.CashierSessionStatus.START && o.UserRole == UserRole.OPDNURSE).OrderByDescending(o => o.Id).ToList<Model.CashierSession>();
 
             }
             return mtList;

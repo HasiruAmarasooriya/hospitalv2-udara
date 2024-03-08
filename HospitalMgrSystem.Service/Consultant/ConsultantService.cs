@@ -10,7 +10,7 @@ namespace HospitalMgrSystem.Service.Consultant
 {
     public class ConsultantService : IConsultantService
     {
-        public HospitalMgrSystem.Model.Consultant CreateConsultant(HospitalMgrSystem.Model.Consultant consultant) 
+        public HospitalMgrSystem.Model.Consultant CreateConsultant(HospitalMgrSystem.Model.Consultant consultant)
         {
 
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
@@ -39,6 +39,28 @@ namespace HospitalMgrSystem.Service.Consultant
             }
         }
 
+        public List<Model.Consultant> GetAllConsultantThatHaveSchedulings()
+        {
+            List<Model.Consultant> mtList = new List<Model.Consultant>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                // Get doctor ids which have schedulings
+                var doctorIds = dbContext.ChannelingSchedule
+                    .Where(x => x.Status == Model.Enums.CommonStatus.Active)
+                    .Select(x => x.ConsultantId)
+                    .Distinct()
+                    .ToList();
+
+
+                mtList = dbContext.Consultants
+                    .Include(c => c.Specialist)
+                    .Where(o => o.Status == 0 && doctorIds.Contains(o.Id))
+                    .ToList();
+            }
+
+            return mtList;
+        }
+
         public List<Model.Consultant> GetAllConsultantByStatus()
         {
             List<Model.Consultant> mtList = new List<Model.Consultant>();
@@ -65,14 +87,14 @@ namespace HospitalMgrSystem.Service.Consultant
             List<Model.Consultant> mtList = new List<Model.Consultant>();
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.Consultants.Include(c => c.Specialist).Where(o => o.Status == 0 && o.SpecialistId==id).ToList<Model.Consultant>();
+                mtList = dbContext.Consultants.Include(c => c.Specialist).Where(o => o.Status == 0 && o.SpecialistId == id).ToList<Model.Consultant>();
 
             }
             return mtList;
         }
         public Model.Consultant GetAllConsultantByID(int? id)
         {
-            Model.Consultant consultant  = new Model.Consultant();
+            Model.Consultant consultant = new Model.Consultant();
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
                 consultant = dbContext.Consultants.First(o => o.Id == id);
@@ -99,7 +121,7 @@ namespace HospitalMgrSystem.Service.Consultant
             if (value == null) { value = ""; }
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.Consultants.Include(c => c.Specialist).Where(o => (o.Name.Contains(value) || o.ContectNumber.Contains(value) 
+                mtList = dbContext.Consultants.Include(c => c.Specialist).Where(o => (o.Name.Contains(value) || o.ContectNumber.Contains(value)
                 || o.Specialist.Name.Contains(value)) && o.Status == 0).ToList<Model.Consultant>();
 
             }

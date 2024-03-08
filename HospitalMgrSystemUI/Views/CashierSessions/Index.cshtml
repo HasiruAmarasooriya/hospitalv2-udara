@@ -62,6 +62,7 @@
                                     <th>End Time</th>
                                     <th>Starting Balence</th>
                                     <th>End Balence</th>
+                                    <th>Total Amount</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -80,6 +81,9 @@
                                     </td>
                                     <td>
                                         @item.EndBalence
+                                    </td>
+                                    <td>
+                                        @item.TotalAmount
                                     </td>
                                     <td>
                                         <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;

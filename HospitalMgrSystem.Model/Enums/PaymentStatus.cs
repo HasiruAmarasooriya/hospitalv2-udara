@@ -12,6 +12,7 @@ namespace HospitalMgrSystem.Model.Enums
         PARTIAL_PAID,// If Balence > 0
         NEED_TO_PAY,// If Balence < 0
         OPD,// If payment done by OPD and still not it add on cashier
-        NOT_PAID// Newly created invoiced
+        NOT_PAID, // Newly created invoiced
+        ALL // All
     }
 }

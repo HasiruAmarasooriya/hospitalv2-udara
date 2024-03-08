@@ -5,7 +5,7 @@
 @{
 
 }
-@section Styles{
+@section Styles {
     <style>
         .select2-selection__rendered {
             line-height: 31px !important;
@@ -45,68 +45,110 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Channeling Shedule Details</h4>
- @*               @using (Html.BeginForm("Search", "Channel", new { value = 100 }, FormMethod.Post))
-                {
+            <div class="modal-body">
+                <form asp-action="FilterForm" method="post">
                     <div class="row">
-
-                        <div class="col-md-2">
-                            <div class="form-group-sm ">
-                                <input class="form-control " type="text" name="txtSearch" id="txtSearch" placeholder="Search.." />
-                                <label for="StartShiftUtc">&nbsp;</label>
-
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="companyName">Start Date</label>
+                                <input type="text" id="date-format-start" asp-format="{0:yyyy-MM-dd}" class="form-control" asp-for="StartTime" placeholder="">
                             </div>
                         </div>
-                        <div class="col-md-2" id="divLoader">
-                            <div class="form-group-sm ">
-
-
-                                <button type="submit" class="btn btn btn-primary" id="btnfilter" data-toggle="tooltip" data-placement="top" title="Filter Records By Date Range"><i class="fa fa-filter"></i> &nbsp;Filter</button>
-
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="companyName">End Date</label>
+                                <input type="text" id="date-format-end" asp-format="{0:yyyy-MM-dd}" class="form-control" asp-for="EndTime" placeholder="">
                             </div>
                         </div>
-                        <div class="col-md-2">
-                            <div class="form-group mt-4-q">
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="companyName">Doctor Speciality</label>
+                                <select class="form-control ddlSearchList" id="dropPaidStatus" asp-for="SpecialistId">
+                                    <option value="-2">All</option>
+                                    @if (Model != null)
+                                    {
+                                        @foreach (var item in Model.Specialists)
+                                        {
+                                            <option value="@item.Id">@item.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="companyName">Channeling Schedule Status</label>
+                                <select class="form-control ddlSearchList" id="dropPaidStatus" asp-for="channellingScheduleStatus">
+                                    <option value="6" selected>All</option>
+                                    <option value="0">NOT ACTIVE</option>
+                                    <option value="1">ACTIVE</option>
+                                    <option value="2">SESSION START</option>
+                                    <option value="3">SESSION END</option>
+                                    <option value="4">SESSION CANCEL</option>
+                                    <option value="5">PENDING</option>
+                                </select>
                             </div>
                         </div>
 
                     </div>
 
+                    <div class="modal-footer d-flex justify-content-between">
+                        <div></div>
+                        <div>
+                            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal" onclick="handleClear()">&nbsp;Clear</button>
+                            <button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Filter</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
 
+        </div>
+    </div>
+</div>
 
-                }*@
-
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Channeling Shedule Details</h4>
                 <div class="row"></div>
                 <div class="table-responsive">
                     <table id="basic-2" class="display">
                         <thead>
                             <tr>
-
-
+                                <th>Id</th>
                                 <th>Date</th>
                                 <th>Consultant Name</th>
+                                <th>Speciality</th>
                                 <th>Active Appointment</th>
                                 <th>Paid Appointment</th>
+                                <th>Refund Appointment</th>
                                 <th>Doctor Fee</th>
-                                <th>Hospital Fee</th>                            
+                                <th>Hospital Fee</th>
+                                <th>Total Amount</th>
                                 <th>Status</th>
                                 <th>View</th>
                                 <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody id="tblBodyPayments">
-                            @if(Model != null){
+                            @if (Model != null)
+                            {
                                 @foreach (var channelingShedule in Model.ChannelingScheduleList)
                                 {
                                     <tr>
-
+                                        <td>@channelingShedule.Id</td>
                                         <td>@channelingShedule.DateTime</td>
                                         <td>@channelingShedule.Consultant.Name</td>
+                                        <td>@channelingShedule.Consultant.Specialist.Name</td>
                                         <td>@channelingShedule.booked / @channelingShedule.NoOfAppointment</td>
                                         <td>@channelingShedule.paid</td>
+                                        <td>@channelingShedule.refund</td>
                                         <td>@channelingShedule.ConsultantFee</td>
                                         <td>@channelingShedule.HospitalFee</td>
+                                        <td>@channelingShedule.totalAmount</td>
                                         <td>@channelingShedule.scheduleStatus</td>
                                         <td>
                                             <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@channelingShedule.Id);><i class='fa fa-eye'></i></button>  &nbsp;
@@ -134,9 +176,14 @@
 </div>
 
 
-@section scripts{
+@section scripts {
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+
+        function handleClear() {
+            window.location.href = '/ChannelingShedule/';
+        }
+
         function ShowShiftDetails(id) {
 
             console.log(id);
@@ -179,6 +226,35 @@
             $('#date-format').bootstrapMaterialDatePicker({
                 time: true,
                 format: "YYYY-MM-DD HH:mm"
+
+            });
+
+        });
+
+        $('body').on('focus', "#date-format", function () {
+
+            $('#date-format').bootstrapMaterialDatePicker({
+                time: true,
+                format: "YYYY-MM-DD hh:mm"
+
+            });
+
+        });
+
+        $('body').on('focus', "#date-format-start", function () {
+
+            $('#date-format-start').bootstrapMaterialDatePicker({
+                time: false,
+                format: "YYYY-MM-DD"
+
+            });
+
+        });
+        $('body').on('focus', "#date-format-end", function () {
+
+            $('#date-format-end').bootstrapMaterialDatePicker({
+                time: false,
+                format: "YYYY-MM-DD"
 
             });
 

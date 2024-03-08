@@ -32,18 +32,115 @@ namespace HospitalMgrSystemUI.Controllers
         public OPDDto _OPDDto { get; set; }
         public IActionResult Index()
         {
-            OPDDto oPDDto = new OPDDto();
-            oPDDto.listOPDTbDto = GetAllChannelingByStatus();
+            OPDDto oPDDto = new OPDDto()
+            {
+                StartTime = DateTime.Now,
+                EndTime = DateTime.Now,
+                listOPDTbDto = GetAllChannelingByStatus(),
+                listSpecialists = new ChannelingService().GetAllSpecialists(),
+                paymentStatus = PaymentStatus.ALL,
+                channellingScheduleStatus = ChannellingScheduleStatus.ALL,
+            };
+
             return View(oPDDto);
         }
 
-        //public ActionResult onChangePatient(string id)
-        //{
-        //    ChannelingDto channelingDto = new ChannelingDto();
-        //    channelingDto.listConsultants = LoadConsultant();
+        public IActionResult FilterForm()
+        {
+            OPDDto channelingDto = new OPDDto()
+            {
+                StartTime = DateTime.Now,
+                EndTime = DateTime.Now,
+                listSpecialists = new ChannelingService().GetAllSpecialists(),
+            };
 
-        //    return PartialView("_PartialAddChanneling", channelingDto);
-        //}
+            List<OPDTbDto> oPDTbDto = new List<OPDTbDto>();
+            List<OPD> resultSet = new List<OPD>();
+
+            try
+            {
+                // When the user selects all the options
+                if (_OPDDto.SpecialistId != -2 && _OPDDto.paymentStatus != PaymentStatus.ALL && _OPDDto.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
+                {
+                    resultSet = new ChannelingService().GetAllChannelingByAllFilters(_OPDDto.StartTime, _OPDDto.EndTime, _OPDDto.SpecialistId, _OPDDto.paymentStatus, _OPDDto.channellingScheduleStatus);
+                }
+
+                // When the user selects the payment status, and the channeling schedule status
+                if (_OPDDto.SpecialistId == -2 && _OPDDto.paymentStatus != PaymentStatus.ALL && _OPDDto.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
+                {
+                    resultSet = new ChannelingService().GetAllChannelingByPaymentStatusAndChannelingScheduleStatus(_OPDDto.StartTime, _OPDDto.EndTime, _OPDDto.paymentStatus, _OPDDto.channellingScheduleStatus);
+                }
+
+                // When the user selects the specialist and the channeling schedule status
+                if (_OPDDto.SpecialistId != -2 && _OPDDto.paymentStatus == PaymentStatus.ALL && _OPDDto.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
+                {
+                    resultSet = new ChannelingService().GetAllChannelingByDoctorSpecialityAndScheduleStatus(_OPDDto.StartTime, _OPDDto.EndTime, _OPDDto.SpecialistId, _OPDDto.channellingScheduleStatus);
+                }
+
+                // When the user selects the specialist and the payment status
+                if (_OPDDto.SpecialistId != -2 && _OPDDto.paymentStatus != PaymentStatus.ALL && _OPDDto.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
+                {
+                    resultSet = new ChannelingService().GetAllChannelingBySpecialistIdAndPaymentStatus(_OPDDto.StartTime, _OPDDto.EndTime, _OPDDto.paymentStatus, _OPDDto.SpecialistId);
+                }
+
+                // When the user selects only the payment status
+                if (_OPDDto.SpecialistId == -2 && _OPDDto.paymentStatus != PaymentStatus.ALL && _OPDDto.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
+                {
+                    resultSet = new ChannelingService().GetAllChannelingByPaymentStatus(_OPDDto.StartTime, _OPDDto.EndTime, _OPDDto.paymentStatus);
+                }
+
+                // When the user selects only the channeling schedule status
+                if (_OPDDto.SpecialistId == -2 && _OPDDto.paymentStatus == PaymentStatus.ALL && _OPDDto.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
+                {
+                    resultSet = new ChannelingService().GetAllChannelingByChannelingScheduleStatus(_OPDDto.StartTime, _OPDDto.EndTime, _OPDDto.channellingScheduleStatus);
+                }
+
+                // When the user selects only the specialist
+                if (_OPDDto.SpecialistId != -2 && _OPDDto.paymentStatus == PaymentStatus.ALL && _OPDDto.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
+                {
+                    resultSet = new ChannelingService().GetAllChannelingByDoctorSpeciality(_OPDDto.StartTime, _OPDDto.EndTime, _OPDDto.SpecialistId);
+                }
+
+                // When the user selects only the date
+                if (_OPDDto.SpecialistId == -2 && _OPDDto.paymentStatus == PaymentStatus.ALL && _OPDDto.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
+                {
+                    resultSet = new ChannelingService().GetAllChannelingByDateTime(_OPDDto.StartTime, _OPDDto.EndTime);
+                }
+
+                foreach (var item in resultSet)
+                {
+                    oPDTbDto.Add(new OPDTbDto()
+                    {
+                        Id = item.Id,
+                        roomName = item.room.Name,
+                        Description = item.Description,
+                        consaltantName = item.consultant.Name,
+                        FullName = item.patient.FullName,
+                        MobileNumber = item.patient.MobileNumber,
+                        DateTime = item.DateTime,
+                        Sex = (SexStatus)item.patient.Sex,
+                        Status = item.Status,
+                        AppoimentNo = item.AppoimentNo,
+                        paymentStatus = item.paymentStatus,
+                        schedularId = item.schedularId,
+                        specialistData = item.consultant.Specialist,
+                        consaltantId = item.ConsultantID,
+                        channelingScheduleData = item.channelingScheduleData
+
+                    });
+                }
+
+                channelingDto.listOPDTbDto = oPDTbDto;
+
+                return View("Index", channelingDto);
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+
         public ActionResult CreateChanneling(int Id)
         {
             OPDDto oPDChannelingDto = new OPDDto();
@@ -127,12 +224,13 @@ namespace HospitalMgrSystemUI.Controllers
         {
             try
             {
-                List<Consultant> ConsultantLists = new ConsultantService().GetAllConsultantByStatus();
+                List<Consultant> ConsultantLists = new ConsultantService().GetAllConsultantThatHaveSchedulings();
                 return ConsultantLists;
             }
             catch (System.Exception ex)
-            { }
-            return null;
+            {
+                return null;
+            }
         }
 
         private List<Patient> LoadPatient()
@@ -208,7 +306,10 @@ namespace HospitalMgrSystemUI.Controllers
                             Status = item.Status,
                             AppoimentNo = item.AppoimentNo,
                             paymentStatus = item.paymentStatus,
-                            schedularId = item.schedularId
+                            schedularId = item.schedularId,
+                            specialistData = item.consultant.Specialist,
+                            consaltantId = item.ConsultantID,
+                            channelingScheduleData = item.channelingScheduleData
                         });
                     }
 
@@ -263,7 +364,7 @@ namespace HospitalMgrSystemUI.Controllers
                 }
 
 
-                
+
                 if (oPDDto.scanId != 0)
                 {
                     ScanObj = ScanGetByID(oPDDto.scanId);
@@ -308,7 +409,7 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.ConsultantFee = consultantFee;
                     oPDDto.opd.shiftID = NightShiftSessionList[0].Id;
 
-                    if( ScanObj != null && ScanObj.Id != 0)
+                    if (ScanObj != null && ScanObj.Id != 0)
                     {
                         oPDDto.opd.Description = ScanObj.ItemName;
                         oPDDto.opd.HospitalFee = ScanObj.HospitalFee;

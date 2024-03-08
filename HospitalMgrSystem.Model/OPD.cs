@@ -71,6 +71,9 @@ namespace HospitalMgrSystem.Model
         [NotMapped]
         public int OpdType { get; set; }
 
+        [NotMapped]
+        public ChannelingSchedule channelingScheduleData { get; set; }
+
 
     }
 }
