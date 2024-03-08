@@ -42,5 +42,8 @@ namespace HospitalMgrSystem.Model
         public int col9 { get; set; } // 1000
         public int col10 { get; set; }// 5000
 
+        [NotMapped]
+        public decimal TotalAmount { get; set; }
+
     }
 }
