@@ -123,6 +123,13 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                     .OrderByDescending(o => o.DateTime)
                     .ToList();
 
+                // Get Total amount of Each consultant using OPD table
+                var totalAmountOfEachCashier = dbContext.OPD
+                    .Where(o => o.invoiceType == InvoiceType.CHE)
+                    .GroupBy(o => o.schedularId)
+                    .Select(g => new { ScheduleId = g.Key, Total = g.Sum(o => o.ConsultantFee + o.HospitalFee + o.OtherFee) })
+                    .ToList();
+
                 var bookedChannelCount = dbContext.OPD
                     .Where(o => o.invoiceType == InvoiceType.CHE)
                     .GroupBy(o => new { o.schedularId, o.AppoimentNo })
@@ -170,6 +177,14 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                         if (item.Id == bookedItem.ScheduleId)
                         {
                             item.refund = bookedItem.Count;
+                        }
+                    }
+
+                    foreach (var totalAmount in totalAmountOfEachCashier)
+                    {
+                        if (item.Id == totalAmount.ScheduleId)
+                        {
+                            item.totalAmount = totalAmount.Total;
                         }
                     }
                 }
