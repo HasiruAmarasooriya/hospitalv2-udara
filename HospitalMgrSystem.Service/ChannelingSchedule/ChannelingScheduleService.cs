@@ -1,4 +1,5 @@
 ﻿using HospitalMgrSystem.Model.Enums;
+using HospitalMgrSystem.Service.Default;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
@@ -229,18 +230,216 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
             return mtList;
         }
 
-        public HospitalMgrSystem.Model.ChannelingSchedule SheduleGetById(int id)
+        public int GetTotalRefundHospitalFeeCount(int id, decimal hospitalFee)
         {
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
+                // get totalRefundDoctorFeeCount according to the schedularId
+                var opdIds = dbContext.OPD
+                    .Where(o => o.schedularId == id)
+                    .Select(o => o.Id)
+                    .ToList();
 
+                var invoicesIds = dbContext.Invoices
+                    .Where(o => opdIds.Contains(o.ServiceID))
+                    .Select(o => o.Id)
+                    .ToList();
 
-                HospitalMgrSystem.Model.ChannelingSchedule result = (from p in dbContext.ChannelingSchedule.
-                                                                     Include(c => c.Consultant)
-                                                                     where p.Id == id
-                                                                     select p).SingleOrDefault();
+                var count = dbContext.InvoiceItems
+                    .Where(o => invoicesIds.Contains(o.InvoiceId) && o.price == hospitalFee && o.itemInvoiceStatus == ItemInvoiceStatus.Remove)
+                    .Count();
+
+                return count;
+            }
+        }
+
+        public int GetTotalRefundDoctorFeeCount(int id, decimal hospitalFee)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                // get totalRefundDoctorFeeCount according to the schedularId
+                var opdIds = dbContext.OPD
+                    .Where(o => o.schedularId == id)
+                    .Select(o => o.Id)
+                    .ToList();
+
+                var invoicesIds = dbContext.Invoices
+                    .Where(o => opdIds.Contains(o.ServiceID))
+                    .Select(o => o.Id)
+                    .ToList();
+
+                var count = dbContext.InvoiceItems
+                    .Where(o => invoicesIds.Contains(o.InvoiceId) && o.price != hospitalFee && o.itemInvoiceStatus == ItemInvoiceStatus.Remove)
+                    .Count();
+
+                return count;
+            }
+        }
+
+        public decimal GetTotalRefundDoctorFeeAmount(int id, decimal hospitalFee)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                // get totalRefundDoctorFeeCount according to the schedularId
+                var opdIds = dbContext.OPD
+                    .Where(o => o.schedularId == id)
+                    .Select(o => o.Id)
+                    .ToList();
+
+                var invoicesIds = dbContext.Invoices
+                    .Where(o => opdIds.Contains(o.ServiceID))
+                    .Select(o => o.Id)
+                    .ToList();
+
+                var totalAmount = dbContext.InvoiceItems
+                    .Where(o => invoicesIds.Contains(o.InvoiceId) && o.price != hospitalFee && o.itemInvoiceStatus == ItemInvoiceStatus.Remove)
+                    .GroupBy(o => o.invoice)
+                    .Select(g => g.Sum(o => o.price))
+                    .SingleOrDefault();
+
+                return totalAmount;
+            }
+        }
+
+        public decimal GetTotalRefundHospitalFeeAmount(int id, decimal hospitalFee)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                // get totalRefundDoctorFeeCount according to the schedularId
+                var opdIds = dbContext.OPD
+                    .Where(o => o.schedularId == id)
+                    .Select(o => o.Id)
+                    .ToList();
+
+                var invoicesIds = dbContext.Invoices
+                    .Where(o => opdIds.Contains(o.ServiceID))
+                    .Select(o => o.Id)
+                    .ToList();
+
+                var totalAmount = dbContext.InvoiceItems
+                    .Where(o => invoicesIds.Contains(o.InvoiceId) && o.price == hospitalFee && o.itemInvoiceStatus == ItemInvoiceStatus.Remove)
+                    .GroupBy(o => o.invoice)
+                    .Select(g => g.Sum(o => o.price))
+                    .SingleOrDefault();
+
+                return totalAmount;
+            }
+        }
+
+        public decimal GetTotalHospitalFeeAmount(int id, decimal hospitalFee)
+        {
+            decimal totalRefundHospitalFeeAmount = GetTotalRefundHospitalFeeAmount(id, hospitalFee);
+
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                var opdIds = dbContext.OPD
+                    .Where(o => o.schedularId == id)
+                    .Select(o => o.Id)
+                    .ToList();
+
+                var invoicesIds = dbContext.Invoices
+                    .Where(o => opdIds.Contains(o.ServiceID))
+                    .Select(o => o.Id)
+                    .ToList();
+
+                var totalPaidHospitalFeeAmount = dbContext.InvoiceItems
+                    .Where(o => invoicesIds.Contains(o.InvoiceId) && o.price == hospitalFee && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED)
+                    .GroupBy(o => o.invoice)
+                    .Select(g => g.Sum(o => o.price))
+                    .SingleOrDefault();
+
+                var totalAmount = totalPaidHospitalFeeAmount - totalRefundHospitalFeeAmount;
+
+                return totalAmount;
+            }
+        }
+
+        public decimal GetTotalDoctorFeeAmount(int id, decimal hospitalFee)
+        {
+            decimal totalRefundDoctorFeeAmount = GetTotalRefundDoctorFeeAmount(id, hospitalFee);
+
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                var opdIds = dbContext.OPD
+                    .Where(o => o.schedularId == id)
+                    .Select(o => o.Id)
+                    .ToList();
+
+                var invoicesIds = dbContext.Invoices
+                    .Where(o => opdIds.Contains(o.ServiceID))
+                    .Select(o => o.Id)
+                    .ToList();
+
+                var totalPaidDoctorFeeAmount = dbContext.InvoiceItems
+                    .Where(o => invoicesIds.Contains(o.InvoiceId) && o.price != hospitalFee && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED)
+                    .GroupBy(o => o.invoice)
+                    .Select(g => g.Sum(o => o.price))
+                    .SingleOrDefault();
+
+                var totalAmount = totalPaidDoctorFeeAmount - totalRefundDoctorFeeAmount;
+
+                return totalAmount;
+            }
+        }
+
+        public Model.ChannelingSchedule SheduleGetById(int id)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                // get number of patients according to the schedularId
+                var patientCount = dbContext.OPD
+                    .Where(o => o.invoiceType == InvoiceType.CHE && o.schedularId == id)
+                    .GroupBy(o => o.schedularId)
+                    .Select(g => g.Count())
+                    .SingleOrDefault();
+
+                // get Actual patient count according to the schedularId
+                var actualPatientCount = dbContext.OPD
+                    .Where(o => o.invoiceType == InvoiceType.CHE && o.paymentStatus != PaymentStatus.NOT_PAID && o.schedularId == id)
+                    .GroupBy(o => o.schedularId)
+                    .Select(g => g.Count())
+                    .SingleOrDefault();
+
+                // get total refund doctor fee amount according to the schedularId
+                var totalRefundAmount = dbContext.OPD
+                    .Where(o => o.invoiceType == InvoiceType.CHE && o.paymentStatus == PaymentStatus.NEED_TO_PAY && o.schedularId == id)
+                    .GroupBy(o => o.schedularId)
+                    .Select(g => new { Total = g.Sum(o => o.ConsultantFee) })
+                    .SingleOrDefault();
+
+                // get total refund hospital fee amount according to the schedularId
+                var totalRefundHospitalAmount = dbContext.OPD
+                    .Where(o => o.invoiceType == InvoiceType.CHE && o.paymentStatus == PaymentStatus.NEED_TO_PAY && o.schedularId == id)
+                    .GroupBy(o => o.schedularId)
+                    .Select(g => new { Total = g.Sum(o => o.HospitalFee) })
+                    .SingleOrDefault();
+
+                // Get refunt count of patients according to the schedularId
+                var refundPatientCount = dbContext.OPD
+                    .Where(o => o.invoiceType == InvoiceType.CHE && o.paymentStatus == PaymentStatus.NEED_TO_PAY)
+                    .GroupBy(o => o.schedularId)
+                    .Select(g => new { ScheduleId = g.Key, Count = g.Count() })
+                    .ToList();
+
+                Model.ChannelingSchedule result = dbContext.ChannelingSchedule
+                    .Include(c => c.Consultant)
+                    .Include(c => c.Consultant.Specialist)
+                    .Include(c => c.Consultant)
+                    .Where(o => o.Id == id)
+                    .SingleOrDefault();
+
                 result.Status = 0;
+                result.patientCount = patientCount;
+                result.actualPatientCount = actualPatientCount;
+                result.totalRefundHospitalFeeCount = GetTotalRefundHospitalFeeCount(id, result.HospitalFee);
+                result.totalRefundDoctorFeeCount = GetTotalRefundDoctorFeeCount(id, result.HospitalFee);
+                result.totalRefundDoctorFeeAmount = GetTotalRefundDoctorFeeAmount(id, result.HospitalFee);
+                result.totalRefundHospitalFeeAmount = GetTotalRefundHospitalFeeAmount(id, result.HospitalFee);
+                result.totalHospitalFeeAmount = GetTotalHospitalFeeAmount(id, result.HospitalFee);
+                result.totalDoctorFeeAmount = GetTotalDoctorFeeAmount(id, result.HospitalFee);
+
                 dbContext.SaveChanges();
+
                 return result;
             }
         }
