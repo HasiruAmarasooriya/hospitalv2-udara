@@ -34,5 +34,32 @@ namespace HospitalMgrSystem.Model
 
         [NotMapped]
         public int refund { get; set; }
+
+        [NotMapped]
+        public int patientCount { get; set; }
+
+        [NotMapped]
+        public int refundPatientCount { get; set; }
+
+        [NotMapped]
+        public decimal actualPatientCount { get; set; }
+
+        [NotMapped]
+        public int totalRefundDoctorFeeCount { get; set; }
+
+        [NotMapped]
+        public int totalRefundHospitalFeeCount { get; set; }
+
+        [NotMapped]
+        public decimal totalRefundDoctorFeeAmount { get; set; }
+
+        [NotMapped]
+        public decimal totalRefundHospitalFeeAmount { get; set; }
+
+        [NotMapped]
+        public decimal totalHospitalFeeAmount { get; set; }
+
+        [NotMapped]
+        public decimal totalDoctorFeeAmount { get; set; }
     }
 }
