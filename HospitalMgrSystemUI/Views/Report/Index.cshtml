@@ -60,21 +60,21 @@
                                 </select>
                             </div>
                         </div>
-                         <div class="col-md-6">
-                             <br/>
+                        <div class="col-md-6">
+                            <br />
                             <div class="form-group">
                                 <div class="spark-chart form-material">
-                                        <ol class="list-unstyled d-flex">
+                                    <ol class="list-unstyled d-flex">
 
-                                                <li class="mr-2">
-                                                            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal" onclick="handleClear()">&nbsp;Clear</button>
-                                                </li>
+                                        <li class="mr-2">
+                                            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal" onclick="handleClear()">&nbsp;Clear</button>
+                                        </li>
 
-                                                <li class="mr-2">
-                                                            <button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Filter</button>
-                                                </li>
-                                        </ol>
-                                </div>     
+                                        <li class="mr-2">
+                                            <button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Filter</button>
+                                        </li>
+                                    </ol>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -95,25 +95,25 @@
                         <div class="spark-chart form-material">
                             <ol class="list-unstyled d-flex">
 
-                                    <li class="mr-2">
+                                <li class="mr-2">
                                     <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Today</button>
-                                    </li>
+                                </li>
 
-                                    <li class="mr-2">
-                                        <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Yesterday</button>
-                                    </li>
+                                <li class="mr-2">
+                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Yesterday</button>
+                                </li>
 
-                                    <li class="mr-2">
-                                        <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Week</button>
-                                    </li>
+                                <li class="mr-2">
+                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Week</button>
+                                </li>
 
-                                    <li class="mr-2">
-                                        <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Month</button>
-                                    </li>
-                             
+                                <li class="mr-2">
+                                    <button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Month</button>
+                                </li>
+
                             </ol>
                         </div>
-                    
+
                     </div>
                 }
             </div>
@@ -152,13 +152,13 @@
                                 <th style="text-align: right;">Total Amount</th>
                                 <th style="text-align: right;">Total Paid Amount</th>
                                 <th style="text-align: right;">Deviation</th>
-                               @* <th>Action 1</th>*@
+                                @* <th>Action 1</th>*@
                             </tr>
                         </thead>
                         <tbody>
                             @if (Model.listopd != null)
                             {
-                                
+
                                 int i = 1;
                                 decimal totalAmountOfTotalAmount = 0;
                                 decimal totalAmountOfTotalPaidAmount = 0;
@@ -176,16 +176,16 @@
                                         <td style="text-align: right;">@item.TotalAmount</td>
                                         <td style="text-align: right;">@item.TotalPaidAmount</td>
                                         <td style="text-align: right;">@item.deviation</td>
-@*                                        <td>
-                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>*@
+                                        @*                                        <td>
+                                <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                </td>*@
                                     </tr>
 
                                     totalAmountOfTotalAmount = totalAmountOfTotalAmount + (item.TotalAmount ?? 0m);
                                     totalAmountOfTotalPaidAmount = totalAmountOfTotalPaidAmount + (item.TotalPaidAmount ?? 0m);
                                     totaldeviation = totaldeviation + (item.deviation ?? 0m);
-                                    
-                                   i++;
+
+                                    i++;
                                 }
                                 <tr class="table-success">
                                     <td colspan="7">Total</td>
@@ -214,9 +214,9 @@
                                         <td style="text-align: right;">@item.TotalAmount</td>
                                         <td style="text-align: right;">@item.TotalPaidAmount</td>
                                         <td style="text-align: right;">@item.deviation</td>
-@*                                        <td>
-                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>*@
+                                        @*                                        <td>
+                                <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                </td>*@
                                     </tr>
 
                                     totalAmountOfTotalAmount = totalAmountOfTotalAmount + (item.TotalAmount ?? 0m);
@@ -239,31 +239,31 @@
                 <br>
                 @if (Model.listNightShiftOPD != null)
                 {
-                <h4 class="card-title">OPD Night Shift</h4>
-                <div class="table-responsive">
+                    <h4 class="card-title">OPD Night Shift</h4>
+                    <div class="table-responsive">
 
-                    <table class="table">
-                        <thead class="table-danger">
-                            <tr>
-                                <th>No</th>
-                                <th>Invoice ID</th>
-                                <th>OPD ID</th>
-                                <th>Cashier</th>
-                                <th>Issued By</th>
-                                <th>Issued Date</th>
-                                <th style="text-align: right;">Total Amount</th>
-                                <th style="text-align: right;">Total Paid Amount</th>
-                                <th style="text-align: right;">Deviation</th>
-@*                                <th>Action 1</th>*@
-                            </tr>
-                        </thead>
-                        <tbody>
-                              @{
-                                int i = 1;
-                                decimal totalAmountOfTotalAmount = 0;
-                                decimal totalAmountOfTotalPaidAmount = 0;
-                                decimal totaldeviation = 0;
-                              }
+                        <table class="table">
+                            <thead class="table-danger">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Invoice ID</th>
+                                    <th>OPD ID</th>
+                                    <th>Cashier</th>
+                                    <th>Issued By</th>
+                                    <th>Issued Date</th>
+                                    <th style="text-align: right;">Total Amount</th>
+                                    <th style="text-align: right;">Total Paid Amount</th>
+                                    <th style="text-align: right;">Deviation</th>
+                                    @*                                <th>Action 1</th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int i = 1;
+                                    decimal totalAmountOfTotalAmount = 0;
+                                    decimal totalAmountOfTotalPaidAmount = 0;
+                                    decimal totaldeviation = 0;
+                                }
 
                                 @foreach (var item in Model.listNightShiftOPD)
                                 {
@@ -277,16 +277,16 @@
                                         <td style="text-align: right;">@item.TotalAmount</td>
                                         <td style="text-align: right;">@item.TotalPaidAmount</td>
                                         <td style="text-align: right;">@item.deviation</td>
-@*                                        <td>
-                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>*@
+                                        @*                                        <td>
+                                <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                </td>*@
                                     </tr>
-                    
+
                                     totalAmountOfTotalAmount = totalAmountOfTotalAmount + (item.TotalAmount ?? 0m);
                                     totalAmountOfTotalPaidAmount = totalAmountOfTotalPaidAmount + (item.TotalPaidAmount ?? 0m);
                                     totaldeviation = totaldeviation + (item.deviation ?? 0m);
                                     i++;
-                                    
+
 
                                 }
                                 <tr class="table-danger">
@@ -295,12 +295,12 @@
                                     <td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
                                     <td style="text-align: right;">@totaldeviation</td>
                                 </tr>
-                           
-                        </tbody>
-                    </table>
-                           
-                </div>
-                 }
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                }
 
                 <br>
                 @{
@@ -316,7 +316,7 @@
                     }
 
                 }
-                
+
                 <div class="table-responsive">
                     <table class="table">
                         <thead class="table-danger">
@@ -326,7 +326,7 @@
                                 <th>Patient Name</th>
                                 <th>Consultant</th>
                                 <th>Contact Number</th>
-                                 <th>Issued By</th>
+                                <th>Issued By</th>
                                 <th>Issued Date</th>
                                 <th style="text-align: right;">Total Amount</th>
                                 @*<th>Action 1</th>*@
@@ -348,9 +348,9 @@
                                         <td>@item.issuedUser.FullName</td>
                                         <td>@item.CreateDate</td>
                                         <td style="text-align: right;">@item.TotalAmount</td>
-@*                                        <td>
-                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>*@
+                                        @*                                        <td>
+                                <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                </td>*@
                                     </tr>
                                     i++;
                                     totalAmountOfTotalAmount = totalAmountOfTotalAmount + (item.TotalAmount ?? 0m);
@@ -377,9 +377,9 @@
                                         <td>@item.issuedUser.FullName</td>
                                         <td>@item.CreateDate</td>
                                         <td style="text-align: right;">@item.TotalAmount</td>
-@*                                        <td>
-                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>*@
+                                        @*                                        <td>
+                                <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                </td>*@
                                     </tr>
                                     i++;
                                     totalAmountOfTotalAmount = totalAmountOfTotalAmount + (item.TotalAmount ?? 0m);
@@ -422,9 +422,9 @@
                                 <th>Issued Date</th>
                                 <th style="text-align: right;">Total Old Paid Amount</th>
                                 <th style="text-align: right;">Total Paid Amount</th>
-                                <th style="text-align: right;">Total Refund</th>                  
+                                <th style="text-align: right;">Total Refund</th>
                                 <th style="text-align: right;">To be refunded</th>
-@*                                <th>Action 1</th>*@
+                                @*                                <th>Action 1</th>*@
                             </tr>
                         </thead>
                         <tbody>
@@ -441,7 +441,7 @@
                                     <tr>
                                         <td>@i</td>
                                         <td>@item.invoiceID</td>
-                                        <td>@item.Id</td>               
+                                        <td>@item.Id</td>
                                         <td>@item.cashier.FullName</td>
                                         <td>@item.issuedUser.FullName</td>
                                         <td>@item.CreateDate</td>
@@ -449,9 +449,9 @@
                                         <td style="text-align: right;">@item.TotalPaidAmount</td>
                                         <td style="text-align: right;">@item.TotalRefund</td>
                                         <td style="text-align: right;">@item.TotalNeedToRefund</td>
-@*                                        <td>
-                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>*@
+                                        @*                                        <td>
+                                <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                </td>*@
                                     </tr>
 
                                     totalAmountOfTotalOldAmount = totalAmountOfTotalOldAmount + (item.TotalOldAmount ?? 0m);
@@ -472,11 +472,11 @@
 
                             @if (Model.listNeedToPayChanneling != null)
                             {
-                                    int i = 1;
-                                    decimal totalAmountOfTotalOldAmount = 0;
-                                    decimal totalAmountOfTotalPaidAmount = 0;
-                                    decimal totalAmountOfTotalRefund = 0;
-                                    decimal totalAmountOfTotalNeedToRefund = 0;
+                                int i = 1;
+                                decimal totalAmountOfTotalOldAmount = 0;
+                                decimal totalAmountOfTotalPaidAmount = 0;
+                                decimal totalAmountOfTotalRefund = 0;
+                                decimal totalAmountOfTotalNeedToRefund = 0;
                                 @foreach (var item in Model.listNeedToPayChanneling)
                                 {
                                     <tr>
@@ -490,9 +490,9 @@
                                         <td style="text-align: right;">@item.TotalPaidAmount</td>
                                         <td style="text-align: right;">@item.TotalRefund</td>
                                         <td style="text-align: right;">@item.TotalNeedToRefund</td>
-@*                                        <td>
-                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>*@
+                                        @*                                        <td>
+                                <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
+                                </td>*@
                                     </tr>
                                     totalAmountOfTotalOldAmount = totalAmountOfTotalOldAmount + (item.TotalOldAmount ?? 0m);
                                     totalAmountOfTotalPaidAmount = totalAmountOfTotalPaidAmount + (item.TotalPaidAmount ?? 0m);
@@ -501,7 +501,7 @@
                                     i++;
 
                                 }
-                                 <tr class="table-danger">
+                                <tr class="table-danger">
                                     <td colspan="6">Total</td>
                                     <td style="text-align: right;">@totalAmountOfTotalOldAmount</td>
                                     <td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
@@ -512,28 +512,23 @@
                         </tbody>
                     </table>
                 </div>
+
                 <br>
-
-
-
-
 
                 @if (Model.listopdGrugs != null)
                 {
-                <h4 class="card-title">OPD Drugs</h4>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead class="table-success">
-                            <tr>
-                                <th>Drug ID</th>
-                                <th>Drug Name</th>
-                                <th>Drug Total Quantity</th>
-                                <th>Drug Total Price</th>
-                                <th>Action 1</th>
-                            </tr>
-                        <tbody>
-
-
+                    <h4 class="card-title">OPD Drugs</h4>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead class="table-success">
+                                <tr>
+                                    <th>Drug ID</th>
+                                    <th>Drug Name</th>
+                                    <th>Drug Total Quantity</th>
+                                    <th>Drug Total Price</th>
+                                    <th>Action 1</th>
+                                </tr>
+                            <tbody>
                                     @foreach (var item in Model.listopdGrugs)
                                     {
                                     <tr>
@@ -547,12 +542,10 @@
                                     </tr>
 
                                     }
-                        
-                        </tbody>
-                    </table>
-                </div>
-                
-            }
+                            </tbody>
+                        </table>
+                    </div>
+                }
             </div>
         </div>
     </div>

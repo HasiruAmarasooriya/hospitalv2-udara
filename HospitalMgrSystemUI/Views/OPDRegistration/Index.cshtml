@@ -304,7 +304,7 @@
             if (dropDoctor.value == 82) {
                 document.getElementById('hospitalFeeInput').value = 0;
             } else {
-                document.getElementById('hospitalFeeInput').value = 700;
+                document.getElementById('hospitalFeeInput').value = 850;
             }
         }
 
@@ -596,7 +596,7 @@
             var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
             var doctortID = parseInt(docId);
             var opdID = $('#opdIndexNumber').val();
-            var opdType = parseInt(docId) == 82 ? 0 : 1;
+            var opdType = parseInt(docId) == 82 ? 0 : parseInt(docId) == 83 ? 2 : 1;
 
             var patientObject = {
                 Id: patientID,
