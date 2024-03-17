@@ -1,4 +1,5 @@
-﻿using HospitalMgrSystem.Model.Enums;
+﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace HospitalMgrSystem.Service.OtherTransactions
     {
         public Model.OtherTransactions CreateOtherTransactions(Model.OtherTransactions otherTransactions)
         {
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
                 if (otherTransactions.Id == 0)
                 {
@@ -32,7 +33,7 @@ namespace HospitalMgrSystem.Service.OtherTransactions
 
                     //dbContext.SaveChanges();
                 }
-                return otherTransactions;
+                return dbContext.OtherTransactions.Find(otherTransactions.Id);
             }
         }
 

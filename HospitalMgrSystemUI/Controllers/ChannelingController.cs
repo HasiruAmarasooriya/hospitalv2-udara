@@ -657,6 +657,7 @@ namespace HospitalMgrSystemUI.Controllers
                         _OPDDto.age = age;
                         _OPDDto.sex = sex;
                         _OPDDto.phone = phone;
+                        _OPDDto.TotalAmount = OPDobj.HospitalFee + OPDobj.ConsultantFee;
 
                     }
 
@@ -910,12 +911,15 @@ namespace HospitalMgrSystemUI.Controllers
             var age = opdDto.opd.patient.Age;
             var phone = opdDto.opd.patient.MobileNumber;
             var sex = opdDto.opd.patient.Sex;
+            var totalAmount = opdDto.opd.TotalAmount;
 
             _OPDDto.opdId = Id;
             _OPDDto.name = name;
             _OPDDto.age = age;
             _OPDDto.sex = sex;
             _OPDDto.phone = phone;
+            _OPDDto.TotalAmount = totalAmount;
+
             return PartialView("_PartialQR", _OPDDto);
         }
     }

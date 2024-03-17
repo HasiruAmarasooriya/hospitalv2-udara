@@ -14,6 +14,7 @@ namespace HospitalMgrSystem.Model.Enums
         OTHER_INCOME,
         OTHER_EXPENSES,
         CASHIER_TRANSFER_IN,
-        CASHIER_TRANSFER_OUT
+        CASHIER_TRANSFER_OUT,
+        DOCTOR_PAYMENT,
     }
 }

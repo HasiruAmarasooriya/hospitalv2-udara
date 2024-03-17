@@ -127,6 +127,72 @@
                     </div>
                 </div>
             </div>
+
+            @if (Model.ChannelingSchedule != null)
+            {
+                <hr />
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="companyName">No of Registered Patients</label>
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.patientCount" placeholder="NO Of Appoinment" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="companyName">No of Actual Registered Patients</label>
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.actualPatientCount" placeholder="NO Of Appoinment" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="companyName">Total Refund Doctor Fee Count</label>
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalRefundDoctorFeeCount" placeholder="NO Of Appoinment" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="companyName">Total Refund Hospital Fee Count</label>
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalRefundHospitalFeeCount" placeholder="NO Of Appoinment" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="companyName">Total Refund Doctor Fee Amount</label>
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalRefundDoctorFeeAmount" placeholder="NO Of Appoinment" />
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="companyName">Total Refund Hospital Fee Amount</label>
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalRefundHospitalFeeAmount" placeholder="NO Of Appoinment" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="companyName">Total Doctor Fee Amount</label>
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalDoctorFeeAmount" placeholder="NO Of Appoinment" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="companyName">Total Hospital Fee Amount</label>
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalHospitalFeeAmount" placeholder="NO Of Appoinment" />
+                        </div>
+                    </div>
+                </div>
+            }
+
         </div>
 
         <div class="modal-footer">

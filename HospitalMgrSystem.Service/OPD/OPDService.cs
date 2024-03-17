@@ -173,17 +173,22 @@ namespace HospitalMgrSystem.Service.OPD
 
         public Model.OPD GetAllOPDByID(int? id)
         {
-            Model.OPD opd = new Model.OPD();
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                opd = dbContext.OPD
-             .Include(o => o.patient) // Load the Patient related to OPD
-             .Include(o => o.consultant) // Load the Consultant related to OPD
-               .Include(o => o.nightShiftSession) // Load the nightShiftSession
-             .SingleOrDefault(o => o.Id == id);
+                Model.OPD opdData = dbContext.OPD
+                                    .Include(o => o.patient) // Load the Patient related to OPD
+                                    .Include(o => o.consultant) // Load the Consultant related to OPD
+                                    .Include(o => o.nightShiftSession) // Load the nightShiftSession
+                                    .SingleOrDefault(o => o.Id == id);
+
+                opdData.TotalAmount = 0;
+                opdData.TotalAmount = opdData.TotalAmount + opdData.HospitalFee;
+                opdData.TotalAmount = opdData.TotalAmount + opdData.ConsultantFee;
+
+                return opdData;
 
             }
-            return opd;
+            
         }
 
         public List<Model.OPD> GetAllOPDByStatus()

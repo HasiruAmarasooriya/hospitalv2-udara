@@ -13,6 +13,7 @@
     var age = @Html.Raw(Json.Serialize(Model.age));
     var sex = @Html.Raw(Json.Serialize(Model.sex == 1 ? "Male" : Model.sex == 2 ? "Female" : "None"));
     var telephoneNumber = @Html.Raw(Json.Serialize(Model.phone));
+    var totalAmount = @Html.Raw(Json.Serialize(Model.TotalAmount));
 
     function generateQRCode(size) {
 
@@ -49,6 +50,7 @@
         printWindow.document.write('<tr><td>Age:</td><td>' + age + '</td></tr>');
         printWindow.document.write('<tr><td>Sex:</td><td>' + sex + '</td></tr>');
         printWindow.document.write('<tr><td>Telephone:</td><td>' + telephoneNumber + '</td></tr>');
+        printWindow.document.write('<tr><td>Total Amount:</td><td>' + totalAmount + '</td></tr>');
         printWindow.document.write('</table>');
         printWindow.document.write('</div>');
 

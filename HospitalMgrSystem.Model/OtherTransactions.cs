@@ -29,6 +29,7 @@ namespace HospitalMgrSystem.Model
         public decimal Amount { get; set; }
         public string? Description { get; set; }
         public int? ApprovedByID { get; set; }
+        public int? SchedularId { get; set; }
 
         [ForeignKey("ApprovedByID")]
         public User? ApprovedBy { get; set; }

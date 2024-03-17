@@ -102,6 +102,7 @@
                                         <option value="@item.Id">@item.Name</option>
                                     }
                                     <option value="82">Investigation</option>
+                                    <option value="83">X-RAY</option>
                                 </select>
                             }
                             else
@@ -125,14 +126,17 @@
 
 
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Name</label>
                         <select class="form-control ddlSearchList" onchange="javascript:select_onchange_drug(this.value);" id="drugus" asp-for="opdDrugus.DrugId">
                             <option value="0">Select Drug</option>
+                            <option value="1">Drug 1</option>
+                            <option value="2">Drug 2 </option>
                             @foreach (var item in Model.Drugs)
                             {
                                 <option value="@item.Id">@item.DrugName - @item.DrugsCategory.Category</option>
+                                
                             }
                         </select>
                     </div>
@@ -196,7 +200,7 @@
 
     <div class="text-left mx-3">
         @* <div>
-            Total: <input id="total" class="form-control" type="text" placeholder="Your Total will Appear Here" readonly>
+        Total: <input id="total" class="form-control" type="text" placeholder="Your Total will Appear Here" readonly>
         </div> *@
         <div class="mt-4 text-right">
             <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Close</button>
@@ -263,7 +267,7 @@
                                 </tr>
                             }
 
-                            
+
                         }
 
                         @{
@@ -276,7 +280,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="companyName">Total: </label>
-                            <input id="total" class="form-control" value="@totalAmount" type="text" placeholder="Your Total will Appear Here"  readonly>
+                            <input id="total" class="form-control" value="@totalAmount" type="text" placeholder="Your Total will Appear Here" readonly>
                         </div>
                     </div>
 

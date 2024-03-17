@@ -20,6 +20,7 @@ namespace HospitalMgrSystemUI.Models
         public int sex { get; set; }
         public string phone { get; set; }
         public int OpdType { get; set; }
+        public decimal? TotalAmount { get; set; }
 
         public OPD? opd { get; set; }
         public Patient? patient { get; set; }
