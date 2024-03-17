@@ -481,7 +481,7 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.CreateDate = DateTime.Now;
                     oPDDto.opd.ModifiedDate = DateTime.Now;
                     oPDDto.opd.HospitalFee = oPDDto.OpdType == 1 ? hospitalFee : 0;
-                    oPDDto.opd.Description = oPDDto.OpdType == 1 ? "OPD" : "Other";
+                    oPDDto.opd.Description = oPDDto.OpdType == 1 ? "OPD" : oPDDto.OpdType == 2 ? "X-RAY" : "Other";
                     oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
                     oPDDto.opd.invoiceType = InvoiceType.OPD;
                     oPDDto.opd.ConsultantFee = 0;
@@ -591,6 +591,7 @@ namespace HospitalMgrSystemUI.Controllers
                         _OPDDto.age = age;
                         _OPDDto.sex = sex;
                         _OPDDto.phone = phone;
+                        _OPDDto.TotalAmount = OPDobj.HospitalFee + OPDobj.ConsultantFee;
 
                         foreach (var drugusItem in oPDDto.OPDDrugusList)
                         {
@@ -872,12 +873,15 @@ namespace HospitalMgrSystemUI.Controllers
             var age = opdDto.opd.patient.Age;
             var phone = opdDto.opd.patient.MobileNumber;
             var sex = opdDto.opd.patient.Sex;
+            var totalAmount = opdDto.opd.TotalAmount;
 
             _OPDDto.opdId = Id;
             _OPDDto.name = name;
             _OPDDto.age = age;
             _OPDDto.sex = sex;
             _OPDDto.phone = phone;
+            _OPDDto.TotalAmount = totalAmount;
+
             return PartialView("_PartialQR", _OPDDto);
         }
 
