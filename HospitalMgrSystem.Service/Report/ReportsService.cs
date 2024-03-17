@@ -38,7 +38,7 @@ namespace HospitalMgrSystem.Service.Report
                 var invoiceListNotPaid = dbContext.Invoices.Where(o => o.InvoiceType == InvoiceType.OPD && opdIdsNotPaid.Contains(o.ServiceID)).Select(r => r.Id).ToList();
 
                 var totalCashierAmount = dbContext.Payments
-                    .Where(o =>  o.BillingType == BillingType.CASHIER && invoiceList.Contains(o.InvoiceID))
+                    .Where(o => o.BillingType == BillingType.CASHIER && invoiceList.Contains(o.InvoiceID))
                     .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
                 var totalBalanceAmount = dbContext.Payments
@@ -46,7 +46,7 @@ namespace HospitalMgrSystem.Service.Report
                     .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
                 var totalRefundAmount = dbContext.Payments
-                    .Where(o =>  o.BillingType == BillingType.REFUND && invoiceList.Contains(o.InvoiceID))
+                    .Where(o => o.BillingType == BillingType.REFUND && invoiceList.Contains(o.InvoiceID))
                     .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
                 var totalRefundAmountInNeedToPay = dbContext.Payments
@@ -67,8 +67,8 @@ namespace HospitalMgrSystem.Service.Report
                 //var totalPaidAmount = totalAmount + totalRefundAmount + totalOtherOutAmount;
 
                 var totalRefund = removedItemSumNeedToPay + removedItemSumRefund;
-                var totalAmount = totalCashierAmount  + totalBalanceAmount + removedItemSumNeedToPay+ removedItemSumRefund;
-                var totalPaidAmount = totalAmount + totalRefundAmount ;
+                var totalAmount = totalCashierAmount + totalBalanceAmount + removedItemSumNeedToPay + removedItemSumRefund;
+                var totalPaidAmount = totalAmount + totalRefundAmount;
 
                 var oldPaidAmount = totalPaidAmount - (totalRefundAmount + totalRefundAmountInNeedToPay);
                 var actRefundAmount = oldPaidAmount - totalPaidAmount;
@@ -207,18 +207,38 @@ namespace HospitalMgrSystem.Service.Report
         public List<Model.OPD> GetAllChannelingByDateRangeAndNotPaidStatus(DateTime startDate, DateTime endDate)
         {
 
-            List<Model.OPD> mtList = new List<Model.OPD>();
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.OPD
+                List<Model.OPD> mtList = dbContext.OPD
                     .Include(c => c.patient)
                     .Include(c => c.consultant)
                     .Include(c => c.room)
                     .Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NOT_PAID && o.invoiceType == InvoiceType.CHE)
                     .OrderByDescending(o => o.Id)
                     .ToList();
+
+                var userIds = mtList.Select(r => r.ModifiedUser).ToList();
+
+                List<Model.User> userList = dbContext.Users.Where(o => userIds.Contains(o.Id)).ToList();
+
+                foreach (var item in mtList)
+                {
+                    item.TotalAmount = 0;
+                    item.TotalAmount = item.TotalAmount + item.HospitalFee;
+                    item.TotalAmount = item.TotalAmount + item.ConsultantFee;
+
+                    foreach (var user in userList)
+                    {
+                        if (item.ModifiedUser == user.Id)
+                        {
+                            item.issuedUser = user;
+                        }
+                    }
+                }
+
+                return mtList;
             }
-            return mtList;
+            
         }
 
         #endregion
@@ -306,7 +326,7 @@ namespace HospitalMgrSystem.Service.Report
                     .OrderByDescending(o => o.Id)
                     .ToList();
 
-                var opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate  && o.paymentStatus == PaymentStatus.OPD).Select(r => r.Id).ToList();
+                var opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.paymentStatus == PaymentStatus.OPD).Select(r => r.Id).ToList();
                 var invoiceList = dbContext.Invoices.Where(o => o.InvoiceType == InvoiceType.OPD && opdIds.Contains(o.ServiceID)).ToList();
 
                 foreach (var item in invoiceList)
@@ -382,7 +402,7 @@ namespace HospitalMgrSystem.Service.Report
                     opdObj.deviation = 0;
                     foreach (var invoiceItem in invoiceItemList)
                     {
-                        opdObj.TotalRefund = opdObj.TotalRefund+ invoiceItem.Total;        
+                        opdObj.TotalRefund = opdObj.TotalRefund + invoiceItem.Total;
                     }
 
                     var paymentList = dbContext.Payments.Where(o => o.InvoiceID == item.Id).ToList();
@@ -390,7 +410,7 @@ namespace HospitalMgrSystem.Service.Report
                     foreach (var payment in paymentList)
                     {
                         decimal paidAmount = payment.CashAmount + payment.DdebitAmount + payment.CreditAmount + payment.ChequeAmount + payment.GiftCardAmount;
-                        if(payment.BillingType == BillingType.REFUND)
+                        if (payment.BillingType == BillingType.REFUND)
                         {
                             tRefund = tRefund + paidAmount;
                         }
@@ -464,7 +484,7 @@ namespace HospitalMgrSystem.Service.Report
         }
 
 
-        public List<Model.OPD> GetAllOPDAndChannellingByAndDateRangeNotPaid(DateTime startDate, DateTime endDate,InvoiceType invoiceType)
+        public List<Model.OPD> GetAllOPDAndChannellingByAndDateRangeNotPaid(DateTime startDate, DateTime endDate, InvoiceType invoiceType)
         {
             List<Model.OPD> mtList = new List<Model.OPD>();
             List<Model.OPD> newmtList = new List<Model.OPD>();
@@ -485,7 +505,7 @@ namespace HospitalMgrSystem.Service.Report
                 foreach (var item in mtList)
                 {
                     Model.OPD opdObj = new Model.OPD();
-                    opdObj = item;          
+                    opdObj = item;
                     Model.User user = new Model.User();
                     user = GetUserById(opdObj.ModifiedUser);
 
