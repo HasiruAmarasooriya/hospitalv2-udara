@@ -14,6 +14,9 @@ using HospitalMgrSystem.Service.OPD;
 using HospitalMgrSystem.Service.SMS;
 using iTextSharp.text.pdf.parser.clipper;
 using HospitalMgrSystem.Model.Enums;
+using HospitalMgrSystem.Service.CashierSession;
+using HospitalMgrSystem.Service.OtherTransactions;
+using HospitalMgrSystem.Service.Cashier;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -200,11 +203,13 @@ namespace HospitalMgrSystemUI.Controllers
 
         public async Task<IActionResult> AddNewChannelingSheduleAsync()
         {
+            var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+
             using (var httpClient = new HttpClient())
             {
                 try
                 {
-                    if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.NOT_ACTIVE && viewChannelingSchedule.ChannelingSchedule.scheduleStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.ACTIVE)
+                    if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.NOT_ACTIVE && viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.ACTIVE)
                     {
                         ChannelingSMS channelingSMS = new ChannelingSMS();
 
@@ -220,6 +225,89 @@ namespace HospitalMgrSystemUI.Controllers
 
                     }
 
+                    if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus == ChannellingScheduleStatus.SESSION_END)
+                    {
+                        List<CashierSession> mtList = new List<CashierSession>();
+                        ChannelingSchedule channelingScheduleData = new ChannelingScheduleService().SheduleGetById(viewChannelingSchedule.ChannelingSchedule.Id);
+                        mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
+
+                        if (mtList.Count > 0)
+                        {
+                            OtherTransactions otherTransactions = new OtherTransactions();
+
+                            otherTransactions.SessionID = mtList[0].Id;
+                            otherTransactions.ConvenerID = Convert.ToInt32(userIdCookie);
+                            otherTransactions.InvoiceType = InvoiceType.DOCTOR_PAYMENT;
+                            otherTransactions.Amount = channelingScheduleData.totalDoctorFeeAmount;
+                            otherTransactions.Description = "DOCTOR_PAYMENT";
+                            otherTransactions.ApprovedByID = Convert.ToInt32(userIdCookie);
+                            otherTransactions.Status = CommonStatus.Active;
+                            otherTransactions.otherTransactionsStatus = OtherTransactionsStatus.Cashier_Out;
+                            otherTransactions.CreateUser = Convert.ToInt32(userIdCookie);
+                            otherTransactions.ModifiedUser = Convert.ToInt32(userIdCookie);
+                            otherTransactions.CreateDate = DateTime.Now;
+                            otherTransactions.ModifiedDate = DateTime.Now;
+                            otherTransactions.BeneficiaryID = channelingScheduleData.ConsultantId;
+                            otherTransactions.SchedularId = viewChannelingSchedule.ChannelingSchedule.Id;
+
+                            OtherTransactions savedOtherTransaction = new OtherTransactionsService().CreateOtherTransactions(otherTransactions);
+
+                            Invoice invoice = new Invoice();
+
+                            invoice.CustomerID = channelingScheduleData.ConsultantId;
+                            invoice.CustomerName = channelingScheduleData.Consultant.Name;
+                            invoice.InvoiceType = InvoiceType.DOCTOR_PAYMENT;
+                            invoice.paymentStatus = PaymentStatus.PAID;
+                            invoice.Status = InvoiceStatus.New;
+                            invoice.CreateUser = Convert.ToInt32(userIdCookie);
+                            invoice.ModifiedUser = Convert.ToInt32(userIdCookie);
+                            invoice.CreateDate = DateTime.Now;
+                            invoice.ModifiedDate = DateTime.Now;
+                            invoice.ServiceID = savedOtherTransaction.Id;
+
+
+                            Invoice savedInvoice = new CashierService().AddInvoice(invoice);
+
+                            InvoiceItem invoiceItem = new InvoiceItem();
+
+                            invoiceItem.InvoiceId = savedInvoice.Id;
+                            invoiceItem.ItemID = 2;
+                            invoiceItem.billingItemsType = BillingItemsType.OTHER;
+                            invoiceItem.price = channelingScheduleData.totalDoctorFeeAmount;
+                            invoiceItem.qty = 1;
+                            invoiceItem.Discount = 0;
+                            invoiceItem.Total = invoiceItem.price * invoiceItem.qty;
+                            invoiceItem.CreateDate = DateTime.Now;
+                            invoiceItem.CreateUser = Convert.ToInt32(userIdCookie);
+                            invoiceItem.ModifiedDate = DateTime.Now;
+                            invoiceItem.ModifiedUser = Convert.ToInt32(userIdCookie);
+                            invoiceItem.Status = CommonStatus.Active;
+                            invoiceItem.itemInvoiceStatus = ItemInvoiceStatus.BILLED;
+
+                            InvoiceItem savedInvoiceItem = new CashierService().AddSingleInvoiceItem(invoiceItem);
+
+                            Payment payment = new Payment();
+
+                            payment.InvoiceID = savedInvoice.Id;
+                            payment.CashAmount = 0 - invoiceItem.Total;
+                            payment.CreditAmount = 0;
+                            payment.DdebitAmount = 0;
+                            payment.ChequeAmount = 0;
+                            payment.GiftCardAmount = 0;
+                            payment.CreateUser = Convert.ToInt32(userIdCookie);
+                            payment.ModifiedUser = Convert.ToInt32(userIdCookie);
+                            payment.CreateDate = DateTime.Now;
+                            payment.ModifiedDate = DateTime.Now;
+                            payment.CashierStatus = CashierStatus.CashierOut;
+                            payment.BillingType = BillingType.OTHER_OUT;
+                            payment.sessionID = mtList[0].Id;
+
+                            Payment savedPayment = new CashierService().AddPayments(payment);
+                            
+                        }
+
+                    }
+
                     viewChannelingSchedule.ChannelingSchedule.Consultant = null;
                     ChannelingSchedule channelingSchedule = new ChannelingScheduleService().CreateChannelingSchedule(viewChannelingSchedule.ChannelingSchedule);
                     return RedirectToAction("Index");
@@ -230,6 +318,22 @@ namespace HospitalMgrSystemUI.Controllers
                 }
             }
 
+        }
+
+        private List<CashierSession> GetActiveCashierSession(int id)
+        {
+            List<CashierSession> CashierSessionList = new List<CashierSession>();
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    CashierSessionList = new CashierSessionService().GetACtiveCashierSessions(id);
+
+                }
+                catch (Exception ex) { }
+            }
+            return CashierSessionList;
         }
 
         public IActionResult SheduleGetByConsultantIdandDate()
