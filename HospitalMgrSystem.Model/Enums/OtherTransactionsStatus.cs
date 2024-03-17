@@ -11,7 +11,7 @@ namespace HospitalMgrSystem.Model.Enums
         Requested,
         Approved,
         Completed,
-        Cashier_In
-
+        Cashier_In,
+        Cashier_Out,
     }
 }
