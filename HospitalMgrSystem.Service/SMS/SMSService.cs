@@ -164,6 +164,113 @@ namespace HospitalMgrSystem.Service.SMS
 
         }
 
+        public string generateMessageBodyForNewChanneling(ChannelingSMS channelingSMS)
+        {
+
+            string message = "";
+
+  
+                message = "KUMUDU HOSPITAL(PVT)LTD\n"
+                    + "\nRef No : CHE-" + channelingSMS.channeling[0].Id
+                    + channelingSMS.channelingSchedule.Consultant.Name
+                    + "\nName :" + channelingSMS.channeling[0].patient.FullName
+                    + "\nNo :" + channelingSMS.channeling[0].AppoimentNo
+                    + "\nDate :"+ channelingSMS.channelingSchedule.DateTime
+                    + "\nTEL: 066 22 22 244 || 066 22 30 027"
+                    + "\nwww.kumuduhospital.lk";
+            
+
+
+            return message;
+
+        }
+
+        public async Task<string> SendSMSTokenForNewChannel(ChannelingSMS channelingSMS)
+        {
+            SMSAPILogin _smsApiLogin = new SMSAPILogin();
+            SMSCampaign _SMSCampaign = new SMSCampaign();
+
+            using (var httpClient = new HttpClient())
+            {
+                _smsApiLogin = await GetAccessToken();
+                if (_smsApiLogin != null && _smsApiLogin != null)
+                {
+                    SMSCampaign smsCampaign = new SMSCampaign();
+                    _SMSCampaign.CampaignID = 0;
+                    _SMSCampaign.CampaignCost = 0;
+                    _SMSCampaign.duplicateNo = 0;
+                    _SMSCampaign.invaliedNo = 0;
+                    _SMSCampaign.maskBlockedUser = 0;
+                    _SMSCampaign.CreateDate = DateTime.Now;
+                    _SMSCampaign.CreateUser = 0;
+                    _SMSCampaign.sceduleID = channelingSMS.channelingSchedule.Id;
+
+                    smsCampaign = createSMSCampaign(_SMSCampaign);
+
+                    var mobileNumbers = new List<MobileNumber>();
+                    foreach (var item in channelingSMS.channeling)
+                    {
+                        mobileNumbers.Add(new MobileNumber { mobile = item.patient.MobileNumber });
+                    }
+
+                    var messageBody = generateMessageBodyForNewChanneling(channelingSMS);
+
+                    var request = new SMSTokenRequest
+                    {
+                        msisdn = mobileNumbers,
+                        sourceAddress = "Kumudu hos ",
+                        message = messageBody,
+                        transaction_id = smsCampaign.Id,
+                        payment_method = 0,
+                        push_notification_url = ""
+                    };
+
+                    var jsonRequest = JsonSerializer.Serialize(request);
+                    var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+                    // Add Authorization header
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _smsApiLogin.Token);
+
+                    var response = await httpClient.PostAsync("https://e-sms.dialog.lk/api/v2/sms", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        var responseObject = JsonSerializer.Deserialize<ApiResponse>(responseContent);
+
+                        if (responseObject.status == "success")
+                        {
+                            var campaignId = responseObject.data.campaignId;
+                            var campaignCost = responseObject.data.campaignCost;
+
+                            smsCampaign.CampaignID = campaignId;
+                            smsCampaign.CampaignCost = campaignCost;
+                            smsCampaign.duplicateNo = responseObject.data.duplicatesRemoved;
+                            smsCampaign.invaliedNo = responseObject.data.invalidNumbers;
+                            smsCampaign.maskBlockedUser = responseObject.data.mask_blocked_numbers;
+
+                            // Handle success case
+                            return $"Campaign ID: {campaignId}, Campaign Cost: {campaignCost}";
+                        }
+                        else
+                        {
+                            var errorCode = responseObject.errCode;
+                            var reason = responseObject.comment;
+                            // Handle failure case
+                            throw new Exception($"API call failed. Reason: {reason}, Error Code: {errorCode}");
+                        }
+                    }
+                    else
+                    {
+                        // Handle HTTP error response
+                        var statusCode = response.StatusCode;
+                        throw new Exception($"HTTP request failed with status code {statusCode}");
+                    }
+                }
+                return null;
+            }
+        }
+
         public async Task<string> SendSMSToken(ChannelingSMS channelingSMS)
         {
             SMSAPILogin _smsApiLogin = new SMSAPILogin();
