@@ -8,6 +8,7 @@ using HospitalMgrSystem.Service.Drugs;
 using HospitalMgrSystem.Service.NightShiftSession;
 using HospitalMgrSystem.Service.OPD;
 using HospitalMgrSystem.Service.Patients;
+using HospitalMgrSystem.Service.SMS;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Utilities.Encoders;
@@ -339,7 +340,7 @@ namespace HospitalMgrSystemUI.Controllers
             return channelingSchedule;
         }
 
-        public IActionResult AddNewChannel([FromBody] OPDDto oPDDto)
+        public async Task<IActionResult> AddNewChannelAsync([FromBody] OPDDto oPDDto)
         {
             var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
 
@@ -548,6 +549,15 @@ namespace HospitalMgrSystemUI.Controllers
                             drugusItem.IsRefund = 0;
                             new OPDService().CreateOPDDrugus(drugusItem);
                         }
+
+                        ChannelingSMS channelingSMS = new ChannelingSMS();
+
+                        channelingSMS.channelingForOnePatient = LoadChannelingByID(OPDobj.Id);
+                        channelingSMS.channelingSchedule = ChannelingScheduleGetByID(channelingSMS.channelingForOnePatient.schedularId);
+                        channelingSMS.ChannellingScheduleStatus = channelingSMS.channelingSchedule.scheduleStatus;
+
+                        SMSService sMSService = new SMSService();
+                        await sMSService.SendSMSTokenForNewChannel(channelingSMS);
                     }
 
                 }
