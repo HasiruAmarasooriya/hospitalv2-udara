@@ -586,12 +586,7 @@ namespace HospitalMgrSystemUI.Controllers
 
                     if (OPDobj != null)
                     {
-                        _OPDDto.opdId = OPDobj.Id;
-                        _OPDDto.name = name;
-                        _OPDDto.age = age;
-                        _OPDDto.sex = sex;
-                        _OPDDto.phone = phone;
-                        _OPDDto.TotalAmount = OPDobj.HospitalFee + OPDobj.ConsultantFee;
+                        
 
                         foreach (var drugusItem in oPDDto.OPDDrugusList)
                         {
@@ -601,6 +596,15 @@ namespace HospitalMgrSystemUI.Controllers
                             drugusItem.IsRefund = 0;
                             new OPDService().CreateOPDDrugus(drugusItem);
                         }
+
+                        OPD opdDataForQr = new OPDService().GetAllOPDByID(OPDobj.Id);
+
+                        _OPDDto.opdId = OPDobj.Id;
+                        _OPDDto.name = opdDataForQr.patient.FullName;
+                        _OPDDto.age = opdDataForQr.patient.Age;
+                        _OPDDto.sex = opdDataForQr.patient.Sex;
+                        _OPDDto.phone = opdDataForQr.patient.MobileNumber;
+                        _OPDDto.TotalAmount = opdDataForQr.TotalAmount;
                     }
                 }
                 return PartialView("_PartialQR", _OPDDto);
