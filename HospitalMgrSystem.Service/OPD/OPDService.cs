@@ -181,9 +181,13 @@ namespace HospitalMgrSystem.Service.OPD
                                     .Include(o => o.nightShiftSession) // Load the nightShiftSession
                                     .SingleOrDefault(o => o.Id == id);
 
+                decimal opdDrugsTotal = dbContext.OPDDrugus
+                                    .Where(o => o.opdId == id && o.Status == CommonStatus.Active)
+                                    .Sum(o => o.Amount);
+                                    
+
                 opdData.TotalAmount = 0;
-                opdData.TotalAmount = opdData.TotalAmount + opdData.HospitalFee;
-                opdData.TotalAmount = opdData.TotalAmount + opdData.ConsultantFee;
+                opdData.TotalAmount = opdData.TotalAmount + opdData.HospitalFee + opdData.ConsultantFee + opdDrugsTotal;
 
                 return opdData;
 
