@@ -22,7 +22,7 @@ namespace HospitalMgrSystem.Service.Patients
                 else
                 {
                     Patient result = (from p in dbContext.Patients where p.Id == patient.Id select p).SingleOrDefault();
-                    // result.FullName = patient.FullName;
+                    result.FullName = patient.FullName;
                     result.Address = patient.Address;
                     result.Age = patient.Age;
                     result.MobileNumber = patient.MobileNumber;
