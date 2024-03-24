@@ -166,20 +166,14 @@ namespace HospitalMgrSystem.Service.SMS
 
         public string generateMessageBodyForNewChanneling(ChannelingSMS channelingSMS)
         {
-
-            string message = "";
-
-  
-                message = "KUMUDU HOSPITAL(PVT)LTD\n"
-                    + "\nRef No : CHE-" + channelingSMS.channeling[0].Id
-                    + channelingSMS.channelingSchedule.Consultant.Name
-                    + "\nName :" + channelingSMS.channeling[0].patient.FullName
-                    + "\nNo :" + channelingSMS.channeling[0].AppoimentNo
-                    + "\nDate :"+ channelingSMS.channelingSchedule.DateTime
-                    + "\nTEL: 066 22 22 244 || 066 22 30 027"
-                    + "\nwww.kumuduhospital.lk";
-            
-
+            string message = "KUMUDU HOSPITAL(PVT)LTD\n"
+                            + "\nRef No : CHE-" + channelingSMS.channelingForOnePatient.Id
+                            + channelingSMS.channelingSchedule.Consultant.Name
+                            + "\nName :" + channelingSMS.channelingForOnePatient.patient.FullName
+                            + "\nNo :" + channelingSMS.channelingForOnePatient.AppoimentNo
+                            + "\nDate :" + channelingSMS.channelingSchedule.DateTime
+                            + "\nTEL: 066 22 22 244 || 066 22 30 027"
+                            + "\nwww.kumuduhospital.lk";
 
             return message;
 
@@ -207,11 +201,15 @@ namespace HospitalMgrSystem.Service.SMS
 
                     smsCampaign = createSMSCampaign(_SMSCampaign);
 
-                    var mobileNumbers = new List<MobileNumber>();
-                    foreach (var item in channelingSMS.channeling)
+                    var mobileNumbers = new List<MobileNumber>
+                    {
+                        new MobileNumber { mobile = channelingSMS.channelingForOnePatient.patient.MobileNumber }
+                    };
+
+                    /*foreach (var item in channelingSMS.channeling)
                     {
                         mobileNumbers.Add(new MobileNumber { mobile = item.patient.MobileNumber });
-                    }
+                    }*/
 
                     var messageBody = generateMessageBodyForNewChanneling(channelingSMS);
 

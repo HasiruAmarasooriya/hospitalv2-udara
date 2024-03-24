@@ -525,7 +525,7 @@
 
             var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
             var doctortID = parseInt(docId);
-            let hospitalCharges = doctortID == 82 ? 0 : 700;
+            let hospitalCharges = doctortID == 82 ? 0 : 850;
             $("#hospitalCharges").val(hospitalCharges)
 
             let subTotal = newTotal + hospitalCharges;

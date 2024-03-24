@@ -14,6 +14,63 @@
     var isCheckedEXE = 0;
     var channelingItemID = 0;
 
+    function handleSubmit() {
+        var opdID = $('#opdIndexNumber').val();
+        if (opdID == 0) {
+            submitChanneling();
+        } else {
+            updatePatientDetails();
+        }
+    }
+
+    function updatePatientDetails() {
+        var opdID = $('#opdIndexNumber').val();
+        var fullName = $('#dropPatient option:selected').text();
+        var patientID = $('#dropPatient').val();
+        var contactNo = $('#txtMobileNumber').val();
+        var sex = $('#dropSex').val();
+        var age = $('#txtAge').val();
+
+        var patientObject = {
+            Id: patientID,
+            FullName: fullName,
+            MobileNumber: contactNo,
+            Age: age
+        }
+
+        var opdObject = {
+            Id: opdID
+        };
+
+        var opdDtoObject = {
+            patient: patientObject,
+            opd: opdObject
+        };
+
+        console.log(opdDtoObject);
+
+        $.ajax({
+            url: '/Channeling/UpdatePatientAndSendMessage', // Adjust the URL based on your actual route
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(opdDtoObject),
+            success: function (data) {
+                drugusList = [];
+                // document.getElementById("tblBodyPayments2").innerHTML = "";
+                // Handle success, e.g., redirect to another page
+                window.location.href = '/Channeling/Index';
+
+            },
+            error: function (error) {
+                // Handle error
+                console.error('Error submitting drugus items:', error);
+            }
+        });
+
+    }
+
+
+
     function submitChanneling() {
         var fullName = $('#dropPatient option:selected').text();
         var patientID = $('#dropPatient').val();
@@ -992,7 +1049,7 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
 
-            <button type="button" class="btn  waves-effect btn-primary" onclick="submitChanneling()"><i class="fa fa-save"></i>&nbsp;Save</button>
+            <button type="button" class="btn  waves-effect btn-primary" onclick="handleSubmit()"><i class="fa fa-save"></i>&nbsp;Save</button>
             <button type="button" class="btn waves-effect btn-primary ms-2" onclick="submitChannelingWithQR()">
                 <i class='fa fa-print'></i>&nbsp;Print & Save
             </button>

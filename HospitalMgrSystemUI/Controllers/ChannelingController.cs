@@ -8,6 +8,7 @@ using HospitalMgrSystem.Service.Drugs;
 using HospitalMgrSystem.Service.NightShiftSession;
 using HospitalMgrSystem.Service.OPD;
 using HospitalMgrSystem.Service.Patients;
+using HospitalMgrSystem.Service.SMS;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Utilities.Encoders;
@@ -339,7 +340,39 @@ namespace HospitalMgrSystemUI.Controllers
             return channelingSchedule;
         }
 
-        public IActionResult AddNewChannel([FromBody] OPDDto oPDDto)
+        public async Task<IActionResult> UpdatePatientAndSendMessageAsync([FromBody] OPDDto oPDDto) 
+        {
+            var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+
+            try
+            {
+                Patient patient = new Patient();
+
+                oPDDto.patient.CreateUser = Convert.ToInt32(userIdCookie);
+                oPDDto.patient.ModifiedUser = Convert.ToInt32(userIdCookie);
+                patient = CreatePatient(oPDDto.patient);
+
+                if (patient != null)
+                {
+                    ChannelingSMS channelingSMS = new ChannelingSMS();
+
+                    channelingSMS.channelingForOnePatient = LoadChannelingByID(oPDDto.opd.Id);
+                    channelingSMS.channelingSchedule = ChannelingScheduleGetByID(channelingSMS.channelingForOnePatient.schedularId);
+                    channelingSMS.ChannellingScheduleStatus = channelingSMS.channelingSchedule.scheduleStatus;
+
+                    SMSService sMSService = new SMSService();
+                    await sMSService.SendSMSTokenForNewChannel(channelingSMS);
+                }
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+        public async Task<IActionResult> AddNewChannelAsync([FromBody] OPDDto oPDDto)
         {
             var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
 
@@ -548,6 +581,15 @@ namespace HospitalMgrSystemUI.Controllers
                             drugusItem.IsRefund = 0;
                             new OPDService().CreateOPDDrugus(drugusItem);
                         }
+
+                        ChannelingSMS channelingSMS = new ChannelingSMS();
+
+                        channelingSMS.channelingForOnePatient = LoadChannelingByID(OPDobj.Id);
+                        channelingSMS.channelingSchedule = ChannelingScheduleGetByID(channelingSMS.channelingForOnePatient.schedularId);
+                        channelingSMS.ChannellingScheduleStatus = channelingSMS.channelingSchedule.scheduleStatus;
+
+                        SMSService sMSService = new SMSService();
+                        await sMSService.SendSMSTokenForNewChannel(channelingSMS);
                     }
 
                 }
@@ -559,7 +601,7 @@ namespace HospitalMgrSystemUI.Controllers
                 return RedirectToAction("Index");
             }
         }
-        public IActionResult AddNewChannelWithQR([FromBody] OPDDto oPDDto)
+        public async Task<IActionResult> AddNewChannelWithQRAsync([FromBody] OPDDto oPDDto)
         {
             var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
 
@@ -786,6 +828,15 @@ namespace HospitalMgrSystemUI.Controllers
                             drugusItem.IsRefund = 0;
                             new OPDService().CreateOPDDrugus(drugusItem);
                         }
+
+                        ChannelingSMS channelingSMS = new ChannelingSMS();
+
+                        channelingSMS.channelingForOnePatient = LoadChannelingByID(OPDobj.Id);
+                        channelingSMS.channelingSchedule = ChannelingScheduleGetByID(channelingSMS.channelingForOnePatient.schedularId);
+                        channelingSMS.ChannellingScheduleStatus = channelingSMS.channelingSchedule.scheduleStatus;
+
+                        SMSService sMSService = new SMSService();
+                        await sMSService.SendSMSTokenForNewChannel(channelingSMS);
                     }
 
                 }
