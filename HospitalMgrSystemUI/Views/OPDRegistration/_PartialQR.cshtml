@@ -13,6 +13,8 @@
     var opdId = @Html.Raw(Json.Serialize(Model.opdId));
     var fullName = @Html.Raw(Json.Serialize(Model.name));
     var age = @Html.Raw(Json.Serialize(Model.age));
+    var months = @Html.Raw(Json.Serialize(Model.months));
+    var days = @Html.Raw(Json.Serialize(Model.days));
     var sex = @Html.Raw(Json.Serialize(Model.sex == 1 ? "Male" : Model.sex == 2 ? "Female" : "None"));
     var telephoneNumber = @Html.Raw(Json.Serialize(Model.phone));
     var totalAmount = @Html.Raw(Json.Serialize(Model.TotalAmount));
@@ -49,7 +51,9 @@
         printWindow.document.write('<table style="margin: auto;">');
         printWindow.document.write('<tr><td>OPD:</td><td>' + opdId + '</td></tr>');
         printWindow.document.write('<tr><td>Name:</td><td>' + fullName + '</td></tr>');
-        printWindow.document.write('<tr><td>Age:</td><td>' + age + '</td></tr>');
+        printWindow.document.write('<tr><td>Age:</td><td> Years - ' + age + ' / Months - ' + months +' / Days - ' + days +  '</td></tr>');
+        // printWindow.document.write('<tr><td>Months:</td><td>' + months + '</td></tr>');
+        // printWindow.document.write('<tr><td>Days:</td><td>' + days + '</td></tr>');
         printWindow.document.write('<tr><td>Sex:</td><td>' + sex + '</td></tr>');
         printWindow.document.write('<tr><td>Telephone:</td><td>' + telephoneNumber + '</td></tr>');
         printWindow.document.write('<tr><td>Total Amount:</td><td>' + totalAmount + '</td></tr>');

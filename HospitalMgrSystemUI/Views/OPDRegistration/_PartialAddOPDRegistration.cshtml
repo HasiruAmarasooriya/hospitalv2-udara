@@ -44,14 +44,25 @@
                             <option value="0">Select one</option>
                             <option value="1">Male</option>
                             <option value="2">Female</option>
-
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-2">
                     <div class="form-group">
                         <label for="companyName">Age</label>
-                        <input class="form-control " type="text" id="txtAge" placeholder="Age" asp-for="opd.patient.Age" />
+                        <input class="form-control" type="text" id="txtAge" placeholder="Age" asp-for="opd.patient.Age" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="companyName">Months</label>
+                        <input class="form-control" type="text" id="txtMonths" placeholder="Months" asp-for="opd.patient.Months" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="companyName">Days</label>
+                        <input class="form-control" type="text" id="txtDays" placeholder="Days" asp-for="opd.patient.Days" />
                     </div>
                 </div>
             </div>
@@ -136,7 +147,7 @@
                             @foreach (var item in Model.Drugs)
                             {
                                 <option value="@item.Id">@item.DrugName - @item.DrugsCategory.Category</option>
-                                
+
                             }
                         </select>
                     </div>

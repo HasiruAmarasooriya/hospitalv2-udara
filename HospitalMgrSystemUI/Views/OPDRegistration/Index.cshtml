@@ -135,7 +135,6 @@
     <div class="col-12">
         <div class="card">
             <div class="modal-body" id="AddEditContainerModel">
-  
             </div>
 
         </div>
@@ -330,8 +329,8 @@
             // You can change 'Enter' to any key you want to trigger the function
             if (event.key === 'Escape') {
                 // Call your function for Escape key
-                 handleClear();
-            } 
+                handleClear();
+            }
         });
 
 
@@ -472,8 +471,9 @@
                     $('#txtMobileNumber').val(data.mobileNumber);
                     $('#dropSex').val(data.sex);
                     $('#txtAge').val(data.age);
+                    $('#txtMonths').val(data.months);
+                    $('#txtDays').val(data.days);
                 }
-
             });
         }
 
@@ -591,6 +591,8 @@
             var contactNo = $('#txtMobileNumber').val();
             var sex = $('#dropSex').val();
             var age = $('#txtAge').val();
+            var months = $('#txtMonths').val();
+            var days = $('#txtDays').val();
             // selectedDoctorId
 
             var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
@@ -603,6 +605,8 @@
                 FullName: fullName,
                 MobileNumber: contactNo,
                 Age: age,
+                Months: months,
+                Days: days,
                 Sex: sex
             };
 
@@ -651,6 +655,8 @@
             var contactNo = $('#txtMobileNumber').val();
             var sex = $('#dropSex').val();
             var age = $('#txtAge').val();
+            var months = $('#txtMonths').val();
+            var days = $('#txtDays').val();
 
             var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
             var doctortID = parseInt(docId);
@@ -662,6 +668,8 @@
                 FullName: fullName,
                 MobileNumber: contactNo,
                 Age: age,
+                Months: months,
+                Days: days,
                 Sex: sex
             };
 
