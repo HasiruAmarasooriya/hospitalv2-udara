@@ -10,6 +10,8 @@ namespace HospitalMgrSystem.Model
         public string? MobileNumber { get; set; }
         public string? TelephoneNumber { get; set; }
         public int Age { get; set; }
+        public int Months { get; set; }
+        public int Days { get; set; }
         public int Sex { get; set; }
         public int Religion { get; set; }
         public int Nationality { get; set; }
