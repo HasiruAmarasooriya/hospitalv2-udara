@@ -25,6 +25,8 @@ namespace HospitalMgrSystem.Service.Patients
                     result.FullName = patient.FullName;
                     result.Address = patient.Address;
                     result.Age = patient.Age;
+                    result.Months = patient.Months;
+                    result.Days = patient.Days;
                     result.MobileNumber = patient.MobileNumber;
                     result.ModifiedDate = DateTime.Now;
                     result.ModifiedUser = patient.ModifiedUser;
