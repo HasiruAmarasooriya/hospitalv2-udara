@@ -30,12 +30,16 @@
         var contactNo = $('#txtMobileNumber').val();
         var sex = $('#dropSex').val();
         var age = $('#txtAge').val();
+        var months = $('#txtMonths').val();
+        var days = $('#txtDays').val();
 
         var patientObject = {
             Id: patientID,
             FullName: fullName,
             MobileNumber: contactNo,
-            Age: age
+            Age: age,
+            Months: months,
+            Days: days,
         }
 
         var opdObject = {
@@ -79,6 +83,8 @@
         var age = $('#txtAge').val();
         var appoinmentNumber = $('#dropNoOfAppoinment').val();
         var schedularId = $('#dropShedule').val();
+        var months = $('#txtMonths').val();
+        var days = $('#txtDays').val();
         // selectedDoctorId
 
         var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
@@ -91,6 +97,8 @@
             FullName: fullName,
             MobileNumber: contactNo,
             Age: age,
+            Months: months,
+            Days: days,
             Sex: sex
         };
 
@@ -219,6 +227,8 @@
                 $('#txtMobileNumber').val(data.mobileNumber);
                 $('#dropSex').val(data.sex);
                 $('#txtAge').val(data.age);
+                $('#txtMonths').val(data.months);
+                $('#txtDays').val(data.days);
             }
         });
     }
@@ -747,10 +757,24 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-2">
                     <div class="form-group">
                         <label for="companyName">Age</label>
                         <input class="form-control " type="text" id="txtAge" placeholder="Age" asp-for="opd.patient.Age" />
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="companyName">Months</label>
+                        <input class="form-control " type="text" id="txtMonths" placeholder="Months" asp-for="opd.patient.Months" />
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="companyName">Days</label>
+                        <input class="form-control " type="text" id="txtDays" placeholder="Days" asp-for="opd.patient.Days" />
                     </div>
                 </div>
             </div>

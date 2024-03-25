@@ -17,6 +17,8 @@ namespace HospitalMgrSystemUI.Models
         public int paidStatus { get; set; }
         public string name { get; set; }
         public int age { get; set; }
+        public int months { get; set; }
+        public int days { get; set; }
         public int sex { get; set; }
         public string phone { get; set; }
         public int OpdType { get; set; }
