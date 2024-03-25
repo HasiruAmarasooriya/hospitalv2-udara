@@ -652,6 +652,8 @@ namespace HospitalMgrSystemUI.Controllers
 
                 string name = patient.FullName;
                 var age = patient.Age;
+                var months = patient.Months;
+                var days = patient.Days;
                 var phone = patient.MobileNumber;
                 var sex = patient.Sex;
 
@@ -697,6 +699,8 @@ namespace HospitalMgrSystemUI.Controllers
                         _OPDDto.opdId = OPDobj.Id;
                         _OPDDto.name = name;
                         _OPDDto.age = age;
+                        _OPDDto.months = months;
+                        _OPDDto.days = days;
                         _OPDDto.sex = sex;
                         _OPDDto.phone = phone;
                         _OPDDto.TotalAmount = OPDobj.HospitalFee + OPDobj.ConsultantFee;
@@ -960,6 +964,8 @@ namespace HospitalMgrSystemUI.Controllers
 
             string name = opdDto.opd.patient.FullName;
             var age = opdDto.opd.patient.Age;
+            var months = opdDto.opd.patient.Months;
+            var days  = opdDto.opd.patient.Days;
             var phone = opdDto.opd.patient.MobileNumber;
             var sex = opdDto.opd.patient.Sex;
             var totalAmount = opdDto.opd.TotalAmount;
@@ -967,6 +973,8 @@ namespace HospitalMgrSystemUI.Controllers
             _OPDDto.opdId = Id;
             _OPDDto.name = name;
             _OPDDto.age = age;
+            _OPDDto.months = months;
+            _OPDDto.days = days;
             _OPDDto.sex = sex;
             _OPDDto.phone = phone;
             _OPDDto.TotalAmount = totalAmount;
