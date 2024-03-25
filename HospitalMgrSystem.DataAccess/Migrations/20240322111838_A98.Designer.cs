@@ -4,6 +4,7 @@ using HospitalMgrSystem.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HospitalMgrSystem.DataAccess.Migrations
 {
     [DbContext(typeof(HospitalDBContext))]
-    partial class HospitalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240322111838_A98")]
+    partial class A98
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1455,9 +1458,6 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.Property<int>("CreateUser")
                         .HasColumnType("int");
 
-                    b.Property<int>("Days")
-                        .HasColumnType("int");
-
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
 
@@ -1490,6 +1490,9 @@ namespace HospitalMgrSystem.DataAccess.Migrations
 
                     b.Property<string>("TelephoneNumber")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Years")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
