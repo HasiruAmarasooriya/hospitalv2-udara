@@ -12,7 +12,8 @@ namespace HospitalMgrSystem.Service.User
 {
     public class UserService : IUserService
     {
-        public HospitalMgrSystem.Model.User GetUserLogin(HospitalMgrSystem.Model.User user) {
+        public HospitalMgrSystem.Model.User GetUserLogin(HospitalMgrSystem.Model.User user)
+        {
 
             Model.User objUser = new Model.User();
 
@@ -20,9 +21,10 @@ namespace HospitalMgrSystem.Service.User
             {
                 string encodingString = MD5Hash(user.Password).ToUpper();
 
-                using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext()) {
+                using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+                {
 
-                   objUser = dbContext.Users.Where(o => o.UserName == user.UserName && o.Password == encodingString && o.Status == 0).FirstOrDefault();
+                    objUser = dbContext.Users.Where(o => o.UserName == user.UserName && o.Password == encodingString && o.Status == 0).FirstOrDefault();
                 }
             }
             catch (Exception ex)
@@ -30,6 +32,37 @@ namespace HospitalMgrSystem.Service.User
             return objUser;
         }
 
+
+        public bool ValidateUserById(Model.User user)
+        {
+
+            Model.User objUser = new Model.User();
+
+            try
+            {
+                string encodingString = MD5Hash(user.Password).ToUpper();
+
+                using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+                {
+
+                    objUser = dbContext.Users.Where(o => o.Id == user.Id && o.Password == encodingString && o.Status == 0).FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            if (objUser != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
 
 
         public HospitalMgrSystem.Model.User CreateUser(HospitalMgrSystem.Model.User user)
@@ -74,7 +107,7 @@ namespace HospitalMgrSystem.Service.User
                 user.Password = encodingString;
                 if (user.Id != 0)
                 {
-                 
+
                     HospitalMgrSystem.Model.User result = (from p in dbContext.Users where p.Id == user.Id select p).SingleOrDefault();
                     result.Password = user.Password;
                     result.ModifiedDate = DateTime.Now;
@@ -91,7 +124,7 @@ namespace HospitalMgrSystem.Service.User
 
             try
             {
-               
+
                 using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
                 {
 
