@@ -16,23 +16,23 @@
 
     };
 
-    document.addEventListener('keydown', function(event) {
-    // You can change 'Enter' to any key you want to trigger the function
-    if (event.key === 'Enter') {
-        // Call your function here
-        PrintInvoice();
-    }
+    document.addEventListener('keydown', function (event) {
+        // You can change 'Enter' to any key you want to trigger the function
+        if (event.key === 'Enter') {
+            // Call your function here
+            PrintInvoice();
+        }
 
-    if (event.key === 'Escape') {
-        // Call your function for Escape key
-        ClearCashier();
-    } 
+        if (event.key === 'Escape') {
+            // Call your function for Escape key
+            ClearCashier();
+        }
     });
 
 
     // $(window).load(function () {
     //     // Extract the PreID from the URL
-        
+
 
 
     //     // if (id != null) {
@@ -428,7 +428,7 @@
                                                 @foreach (var item in Model.cashierBillingItemDtoList)
                                                 {
 
-                                                    @if (item.price != 0 )
+                                                    @if (item.price != 0)
                                                     {
                                                         <tr>
                                                             <td>@item.billingItemName (@item.billingItemsTypeName)</td>
@@ -437,8 +437,6 @@
                                                             <td>@item.discount</td>
                                                             <td>@item.amount</td>
                                                             <td>
-
-
                                                             </td>
                                                         </tr>
                                                     }
@@ -448,7 +446,7 @@
                                                 @foreach (var item in Model.cashierBilledItemDtoList)
                                                 {
 
-                                                    @if (item.price != 0 )
+                                                    @if (item.price != 0)
                                                     {
                                                         <tr>
                                                             <td>@item.billingItemName (@item.billingItemsTypeName)</td>
@@ -461,12 +459,12 @@
                                                                 {
                                                                     @if (Model.invoice.paymentStatus != HospitalMgrSystem.Model.Enums.PaymentStatus.OPD)
 
-                                                                    @using (Html.BeginForm("RemoveItem", "Cashier", new { Id = @item.BillingItemID, InvoiceType = Model.invoiceType, BillingItemsType = @item.billingItemsType, PreID = Model.PreID ,InvoiceID =Model.invoiceID }, FormMethod.Post))
-                                                                    {
+                                                                        @using (Html.BeginForm("RemoveItem", "Cashier", new { Id = @item.BillingItemID, InvoiceType = Model.invoiceType, BillingItemsType = @item.billingItemsType, PreID = Model.PreID, InvoiceID = Model.invoiceID }, FormMethod.Post))
+                                                                        {
 
-                                                                        <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>Refund</button>
+                                                                            <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>Refund</button>
 
-                                                                    }
+                                                                        }
                                                                 }
 
                                                             </td>
@@ -735,20 +733,27 @@
                                 <td style="border-bottom: 1px solid white;"><span class="label label-success">GIFT CARD</span></td>
                                 <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="giftCard" id="giftcardID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
                             </tr>
-                            @if(Model != null){
-                            @if (Model.invoiceID != 0 || Model.total < 0)
+
+                            @if (Model != null)
                             {
+                                @if (Model.invoiceID != 0 || Model.total < 0)
+                                {
                                     <tr class="table-danger">
-                                        <td style="border-bottom: 1px solid white;">Total Refund</td>
+                                        <td style="border-bottom: 1px solid white;">TOTAL REFUND</td>
                                         <td style="border-bottom: 1px solid white;">
                                             <b><input class="form-control danger" type="number" id="giftcardID" placeholder="" value="@(Model.total * -1)" disabled /></b>
                                         </td>
                                     </tr>
+
+                                    @if (Model.invoiceID != 0 && Model.total < 0)
+                                    {
+
+                                    }
+                                }
                             }
-                            }
-      
+
                         </table>
-                         <center>
+                        <center>
                             @if (Model != null)
                             {
 
@@ -761,7 +766,8 @@
                                     }
                                     @if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.OPDNURSE)
                                     {
-                                        @if (Model.opd != null){
+                                        @if (Model.opd != null)
+                                        {
                                             @if (Model.opd.nightShiftSession != null)
                                             {
                                                 @if (Model.opd.nightShiftSession.shift == HospitalMgrSystem.Model.Enums.Shift.NIGHT_SHIFT)
@@ -770,27 +776,44 @@
                                                 }
                                             }
                                         }
-                             
+
 
                                     }
-                                   
+
                                 }
 
 
                             }
-                         </center>
-                         </form>
-                        <center>
+                        </center>
+                    </form>
+                    <center>
                         @if (Model != null)
                         {
                             @if (Model.invoiceID != 0 && Model.total < 0)
                             {
-                                @using (Html.BeginForm("Refund", "Cashier", new { Id = Model.invoiceID, Refund =Model.total }, FormMethod.Post))
+                                @using (Html.BeginForm("Refund", "Cashier", new { Id = Model.invoiceID, Refund = Model.total }, FormMethod.Post))
                                 {
-                                
+                                    <table class="table" style="border-collapse: collapse;">
+                                        <tr class="table-danger">
+                                            <td style="border-bottom: 1px solid white;">USER PASSWORD</td>
+                                            <td style="border-bottom: 1px solid white;"><b><input class="form-control danger" type="password" name="userPassword" id="userPassword" placeholder="Enter password" /></b></td>
+                                        </tr>
+                                    </table>
+
                                     <button id='link_copy' type="submit" class='btn waves-effect waves-light  btn-danger'>Refund</button>
 
                                 }
+
+                                @* <form asp-action="Refund" method="post">
+                        <table>
+                        <tr class="table-danger">
+                        <td style="border-bottom: 1px solid white;">USER PASSWORD</td>
+                        <td style="border-bottom: 1px solid white;"><b><input class="form-control danger" type="text" asp asp-for="userPassword" id="userPassword" placeholder="Enter password" onkeyup="" /></b></td>
+                        </tr>
+                        </table>
+
+                        <button id='link_copy' type="submit" class='btn waves-effect waves-light  btn-danger'>Refund</button>
+                        </form> *@
                             }
 
                         }
@@ -799,7 +822,8 @@
                         {
                             @if (Model.invoiceID != 0)
                             {
-                                @if (Model.invoice.paymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.OPD){
+                                @if (Model.invoice.paymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.OPD)
+                                {
 
                                     @if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.CASHIER)
                                     {
@@ -809,7 +833,7 @@
                                             <button id='link_copy' type="submit" class='btn waves-effect waves-light  btn-danger'>Mark as paid</button>
 
                                         }
-                                    
+
                                     }
 
                                 }
@@ -819,8 +843,8 @@
                         }
 
                     </center>
-           
-        
+
+
                 </div>
             </div>
         </div>

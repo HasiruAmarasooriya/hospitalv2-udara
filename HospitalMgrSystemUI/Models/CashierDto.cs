@@ -33,6 +33,7 @@ namespace HospitalMgrSystemUI.Models
         public decimal debit { get; set; }
         public decimal cheque { get; set; }
         public decimal giftCard { get; set; }
+        public string userPassword { get; set; }
 
         public decimal hospitalFee { get; set; }
         public decimal consaltantFee { get; set; }
