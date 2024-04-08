@@ -1215,6 +1215,31 @@ namespace HospitalMgrSystemUI.Controllers
                 }
             }
         }
+
+        public IActionResult RemoveAllItems(List<object> Id, InvoiceType InvoiceType, List<BillingItemsType> BillingItemsType, string PreID, int InvoiceID)
+        {
+            CashierDto cashierDto = GetCashierAlldetails(PreID);
+
+            List<BillingItemDto> listData = cashierDto.cashierBilledItemDtoList;
+
+            try
+            {
+                for (int i = 0; i < listData.Count; i++)
+                {
+                    RemoveItem(listData[i].BillingItemID, InvoiceType, listData[i].billingItemsType, PreID, InvoiceID);
+                }
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index");
+            }
+
+
+            return RedirectToAction("Index", new { PreID = PreID });
+        }
+
+
+
         public IActionResult RemoveItem(int Id, InvoiceType InvoiceType, BillingItemsType BillingItemsType, string PreID, int InvoiceID)
         {
             using (var httpClient = new HttpClient())
