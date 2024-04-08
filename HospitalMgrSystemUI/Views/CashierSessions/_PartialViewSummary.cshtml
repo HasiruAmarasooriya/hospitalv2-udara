@@ -1,0 +1,165 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model CashierSessionDto;
+@{
+    Layout = null;
+}
+@inject IConfiguration Configuration
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+    </style>
+    <title>Cashier Summary</title>
+</head>
+<body>
+    <div id="logo">
+        <img src="https://kumuduhospital.com/assets/images/kumudu_logo2.jpg"
+             alt="Logo"
+             width="100" />
+    </div>
+    <div id="address">
+        No 48, Kandy Road, Mathale,<br />
+        Tel: 066 22 22 2444 | 066 22 30 027<br />
+        Date: @Model.sessionDate.Date.ToShortDateString()<br />
+    </div>
+
+    <h1>Cashier Session Summary (@Model.cashierSessionID)</h1>
+
+    <!-- OPD Summary -->
+    <h2>OPD Summary</h2>
+    <table border="1">
+        <tr>
+            <th>Category</th>
+            <th>Total Amount</th>
+            <th>Paid Amount</th>
+            <th>Refund</th>
+        </tr>
+        <tr>
+            <td>OPD</td>
+            <td>@Model.CashierPaymentData.OPDTotalAmount</td>
+            <td>@Model.CashierPaymentData.OPDTotalPaidAmount</td>
+            <td>@Model.CashierPaymentData.OPDTotalRefund</td>
+        </tr>
+    </table>
+
+    <!-- X-RAY Summary -->
+    <h2>X-RAY Summary</h2>
+    <table border="1">
+        <tr>
+            <th>Category</th>
+            <th>Total Amount</th>
+            <th>Paid Amount</th>
+            <th>Refund</th>
+        </tr>
+        <tr>
+            <td>X-RAY</td>
+            <td>@Model.CashierPaymentData.XRAYTotalAmount</td>
+            <td>@Model.CashierPaymentData.XRAYTotalPaidAmount</td>
+            <td>@Model.CashierPaymentData.XRAYTotalRefund</td>
+        </tr>
+    </table>
+
+    <!-- OTHER Services Summary -->
+    <h2>OTHER Services Summary</h2>
+    <table border="1">
+        <tr>
+            <th>Category</th>
+            <th>Total Amount</th>
+            <th>Paid Amount</th>
+            <th>Refund</th>
+        </tr>
+        <tr>
+            <td>OTHER</td>
+            <td>@Model.CashierPaymentData.OtherTotalAmount</td>
+            <td>@Model.CashierPaymentData.OtherTotalPaidAmount</td>
+            <td>@Model.CashierPaymentData.OtherTotalRefund</td>
+        </tr>
+    </table>
+
+    <!-- Channeling Summary -->
+    <h2>Channeling Summary</h2>
+    <table border="1">
+        <tr>
+            <th>Category</th>
+            <th>Total Amount</th>
+            <th>Paid Amount</th>
+            <th>Refund</th>
+        </tr>
+        <tr>
+            <td>Channeling</td>
+            <td>@Model.CashierPaymentData.ChannelingTotalAmount</td>
+            <td>@Model.CashierPaymentData.ChannelingTotalPaidAmount</td>
+            <td>@Model.CashierPaymentData.ChannelingTotalRefund</td>
+        </tr>
+    </table>
+
+    @* <h1>Cashier Session Number: @Model.sessionId</h1>
+
+    <h1>OPD Total Amount: @Model.CashierPaymentData.OPDTotalAmount</h1>
+    <h1>OPD Total Paid Amount: @Model.CashierPaymentData.OPDTotalPaidAmount</h1>
+    <h1>OPD Total Refund: @Model.CashierPaymentData.OPDTotalRefund</h1>
+
+    <hr />
+
+    <h1>X-RAY Total Amount: @Model.CashierPaymentData.XRAYTotalAmount</h1>
+    <h1>X-RAY Total Paid Amount: @Model.CashierPaymentData.XRAYTotalPaidAmount</h1>
+    <h1>X-RAY Total Refund: @Model.CashierPaymentData.XRAYTotalRefund</h1>
+
+    <hr />
+
+    <h1>OTHER Total Amount: @Model.CashierPaymentData.OtherTotalAmount</h1>
+    <h1>OTHER Total Paid Amount: @Model.CashierPaymentData.OtherTotalPaidAmount</h1>
+    <h1>OTHER Total Refund: @Model.CashierPaymentData.OtherTotalRefund</h1>
+
+    <hr />
+
+    <h1>Channeling Total Amount: @Model.CashierPaymentData.ChannelingTotalAmount</h1>
+    <h1>Channeling Total Paid Amount: @Model.CashierPaymentData.ChannelingTotalPaidAmount</h1>
+    <h1>Channeling Total Refund: @Model.CashierPaymentData.ChannelingTotalRefund</h1> *@
+
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script type="text/javascript">
+        // Call the generateQRCode function when the page loads
+        document.addEventListener("DOMContentLoaded", function () {
+            generateQRCode(50);
+        });
+
+        function generateQRCode(size) {
+            const qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: 'Hello kohomada',
+                width: size,
+                height: size,
+            });
+        }
+
+        // Rest of your script...
+    </script>
+</body>
+</html>
