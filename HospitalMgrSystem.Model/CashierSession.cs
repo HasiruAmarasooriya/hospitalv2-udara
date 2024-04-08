@@ -45,5 +45,36 @@ namespace HospitalMgrSystem.Model
         [NotMapped]
         public decimal TotalAmount { get; set; }
 
+        #region OPD Payment Data
+
+        [NotMapped]
+        public decimal OPDTotalAmount { get; set; }
+        [NotMapped]
+        public decimal OPDTotalPaidAmount { get; set; }
+        [NotMapped]
+        public decimal OPDTotalRefund { get; set; }
+
+        [NotMapped]
+        public decimal ChannelingTotalAmount { get; set; }
+        [NotMapped]
+        public decimal ChannelingTotalPaidAmount { get; set; }
+        [NotMapped]
+        public decimal ChannelingTotalRefund { get; set; }
+
+        [NotMapped]
+        public decimal XRAYTotalAmount { get; set; }
+        [NotMapped]
+        public decimal XRAYTotalPaidAmount { get; set; }
+        [NotMapped]
+        public decimal XRAYTotalRefund { get; set; }
+
+        [NotMapped]
+        public decimal OtherTotalAmount { get; set; }
+        [NotMapped]
+        public decimal OtherTotalPaidAmount { get; set; }
+        [NotMapped]
+        public decimal OtherTotalRefund { get; set; }
+
+        #endregion
     }
 }
