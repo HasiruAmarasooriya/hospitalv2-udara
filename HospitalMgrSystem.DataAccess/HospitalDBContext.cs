@@ -59,7 +59,8 @@ namespace HospitalMgrSystem.DataAccess
         public DbSet<ClaimBill> ClaimBills { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString = "server=cebdbserver.database.windows.net;Database=KUMUDU; User Id=cebuser; Password=Anubaba@1234";
+            // var connectionString = "server=cebdbserver.database.windows.net;Database=KUMUDU; User Id=cebuser; Password=Anubaba@1234";
+            var connectionString = "Data Source=DESKTOP-SL43NS2\\SQLEXPRESS;Initial Catalog=KUMUDU;Integrated Security=True;Encrypt=False";
             optionsBuilder.UseSqlServer(connectionString);
         }
     }
