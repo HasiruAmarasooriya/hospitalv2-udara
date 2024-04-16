@@ -116,6 +116,8 @@
 
                     </div>
                 }
+
+                <button class="btn waves-effect btn-warning" onclick="printReport()"><i class="fa-solid fa-moon"></i>Download All</button>
             </div>
         </div>
     </div>
@@ -557,7 +559,7 @@
             <div class="card-body">
                 <h3 class="card-title" style="text-align: center;">Summary</h3>
                 <div class="table-responsive">
-                    @if (Model.StartTime != null && Model.EndTime != null && Model.paymentData != null)
+                    @if (Model.StartTime != null && Model.EndTime != null && Model.OPDPaymentData != null)
                     {
 
                         <table class="table">
@@ -572,17 +574,17 @@
                                 </tr>
                                 <tr>
                                     <th style="text-align: right;">Total Amount:</th>
-                                    <th style="text-align: left;">@Model.paymentData.TotalAmountOld LKR</th>
+                                    <th style="text-align: left;">@Model.OPDPaymentData.TotalAmountOld LKR</th>
                                 </tr>
                                 <tr>
                                     <th style="text-align: right;">Total Refunded Amount:</th>
-                                    <th style="text-align: left;">@Model.paymentData.TotalAmountRefunded LKR</th>
+                                    <th style="text-align: left;">@Model.OPDPaymentData.TotalAmountRefunded LKR</th>
                                 </tr>
                             </thead>
                             <tbody class="table-primary">
                                 <tr>
                                     <th style="text-align: right;">Total Paid Amount:</th>
-                                    <th style="text-align: left;">@Model.paymentData.TotalPaidAmount LKR</th>
+                                    <th style="text-align: left;">@Model.OPDPaymentData.TotalPaidAmount LKR</th>
                                 </tr>
                             </tbody>
                         </table>
@@ -642,6 +644,66 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script>
+
+        function printReport() {
+            var logoImage = new Image();
+            var barcodeImage = new Image();
+            var imagesLoaded = 0;
+
+
+            logoImage.src = "https://kumuduhospital.com/assets/images/kumudu_logo2.jpg"; // Replace with your actual logo URL
+            barcodeImage.src = "https://png.pngtree.com/png-clipart/20220424/original/pngtree-black-and-white-icons-of-barcode-numbers-png-image_7554658.png"; // Replace with your actual barcode URL
+
+            // Callback function to check if all images are loaded
+            function checkImagesLoaded() {
+                imagesLoaded++;
+
+                if (imagesLoaded === 2) { // You may need to adjust this count if you have more images
+                    openPrintWindow();
+                }
+            }
+
+            // Set the load event listeners for the images
+            logoImage.onload = checkImagesLoaded;
+            barcodeImage.onload = checkImagesLoaded;
+
+            function openPrintWindow() {
+                var startDate = $('#date-format-start').val();
+                var endDate = $('#date-format-end').val();
+
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Report/DownloadReport",
+                    data: JSON.stringify({ StartTime: startDate, EndTime: endDate }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "html",
+                    success: function (response) {
+                        var printWindow = window.open('', '_blank', 'width=600,height=600,location=no,menubar=no');
+                        printWindow.document.open();
+                        printWindow.document.write(response);
+                        //printWindow.document.getElementsByTagName('body')[0].style.setProperty('width', '600px'); // Set the width as needed
+                        //printWindow.document.getElementsByTagName('body')[0].style.setProperty('margin', '0'); // Remove any margins
+                        printWindow.document.close();
+                        printWindow.print();
+                        printWindow.close();
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+
+            // If the images are already cached, the load event may not fire, so check immediately
+            if (logoImage.complete && barcodeImage.complete) {
+                openPrintWindow();
+            }
+        }
+
+
 
 
 
