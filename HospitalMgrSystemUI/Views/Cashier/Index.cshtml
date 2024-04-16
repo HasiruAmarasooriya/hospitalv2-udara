@@ -410,6 +410,10 @@
                                 {
                                     @if (Model.cashierBillingItemDtoList != null && Model.opd != null)
                                     {
+
+                                        List<object> itemIds = new List<object>();
+                                        List<object> billingItemsTypes = new List<object>();
+
                                         <table class="table">
 
                                             <thead class="table-success">
@@ -448,6 +452,9 @@
 
                                                     @if (item.price != 0)
                                                     {
+                                                        itemIds.Add(item.BillingItemID);
+                                                        billingItemsTypes.Add(item.billingItemsType);
+
                                                         <tr>
                                                             <td>@item.billingItemName (@item.billingItemsTypeName)</td>
                                                             <td>@item.price</td>
@@ -472,8 +479,23 @@
                                                     }
 
                                                 }
+
+
                                             </tbody>
+
+
                                         </table>
+                                        @if (Model != null && Model.cashierBilledItemDtoList.Count > 0)
+                                        {
+                                            @if (Model.invoice.paymentStatus != HospitalMgrSystem.Model.Enums.PaymentStatus.OPD)
+
+                                                @using (Html.BeginForm("RemoveAllItems", "Cashier", new { Id = @itemIds, InvoiceType = Model.invoiceType, BillingItemsType = @billingItemsTypes, PreID = Model.PreID, InvoiceID = Model.invoiceID }, FormMethod.Post))
+                                                {
+
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-danger'>Refund All</button>
+
+                                                }
+                                        }
                                     }
                                     @*                            @if (Model.opd != null)
                                 {
@@ -776,13 +798,8 @@
                                                 }
                                             }
                                         }
-
-
                                     }
-
                                 }
-
-
                             }
                         </center>
                     </form>

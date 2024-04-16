@@ -20,6 +20,19 @@ namespace HospitalMgrSystemUI.Controllers
             return View(cashierSessionDto);
         }
 
+        public ActionResult DownloadCashierPayment([FromBody] CashierSessionDto cashierSessionDtoData)
+        {
+            
+            CashierSessionDto cashierSessionDto = new CashierSessionDto();
+            CashierSessionService cashierSessionService = new CashierSessionService();
+
+            cashierSessionDto.CashierPaymentData= cashierSessionService.GetCashierSessionPaymentData(cashierSessionDtoData.sessionId);
+            cashierSessionDto.cashierSessionID = cashierSessionDtoData.sessionId;
+            cashierSessionDto.sessionDate = DateTime.Now;
+
+            return PartialView("_PartialViewSummary", cashierSessionDto);
+        }
+
 
         public ActionResult CreateCashierSessionse(int id)
         {
@@ -42,10 +55,6 @@ namespace HospitalMgrSystemUI.Controllers
                 cashierSessionDto.user = GetUserById(userID);
                 return PartialView("_PartialAddCashierSession", cashierSessionDto);
             }
-                
-
-
-
         }
 
         public IActionResult CreateNewCashierSession()

@@ -64,9 +64,9 @@ namespace HospitalMgrSystem.Service.Consultant
         public List<Model.Consultant> GetAllConsultantByStatus()
         {
             List<Model.Consultant> mtList = new List<Model.Consultant>();
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.Consultants.Include(c => c.Specialist).Where(o => o.Status == 0).ToList<Model.Consultant>();
+                mtList = dbContext.Consultants.Include(c => c.Specialist).Where(o => o.Status == 0).ToList();
 
             }
             return mtList;

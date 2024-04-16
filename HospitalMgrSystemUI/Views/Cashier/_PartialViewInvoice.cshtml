@@ -188,11 +188,11 @@
 
                         <tr>
                             <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: left;">Other Items</td>
-                            <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">@itemAmmount LKR</td>
+                            <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">Rs. @itemAmmount</td>
                         </tr>
                         <tr style="margin-left: auto;">
                             <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: left;">Hospital Fee</td>
-                            <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">@hospitalFee LKR</td>
+                            <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">Rs. @hospitalFee</td>
                         </tr>
                     }
                     @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
@@ -202,11 +202,11 @@
                         {
                             <tr>
                                 <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: left;">Hospital Fee</td>
-                                <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">@(Model.opd.HospitalFee) LKR</td>
+                                <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">Rs. @(Model.opd.HospitalFee)</td>
                             </tr>
                             <tr style="margin-left: auto;">
                                 <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: left;">Doctor Fee</td>
-                                <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">@(Model.opd.ConsultantFee) LKR</td>
+                                <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">Rs. @(Model.opd.ConsultantFee)</td>
                             </tr>
                         }
                     }
@@ -235,7 +235,7 @@
                 <table id="total-section" style="margin-left: auto;">
                     <tr>
                         <td style="text-align: left;">Net total:</td>
-                        <td style="text-align: right;">@Model.preSubtotal.ToString("0.00") LKR</td>
+                        <td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
                     </tr>
 
                     
@@ -259,11 +259,11 @@
                         
                         <tr>
                             <td style="text-align: left;">Cash Payment:</td>
-                            <td style="text-align: right;">@totalCash.ToString("0.00") LKR</td>
+                            <td style="text-align: right;">Rs. @totalCash.ToString("0.00")</td>
                         </tr>
                         <tr>
                         <td style="text-align: left;">Balance:</td>
-                            <td style="text-align: right;">@(Math.Abs(totalBlence).ToString("0.00")) LKR</td>
+                            <td style="text-align: right;">Rs. @(Math.Abs(totalBlence).ToString("0.00"))</td>
                         </tr>
                         }
 

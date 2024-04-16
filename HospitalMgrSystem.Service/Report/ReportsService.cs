@@ -55,16 +55,6 @@ namespace HospitalMgrSystem.Service.Report
 
                 var removedItemSumNeedToPay = dbContext.InvoiceItems.Where(o => o.itemInvoiceStatus == ItemInvoiceStatus.Remove && invoiceListNeedToPay.Contains(o.InvoiceId)).Sum(o => o.price * o.qty);
                 var removedItemSumRefund = dbContext.InvoiceItems.Where(o => o.itemInvoiceStatus == ItemInvoiceStatus.Remove && invoiceListNotPaid.Contains(o.InvoiceId)).Sum(o => o.price * o.qty);
-                //var totalOtherInAmount = dbContext.Payments
-                //    .Where(o => o.ModifiedDate >= startDate && o.ModifiedDate <= endDate && o.BillingType == BillingType.OTHER_IN)
-                //    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
-
-                //var totalOtherOutAmount = dbContext.Payments
-                //    .Where(o => o.ModifiedDate >= startDate && o.ModifiedDate <= endDate && o.BillingType == BillingType.OTHER_OUT)
-                //    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
-
-                //var totalAmount = totalCashierAmount + totalOtherInAmount + totalBalanceAmount;
-                //var totalPaidAmount = totalAmount + totalRefundAmount + totalOtherOutAmount;
 
                 var totalRefund = removedItemSumNeedToPay + removedItemSumRefund;
                 var totalAmount = totalCashierAmount + totalBalanceAmount + removedItemSumNeedToPay + removedItemSumRefund;
