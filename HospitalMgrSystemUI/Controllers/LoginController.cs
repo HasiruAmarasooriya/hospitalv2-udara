@@ -81,6 +81,7 @@ namespace HospitalMgrSystemUI.Controllers
                         // Save username as a cookie
                         Response.Cookies.Append("UserNameCookie", result.UserName);
                         Response.Cookies.Append("UserIdCookie", result.Id.ToString());
+                        Response.Cookies.Append("UserRoleCookie", result.userRole.ToString());
                         string redirectUrl = "/Home/Index";
                         return Redirect(redirectUrl);
                     }
