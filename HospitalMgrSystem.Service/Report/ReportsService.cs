@@ -21,48 +21,65 @@ namespace HospitalMgrSystem.Service.Report
     public class ReportsService
     {
         #region PAYMENT REPORTS
-        public Payment GetAllPaymentsData(DateTime startDate, DateTime endDate)
+
+        // Only for the OPD, XRAY and Investigation
+        public Payment GetAllOPDPaymentsData(DateTime startDate, DateTime endDate, string description)
         {
             Payment paymentData = new Payment();
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
+                List<int> opdIds, invoiceList, opdIdsNeedToPay, invoiceListNeedToPay, opdIdsNotPaid, invoiceListNotPaid;
+
+                if (description == null)
+                {
+                    opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.invoiceType == InvoiceType.CHE && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
+                    invoiceList = dbContext.Invoices.Where(o => opdIds.Contains(o.ServiceID)).Select(r => r.Id).ToList();
+
+                    opdIdsNeedToPay = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.invoiceType == InvoiceType.CHE && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NEED_TO_PAY).Select(r => r.Id).ToList();
+                    invoiceListNeedToPay = dbContext.Invoices.Where(o => opdIdsNeedToPay.Contains(o.ServiceID)).Select(r => r.Id).ToList();
+
+                    opdIdsNotPaid = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.invoiceType == InvoiceType.CHE && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NOT_PAID).Select(r => r.Id).ToList();
+                    invoiceListNotPaid = dbContext.Invoices.Where(o => opdIdsNotPaid.Contains(o.ServiceID)).Select(r => r.Id).ToList();
+                }
+                else
+                {
+                    opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == description && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
+                    invoiceList = dbContext.Invoices.Where(o => opdIds.Contains(o.ServiceID)).Select(r => r.Id).ToList();
+
+                    opdIdsNeedToPay = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == description && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NEED_TO_PAY).Select(r => r.Id).ToList();
+                    invoiceListNeedToPay = dbContext.Invoices.Where(o => opdIdsNeedToPay.Contains(o.ServiceID)).Select(r => r.Id).ToList();
+
+                    opdIdsNotPaid = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == description && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NOT_PAID).Select(r => r.Id).ToList();
+                    invoiceListNotPaid = dbContext.Invoices.Where(o => opdIdsNotPaid.Contains(o.ServiceID)).Select(r => r.Id).ToList();
+                }
 
 
-                var opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
-                var invoiceList = dbContext.Invoices.Where(o => o.InvoiceType == InvoiceType.OPD && opdIds.Contains(o.ServiceID)).Select(r => r.Id).ToList();
-
-                var opdIdsNeedToPay = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NEED_TO_PAY).Select(r => r.Id).ToList();
-                var invoiceListNeedToPay = dbContext.Invoices.Where(o => o.InvoiceType == InvoiceType.OPD && opdIdsNeedToPay.Contains(o.ServiceID)).Select(r => r.Id).ToList();
-
-                var opdIdsNotPaid = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NOT_PAID).Select(r => r.Id).ToList();
-                var invoiceListNotPaid = dbContext.Invoices.Where(o => o.InvoiceType == InvoiceType.OPD && opdIdsNotPaid.Contains(o.ServiceID)).Select(r => r.Id).ToList();
-
-                var totalCashierAmount = dbContext.Payments
+                decimal totalCashierAmount = dbContext.Payments
                     .Where(o => o.BillingType == BillingType.CASHIER && invoiceList.Contains(o.InvoiceID))
                     .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
-                var totalBalanceAmount = dbContext.Payments
+                decimal totalBalanceAmount = dbContext.Payments
                     .Where(o => o.BillingType == BillingType.BALENCE && invoiceList.Contains(o.InvoiceID))
                     .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
-                var totalRefundAmount = dbContext.Payments
+                decimal totalRefundAmount = dbContext.Payments
                     .Where(o => o.BillingType == BillingType.REFUND && invoiceList.Contains(o.InvoiceID))
                     .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
-                var totalRefundAmountInNeedToPay = dbContext.Payments
+                decimal totalRefundAmountInNeedToPay = dbContext.Payments
                     .Where(o => o.BillingType == BillingType.REFUND && invoiceListNeedToPay.Contains(o.InvoiceID))
                     .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
-                var removedItemSumNeedToPay = dbContext.InvoiceItems.Where(o => o.itemInvoiceStatus == ItemInvoiceStatus.Remove && invoiceListNeedToPay.Contains(o.InvoiceId)).Sum(o => o.price * o.qty);
-                var removedItemSumRefund = dbContext.InvoiceItems.Where(o => o.itemInvoiceStatus == ItemInvoiceStatus.Remove && invoiceListNotPaid.Contains(o.InvoiceId)).Sum(o => o.price * o.qty);
+                decimal removedItemSumNeedToPay = dbContext.InvoiceItems.Where(o => o.itemInvoiceStatus == ItemInvoiceStatus.Remove && invoiceListNeedToPay.Contains(o.InvoiceId)).Sum(o => o.price * o.qty);
+                decimal removedItemSumRefund = dbContext.InvoiceItems.Where(o => o.itemInvoiceStatus == ItemInvoiceStatus.Remove && invoiceListNotPaid.Contains(o.InvoiceId)).Sum(o => o.price * o.qty);
 
-                var totalRefund = removedItemSumNeedToPay + removedItemSumRefund;
-                var totalAmount = totalCashierAmount + totalBalanceAmount + removedItemSumNeedToPay + removedItemSumRefund;
-                var totalPaidAmount = totalAmount + totalRefundAmount;
+                decimal totalRefund = removedItemSumNeedToPay + removedItemSumRefund;
+                decimal totalAmount = totalCashierAmount + totalBalanceAmount + removedItemSumNeedToPay + removedItemSumRefund;
+                decimal totalPaidAmount = totalAmount + totalRefundAmount;
 
-                var oldPaidAmount = totalPaidAmount - (totalRefundAmount + totalRefundAmountInNeedToPay);
-                var actRefundAmount = oldPaidAmount - totalPaidAmount;
-                var needToPayTotal = totalRefund - actRefundAmount;
+                decimal oldPaidAmount = totalPaidAmount - (totalRefundAmount + totalRefundAmountInNeedToPay);
+                decimal actRefundAmount = oldPaidAmount - totalPaidAmount;
+                decimal needToPayTotal = totalRefund - actRefundAmount;
 
                 paymentData.TotalAmountOld = oldPaidAmount;
                 paymentData.TotalAmountNeedToPay = needToPayTotal;
@@ -228,7 +245,7 @@ namespace HospitalMgrSystem.Service.Report
 
                 return mtList;
             }
-            
+
         }
 
         #endregion
@@ -251,34 +268,64 @@ namespace HospitalMgrSystem.Service.Report
             return mtList;
         }
 
-        public List<OPDDrugus> GetAllOPDGrugsByDateRangePaidStatus(DateTime startDate, DateTime endDate)
+        public List<OPDDrugus> GetAllOPDGrugsByDateRangePaidStatus(DateTime startDate, DateTime endDate, string description)
         {
             List<OPDDrugus> mtList = new List<OPDDrugus>();
 
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                var temp = dbContext.OPDDrugus
-                   .Include(c => c.opd)
-                   .Include(c => c.Drug)
-                   .Where(o => o.Status == CommonStatus.Active && o.ModifiedDate >= startDate && o.ModifiedDate <= endDate && o.IsRefund == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED)
-                   .GroupBy(o => o.DrugId)
-                   .Select(r => new
-                   {
-                       DrugId = r.Key,
-                       Qty = r.Sum(x => x.Qty),
-                       DrugData = r.Select(x => x.Drug).FirstOrDefault(),
-                       Total = r.Sum(x => x.Amount)
-                   }).ToList();
+                OPDDrugus opdDrug = new OPDDrugus();
 
-                foreach (var item in temp)
+                if (description == null)
                 {
-                    OPDDrugus opdDrug = new OPDDrugus();
-                    opdDrug.DrugId = item.DrugId;
-                    opdDrug.Qty = item.Qty;
-                    opdDrug.Drug = item.DrugData;
-                    opdDrug.Amount = item.Total;
-                    mtList.Add(opdDrug);
+                    var temp = dbContext.OPDDrugus
+                               .Include(c => c.opd)
+                               .Include(c => c.Drug)
+                               .Where(o => o.Status == CommonStatus.Active && o.ModifiedDate >= startDate && o.ModifiedDate <= endDate && o.IsRefund == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED && o.opd.invoiceType == InvoiceType.CHE)
+                               .GroupBy(o => o.DrugId)
+                               .Select(r => new
+                               {
+                                   DrugId = r.Key,
+                                   Qty = r.Sum(x => x.Qty),
+                                   DrugData = r.Select(x => x.Drug).FirstOrDefault(),
+                                   Total = r.Sum(x => x.Amount)
+                               }).ToList();
+
+                    foreach (var item in temp)
+                    {
+                        opdDrug.DrugId = item.DrugId;
+                        opdDrug.Qty = item.Qty;
+                        opdDrug.Drug = item.DrugData;
+                        opdDrug.Amount = item.Total;
+                        mtList.Add(opdDrug);
+                    }
                 }
+                else
+                {
+                    var temp = dbContext.OPDDrugus
+                               .Include(c => c.opd)
+                               .Include(c => c.Drug)
+                               .Where(o => o.Status == CommonStatus.Active && o.ModifiedDate >= startDate && o.ModifiedDate <= endDate && o.IsRefund == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED && o.opd.Description == description)
+                               .GroupBy(o => o.DrugId)
+                               .Select(r => new
+                               {
+                                   DrugId = r.Key,
+                                   Qty = r.Sum(x => x.Qty),
+                                   DrugData = r.Select(x => x.Drug).FirstOrDefault(),
+                                   Total = r.Sum(x => x.Amount)
+                               }).ToList();
+
+
+                    foreach (var item in temp)
+                    {
+                        opdDrug.DrugId = item.DrugId;
+                        opdDrug.Qty = item.Qty;
+                        opdDrug.Drug = item.DrugData;
+                        opdDrug.Amount = item.Total;
+                        mtList.Add(opdDrug);
+                    }
+                }
+
 
                 return mtList;
             }
@@ -301,7 +348,9 @@ namespace HospitalMgrSystem.Service.Report
             return mtList;
         }
 
-        public List<Model.OPD> GetAllOPDByDateRangeAndNightShiftStatus(DateTime startDate, DateTime endDate)
+
+        // Only for the OPD, XRAY and Investigation
+        public List<Model.OPD> GetAllOPDByDateRangeAndNightShiftStatus(DateTime startDate, DateTime endDate, string description)
         {
             List<Model.OPD> mtList = new List<Model.OPD>();
             List<Model.OPD> newmtList = new List<Model.OPD>();
@@ -312,19 +361,19 @@ namespace HospitalMgrSystem.Service.Report
                     .Include(c => c.consultant)
                     .Include(c => c.room)
                     .Include(c => c.nightShiftSession.User)
-                    .Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.paymentStatus == PaymentStatus.OPD)
+                    .Where(o => o.Status == CommonStatus.Active && o.Description == description && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.OPD)
                     .OrderByDescending(o => o.Id)
                     .ToList();
 
-                var opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.paymentStatus == PaymentStatus.OPD).Select(r => r.Id).ToList();
-                var invoiceList = dbContext.Invoices.Where(o => o.InvoiceType == InvoiceType.OPD && opdIds.Contains(o.ServiceID)).ToList();
+                List<int> opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == description && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.OPD).Select(r => r.Id).ToList();
+                List<Invoice> invoiceList = dbContext.Invoices.Where(o => opdIds.Contains(o.ServiceID)).ToList();
 
-                foreach (var item in invoiceList)
+                foreach (Invoice item in invoiceList)
                 {
                     Model.OPD opdObj = new Model.OPD();
                     opdObj = mtList.Where(o => o.Id == item.ServiceID).SingleOrDefault();
 
-                    var invoiceItemList = dbContext.InvoiceItems.Where(o => o.InvoiceId == item.Id && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED).ToList();
+                    List<InvoiceItem> invoiceItemList = dbContext.InvoiceItems.Where(o => o.InvoiceId == item.Id && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED).ToList();
                     Model.User user = new Model.User();
                     user = GetUserById(opdObj.ModifiedUser);
 
@@ -334,14 +383,14 @@ namespace HospitalMgrSystem.Service.Report
                     opdObj.cashier = opdObj.nightShiftSession.User;
                     opdObj.TotalPaidAmount = 0;
                     opdObj.deviation = 0;
-                    foreach (var invoiceItem in invoiceItemList)
+                    foreach (InvoiceItem invoiceItem in invoiceItemList)
                     {
                         opdObj.TotalAmount = opdObj.TotalAmount + invoiceItem.Total;
 
                     }
 
-                    var paymentList = dbContext.Payments.Where(o => o.InvoiceID == item.Id).ToList();
-                    foreach (var payment in paymentList)
+                    List<Payment> paymentList = dbContext.Payments.Where(o => o.InvoiceID == item.Id).ToList();
+                    foreach (Payment payment in paymentList)
                     {
                         decimal paidAmount = payment.CashAmount + payment.DdebitAmount + payment.CreditAmount + payment.ChequeAmount + payment.GiftCardAmount;
                         opdObj.TotalPaidAmount = opdObj.TotalPaidAmount + paidAmount;
@@ -356,7 +405,8 @@ namespace HospitalMgrSystem.Service.Report
         }
 
 
-        public List<Model.OPD> GetAllOPDByDateRangeAndNeedToPayStatus(DateTime startDate, DateTime endDate)
+        // Only for the OPD, XRAY and Investigation
+        public List<Model.OPD> GetAllOPDByDateRangeAndNeedToPayStatus(DateTime startDate, DateTime endDate, string description)
         {
             List<Model.OPD> mtList = new List<Model.OPD>();
             List<Model.OPD> newmtList = new List<Model.OPD>();
@@ -367,19 +417,19 @@ namespace HospitalMgrSystem.Service.Report
                     .Include(c => c.consultant)
                     .Include(c => c.room)
                     .Include(c => c.nightShiftSession.User)
-                    .Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NEED_TO_PAY)
+                    .Where(o => o.Status == CommonStatus.Active && o.Description == description && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NEED_TO_PAY)
                     .OrderByDescending(o => o.Id)
                     .ToList();
 
-                var opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NEED_TO_PAY).Select(r => r.Id).ToList();
-                var invoiceList = dbContext.Invoices.Where(o => o.InvoiceType == InvoiceType.OPD && opdIds.Contains(o.ServiceID)).ToList();
+                List<int> opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == description && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NEED_TO_PAY).Select(r => r.Id).ToList();
+                List<Invoice> invoiceList = dbContext.Invoices.Where(o => opdIds.Contains(o.ServiceID)).ToList();
 
-                foreach (var item in invoiceList)
+                foreach (Invoice item in invoiceList)
                 {
                     Model.OPD opdObj = new Model.OPD();
                     opdObj = mtList.Where(o => o.Id == item.ServiceID).SingleOrDefault();
 
-                    var invoiceItemList = dbContext.InvoiceItems.Where(o => o.InvoiceId == item.Id && o.itemInvoiceStatus == ItemInvoiceStatus.Remove).ToList();
+                    List<InvoiceItem> invoiceItemList = dbContext.InvoiceItems.Where(o => o.InvoiceId == item.Id && o.itemInvoiceStatus == ItemInvoiceStatus.Remove).ToList();
                     Model.User user = new Model.User();
                     user = GetUserById(opdObj.ModifiedUser);
 
@@ -390,14 +440,16 @@ namespace HospitalMgrSystem.Service.Report
                     opdObj.cashier = opdObj.nightShiftSession.User;
                     opdObj.TotalPaidAmount = 0;
                     opdObj.deviation = 0;
-                    foreach (var invoiceItem in invoiceItemList)
+
+                    foreach (InvoiceItem invoiceItem in invoiceItemList)
                     {
                         opdObj.TotalRefund = opdObj.TotalRefund + invoiceItem.Total;
                     }
 
-                    var paymentList = dbContext.Payments.Where(o => o.InvoiceID == item.Id).ToList();
+                    List<Payment> paymentList = dbContext.Payments.Where(o => o.InvoiceID == item.Id).ToList();
                     decimal tRefund = 0;
-                    foreach (var payment in paymentList)
+
+                    foreach (Payment payment in paymentList)
                     {
                         decimal paidAmount = payment.CashAmount + payment.DdebitAmount + payment.CreditAmount + payment.ChequeAmount + payment.GiftCardAmount;
                         if (payment.BillingType == BillingType.REFUND)
@@ -407,6 +459,7 @@ namespace HospitalMgrSystem.Service.Report
                         opdObj.TotalPaidAmount = opdObj.TotalPaidAmount + paidAmount;
 
                     }
+
                     opdObj.TotalNeedToRefund = opdObj.TotalRefund + tRefund;
                     opdObj.TotalOldAmount = opdObj.TotalPaidAmount - tRefund;
                     newmtList.Add(opdObj);
@@ -417,9 +470,10 @@ namespace HospitalMgrSystem.Service.Report
         }
 
 
-        public List<Model.OPD> GetAllOPDByAndDateRangePaidStatus(DateTime startDate, DateTime endDate, PaymentStatus paymentStatus)
+        // Only for the OPD, XRAY and Investigation
+        public List<Model.OPD> GetAllOPDByAndDateRangePaidStatus(DateTime startDate, DateTime endDate, PaymentStatus paymentStatus, string description)
         {
-            List<Model.OPD> mtList = new List<Model.OPD>();
+            List<Model.OPD> mtList = new();
             List<Model.OPD> newmtList = new List<Model.OPD>();
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
@@ -428,21 +482,19 @@ namespace HospitalMgrSystem.Service.Report
                     .Include(c => c.consultant)
                     .Include(c => c.room)
                     .Include(c => c.nightShiftSession.User)
-                    .Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == paymentStatus)
+                    .Where(o => o.Status == CommonStatus.Active && o.Description == description && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == paymentStatus)
                     .OrderByDescending(o => o.Id)
-                    .ToList<Model.OPD>();
+                    .ToList();
 
-                var opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
-                var invoiceList = dbContext.Invoices.Where(o => o.InvoiceType == InvoiceType.OPD && opdIds.Contains(o.ServiceID)).ToList();
+                List<int> opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == description && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
+                List<Invoice> invoiceList = dbContext.Invoices.Where(o => opdIds.Contains(o.ServiceID)).ToList();
 
-                foreach (var item in invoiceList)
+                foreach (Invoice item in invoiceList)
                 {
                     Model.OPD opdObj = new Model.OPD();
                     opdObj = mtList.Where(o => o.Id == item.ServiceID).SingleOrDefault();
 
-
-
-                    var invoiceItemList = dbContext.InvoiceItems.Where(o => o.InvoiceId == item.Id && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED).ToList();
+                    List<InvoiceItem> invoiceItemList = dbContext.InvoiceItems.Where(o => o.InvoiceId == item.Id && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED).ToList();
                     Model.User user = new Model.User();
                     user = GetUserById(opdObj.ModifiedUser);
 
@@ -452,19 +504,20 @@ namespace HospitalMgrSystem.Service.Report
                     opdObj.cashier = opdObj.nightShiftSession.User;
                     opdObj.TotalPaidAmount = 0;
                     opdObj.deviation = 0;
-                    foreach (var invoiceItem in invoiceItemList)
+
+                    foreach (InvoiceItem invoiceItem in invoiceItemList)
                     {
                         opdObj.TotalAmount = opdObj.TotalAmount + invoiceItem.Total;
-
                     }
 
-                    var paymentList = dbContext.Payments.Where(o => o.InvoiceID == item.Id).ToList();
-                    foreach (var payment in paymentList)
+                    List<Payment> paymentList = dbContext.Payments.Where(o => o.InvoiceID == item.Id).ToList();
+                    foreach (Payment payment in paymentList)
                     {
                         decimal paidAmount = payment.CashAmount + payment.DdebitAmount + payment.CreditAmount + payment.ChequeAmount + payment.GiftCardAmount;
                         opdObj.TotalPaidAmount = opdObj.TotalPaidAmount + paidAmount;
 
                     }
+
                     opdObj.deviation = opdObj.TotalPaidAmount - opdObj.TotalAmount;
                     newmtList.Add(opdObj);
                 }
@@ -474,25 +527,49 @@ namespace HospitalMgrSystem.Service.Report
         }
 
 
-        public List<Model.OPD> GetAllOPDAndChannellingByAndDateRangeNotPaid(DateTime startDate, DateTime endDate, InvoiceType invoiceType)
+        // Only for the OPD, XRAY and Investigation
+        public List<Model.OPD> GetAllOPDAndChannellingByAndDateRangeNotPaid(DateTime startDate, DateTime endDate, InvoiceType invoiceType, string description)
         {
             List<Model.OPD> mtList = new List<Model.OPD>();
             List<Model.OPD> newmtList = new List<Model.OPD>();
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.OPD
+                if (description != "OPD" && description != "X-RAY" && description != "Other")
+                {
+                    mtList = dbContext.OPD
                     .Include(c => c.patient)
                     .Include(c => c.consultant)
                     .Include(c => c.room)
                     .Include(c => c.nightShiftSession.User)
                     .Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NOT_PAID && o.invoiceType == invoiceType)
                     .OrderByDescending(o => o.Id)
-                    .ToList<Model.OPD>();
+                    .ToList();
+                }
+                else
+                {
+                    mtList = dbContext.OPD
+                        .Include(c => c.patient)
+                        .Include(c => c.consultant)
+                        .Include(c => c.room)
+                        .Include(c => c.nightShiftSession.User)
+                        .Where(o => o.Status == CommonStatus.Active && o.Description == description && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NOT_PAID && o.invoiceType == invoiceType)
+                        .OrderByDescending(o => o.Id)
+                        .ToList();
+                }
+                List<int> opdIds = new();
 
-                var opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NOT_PAID && o.invoiceType == invoiceType).Select(r => r.Id).ToList();
-                var drugsList = dbContext.OPDDrugus.Where(o => opdIds.Contains(o.opdId)).ToList();
+                if (description != "OPD" && description != "X-RAY" && description != "Other")
+                {
+                    opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NOT_PAID && o.invoiceType == invoiceType).Select(r => r.Id).ToList();
+                }
+                else
+                {
+                    opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == description && o.DateTime >= startDate && o.DateTime <= endDate && o.paymentStatus == PaymentStatus.NOT_PAID && o.invoiceType == invoiceType).Select(r => r.Id).ToList();
+                }
 
-                foreach (var item in mtList)
+                List<OPDDrugus> drugsList = dbContext.OPDDrugus.Where(o => opdIds.Contains(o.opdId)).ToList();
+
+                foreach (Model.OPD item in mtList)
                 {
                     Model.OPD opdObj = new Model.OPD();
                     opdObj = item;
@@ -504,7 +581,7 @@ namespace HospitalMgrSystem.Service.Report
                     opdObj.TotalAmount = 0;
                     opdObj.TotalAmount = opdObj.TotalAmount + opdObj.HospitalFee;
                     opdObj.TotalAmount = opdObj.TotalAmount + opdObj.ConsultantFee;
-                    foreach (var drug in drugsList)
+                    foreach (OPDDrugus drug in drugsList)
                     {
                         decimal price = drug.Price * drug.Qty;
                         opdObj.TotalAmount = opdObj.TotalAmount + price;

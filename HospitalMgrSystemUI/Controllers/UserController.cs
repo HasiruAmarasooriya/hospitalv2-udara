@@ -49,23 +49,25 @@ namespace HospitalMgrSystemUI.Controllers
 
         }
 
-
-
-
         public IActionResult CreateNewUser()
         {
-            User user = new User();
+            var userIdCookie = Convert.ToInt32(HttpContext.Request.Cookies["UserIdCookie"]);
+
             using (var httpClient = new HttpClient())
             {
-
-                try
+                // Validate if the logged user is an Admin
+                if (UserService.ValidateUserAdmin(userIdCookie))
                 {
-                    user = new UserService().CreateUser(viewUser.user);
+                    try
+                    {
+                        User user = new UserService().CreateUser(viewUser.user);
+                    }
+                    catch (Exception ex)
+                    {
+                        return RedirectToAction("Index");
+                    }
                 }
-                catch (Exception ex)
-                {
 
-                }
                 return RedirectToAction("Index");
 
             }
@@ -73,23 +75,24 @@ namespace HospitalMgrSystemUI.Controllers
 
         public IActionResult ChangeUserPassword()
         {
-            User user = new User();
+            var userIdCookie = Convert.ToInt32(HttpContext.Request.Cookies["UserIdCookie"]);
             using (var httpClient = new HttpClient())
             {
-
-                try
+                if (UserService.ValidateUserAdmin(userIdCookie))
                 {
-                    user = new UserService().ChangeUserPw(viewUser.user);
+                    try
+                    {
+                        User user = new UserService().ChangeUserPw(viewUser.user);
+                    }
+                    catch (Exception ex)
+                    {
+                        return RedirectToAction("Index");
+                    }
                 }
-                catch (Exception ex)
-                {
 
-                }
                 return RedirectToAction("Index");
-
             }
         }
-
         public ActionResult CreateUser(int id)
         {
             UserDto userDto = new UserDto();
@@ -98,10 +101,8 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-
                     try
                     {
-
                         userDto.user = new UserService().GetUserByID(id);
                         return PartialView("_PartialAddUser", userDto);
                     }
@@ -112,10 +113,12 @@ namespace HospitalMgrSystemUI.Controllers
                 }
             }
             else
+            {
                 return PartialView("_PartialAddUser", userDto);
+            }
         }
 
-        
+
         public ActionResult changePwUser(int id)
         {
             UserDto userDto = new UserDto();
@@ -124,10 +127,8 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-
                     try
                     {
-
                         userDto.user = new UserService().GetUserByID(id);
                         userDto.conformPassowrd = userDto.user.Password;
                         return PartialView("_PartialChangeUserPassword", userDto);
@@ -139,28 +140,34 @@ namespace HospitalMgrSystemUI.Controllers
                 }
             }
             else
+            {
                 return PartialView("_PartialAddUser", userDto);
+            }
         }
-
-
 
         public IActionResult DeleteUser()
         {
             UserDto userDto = new UserDto();
+            var userIdCookie = Convert.ToInt32(HttpContext.Request.Cookies["UserIdCookie"]);
+
             using (var httpClient = new HttpClient())
             {
+                if (UserService.ValidateUserAdmin(userIdCookie))
+                {
+                    try
+                    {
+                        string APIUrl = _configuration.GetValue<string>("MainAPI:APIURL");
+                        myUser.ModifiedDate = DateTime.Now;
+                        userDto.user = new UserService().DeleteUser(myUser);
+                        return RedirectToAction("Index");
+                    }
+                    catch (Exception ex)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
 
-                try
-                {
-                    string APIUrl = _configuration.GetValue<string>("MainAPI:APIURL");
-                    myUser.ModifiedDate = DateTime.Now;
-                    userDto.user = new UserService().DeleteUser(myUser);
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    return RedirectToAction("Index");
-                }
+                return RedirectToAction("Index");
             }
         }
     }

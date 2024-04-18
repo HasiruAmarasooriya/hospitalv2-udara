@@ -22,11 +22,11 @@ namespace HospitalMgrSystemUI.Controllers
 
         public ActionResult DownloadCashierPayment([FromBody] CashierSessionDto cashierSessionDtoData)
         {
-            
+
             CashierSessionDto cashierSessionDto = new CashierSessionDto();
             CashierSessionService cashierSessionService = new CashierSessionService();
 
-            cashierSessionDto.CashierPaymentData= cashierSessionService.GetCashierSessionPaymentData(cashierSessionDtoData.sessionId);
+            cashierSessionDto.CashierPaymentData = cashierSessionService.GetCashierSessionPaymentData(cashierSessionDtoData.sessionId);
             cashierSessionDto.cashierSessionID = cashierSessionDtoData.sessionId;
             cashierSessionDto.sessionDate = DateTime.Now;
 
@@ -48,7 +48,7 @@ namespace HospitalMgrSystemUI.Controllers
             }
             else
             {
-                CashierSession cashierSession= new CashierSession();
+                CashierSession cashierSession = new CashierSession();
                 cashierSessionDto.cashierSession = cashierSession;
                 cashierSessionDto.cashierSession.cashierSessionStatus = CashierSessionStatus.START;
                 cashierSessionDto.sessionDate = DateTime.Now;
@@ -71,15 +71,15 @@ namespace HospitalMgrSystemUI.Controllers
                         if (viewCashierSessionDto.cashierSession.Id != 0)
                         {
 
-                                viewCashierSessionDto.cashierSession.userID = Convert.ToInt32(userIdCookie);
-                                viewCashierSessionDto.cashierSession.EndTime = DateTime.Now;
-                                viewCashierSessionDto.cashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
-                                viewCashierSessionDto.cashierSession.ModifiedDate = DateTime.Now;
-                                viewCashierSessionDto.cashierSession.Deviation = 0;
-                                viewCashierSessionDto.cashierSession.cashierSessionStatus = CashierSessionStatus.END;
-                                viewCashierSessionDto.cashierSession.UserRole = UserRole.CASHIER;
-                                 cashierSession = new CashierSessionService().CreateCashierSession(viewCashierSessionDto.cashierSession);
-                           
+                            viewCashierSessionDto.cashierSession.userID = Convert.ToInt32(userIdCookie);
+                            viewCashierSessionDto.cashierSession.EndTime = DateTime.Now;
+                            viewCashierSessionDto.cashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
+                            viewCashierSessionDto.cashierSession.ModifiedDate = DateTime.Now;
+                            viewCashierSessionDto.cashierSession.Deviation = 0;
+                            viewCashierSessionDto.cashierSession.cashierSessionStatus = CashierSessionStatus.END;
+                            viewCashierSessionDto.cashierSession.UserRole = UserRole.CASHIER;
+                            cashierSession = new CashierSessionService().CreateCashierSession(viewCashierSessionDto.cashierSession);
+
 
                         }
                         else
@@ -89,23 +89,23 @@ namespace HospitalMgrSystemUI.Controllers
                             if (mtList.Count == 0)
                             {
 
-                            viewCashierSessionDto.cashierSession.userID = Convert.ToInt32(userIdCookie);
-                            viewCashierSessionDto.cashierSession.StartingTime = DateTime.Now;
-                            viewCashierSessionDto.cashierSession.EndTime = DateTime.Now;
-                            viewCashierSessionDto.cashierSession.CreateUser = Convert.ToInt32(userIdCookie);
-                            viewCashierSessionDto.cashierSession.CreateDate = DateTime.Now;
-                            viewCashierSessionDto.cashierSession.cashierSessionStatus = CashierSessionStatus.START;
-                            viewCashierSessionDto.cashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
-                            viewCashierSessionDto.cashierSession.ModifiedDate = DateTime.Now;
-                            viewCashierSessionDto.cashierSession.UserRole = UserRole.CASHIER;
-                            cashierSession = new CashierSessionService().CreateCashierSession(viewCashierSessionDto.cashierSession);
+                                viewCashierSessionDto.cashierSession.userID = Convert.ToInt32(userIdCookie);
+                                viewCashierSessionDto.cashierSession.StartingTime = DateTime.Now;
+                                viewCashierSessionDto.cashierSession.EndTime = DateTime.Now;
+                                viewCashierSessionDto.cashierSession.CreateUser = Convert.ToInt32(userIdCookie);
+                                viewCashierSessionDto.cashierSession.CreateDate = DateTime.Now;
+                                viewCashierSessionDto.cashierSession.cashierSessionStatus = CashierSessionStatus.START;
+                                viewCashierSessionDto.cashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                viewCashierSessionDto.cashierSession.ModifiedDate = DateTime.Now;
+                                viewCashierSessionDto.cashierSession.UserRole = UserRole.CASHIER;
+                                cashierSession = new CashierSessionService().CreateCashierSession(viewCashierSessionDto.cashierSession);
 
                             }
                         }
 
-                       
+
                     }
-                   
+
                 }
                 catch (Exception ex)
                 {

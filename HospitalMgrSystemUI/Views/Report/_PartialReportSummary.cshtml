@@ -1,0 +1,143 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Report;
+@{
+    Layout = null;
+}
+@inject IConfiguration Configuration
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+    </style>
+    <title>Cashier Summary</title>
+</head>
+<body>
+    <div id="logo">
+        <img src="https://kumuduhospital.com/assets/images/kumudu_logo2.jpg"
+             alt="Logo"
+             width="100" />
+    </div>
+    <div id="address">
+        No 48, Kandy Road, Mathale,<br />
+        Tel: 066 22 22 2444 | 066 22 30 027<br />
+        Date: @Model.DateTime.Date.ToShortDateString()<br />
+    </div>
+
+    <h1>Report Summary (@Model.StartTime - @Model.EndTime)</h1>
+
+    <!-- OPD Summary -->
+    <h2>OPD Summary</h2>
+    <table border="1">
+        <tr>
+            <th>Category</th>
+            <th>Total Amount</th>
+            <th>Paid Amount</th>
+            <th>Refund</th>
+        </tr>
+        <tr>
+            <td>OPD</td>
+            <td>@Model.OPDPaymentData.TotalAmountOld</td>
+            <td>@Model.OPDPaymentData.TotalPaidAmount</td>
+            <td>@Model.OPDPaymentData.TotalAmountRefunded</td>
+        </tr>
+    </table>
+
+    <!-- X-RAY Summary -->
+    <h2>X-RAY Summary</h2>
+    <table border="1">
+        <tr>
+            <th>Category</th>
+            <th>Total Amount</th>
+            <th>Paid Amount</th>
+            <th>Refund</th>
+        </tr>
+        <tr>
+            <td>X-RAY</td>
+            <td>@Model.XRAYPaymentData.TotalAmountOld</td>
+            <td>@Model.XRAYPaymentData.TotalPaidAmount</td>
+            <td>@Model.XRAYPaymentData.TotalAmountRefunded</td>
+        </tr>
+    </table>
+
+    <!-- OTHER Services Summary -->
+    <h2>OTHER Services Summary</h2>
+    <table border="1">
+        <tr>
+            <th>Category</th>
+            <th>Total Amount</th>
+            <th>Paid Amount</th>
+            <th>Refund</th>
+        </tr>
+        <tr>
+            <td>OTHER</td>
+            <td>@Model.OTHERPaymentData.TotalAmountOld</td>
+            <td>@Model.OTHERPaymentData.TotalPaidAmount</td>
+            <td>@Model.OTHERPaymentData.TotalAmountRefunded</td>
+        </tr>
+    </table>
+
+    <!-- Channeling Summary -->
+    <h2>Channeling Summary</h2>
+    <table border="1">
+        <tr>
+            <th>Category</th>
+            <th>Total Amount</th>
+            <th>Paid Amount</th>
+            <th>Refund</th>
+        </tr>
+        <tr>
+            <td>Channeling</td>
+            <td>@Model.channelingPaymentData.TotalAmountOld</td>
+            <td>@Model.channelingPaymentData.TotalPaidAmount</td>
+            <td>@Model.channelingPaymentData.TotalAmountRefunded</td>
+        </tr>
+    </table>
+
+    
+
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script type="text/javascript">
+        // Call the generateQRCode function when the page loads
+        document.addEventListener("DOMContentLoaded", function () {
+            generateQRCode(50);
+        });
+
+        function generateQRCode(size) {
+            const qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: 'Hello kohomada',
+                width: size,
+                height: size,
+            });
+        }
+
+        // Rest of your script...
+    </script>
+</body>
+</html>

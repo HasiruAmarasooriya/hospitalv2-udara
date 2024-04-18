@@ -65,9 +65,9 @@ namespace HospitalMgrSystem.Service.User
         }
 
 
-        public HospitalMgrSystem.Model.User CreateUser(HospitalMgrSystem.Model.User user)
+        public Model.User CreateUser(Model.User user)
         {
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
                 if (user.Id == 0)
                 {
@@ -80,7 +80,7 @@ namespace HospitalMgrSystem.Service.User
                 }
                 else
                 {
-                    HospitalMgrSystem.Model.User result = (from p in dbContext.Users where p.Id == user.Id select p).SingleOrDefault();
+                    Model.User result = (from p in dbContext.Users where p.Id == user.Id select p).SingleOrDefault();
                     result.Id = user.Id;
                     result.FullName = user.FullName;
                     result.MobileNumber = user.MobileNumber;
@@ -98,17 +98,35 @@ namespace HospitalMgrSystem.Service.User
             }
         }
 
-
-        public HospitalMgrSystem.Model.User ChangeUserPw(HospitalMgrSystem.Model.User user)
+        public static bool ValidateUserAdmin(int userId)
         {
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                Model.User user = (from p in dbContext.Users where p.Id == userId select p).SingleOrDefault();
+
+                if (user.userRole == UserRole.ADMIN)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
+
+
+        public Model.User ChangeUserPw(Model.User user)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
                 string encodingString = MD5Hash(user.Password).ToUpper();
                 user.Password = encodingString;
                 if (user.Id != 0)
                 {
 
-                    HospitalMgrSystem.Model.User result = (from p in dbContext.Users where p.Id == user.Id select p).SingleOrDefault();
+                    Model.User result = (from p in dbContext.Users where p.Id == user.Id select p).SingleOrDefault();
                     result.Password = user.Password;
                     result.ModifiedDate = DateTime.Now;
                     dbContext.SaveChanges();
