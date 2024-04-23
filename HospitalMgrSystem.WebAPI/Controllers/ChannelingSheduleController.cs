@@ -1,4 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HospitalMgrSystem.WebAPI.Controllers
@@ -60,6 +61,20 @@ namespace HospitalMgrSystem.WebAPI.Controllers
         public ActionResult<ChannelingSchedule> GetAllSheduleGetByConsultantId(int Id)
         {
             var newChanneling = _channelingService.SheduleGetByConsultantId(Id);
+            if (newChanneling == null)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return Ok(newChanneling);
+            }
+        }
+
+        [HttpGet("GetAllSheduleGetByConsultantIdAndSessionStatus")]
+        public ActionResult<ChannelingSchedule> GetAllSheduleGetByConsultantIdAndSessionStatus(int Id, ChannellingScheduleStatus channellingScheduleStatus)
+        {
+            var newChanneling = _channelingService.GetAllSheduleGetByConsultantIdAndSessionStatus(Id, channellingScheduleStatus);
             if (newChanneling == null)
             {
                 return NoContent();

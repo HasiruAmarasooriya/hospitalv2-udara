@@ -6,6 +6,7 @@
 @{
 }
 @inject IConfiguration Configuration
+
 @section Styles {
     <style>
         .select2-selection__rendered {
@@ -21,11 +22,14 @@
         }
     </style>
 }
+
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
         <h3 class="text-themecolor m-b-0 m-t-0">Manage OPD Details</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0)">Home</a>
+            </li>
             <li class="breadcrumb-item active">Manage OPD Details</li>
         </ol>
     </div>
@@ -97,7 +101,6 @@
                     </div>
 
 
-
                     <div class="modal-footer d-flex justify-content-between">
                         <div class="spark-chart form-material">
                             <ol class="list-unstyled d-flex">
@@ -121,8 +124,6 @@
                             <button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Filter</button>
                         </div>
                     </div>
-
-
 
 
                 </form>
@@ -150,39 +151,38 @@
                 <div class="table-responsive">
                     <table id="basic-2" class="display">
                         <thead>
-                            <tr>
-
-
-                                <th>Pt's Full Name</th>
-                                <th>Payment Status</th>
-                                <th>Consultant</th>
-                                <th>contact no</th>
-                                <th>Date & Time</th>
-                                <th>Print</th>
-                                <th>Action 1</th>
-                                <th>Action 2</th>
-                                <th>Action 3</th>
-                            </tr>
+                        <tr>
+                            <th>OPD Id</th>
+                            <th>Pt's Full Name</th>
+                            <th>Payment Status</th>
+                            <th>Consultant</th>
+                            <th>contact no</th>
+                            <th>Date & Time</th>
+                            <th>Print</th>
+                            <th>View OPD</th>
+                            <th>Go to Cashier</th>
+                            <th>Delete OPD</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            @{
-                                decimal? totalAmount = 0;
-                            }
-                            @if (Model.listOPDTbDto != null)
+                        @{
+                            decimal? totalAmount = 0;
+                        }
+                        @if (Model.listOPDTbDto != null)
+                        {
+                            @foreach (var item in Model.listOPDTbDto)
                             {
-
-                                @foreach (var item in Model.listOPDTbDto)
-                                {
-                                    <tr>
-                                        <td>@item.FullName</td>
-                                        <td>@item.paymentStatus</td>
-                                        <td>
-                                            @if (item.consaltantName != null)
-                                            {
-                                                @item.consaltantName
-                                            }
-                                        </td>
-                                        @* @{
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.FullName</td>
+                                    <td>@item.paymentStatus</td>
+                                    <td>
+                                        @if (item.consaltantName != null)
+                                        {
+                                            @item.consaltantName
+                                        }
+                                    </td>
+                                    @* @{
                                 string sex = "";
                                 if (item.Sex == HospitalMgrSystem.Model.Enums.SexStatus.Male)
                                 {
@@ -196,46 +196,52 @@
                                 sex = "Non";
                                 }
                                 } *@
-                                        <td>@item.MobileNumber</td>
-                                        <td>@item.DateTime</td>
-                                        <td>
-                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>
-                                        </td>
-                                        <td>
-                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
-                                        </td>
-                                        <td>
-                                            @if (Model != null)
+                                    <td>@item.MobileNumber</td>
+                                    <td>@item.DateTime</td>
+                                    <td>
+                                        <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);>
+                                            <i class='fa fa-print'></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);>
+                                            <i class='fa fa-eye'></i>
+                                        </button> &nbsp;
+                                    </td>
+                                    <td>
+                                        @if (Model != null)
+                                        {
+                                            <a href="/Cashier?PreID=OPD+@item.Id">
+                                                <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'>
+                                                    <i class='fa fa-money'></i>
+                                                </button>
+                                            </a>
+                                        }
+
+                                    </td>
+                                    <td>
+                                        @if (Model != null)
+                                        {
+                                            @using (Html.BeginForm("DeleteOPD", "OPDRegistration", new { item.Id }, FormMethod.Post))
                                             {
-                                                <a href="/Cashier?PreID=OPD+@item.Id"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
+                                                <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>
+                                                    <i class='fa fa-trash'></i>
+                                                </button>
                                             }
+                                        }
 
-                                        </td>
-                                        <td>
-                                            @if (Model != null)
-                                            {
-
-                                                @using (Html.BeginForm("DeleteOPD", "OPDRegistration", new { Id = @item.Id }, FormMethod.Post))
-                                                {
-
-                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
-
-                                                }
-                                            }
-
-                                        </td>
+                                    </td>
 
 
-                                    </tr>
-                                    @if (item.TotalAmount != null)
-                                    {
-                                        totalAmount = totalAmount + item.TotalAmount;
-                                    }
-
+                                </tr>
+                                @if (item.TotalAmount != null)
+                                {
+                                    totalAmount = totalAmount + item.TotalAmount;
                                 }
                             }
+                        }
 
-                            @*                            @if (totalAmount != null)
+                        @*                            @if (totalAmount != null)
                             {
                             <tr>
                             <td colspan="3"></td>
@@ -262,7 +268,6 @@
     <div class="modal-dialog modal-lg" id="AddEditContainerModel2">
     </div>
 </div>
-
 
 
 @section scripts {
@@ -480,7 +485,7 @@
 
 
         function select_onchange_drug(value) {
-            const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+            const commonUrl = @Json.Serialize(Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
             var itenNo = document.getElementById("drugus").value;
             var settings = {
                 "url": commonUrl + "Drugs/GetAllDrugByID?Id=" + itenNo,
@@ -757,7 +762,6 @@
 
         }
     </script>
-
 
 
 }

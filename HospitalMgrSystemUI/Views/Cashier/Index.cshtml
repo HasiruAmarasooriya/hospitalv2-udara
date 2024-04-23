@@ -363,141 +363,159 @@
 </div>
 
 <div class="row">
-    <div class="col-8">
-        <div class="container">
-            <div class="row">
-                <div class="card" style="width: 100%;">
-                    <div class="card-body">
+<div class="col-8">
+<div class="container">
+<div class="row">
+    <div class="card" style="width: 100%;">
+        <div class="card-body">
 
 
-
-                        @using (Html.BeginForm("Index", "Cashier", FormMethod.Post))
+            @using (Html.BeginForm("Index", "Cashier", FormMethod.Post))
+            {
+                <div class="d-flex">
+                    <div class=" p-2">
+                        <input type="text" class="form-control" id="preID" placeholder="Sean of search item..." asp-for="PreID">
+                    </div>
+                    <div class=" p-2">
+                        <button type="submit" class="btn waves-effect waves-light  btn-info">Scan</button>
+                    </div>
+                    <div class="ml-auto p-2">
+                        <button type="button" class="btn btn-danger" onclick=ClearCashier();>CANCEL SALE</button>
+                        @if (Model != null && Model.PreID != null)
                         {
-                            <div class="d-flex">
-                                <div class=" p-2">
-                                    <input type="text" class="form-control" id="preID" placeholder="Sean of search item..." asp-for="PreID">
-                                </div>
-                                <div class=" p-2">
-                                    <button type="submit" class="btn waves-effect waves-light  btn-info">Scan</button>
-                                </div>
-                                <div class="ml-auto p-2">
-                                    <button type="button" class="btn btn-danger" onclick=ClearCashier();>CANCEL SALE</button>
-                                    @if (Model != null && Model.PreID != null)
-                                    {
-                                        <input type="hidden" id="opid" asp-for="PreID" value="@Model.PreID">
-                                        <button type="button" id="printButton" onclick=PrintInvoice(); class="btn btn-warning">PRINT</button>
-                                        <button type="button" id="claimBillButton" onclick="PrintBill();" class="btn btn-info">CLAIM BILL</button>
-                                    }
-
-                                </div>
-
-
-                            </div>
+                            <input type="hidden" id="opid" asp-for="PreID" value="@Model.PreID">
+                            <button type="button" id="printButton" onclick=PrintInvoice(); class="btn btn-warning">PRINT</button>
+                            <button type="button" id="claimBillButton" onclick="PrintBill();" class="btn btn-info">CLAIM BILL</button>
                         }
 
                     </div>
+
+
                 </div>
+            }
 
-            </div>
+        </div>
+    </div>
 
-            <div class="row">
-                <div class="col-12 " style="padding:0;">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Items</h4>
-                            <div class="table-responsive">
-                                @if (Model != null)
+</div>
+
+<div class="row">
+    <div class="col-12 " style="padding:0;">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Items</h4>
+                <div class="table-responsive">
+                    @if (Model != null)
+                    {
+                        @if (Model.cashierBillingItemDtoList != null && Model.opd != null)
+                        {
+                            var itemIds = new List<object>();
+                            var billingItemsTypes = new List<object>();
+
+                            decimal cashierBillingItemDtoListTotal = 0;
+                            decimal cashierBilledItemDtoListTotal = 0;
+
+                            <table class="table">
+
+                                <thead class="table-success">
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Price</th>
+                                    <th>Qty.</th>
+                                    <th>Disc.</th>
+                                    <th>Subtotal</th>
+                                    <th>Refund</th>
+                                </tr>
+
+                                </thead>
+                                <tbody>
+
+                                @foreach (var item in Model.cashierBillingItemDtoList)
                                 {
-                                    @if (Model.cashierBillingItemDtoList != null && Model.opd != null)
+                                    @if (item.price != 0)
                                     {
-
-                                        List<object> itemIds = new List<object>();
-                                        List<object> billingItemsTypes = new List<object>();
-
-                                        <table class="table">
-
-                                            <thead class="table-success">
-                                                <tr>
-                                                    <th>Item</th>
-                                                    <th>Price</th>
-                                                    <th>Qty.</th>
-                                                    <th>Disc.</th>
-                                                    <th>Subtotal</th>
-                                                    <th>Refund</th>
-                                                </tr>
-
-                                            </thead>
-                                            <tbody>
-
-                                                @foreach (var item in Model.cashierBillingItemDtoList)
-                                                {
-
-                                                    @if (item.price != 0)
-                                                    {
-                                                        <tr>
-                                                            <td>@item.billingItemName (@item.billingItemsTypeName)</td>
-                                                            <td>@item.price</td>
-                                                            <td>@item.qty</td>
-                                                            <td>@item.discount</td>
-                                                            <td>@item.amount</td>
-                                                            <td>
-                                                            </td>
-                                                        </tr>
-                                                    }
-
-                                                }
-
-                                                @foreach (var item in Model.cashierBilledItemDtoList)
-                                                {
-
-                                                    @if (item.price != 0)
-                                                    {
-                                                        itemIds.Add(item.BillingItemID);
-                                                        billingItemsTypes.Add(item.billingItemsType);
-
-                                                        <tr>
-                                                            <td>@item.billingItemName (@item.billingItemsTypeName)</td>
-                                                            <td>@item.price</td>
-                                                            <td>@item.qty</td>
-                                                            <td>@item.discount</td>
-                                                            <td>@item.amount</td>
-                                                            <td>
-                                                                @if (Model != null)
-                                                                {
-                                                                    @if (Model.invoice.paymentStatus != HospitalMgrSystem.Model.Enums.PaymentStatus.OPD)
-
-                                                                        @using (Html.BeginForm("RemoveItem", "Cashier", new { Id = @item.BillingItemID, InvoiceType = Model.invoiceType, BillingItemsType = @item.billingItemsType, PreID = Model.PreID, InvoiceID = Model.invoiceID }, FormMethod.Post))
-                                                                        {
-
-                                                                            <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>Refund</button>
-
-                                                                        }
-                                                                }
-
-                                                            </td>
-                                                        </tr>
-                                                    }
-
-                                                }
-
-
-                                            </tbody>
-
-
-                                        </table>
-                                        @if (Model != null && Model.cashierBilledItemDtoList.Count > 0)
-                                        {
-                                            @if (Model.invoice.paymentStatus != HospitalMgrSystem.Model.Enums.PaymentStatus.OPD)
-
-                                                @using (Html.BeginForm("RemoveAllItems", "Cashier", new { Id = @itemIds, InvoiceType = Model.invoiceType, BillingItemsType = @billingItemsTypes, PreID = Model.PreID, InvoiceID = Model.invoiceID }, FormMethod.Post))
-                                                {
-
-                                                    <button id='link_copy' class='btn waves-effect waves-light btn-danger'>Refund All</button>
-
-                                                }
-                                        }
+                                        cashierBillingItemDtoListTotal += item.amount;
+                                        
+                                        <tr>
+                                            <td>@item.billingItemName (@item.billingItemsTypeName)</td>
+                                            <td>@item.price</td>
+                                            <td>@item.qty</td>
+                                            <td>@item.discount</td>
+                                            <td>@item.amount</td>
+                                            <td>
+                                            </td>
+                                        </tr>
                                     }
-                                    @*                            @if (Model.opd != null)
+                                }
+
+                                @if (Model.cashierBillingItemDtoList.Count > 0)
+                                {
+                                    <tr class="font-weight-bold">
+                                        <td>Total</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>@cashierBillingItemDtoListTotal</td>
+                                        <td></td>
+                                    </tr>
+                                }
+
+                                @foreach (var item in Model.cashierBilledItemDtoList)
+                                {
+                                    @if (item.price != 0)
+                                    {
+                                        cashierBilledItemDtoListTotal += item.amount;
+                                        itemIds.Add(item.BillingItemID);
+                                        billingItemsTypes.Add(item.billingItemsType);
+
+                                        <tr>
+                                            <td>@item.billingItemName (@item.billingItemsTypeName)</td>
+                                            <td>@item.price</td>
+                                            <td>@item.qty</td>
+                                            <td>@item.discount</td>
+                                            <td>@item.amount</td>
+                                            <td>
+                                                @if (Model != null)
+                                                {
+                                                    @if (Model.invoice.paymentStatus != HospitalMgrSystem.Model.Enums.PaymentStatus.OPD)
+                                                        @using (Html.BeginForm("RemoveItem", "Cashier", new { Id = @item.BillingItemID, InvoiceType = Model.invoiceType, BillingItemsType = @item.billingItemsType, PreID = Model.PreID, InvoiceID = Model.invoiceID }, FormMethod.Post))
+                                                    {
+                                                        <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>Refund</button>
+                                                    }
+                                                }
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            
+                            @if (Model.cashierBilledItemDtoList.Count > 0)
+                            {
+                                <tr class="font-weight-bold">
+                                    <td>Total</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>@cashierBilledItemDtoListTotal</td>
+                                    <td></td>
+                                </tr>
+                            }
+
+
+                            </tbody>
+
+
+                            </table>
+                            @if (Model != null && Model.cashierBilledItemDtoList.Count > 0)
+                            {
+                                @if (Model.invoice.paymentStatus != HospitalMgrSystem.Model.Enums.PaymentStatus.OPD)
+                                    @using (Html.BeginForm("RemoveAllItems", "Cashier", new { Id = @itemIds, InvoiceType = Model.invoiceType, BillingItemsType = @billingItemsTypes, PreID = Model.PreID, InvoiceID = Model.invoiceID }, FormMethod.Post))
+                                {
+                                    <button id='link_copy' class='btn waves-effect waves-light btn-danger'>Refund All</button>
+                                }
+                            }
+                        }
+                        @*                            @if (Model.opd != null)
                                 {
                                 <table class="table">
                                 <thead class="table-success">
@@ -525,303 +543,348 @@
 
                                 }*@
 
-                                    @if (Model.channel != null)
-                                    {
-                                        <table class="table">
-                                            <thead class="table-success">
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Pt Name</th>
-                                                    <th>Doctor Fee</th>
-                                                    <th>Hospital Fee</th>
-                                                    <th>Subtotal</th>
-                                                </tr>
+                        @if (Model.channel != null)
+                        {
+                            <table class="table">
+                                <thead class="table-success">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Pt Name</th>
+                                    <th>Doctor Fee</th>
+                                    <th>Hospital Fee</th>
+                                    <th>Subtotal</th>
+                                </tr>
 
-                                            </thead>
-                                            <tbody>
+                                </thead>
+                                <tbody>
 
-                                                <tr>
-                                                    <td>@Model.channel.Id</td>
-                                                    <td>@Model.channel.Patient.FullName</td>
-                                                    <td>@Model.channel.ChannelingSchedule.ConsultantFee</td>
-                                                    <td>@Model.channel.ChannelingSchedule.HospitalFee</td>
-                                                    <td>@(Model.channel.ChannelingSchedule.HospitalFee + Model.channel.ChannelingSchedule.ConsultantFee)</td>
-                                                </tr>
+                                <tr>
+                                    <td>@Model.channel.Id</td>
+                                    <td>@Model.channel.Patient.FullName</td>
+                                    <td>@Model.channel.ChannelingSchedule.ConsultantFee</td>
+                                    <td>@Model.channel.ChannelingSchedule.HospitalFee</td>
+                                    <td>@(Model.channel.ChannelingSchedule.HospitalFee + Model.channel.ChannelingSchedule.ConsultantFee)</td>
+                                </tr>
 
 
-                                            </tbody>
-                                        </table>
-                                    }
-                                }
-                            </div>
-                            @if (Model != null)
-                            {
-                                @if (Model.opd != null)
-                                {
-                                    <div class="d-flex justify-content-center">
-                                        @*<button id='btnEdit1' class='btn waves-effect waves-light  btn-info' onclick=AddOPDToAdmission(@Model.opd.Id); style="margin-left:10px;"><i class='fa fa-plus'></i></button>
+                                </tbody>
+                            </table>
+                        }
+                    }
+                </div>
+                @if (Model != null)
+                {
+                    @if (Model.opd != null)
+                    {
+                        <div class="d-flex justify-content-center">
+                            @*<button id='btnEdit1' class='btn waves-effect waves-light  btn-info' onclick=AddOPDToAdmission(@Model.opd.Id); style="margin-left:10px;"><i class='fa fa-plus'></i></button>
 
                                 <button id='btnEdit1' class='btn waves-effect waves-light  btn-info' onclick=AddDrugusToAdmission(@Model.opd.Id); style="margin-left:10px;"><i class='fa fa-plus'></i></button>
 
                                 <button id='btnEdit2' class='btn waves-effect waves-light  btn-info' onclick=AddInvestigationToAdmission(@Model.opd.Id); style="margin-left:10px;"><i class='fa fa-plus'></i></button>
 
                                 <button id='btnEdit4' class='btn waves-effect waves-light  btn-info' onclick=AddItemsToAdmission(@Model.opd.Id); style="margin-left:10px;"><i class='fa fa-plus'></i></button>*@
-                                    </div>
-                                }
-                            }
                         </div>
-                    </div>
-
-                </div>
-
-            </div>
-            @if (Model != null)
-            {
-                @if (Model.cashierRemoveBillingItemDtoList != null && Model.opd != null)
-                {
-                    <div class="row">
-                        <div class="col-12 " style="padding:0;">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h4 class="card-title">Refund Items</h4>
-                                    <div class="table-responsive">
-
-                                        <table class="table">
-                                            <thead class="table-success">
-                                                <tr>
-                                                    <th>Item</th>
-                                                    <th>Price</th>
-                                                    <th>Qty.</th>
-                                                    <th>Disc.</th>
-                                                    <th>Subtotal</th>
-                                                    <th>Delete</th>
-                                                </tr>
-
-                                            </thead>
-                                            <tbody>
-
-
-                                                @foreach (var item in Model.cashierRemoveBillingItemDtoList)
-                                                {
-                                                    <tr>
-                                                        <td>@item.billingItemName (@item.billingItemsTypeName)</td>
-                                                        <td>@item.price</td>
-                                                        <td>@item.qty</td>
-                                                        <td>@item.discount</td>
-                                                        <td>@item.amount</td>
-                                                        <td>
-                                                            @if (Model != null)
-                                                            {
-
-                                                                @using (Html.BeginForm("AddItem", "Cashier", new { Id = @item.BillingItemID, InvoiceType = Model.invoiceType, BillingItemsType = @item.billingItemsType, PreID = Model.PreID }, FormMethod.Post))
-                                                                {
-
-                                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-plus'></i></button>
-
-                                                                }
-                                                            }
-
-                                                        </td>
-                                                    </tr>
-                                                }
-
-
-                                            </tbody>
-                                        </table>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
+                    }
                 }
-            }
-            <div class="row">
-                <div class="col-12 " style="padding:0;">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Payments</h4>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead class="table-success">
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Invoice</th>
-                                            <th>Payment Type</th>
-                                            <th>Cash</th>
-                                            <th>Credit Card</th>
-                                            <th>Debit Card</th>
-                                            <th>checque</th>
-                                            <th>Gift Card</th>
-                                            <th>Total</th>
-                                        </tr>
-
-                                    </thead>
-                                    <tbody>
-                                        @if (Model != null)
-                                        {
-                                            @if (Model.paymentList != null)
-                                            { @foreach (var item in Model.paymentList)
-                                                {
-                                                    <tr>
-                                                        <td>@item.Id</td>
-                                                        <td>@item.InvoiceID</td>
-                                                        <td>@item.BillingType</td>
-                                                        <td>@item.CashAmount</td>
-                                                        <td>@item.CreditAmount</td>
-                                                        <td>@item.DdebitAmount</td>
-                                                        <td>@item.ChequeAmount</td>
-                                                        <td>@item.GiftCardAmount</td>
-                                                        <td>
-                                                            @(item.CashAmount + item.CreditAmount + item.DdebitAmount + item.ChequeAmount + item.GiftCardAmount)
-                                                        </td>
-                                                    </tr>
-                                                } }
-
-                                        }
-                                    </tbody>
-                                </table>
-
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
             </div>
         </div>
+
     </div>
-    <div class="col-4">
-        <div class="card">
-            <div class="card-body">
 
-                <div class="table-responsive">
-                    <form asp-action="AddSale" method="post">
-                        <table class="table" style="border-collapse: collapse;">
-                            <input type="hidden" asp-for="customerID">
-                            <input type="hidden" asp-for="invoiceType">
-                            <input type="hidden" asp-for="sufID">
-                            <input type="hidden" asp-for="invoiceID">
-                            <tr>
-                                <td>CUSTOMER NAME</td>
-                                <td> <input class="form-control " type="text" asp-for="customerName" id="customerNameID" placeholder="" /></td>
-                            </tr>
-                            <tr>
-                                <td>SUBTOTAL</td>
-                                <td> <input class="form-control " type="text" asp-for="subtotal" id="subtotalID" placeholder="" readonly /></td>
-                            </tr>
-                            <tr>
-                                <td>DISCOUNT</td>
-                                <td><input class="form-control " type="text" asp-for="discount" id="discount" placeholder="" readonly /></td>
-                            </tr>
-                            <tr>
-                                <td style="color:red;">TOTAL</td>
-                                <td><input class="form-control " type="text" asp-for="total" id="totalID" placeholder="" readonly /></td>
-                            </tr>
-                            <tr style="font-size: 12px;text-transform: uppercase;text-align: left;font-weight: 600;border-bottom: white;">
-                                <td style="border-bottom: 1px solid white; border-right:1px solid #f3f1f1;width:50%">Paid</td>
-                                <td style="border-bottom: 1px solid white;">Due</td>
-                            </tr>
-                            <tr style="font-size:14px;text-align:center;">
-                                <td style="border-right:1px solid #f3f1f1"><input class="form-control " type="text" asp-for="totalPaidAmount" id="totalPaidAmountID" placeholder="" readonly /></td>
-                                <td style="color:red;"><input class="form-control " type="text" asp-for="totalDueAmount" id="dueAmountID" placeholder="" readonly /></td>
-                            </tr>
+</div>
+@if (Model != null)
+{
+    @if (Model.cashierRemoveBillingItemDtoList != null && Model.opd != null)
+    {
+        <div class="row">
+            <div class="col-12 " style="padding:0;">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Refund Items</h4>
+                        <div class="table-responsive">
 
-                            <tr>
-                                <td style="border-bottom: 1px solid white;" colspan="2" style="text-align:left">ADD PAYMENT</td>
+                            <table class="table">
+                                <thead class="table-success">
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Price</th>
+                                    <th>Qty.</th>
+                                    <th>Disc.</th>
+                                    <th>Subtotal</th>
+                                    <th>Delete</th>
+                                </tr>
 
-                            </tr>
-                            <tr>
-                                <td style="border-bottom: 1px solid white;"><span class="label label-success">CASH</span></td>
-                                <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="cash" id="cashID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
-                            </tr>
+                                </thead>
+                                <tbody>
 
-                            <tr>
-                                <td style="border-bottom: 1px solid white;"><span class="label label-success">CREDIT CARD</span></td>
-                                <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="credit" id="creditID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
-                            </tr>
-                            <tr>
-                                <td style="border-bottom: 1px solid white;"><span class="label label-success">DEBIT CARD</span></td>
-                                <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="debit" id="debitID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
-                            </tr>
-                            <tr>
 
-                                <td style="border-bottom: 1px solid white;"><span class="label label-success">CHEQUE</span></td>
-                                <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="cheque" id="chequeID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
-                            </tr>
-                            <tr>
-                                <td style="border-bottom: 1px solid white;"><span class="label label-success">GIFT CARD</span></td>
-                                <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" asp-for="giftCard" id="giftcardID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0" /></b></td>
-                            </tr>
-
-                            @if (Model != null)
-                            {
-                                @if (Model.invoiceID != 0 || Model.total < 0)
+                                @foreach (var item in Model.cashierRemoveBillingItemDtoList)
                                 {
-                                    <tr class="table-danger">
-                                        <td style="border-bottom: 1px solid white;">TOTAL REFUND</td>
-                                        <td style="border-bottom: 1px solid white;">
-                                            <b><input class="form-control danger" type="number" id="giftcardID" placeholder="" value="@(Model.total * -1)" disabled /></b>
+                                    <tr>
+                                        <td>@item.billingItemName (@item.billingItemsTypeName)</td>
+                                        <td>@item.price</td>
+                                        <td>@item.qty</td>
+                                        <td>@item.discount</td>
+                                        <td>@item.amount</td>
+                                        <td>
+                                            @if (Model != null)
+                                            {
+                                                @using (Html.BeginForm("AddItem", "Cashier", new { Id = @item.BillingItemID, InvoiceType = Model.invoiceType, BillingItemsType = @item.billingItemsType, PreID = Model.PreID }, FormMethod.Post))
+                                                {
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'>
+                                                        <i class='fa fa-plus'></i>
+                                                    </button>
+                                                }
+                                            }
+
                                         </td>
                                     </tr>
+                                }
 
-                                    @if (Model.invoiceID != 0 && Model.total < 0)
-                                    {
 
-                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    }
+}
+<div class="row">
+    <div class="col-12 " style="padding:0;">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Payments</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="table-success">
+                        <tr>
+                            <th>ID</th>
+                            <th>Invoice</th>
+                            <th>Payment Type</th>
+                            <th>Cash</th>
+                            <th>Credit Card</th>
+                            <th>Debit Card</th>
+                            <th>checque</th>
+                            <th>Gift Card</th>
+                            <th>Total</th>
+                        </tr>
+
+                        </thead>
+                        <tbody>
+                        @if (Model != null)
+                        {
+                            @if (Model.paymentList != null)
+                            {
+                                @foreach (var item in Model.paymentList)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.InvoiceID</td>
+                                        <td>@item.BillingType</td>
+                                        <td>@item.CashAmount</td>
+                                        <td>@item.CreditAmount</td>
+                                        <td>@item.DdebitAmount</td>
+                                        <td>@item.ChequeAmount</td>
+                                        <td>@item.GiftCardAmount</td>
+                                        <td>
+                                            @(item.CashAmount + item.CreditAmount + item.DdebitAmount + item.ChequeAmount + item.GiftCardAmount)
+                                        </td>
+                                    </tr>
                                 }
                             }
+                        }
+                        </tbody>
+                    </table>
 
-                        </table>
-                        <center>
-                            @if (Model != null)
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</div>
+</div>
+<div class="col-4">
+    <div class="card">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <form asp-action="AddSale" method="post">
+                    <table class="table" style="border-collapse: collapse;">
+                        <input type="hidden" asp-for="customerID">
+                        <input type="hidden" asp-for="invoiceType">
+                        <input type="hidden" asp-for="sufID">
+                        <input type="hidden" asp-for="invoiceID">
+                        <tr>
+                            <td>CUSTOMER NAME</td>
+                            <td>
+                                <input class="form-control " type="text" asp-for="customerName" id="customerNameID" placeholder=""/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SUBTOTAL</td>
+                            <td>
+                                <input class="form-control " type="text" asp-for="subtotal" id="subtotalID" placeholder="" readonly/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>DISCOUNT</td>
+                            <td>
+                                <input class="form-control " type="text" asp-for="discount" id="discount" placeholder="" readonly/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="color:red;">TOTAL</td>
+                            <td>
+                                <input class="form-control " type="text" asp-for="total" id="totalID" placeholder="" readonly/>
+                            </td>
+                        </tr>
+                        <tr style="font-size: 12px;text-transform: uppercase;text-align: left;font-weight: 600;border-bottom: white;">
+                            <td style="border-bottom: 1px solid white; border-right:1px solid #f3f1f1;width:50%">Paid</td>
+                            <td style="border-bottom: 1px solid white;">Due</td>
+                        </tr>
+                        <tr style="font-size:14px;text-align:center;">
+                            <td style="border-right:1px solid #f3f1f1">
+                                <input class="form-control " type="text" asp-for="totalPaidAmount" id="totalPaidAmountID" placeholder="" readonly/>
+                            </td>
+                            <td style="color:red;">
+                                <input class="form-control " type="text" asp-for="totalDueAmount" id="dueAmountID" placeholder="" readonly/>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style="border-bottom: 1px solid white;" colspan="2" style="text-align:left">ADD PAYMENT</td>
+
+                        </tr>
+                        <tr>
+                            <td style="border-bottom: 1px solid white;">
+                                <span class="label label-success">CASH</span>
+                            </td>
+                            <td style="border-bottom: 1px solid white;">
+                                <b>
+                                    <input class="form-control " type="number" asp-for="cash" id="cashID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0"/>
+                                </b>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style="border-bottom: 1px solid white;">
+                                <span class="label label-success">CREDIT CARD</span>
+                            </td>
+                            <td style="border-bottom: 1px solid white;">
+                                <b>
+                                    <input class="form-control " type="number" asp-for="credit" id="creditID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0"/>
+                                </b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border-bottom: 1px solid white;">
+                                <span class="label label-success">DEBIT CARD</span>
+                            </td>
+                            <td style="border-bottom: 1px solid white;">
+                                <b>
+                                    <input class="form-control " type="number" asp-for="debit" id="debitID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0"/>
+                                </b>
+                            </td>
+                        </tr>
+                        <tr>
+
+                            <td style="border-bottom: 1px solid white;">
+                                <span class="label label-success">CHEQUE</span>
+                            </td>
+                            <td style="border-bottom: 1px solid white;">
+                                <b>
+                                    <input class="form-control " type="number" asp-for="cheque" id="chequeID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0"/>
+                                </b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border-bottom: 1px solid white;">
+                                <span class="label label-success">GIFT CARD</span>
+                            </td>
+                            <td style="border-bottom: 1px solid white;">
+                                <b>
+                                    <input class="form-control " type="number" asp-for="giftCard" id="giftcardID" placeholder="" onkeyup="javascript:select_onchange_payments();" value="0"/>
+                                </b>
+                            </td>
+                        </tr>
+
+                        @if (Model != null)
+                        {
+                            @if (Model.invoiceID != 0 || Model.total < 0)
                             {
+                                <tr class="table-danger">
+                                    <td style="border-bottom: 1px solid white;">TOTAL REFUND</td>
+                                    <td style="border-bottom: 1px solid white;">
+                                        <b>
+                                            <input class="form-control danger" type="number" id="giftcardID" placeholder="" value="@(Model.total * -1)" disabled/>
+                                        </b>
+                                    </td>
+                                </tr>
 
-                                @if (Model.invoiceID == 0 || Model.totalDueAmount > 0)
+                                @if (Model.invoiceID != 0 && Model.total < 0)
                                 {
-                                    @if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.CASHIER)
-                                    {
-                                        <button type="submit" class="btn btn-success">END SALE</button>
+                                }
+                            }
+                        }
 
-                                    }
-                                    @if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.OPDNURSE)
+                    </table>
+                    <center>
+                        @if (Model != null)
+                        {
+                            @if (Model.invoiceID == 0 || Model.totalDueAmount > 0)
+                            {
+                                @if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.CASHIER)
+                                {
+                                    <button type="submit" class="btn btn-success">END SALE</button>
+                                }
+
+                                @if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.OPDNURSE)
+                                {
+                                    @if (Model.opd != null)
                                     {
-                                        @if (Model.opd != null)
+                                        @if (Model.opd.nightShiftSession != null)
                                         {
-                                            @if (Model.opd.nightShiftSession != null)
+                                            @if (Model.opd.nightShiftSession.shift == HospitalMgrSystem.Model.Enums.Shift.NIGHT_SHIFT)
                                             {
-                                                @if (Model.opd.nightShiftSession.shift == HospitalMgrSystem.Model.Enums.Shift.NIGHT_SHIFT)
-                                                {
-                                                    <button type="submit" class="btn btn-success">END SALE</button>
-                                                }
+                                                <button type="submit" class="btn btn-success">END SALE</button>
                                             }
                                         }
                                     }
                                 }
                             }
-                        </center>
-                    </form>
-                    <center>
-                        @if (Model != null)
+                        }
+                    </center>
+                </form>
+                <center>
+                    @if (Model != null)
+                    {
+                        @if (Model.invoiceID != 0 && Model.total < 0)
                         {
-                            @if (Model.invoiceID != 0 && Model.total < 0)
+                            @using (Html.BeginForm("Refund", "Cashier", new { Id = Model.invoiceID, Refund = Model.total }, FormMethod.Post))
                             {
-                                @using (Html.BeginForm("Refund", "Cashier", new { Id = Model.invoiceID, Refund = Model.total }, FormMethod.Post))
-                                {
-                                    <table class="table" style="border-collapse: collapse;">
-                                        <tr class="table-danger">
-                                            <td style="border-bottom: 1px solid white;">USER PASSWORD</td>
-                                            <td style="border-bottom: 1px solid white;"><b><input class="form-control danger" type="password" name="userPassword" id="userPassword" placeholder="Enter password" /></b></td>
-                                        </tr>
-                                    </table>
+                                <table class="table" style="border-collapse: collapse;">
+                                    <tr class="table-danger">
+                                        <td style="border-bottom: 1px solid white;">USER PASSWORD</td>
+                                        <td style="border-bottom: 1px solid white;">
+                                            <b>
+                                                <input class="form-control danger" type="password" name="userPassword" id="userPassword" placeholder="Enter password"/>
+                                            </b>
+                                        </td>
+                                    </tr>
+                                </table>
 
-                                    <button id='link_copy' type="submit" class='btn waves-effect waves-light  btn-danger'>Refund</button>
+                                <button id='link_copy' type="submit" class='btn waves-effect waves-light  btn-danger'>Refund</button>
+                            }
 
-                                }
-
-                                @* <form asp-action="Refund" method="post">
+                            @* <form asp-action="Refund" method="post">
                         <table>
                         <tr class="table-danger">
                         <td style="border-bottom: 1px solid white;">USER PASSWORD</td>
@@ -831,100 +894,40 @@
 
                         <button id='link_copy' type="submit" class='btn waves-effect waves-light  btn-danger'>Refund</button>
                         </form> *@
-                            }
-
                         }
+                    }
 
-                        @if (Model != null)
+                    @if (Model != null)
+                    {
+                        @if (Model.invoiceID != 0)
                         {
-                            @if (Model.invoiceID != 0)
+                            @if (Model.invoice.paymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.OPD)
                             {
-                                @if (Model.invoice.paymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.OPD)
+                                @if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.CASHIER)
                                 {
-
-                                    @if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.CASHIER)
+                                    @using (Html.BeginForm("MarkAsPaid", "Cashier", new { Id = Model.invoiceID }, FormMethod.Post))
                                     {
-                                        @using (Html.BeginForm("MarkAsPaid", "Cashier", new { Id = Model.invoiceID }, FormMethod.Post))
-                                        {
-
-                                            <button id='link_copy' type="submit" class='btn waves-effect waves-light  btn-danger'>Mark as paid</button>
-
-                                        }
-
+                                        <button id='link_copy' type="submit" class='btn waves-effect waves-light  btn-danger'>Mark as paid</button>
                                     }
-
                                 }
-
                             }
-
                         }
+                    }
 
-                    </center>
+                </center>
 
 
-                </div>
             </div>
         </div>
-
-
     </div>
+
+
+</div>
 </div>
 <div id="AddShiftModel" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-lg" id="AddEditContainerModel">
     </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <div id="AddShiftModel" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
