@@ -4,6 +4,7 @@ using HospitalMgrSystem.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HospitalMgrSystem.DataAccess.Migrations
 {
     [DbContext(typeof(HospitalDBContext))]
-    partial class HospitalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240423181854_A103")]
+    partial class A103
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1473,6 +1476,8 @@ namespace HospitalMgrSystem.DataAccess.Migrations
 
                     b.HasIndex("ApprovedByID");
 
+                    b.HasIndex("BeneficiaryID");
+
                     b.HasIndex("ConvenerID");
 
                     b.HasIndex("SessionID");
@@ -2237,6 +2242,10 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                         .WithMany()
                         .HasForeignKey("ApprovedByID");
 
+                    b.HasOne("HospitalMgrSystem.Model.User", "Beneficiary")
+                        .WithMany()
+                        .HasForeignKey("BeneficiaryID");
+
                     b.HasOne("HospitalMgrSystem.Model.User", "Convener")
                         .WithMany()
                         .HasForeignKey("ConvenerID");
@@ -2246,6 +2255,8 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                         .HasForeignKey("SessionID");
 
                     b.Navigation("ApprovedBy");
+
+                    b.Navigation("Beneficiary");
 
                     b.Navigation("Convener");
 

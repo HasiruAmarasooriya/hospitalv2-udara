@@ -218,10 +218,10 @@ namespace HospitalMgrSystemUI.Controllers
                         channelingSMS.ChannellingScheduleStatus = viewChannelingSchedule.ChannelingSchedule.scheduleStatus;
 
                         // Add temp mobile number to last record
-                        channelingSMS.channeling[channelingSMS.channeling.Count - 1].patient.MobileNumber = "0710101773";
+                        channelingSMS.channeling[channelingSMS.channeling.Count - 1].patient.MobileNumber = "0702869830";
 
                         SMSService sMSService = new SMSService();
-                        await sMSService.SendSMSToken(channelingSMS);
+                        //await sMSService.SendSMSToken(channelingSMS);
 
                     }
 

@@ -28,10 +28,9 @@ namespace HospitalMgrSystem.Service.SMS
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
                 Model.SMSAPILogin _smsApiLogin = new Model.SMSAPILogin();
-                // Check for existing valid token
-                var existingToken = dbContext.SMSAPILogin.FirstOrDefault(t => t.Token != null && t.ExpirationTime > DateTime.Now);
 
-                if (existingToken != null)
+                var existingToken = dbContext.SMSAPILogin.OrderByDescending(t => t.Id).FirstOrDefault(t => t.Token != null);
+                if (existingToken != null && existingToken.ExpirationTime > DateTime.Now)
                 {
                     _smsApiLogin.Id = existingToken.Id; // Use existing an Id property
                     return existingToken; // Use existing valid token
@@ -149,17 +148,38 @@ namespace HospitalMgrSystem.Service.SMS
                     + "\nwww.kumuduhospital.lk";
             }
 
-            if (channelingSMS.ChannellingScheduleStatus == Model.Enums.ChannellingScheduleStatus.SESSION_END)
+            else if (channelingSMS.ChannellingScheduleStatus == Model.Enums.ChannellingScheduleStatus.SESSION_END)
             {
                 message = "KUMUDU HOSPITAL(PVT)LTD\n"
                     + channelingSMS.channelingSchedule.Consultant.Name
-                    + "\nThe Session was Started at "
+                    + "\nThe Session was Ended at "
                     + channelingSMS.channelingSchedule.DateTime
                     + "\nරෝගීන් පර්ක්ෂා කිරීම අවසන් විය"
                     + "\nTEL: 066 22 22 244 || 066 22 30 027"
                     + "\nwww.kumuduhospital.lk";
             }
 
+            else if (channelingSMS.ChannellingScheduleStatus == Model.Enums.ChannellingScheduleStatus.PENDING)
+            {
+                message = "KUMUDU HOSPITAL(PVT)LTD\n"
+                    + channelingSMS.channelingSchedule.Consultant.Name
+                    + "\nSorry...!The Session was Started at "
+                    + channelingSMS.channelingSchedule.DateTime
+                    + "\nරෝගීන් පර්ක්ෂා කිරීම අවසන් විය"
+                    + "\nTEL: 066 22 22 244 || 066 22 30 027"
+                    + "\nwww.kumuduhospital.lk";
+            }
+
+            else if (channelingSMS.ChannellingScheduleStatus == Model.Enums.ChannellingScheduleStatus.SESSION_CANCEL)
+            {
+                message = "KUMUDU HOSPITAL(PVT)LTD\n"
+                    + channelingSMS.channelingSchedule.Consultant.Name
+                    + "\nSorry...!The Session was Canceled at "
+                    + channelingSMS.channelingSchedule.DateTime
+                    + "\nරෝගීන් පර්ක්ෂා කිරීම අවසන් විය"
+                    + "\nTEL: 066 22 22 244 || 066 22 30 027"
+                    + "\nwww.kumuduhospital.lk";
+            }
             return message;
 
         }
@@ -294,7 +314,11 @@ namespace HospitalMgrSystem.Service.SMS
                     var mobileNumbers = new List<MobileNumber>();
                     foreach (var item in channelingSMS.channeling)
                     {
-                        mobileNumbers.Add(new MobileNumber { mobile = item.patient.MobileNumber });
+                        if(item.patient.MobileNumber == "0702869830")
+                        {
+
+                            mobileNumbers.Add(new MobileNumber { mobile = item.patient.MobileNumber });
+                        }
                     }
 
                     var messageBody = generateMessageBodyForChannelingSchedule(channelingSMS);

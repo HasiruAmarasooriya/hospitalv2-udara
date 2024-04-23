@@ -114,7 +114,7 @@ namespace HospitalMgrSystem.Service.OtherTransactions
             List<Model.OtherTransactions> mtList = new List<Model.OtherTransactions>();
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.OtherTransactions.Include(c => c.Convener).Include(c => c.Beneficiary).Include(c => c.ApprovedBy).Include(c => c.cashierSession).Where(o => o.Status == 0 && o.BeneficiaryID == benificaryID && o.otherTransactionsStatus != OtherTransactionsStatus.Cashier_In && o.InvoiceType == InvoiceType.CASHIER_TRANSFER_OUT).OrderByDescending(o => o.Id).ToList<Model.OtherTransactions>();
+                mtList = dbContext.OtherTransactions.Include(c => c.Convener).Include(c => c.ApprovedBy).Include(c => c.cashierSession).Where(o => o.Status == 0 && o.BeneficiaryID == benificaryID && o.otherTransactionsStatus != OtherTransactionsStatus.Cashier_In && o.InvoiceType == InvoiceType.CASHIER_TRANSFER_OUT).OrderByDescending(o => o.Id).ToList<Model.OtherTransactions>();
 
             }
             return mtList;
