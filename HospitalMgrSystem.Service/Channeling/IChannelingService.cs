@@ -15,5 +15,6 @@ namespace HospitalMgrSystem.Service.Channeling
         public List<Model.OPD> ChannelingGetBySheduleId(int id);
         public HospitalMgrSystem.Model.OPD DeleteChanneling(int id);
         public List<Model.Scan> LoadChannelingItems();
+        public List<Model.Consultant> GetAllConsultantThatHaveSchedulingsByDate(DateTime scheduleDate);
     }
 }

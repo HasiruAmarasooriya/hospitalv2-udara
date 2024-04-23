@@ -1,4 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -29,6 +30,28 @@ namespace HospitalMgrSystem.WebAPI.Controllers
             }
         }
 
+        [HttpGet("GetAllConsultantByScheduleDate")]
+        public ActionResult<Channeling> GetAllConsultantByScheduleDate(string StartFrom)
+        {
+            // Parse the string date to a DateTime object
+            if (DateTime.TryParseExact(StartFrom, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out DateTime startDate))
+            {
+                var newChanneling = _channelingService.GetAllConsultantThatHaveSchedulingsByDate(startDate);
+                if (newChanneling == null)
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    return Ok(newChanneling);
+                }
+            }
+            else
+            {
+                // Handle invalid date format
+                return BadRequest("Invalid date format. Please provide the date in yyyy-MM-dd format.");
+            }
+        }
 
 
         [HttpGet("ChannelingGetBySheduleId")]

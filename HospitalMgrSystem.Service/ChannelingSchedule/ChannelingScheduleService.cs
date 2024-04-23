@@ -238,13 +238,41 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.ChannelingSchedule
-                        .Include(c => c.Consultant)
-                        .Include(c => c.Consultant.Specialist)
-                        .Where(o => o.ConsultantId == id &&
-                         o.scheduleStatus == channellingScheduleStatus &&
-                         o.Status == CommonStatus.Active)
-                        .ToList();
+                if(channellingScheduleStatus == ChannellingScheduleStatus.ALL && id==-2)
+                {
+                    mtList = dbContext.ChannelingSchedule
+                            .Include(c => c.Consultant)
+                            .Include(c => c.Consultant.Specialist)
+                            .Where(o => o.Status == CommonStatus.Active)
+                            .ToList();
+                }
+                else if (channellingScheduleStatus == ChannellingScheduleStatus.ALL && id != -2)
+                {
+                    mtList = dbContext.ChannelingSchedule
+                            .Include(c => c.Consultant)
+                            .Include(c => c.Consultant.Specialist)
+                            .Where(o => o.ConsultantId == id && o.Status == CommonStatus.Active)
+                            .ToList();
+                }
+                else if (channellingScheduleStatus != ChannellingScheduleStatus.ALL && id == -2)
+                {
+                    mtList = dbContext.ChannelingSchedule
+                            .Include(c => c.Consultant)
+                            .Include(c => c.Consultant.Specialist)
+                            .Where(o => o.scheduleStatus == channellingScheduleStatus && o.Status == CommonStatus.Active)
+                            .ToList();
+                }
+                else
+                {
+                    mtList = dbContext.ChannelingSchedule
+                            .Include(c => c.Consultant)
+                            .Include(c => c.Consultant.Specialist)
+                            .Where(o => o.ConsultantId == id &&
+                             o.scheduleStatus == channellingScheduleStatus &&
+                             o.Status == CommonStatus.Active)
+                            .ToList();
+                }
+
             }
 
             return mtList;

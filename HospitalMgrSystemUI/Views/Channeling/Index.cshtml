@@ -49,7 +49,7 @@
     <div class="col-12">
         <div class="card">
             <div class="modal-body">
-                <form asp-action="FilterForm" method="post">
+                <form asp-action="FilterForm" method="post" id="filterFrm">
                     <input type="hidden" id="opid" asp-for="opdId">
                     <div class="row">
                         <div class="col-md-2">
@@ -65,32 +65,16 @@
                             </div>
                         </div>
 
-                        @* <div class="col-md-2">
-                        <div class="form-group">
-                        <label for="companyName">Doctor Speciality</label>
-                        <select class="form-control ddlSearchList" id="dropPaidStatus" asp-for="SpecialistId">
-                        <option value="-2">All</option>
-                        @if (Model != null)
-                        {
-                        @foreach (var item in Model.listSpecialists)
-                        {
-                        <option value="@item.Id">@item.Name</option>
-                        }
-                        }
-                        </select>
-                        </div>
-                        </div> *@
-
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="companyName">Consultants</label>
-                                <select class="form-control ddlSearchList" id="dropDoctor" onchange="javascript:select_onchange_doctor()" asp-for="ConsultantID">
+                                <select class="form-control ddlSearchList" id="dropDoctorFilterFrm" onchange="javascript:select_onchange_doctor()" asp-for="ConsultantID">
                                     <option value="-2">All</option>
                                     @if (Model != null)
                                     {
                                         @foreach (var item in Model.listConsultants)
                                         {
-                                            <option value="@item.Id">@item.Name - @item.Specialist.Name</option>
+                                            <option value="@item.Id"> @item.Specialist.Name - @item.Name </option>
                                         }
                                     }
                                 </select>
@@ -99,7 +83,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="companyName">Channeling Schedule Status</label>
-                                <select class="form-control ddlSearchList" id="dropPaidStatus" onchange="javascript:select_onchange_doctor()" asp-for="channellingScheduleStatus">
+                                <select class="form-control ddlSearchList" id="drpScheduleStatus" onchange="javascript:select_onchange_doctor()" asp-for="channellingScheduleStatus">
                                     <option value="6" selected>All</option>
                                     <option value="0">NOT ACTIVE</option>
                                     <option value="1">ACTIVE</option>
@@ -111,31 +95,15 @@
                             </div>
                         </div>
 
-                        <div class="col-md-2">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="companyName">Channeling Shedule</label>
-                                <select class="form-control ddlSearchList" id="dropShedule" asp-for="channeling.ChannelingScheduleID">
-                                    <option>Select one</option>
+                                <select class="form-control ddlSearchList" id="dropSheduleFilterFrm" asp-for="channeling.ChannelingScheduleID">
+                                    <option value="0">Select one</option>
 
                                 </select>
                             </div>
-                        </div>
-
-                        @* <div class="col-md-2">
-                        <div class="form-group">
-                        <label for="companyName">Paid Status</label>
-                        <select class="form-control ddlSearchList" id="dropPaidStatus" asp-for="paymentStatus">
-                        <option value="5" selected>All</option>
-                        <option value="0">PAID</option>
-                        <option value="1">PARTIAL PAID</option>
-                        <option value="2">NEED TO PAY</option>
-                        <option value="3">OPD</option>
-                        <option value="4">NOT PAID</option>
-                        </select>
-                        </div>
-                        </div> *@
-
-                        
+                        </div>                  
 
                     </div>
 
@@ -157,51 +125,41 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Channeling Details</h4>
-                @*          @using (Html.BeginForm("Search", "Channel", new { value = 100 }, FormMethod.Post))
-                {
+                
                 <div class="row">
-
-                <div class="col-md-2">
-                <div class="form-group-sm ">
-                <input class="form-control " type="text" name="txtSearch" id="txtSearch" placeholder="Search.." />
-                <label for="StartShiftUtc">&nbsp;</label>
-
+                    <div class="col-md-10"><h4 class="card-title">Channeling Details</h4></div>
+                    <div class="col-md-2 ">
+                        <!-- Aligning to the right -->
+                        <div class="form-group">
+                            <label for="paymentFilter" class="mr-2"><h4 class="card-title text-left">Filter by Payment Status:</h4></label> <!-- Added mr-2 for spacing -->
+                            <select id="paymentFilter" class="form-control">
+                                <option value="">All</option>
+                                <option value="PAID">PAID</option>
+                                <option value="NEED_TO_PAY">NEED TO PAY</option>
+                                <option value="NOT_PAID">NOT PAID</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                </div>
-                <div class="col-md-2" id="divLoader">
-                <div class="form-group-sm ">
-
-
-                <button type="submit" class="btn btn btn-primary" id="btnfilter" data-toggle="tooltip" data-placement="top" title="Filter Records By Date Range"><i class="fa fa-filter"></i> &nbsp;Filter</button>
-
-                </div>
-                </div>
-                <div class="col-md-2">
-                <div class="form-group mt-4-q">
-                </div>
-                </div>
-
-                </div>
-                }*@
-                @*   <div class="row"></div>*@
                 <div class="table-responsive">
                     <table id="basic-2" class="display">
                         <thead>
                             <tr>
-                                <th>Channeling ID</th>
-                                <th>Patient</th>
-                                <th>Contact Number</th>
+                                <th>Ref No</th>
+                                <th>Cashier</th>
+                                <th>QR</th>
+                                <th>Pt's Name</th>
+                                <th>Pt's Contact Number</th>
                                 <th>Appoinment No</th>
                                 <th>Description</th>
                                 <th>Consultant</th>
                                 <th>Specialist</th>
                                 <th>Shedule</th>
                                 <th>Payment Status</th>
-                                <th>Channeling Schedule Status</th>
+                                <th>Schedule Status</th>
                                 <th>View</th>
-                                <th>QR</th>
-                                <th>View Cashier</th>
+          
+       
                                 <th>Delete</th>
                             </tr>
                         </thead>
@@ -212,7 +170,17 @@
                                 {
                                     <tr>
 
-                                        <td>@item.Id</td>
+                                        <td>CHE @item.Id</td>
+                                        <td>
+                                            @if (Model != null)
+                                            {
+                                                <a href="/Cashier?PreID=CHE+@item.Id"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
+                                            }
+
+                                        </td>
+                                        <td>
+                                            <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>  &nbsp;
+                                        </td>
                                         <td>@item.FullName</td>
                                         <td>@item.MobileNumber</td>
                                         <td>@item.AppoimentNo</td>
@@ -224,16 +192,6 @@
                                         <td>@item.channelingScheduleData.scheduleStatus</td>
                                         <td>
                                             <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
-                                        </td>
-                                        <td>
-                                            <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>  &nbsp;
-                                        </td>
-                                        <td>
-                                            @if (Model != null)
-                                            {
-                                                <a href="/Cashier?PreID=CHE+@item.Id"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
-                                            }
-
                                         </td>
                                         <td>
                                             @using (Html.BeginForm("DeleteChanneling", "Channeling", new { Id = @item.Id }, FormMethod.Post))
@@ -263,9 +221,74 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script>
+
+        $(document).ready(function () {
+            $('#dropDoctorFilterFrm').select2({
+                width: '100%',
+                height: "auto !important",
+                dropdownCssClass: "bigdrop",
+                dropdownParent: $('#filterFrm'),
+                placeholder: 'Select one',
+                allowClear: false,
+            });
+
+       
+        });
+
+        $('#paymentFilter').change(function () {
+            var selectedPaymentStatus = $(this).val();
+
+            $('#basic-2 tbody tr').each(function () {
+                var rowPaymentStatus = $(this).find('td:eq(10)').text(); // Index of the payment status column (zero-based)
+
+                if (selectedPaymentStatus === '' || rowPaymentStatus === selectedPaymentStatus) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        $('#date-format-start').on('change', function () {
+            // Get the selected date value
+            var selectedDate = $(this).val();
+
+
+            const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+
+            var settings = {
+                "url": commonUrl + "Channeling/GetAllConsultantByScheduleDate?StartFrom=" + selectedDate,
+                "method": "GET",
+                "headers": {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+            };
+
+            $.ajax(settings).done(function (response) {
+                console.log(response);
+
+                const select = document.querySelector('#dropDoctorFilterFrm');
+
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+
+                for (let item of response) {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.text = item.specialist.name +"-"+ item.name ;
+                    select.add(option);
+                }
+            });
+
+
+
+        });
+
         function select_onchange_doctor() {
-            const doctorId = document.getElementById('dropDoctor').value;
-            const scheduleStatus = document.getElementById('dropPaidStatus').value;
+            const doctorId = document.getElementById('dropDoctorFilterFrm').value;
+            const scheduleStatus = document.getElementById('drpScheduleStatus').value;
 
             const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
             // var selectedDate = document.getElementById("date-format").value;
@@ -281,7 +304,7 @@
             $.ajax(settings).done(function (response) {
                 console.log(response);
 
-                const select = document.querySelector('#dropShedule');
+                const select = document.querySelector('#dropSheduleFilterFrm');
 
                 while (select.options.length > 1) {
                     select.remove(1);
@@ -301,7 +324,7 @@
                         second: 'numeric',
                     });
 
-                    option.text = dateTime;
+                    option.text = dateTime + item.consultant.name + "(" + item.consultant.specialist.name + ")";
                     select.add(option);
                 }
             });

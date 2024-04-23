@@ -302,7 +302,23 @@ namespace HospitalMgrSystem.Service.Channeling
             List<Model.OPD> mtList = new List<Model.OPD>();
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                mtList = dbContext.OPD.Where(o => o.schedularId == id && o.Status == 0 && o.invoiceType == InvoiceType.CHE).ToList();
+                var channelingScheduleIds = dbContext.ChannelingSchedule
+                                            .Where(o => o.Status == CommonStatus.Active)
+                                            .Select(o => o.Id)
+                                            .ToList();
+
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule.ToList();
+                mtList = dbContext.OPD
+                    .Include(c => c.patient)
+                    .Include(c => c.consultant)
+                    .Include(c => c.room)
+                    .Include(c => c.consultant.Specialist)
+                    .Where(o => o.schedularId == id && o.Status == 0 && o.invoiceType == InvoiceType.CHE).ToList();
+
+                for (int i = 0; i < mtList.Count; i++)
+                {
+                    mtList[i].channelingScheduleData = schedularIdList.Where(o => o.Id == mtList[i].schedularId).SingleOrDefault();
+                }
 
             }
             return mtList;
@@ -344,5 +360,26 @@ namespace HospitalMgrSystem.Service.Channeling
             return opd;
         }
 
+        public List<Model.Consultant> GetAllConsultantThatHaveSchedulingsByDate(DateTime scheduleDate)
+        {
+            List<Model.Consultant> mtList = new List<Model.Consultant>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                // Get doctor ids which have schedulings
+                var doctorIds = dbContext.ChannelingSchedule
+                    .Where(x => x.Status == Model.Enums.CommonStatus.Active && x.DateTime > scheduleDate)
+                    .Select(x => x.ConsultantId)
+                    .Distinct()
+                    .ToList();
+
+
+                mtList = dbContext.Consultants
+                    .Include(c => c.Specialist)
+                    .Where(o => o.Status == 0 && doctorIds.Contains(o.Id))
+                    .ToList();
+            }
+
+            return mtList;
+        }
     }
 }

@@ -32,17 +32,16 @@ public class ChannelingController : Controller
         var oPDDto = new OPDDto()
         {
             StartTime = DateTime.Now,
-            EndTime = DateTime.Now,
+            EndTime = DateTime.Now.AddDays(1),
             listOPDTbDto = GetAllChannelingByStatus(),
             listSpecialists = new ChannelingService().GetAllSpecialists(),
-            listConsultants = new ConsultantService().GetAllConsultantThatHaveSchedulings(),
+            listConsultants = new ConsultantService().GetAllConsultantThatHaveSchedulingsByDate(DateTime.Now),
             paymentStatus = PaymentStatus.ALL,
             channellingScheduleStatus = ChannellingScheduleStatus.ALL
         };
 
         return View(oPDDto);
     }
-
     public IActionResult FilterForm()
     {
         var channelingDto = new OPDDto()
@@ -63,47 +62,14 @@ public class ChannelingController : Controller
                 resultSet = new ChannelingService().GetAllChannelingByAllFilters(_OPDDto.StartTime, _OPDDto.EndTime,
                     _OPDDto.SpecialistId, _OPDDto.paymentStatus, _OPDDto.channellingScheduleStatus);
 
-            // When the user selects the payment status, and the channeling schedule status
-            if (_OPDDto.SpecialistId == -2 && _OPDDto.paymentStatus != PaymentStatus.ALL &&
-                _OPDDto.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
-                resultSet = new ChannelingService().GetAllChannelingByPaymentStatusAndChannelingScheduleStatus(
-                    _OPDDto.StartTime, _OPDDto.EndTime, _OPDDto.paymentStatus, _OPDDto.channellingScheduleStatus);
+            if(_OPDDto.channeling.ChannelingScheduleID != 0)
+            {
+                resultSet = new ChannelingService().ChannelingGetBySheduleId(_OPDDto.channeling.ChannelingScheduleID);
+            }
 
-            // When the user selects the specialist and the channeling schedule status
-            if (_OPDDto.SpecialistId != -2 && _OPDDto.paymentStatus == PaymentStatus.ALL &&
-                _OPDDto.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
-                resultSet = new ChannelingService().GetAllChannelingByDoctorSpecialityAndScheduleStatus(
-                    _OPDDto.StartTime, _OPDDto.EndTime, _OPDDto.SpecialistId, _OPDDto.channellingScheduleStatus);
-
-            // When the user selects the specialist and the payment status
-            if (_OPDDto.SpecialistId != -2 && _OPDDto.paymentStatus != PaymentStatus.ALL &&
-                _OPDDto.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
-                resultSet = new ChannelingService().GetAllChannelingBySpecialistIdAndPaymentStatus(_OPDDto.StartTime,
-                    _OPDDto.EndTime, _OPDDto.paymentStatus, _OPDDto.SpecialistId);
-
-            // When the user selects only the payment status
-            if (_OPDDto.SpecialistId == -2 && _OPDDto.paymentStatus != PaymentStatus.ALL &&
-                _OPDDto.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
-                resultSet = new ChannelingService().GetAllChannelingByPaymentStatus(_OPDDto.StartTime, _OPDDto.EndTime,
-                    _OPDDto.paymentStatus);
-
-            // When the user selects only the channeling schedule status
-            if (_OPDDto.SpecialistId == -2 && _OPDDto.paymentStatus == PaymentStatus.ALL &&
-                _OPDDto.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
-                resultSet = new ChannelingService().GetAllChannelingByChannelingScheduleStatus(_OPDDto.StartTime,
-                    _OPDDto.EndTime, _OPDDto.channellingScheduleStatus);
-
-            // When the user selects only the specialist
-            if (_OPDDto.SpecialistId != -2 && _OPDDto.paymentStatus == PaymentStatus.ALL &&
-                _OPDDto.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
-                resultSet = new ChannelingService().GetAllChannelingByDoctorSpeciality(_OPDDto.StartTime,
-                    _OPDDto.EndTime, _OPDDto.SpecialistId);
-
-            // When the user selects only the date
-            if (_OPDDto.SpecialistId == -2 && _OPDDto.paymentStatus == PaymentStatus.ALL &&
-                _OPDDto.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
-                resultSet = new ChannelingService().GetAllChannelingByDateTime(_OPDDto.StartTime, _OPDDto.EndTime);
-
+            if(resultSet != null)
+            {
+    
             foreach (var item in resultSet)
                 oPDTbDto.Add(new OPDTbDto()
                 {
@@ -124,15 +90,112 @@ public class ChannelingController : Controller
                     channelingScheduleData = item.channelingScheduleData
                 });
 
-            channelingDto.listOPDTbDto = oPDTbDto;
+                channelingDto.listOPDTbDto = oPDTbDto;
+                channelingDto.listConsultants = new ConsultantService().GetAllConsultantThatHaveSchedulings();
+                return View("Index", channelingDto);
 
-            return View("Index", channelingDto);
+
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
         catch (Exception ex)
         {
             return RedirectToAction("Index");
         }
     }
+    //public IActionResult FilterForm()
+    //{
+    //    var channelingDto = new OPDDto()
+    //    {
+    //        StartTime = DateTime.Now,
+    //        EndTime = DateTime.Now,
+    //        listSpecialists = new ChannelingService().GetAllSpecialists()
+    //    };
+
+    //    var oPDTbDto = new List<OPDTbDto>();
+    //    var resultSet = new List<OPD>();
+
+    //    try
+    //    {
+    //        // When the user selects all the options
+    //        if (_OPDDto.SpecialistId != -2 && _OPDDto.paymentStatus != PaymentStatus.ALL &&
+    //            _OPDDto.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
+    //            resultSet = new ChannelingService().GetAllChannelingByAllFilters(_OPDDto.StartTime, _OPDDto.EndTime,
+    //                _OPDDto.SpecialistId, _OPDDto.paymentStatus, _OPDDto.channellingScheduleStatus);
+
+    //        // When the user selects the payment status, and the channeling schedule status
+    //        if (_OPDDto.SpecialistId == -2 && _OPDDto.paymentStatus != PaymentStatus.ALL &&
+    //            _OPDDto.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
+    //            resultSet = new ChannelingService().GetAllChannelingByPaymentStatusAndChannelingScheduleStatus(
+    //                _OPDDto.StartTime, _OPDDto.EndTime, _OPDDto.paymentStatus, _OPDDto.channellingScheduleStatus);
+
+    //        // When the user selects the specialist and the channeling schedule status
+    //        if (_OPDDto.SpecialistId != -2 && _OPDDto.paymentStatus == PaymentStatus.ALL &&
+    //            _OPDDto.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
+    //            resultSet = new ChannelingService().GetAllChannelingByDoctorSpecialityAndScheduleStatus(
+    //                _OPDDto.StartTime, _OPDDto.EndTime, _OPDDto.SpecialistId, _OPDDto.channellingScheduleStatus);
+
+    //        // When the user selects the specialist and the payment status
+    //        if (_OPDDto.SpecialistId != -2 && _OPDDto.paymentStatus != PaymentStatus.ALL &&
+    //            _OPDDto.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
+    //            resultSet = new ChannelingService().GetAllChannelingBySpecialistIdAndPaymentStatus(_OPDDto.StartTime,
+    //                _OPDDto.EndTime, _OPDDto.paymentStatus, _OPDDto.SpecialistId);
+
+    //        // When the user selects only the payment status
+    //        if (_OPDDto.SpecialistId == -2 && _OPDDto.paymentStatus != PaymentStatus.ALL &&
+    //            _OPDDto.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
+    //            resultSet = new ChannelingService().GetAllChannelingByPaymentStatus(_OPDDto.StartTime, _OPDDto.EndTime,
+    //                _OPDDto.paymentStatus);
+
+    //        // When the user selects only the channeling schedule status
+    //        if (_OPDDto.SpecialistId == -2 && _OPDDto.paymentStatus == PaymentStatus.ALL &&
+    //            _OPDDto.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
+    //            resultSet = new ChannelingService().GetAllChannelingByChannelingScheduleStatus(_OPDDto.StartTime,
+    //                _OPDDto.EndTime, _OPDDto.channellingScheduleStatus);
+
+    //        // When the user selects only the specialist
+    //        if (_OPDDto.SpecialistId != -2 && _OPDDto.paymentStatus == PaymentStatus.ALL &&
+    //            _OPDDto.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
+    //            resultSet = new ChannelingService().GetAllChannelingByDoctorSpeciality(_OPDDto.StartTime,
+    //                _OPDDto.EndTime, _OPDDto.SpecialistId);
+
+    //        // When the user selects only the date
+    //        if (_OPDDto.SpecialistId == -2 && _OPDDto.paymentStatus == PaymentStatus.ALL &&
+    //            _OPDDto.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
+    //            resultSet = new ChannelingService().GetAllChannelingByDateTime(_OPDDto.StartTime, _OPDDto.EndTime);
+
+    //        foreach (var item in resultSet)
+    //            oPDTbDto.Add(new OPDTbDto()
+    //            {
+    //                Id = item.Id,
+    //                roomName = item.room.Name,
+    //                Description = item.Description,
+    //                consaltantName = item.consultant.Name,
+    //                FullName = item.patient.FullName,
+    //                MobileNumber = item.patient.MobileNumber,
+    //                DateTime = item.DateTime,
+    //                Sex = (SexStatus)item.patient.Sex,
+    //                Status = item.Status,
+    //                AppoimentNo = item.AppoimentNo,
+    //                paymentStatus = item.paymentStatus,
+    //                schedularId = item.schedularId,
+    //                specialistData = item.consultant.Specialist,
+    //                consaltantId = item.ConsultantID,
+    //                channelingScheduleData = item.channelingScheduleData
+    //            });
+
+    //        channelingDto.listOPDTbDto = oPDTbDto;
+
+    //        return View("Index", channelingDto);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return RedirectToAction("Index");
+    //    }
+    //}
 
 
     public ActionResult CreateChanneling(int Id)

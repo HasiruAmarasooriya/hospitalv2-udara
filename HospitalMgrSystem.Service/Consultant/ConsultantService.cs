@@ -61,6 +61,28 @@ namespace HospitalMgrSystem.Service.Consultant
             return mtList;
         }
 
+        public List<Model.Consultant> GetAllConsultantThatHaveSchedulingsByDate(DateTime scheduleDate)
+        {
+            List<Model.Consultant> mtList = new List<Model.Consultant>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                // Get doctor ids which have schedulings
+                var doctorIds = dbContext.ChannelingSchedule
+                    .Where(x => x.Status == Model.Enums.CommonStatus.Active && x.DateTime > scheduleDate)
+                    .Select(x => x.ConsultantId)
+                    .Distinct()
+                    .ToList();
+
+
+                mtList = dbContext.Consultants
+                    .Include(c => c.Specialist)
+                    .Where(o => o.Status == 0 && doctorIds.Contains(o.Id))
+                    .ToList();
+            }
+
+            return mtList;
+        }
+
         public List<Model.Consultant> GetAllConsultantByStatus()
         {
             List<Model.Consultant> mtList = new List<Model.Consultant>();
