@@ -231,6 +231,25 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
             return mtList;
         }
 
+        public List<Model.ChannelingSchedule> GetAllSheduleGetByConsultantIdAndSessionStatus(int id, ChannellingScheduleStatus channellingScheduleStatus)
+        {
+            List<Model.ChannelingSchedule> mtList = new List<Model.ChannelingSchedule>();
+            DateTime currentTime = DateTime.Now; // Get the current time
+
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.ChannelingSchedule
+                        .Include(c => c.Consultant)
+                        .Include(c => c.Consultant.Specialist)
+                        .Where(o => o.ConsultantId == id &&
+                         o.scheduleStatus == channellingScheduleStatus &&
+                         o.Status == CommonStatus.Active)
+                        .ToList();
+            }
+
+            return mtList;
+        }
+
         public int GetTotalRefundHospitalFeeCount(int id, decimal hospitalFee)
         {
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
@@ -472,5 +491,7 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                 return result;
             }
         }
+
+        
     }
 }
