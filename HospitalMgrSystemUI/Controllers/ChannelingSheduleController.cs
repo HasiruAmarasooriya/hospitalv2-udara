@@ -24,11 +24,9 @@ namespace HospitalMgrSystemUI.Controllers
     {
         private IConfiguration _configuration;
 
-        [BindProperty]
-        public ChannelingSheduleDto viewChannelingSchedule { get; set; }
+        [BindProperty] public ChannelingSheduleDto viewChannelingSchedule { get; set; }
 
-        [BindProperty]
-        public ChannelingSchedule myChannelingShedule { get; set; }
+        [BindProperty] public ChannelingSchedule myChannelingShedule { get; set; }
 
         public ChannelingSheduleController(IConfiguration configuration)
         {
@@ -41,7 +39,7 @@ namespace HospitalMgrSystemUI.Controllers
             ChannelingSheduleDto channelingSheduleDto = new ChannelingSheduleDto()
             {
                 StartTime = DateTime.Now,
-                EndTime = DateTime.Now,
+                EndTime = DateTime.Now.AddDays(1),
                 Specialists = new ChannelingService().GetAllSpecialists(),
                 channellingScheduleStatus = ChannellingScheduleStatus.ALL,
             };
@@ -52,15 +50,12 @@ namespace HospitalMgrSystemUI.Controllers
                 {
                     channelingSheduleDto.ChannelingScheduleList = new ChannelingScheduleService().SheduleGetByStatus();
                     return View(channelingSheduleDto);
-
                 }
                 catch (Exception ex)
                 {
                     return View();
-
                 }
             }
-
         }
 
         public IActionResult FilterForm()
@@ -78,27 +73,39 @@ namespace HospitalMgrSystemUI.Controllers
                 List<ChannelingSchedule> resultSet = new List<ChannelingSchedule>();
 
                 // When the user selects only the date
-                if (viewChannelingSchedule.SpecialistId == -2 && viewChannelingSchedule.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
+                if (viewChannelingSchedule.SpecialistId == -2 && viewChannelingSchedule.channellingScheduleStatus ==
+                    ChannellingScheduleStatus.ALL)
                 {
-                    resultSet = new ChannelingScheduleService().GetAllChannelingScheduleByDateTime(viewChannelingSchedule.StartTime, viewChannelingSchedule.EndTime);
+                    resultSet = new ChannelingScheduleService().GetAllChannelingScheduleByDateTime(
+                        viewChannelingSchedule.StartTime, viewChannelingSchedule.EndTime);
                 }
 
                 // When the user select the speciality
-                else if (viewChannelingSchedule.SpecialistId != -2 && viewChannelingSchedule.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
+                else if (viewChannelingSchedule.SpecialistId != -2 &&
+                         viewChannelingSchedule.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
                 {
-                    resultSet = new ChannelingScheduleService().GetAllChannelingScheduleByDateTimeWithSpeciality(viewChannelingSchedule.StartTime, viewChannelingSchedule.EndTime, viewChannelingSchedule.SpecialistId);
+                    resultSet = new ChannelingScheduleService().GetAllChannelingScheduleByDateTimeWithSpeciality(
+                        viewChannelingSchedule.StartTime, viewChannelingSchedule.EndTime,
+                        viewChannelingSchedule.SpecialistId);
                 }
 
                 // When the user select the status
-                else if (viewChannelingSchedule.SpecialistId == -2 && viewChannelingSchedule.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
+                else if (viewChannelingSchedule.SpecialistId == -2 &&
+                         viewChannelingSchedule.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
                 {
-                    resultSet = new ChannelingScheduleService().GetAllChannelingScheduleByDateTimeWithStatus(viewChannelingSchedule.StartTime, viewChannelingSchedule.EndTime, viewChannelingSchedule.channellingScheduleStatus);
+                    resultSet = new ChannelingScheduleService().GetAllChannelingScheduleByDateTimeWithStatus(
+                        viewChannelingSchedule.StartTime, viewChannelingSchedule.EndTime,
+                        viewChannelingSchedule.channellingScheduleStatus);
                 }
 
                 // When the user select both the speciality and the status
-                else if (viewChannelingSchedule.SpecialistId != -2 && viewChannelingSchedule.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
+                else if (viewChannelingSchedule.SpecialistId != -2 &&
+                         viewChannelingSchedule.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
                 {
-                    resultSet = new ChannelingScheduleService().GetAllChannelingScheduleByDateTimeWithSpecialityAndStatus(viewChannelingSchedule.StartTime, viewChannelingSchedule.EndTime, viewChannelingSchedule.channellingScheduleStatus, viewChannelingSchedule.SpecialistId);
+                    resultSet =
+                        new ChannelingScheduleService().GetAllChannelingScheduleByDateTimeWithSpecialityAndStatus(
+                            viewChannelingSchedule.StartTime, viewChannelingSchedule.EndTime,
+                            viewChannelingSchedule.channellingScheduleStatus, viewChannelingSchedule.SpecialistId);
                 }
 
                 channelingSheduleDto.ChannelingScheduleList = resultSet;
@@ -122,7 +129,6 @@ namespace HospitalMgrSystemUI.Controllers
                 {
                     try
                     {
-
                         channelingSheduleDto.ChannelingSchedule = LoadChannelingSheduleByID(Id);
                         return PartialView("_PartialAddChannelingShedule", channelingSheduleDto);
                     }
@@ -131,13 +137,9 @@ namespace HospitalMgrSystemUI.Controllers
                         return RedirectToAction("Index");
                     }
                 }
-
             }
 
             return PartialView("_PartialAddChannelingShedule", channelingSheduleDto);
-
-
-
         }
 
         private List<Specialist> LoadSpecialists()
@@ -148,7 +150,9 @@ namespace HospitalMgrSystemUI.Controllers
                 return specialists;
             }
             catch (System.Exception ex)
-            { }
+            {
+            }
+
             return null;
         }
 
@@ -161,10 +165,12 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     consultants = new ConsultantService().GetAllConsultantByStatus();
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return consultants;
         }
 
@@ -178,10 +184,12 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     channelingSchedule = new ChannelingScheduleService().SheduleGetByStatus();
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return channelingSchedule;
         }
 
@@ -194,10 +202,12 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     channelingSchedule = new ChannelingScheduleService().SheduleGetById(id);
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return channelingSchedule;
         }
 
@@ -209,26 +219,34 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 try
                 {
-                    if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.NOT_ACTIVE && viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.ACTIVE)
+                    if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus !=
+                        ChannellingScheduleStatus.NOT_ACTIVE &&
+                        viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.ACTIVE)
                     {
                         ChannelingSMS channelingSMS = new ChannelingSMS();
 
-                        channelingSMS.channeling = new OPDService().GetAllOPDBySchedularID(viewChannelingSchedule.ChannelingSchedule.Id);
-                        channelingSMS.channelingSchedule = LoadChannelingSheduleByID(viewChannelingSchedule.ChannelingSchedule.Id);
-                        channelingSMS.ChannellingScheduleStatus = viewChannelingSchedule.ChannelingSchedule.scheduleStatus;
+                        channelingSMS.channeling =
+                            new OPDService().GetAllOPDBySchedularID(viewChannelingSchedule.ChannelingSchedule.Id);
+                        channelingSMS.channelingSchedule =
+                            LoadChannelingSheduleByID(viewChannelingSchedule.ChannelingSchedule.Id);
+                        channelingSMS.ChannellingScheduleStatus =
+                            viewChannelingSchedule.ChannelingSchedule.scheduleStatus;
 
                         // Add temp mobile number to last record
-                        channelingSMS.channeling[channelingSMS.channeling.Count - 1].patient.MobileNumber = "0702869830";
+                        channelingSMS.channeling[channelingSMS.channeling.Count - 1].patient.MobileNumber =
+                            "0702869830";
 
                         SMSService sMSService = new SMSService();
                         //await sMSService.SendSMSToken(channelingSMS);
-
                     }
 
-                    if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus == ChannellingScheduleStatus.SESSION_END)
+                    if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus ==
+                        ChannellingScheduleStatus.SESSION_END)
                     {
                         List<CashierSession> mtList = new List<CashierSession>();
-                        ChannelingSchedule channelingScheduleData = new ChannelingScheduleService().SheduleGetById(viewChannelingSchedule.ChannelingSchedule.Id);
+                        ChannelingSchedule channelingScheduleData =
+                            new ChannelingScheduleService().SheduleGetById(viewChannelingSchedule.ChannelingSchedule
+                                .Id);
                         mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
 
                         if (mtList.Count > 0)
@@ -250,7 +268,8 @@ namespace HospitalMgrSystemUI.Controllers
                             otherTransactions.BeneficiaryID = channelingScheduleData.ConsultantId;
                             otherTransactions.SchedularId = viewChannelingSchedule.ChannelingSchedule.Id;
 
-                            OtherTransactions savedOtherTransaction = new OtherTransactionsService().CreateOtherTransactions(otherTransactions);
+                            OtherTransactions savedOtherTransaction =
+                                new OtherTransactionsService().CreateOtherTransactions(otherTransactions);
 
                             Invoice invoice = new Invoice();
 
@@ -303,13 +322,13 @@ namespace HospitalMgrSystemUI.Controllers
                             payment.sessionID = mtList[0].Id;
 
                             Payment savedPayment = new CashierService().AddPayments(payment);
-                            
                         }
-
                     }
 
                     viewChannelingSchedule.ChannelingSchedule.Consultant = null;
-                    ChannelingSchedule channelingSchedule = new ChannelingScheduleService().CreateChannelingSchedule(viewChannelingSchedule.ChannelingSchedule);
+                    ChannelingSchedule channelingSchedule =
+                        new ChannelingScheduleService().CreateChannelingSchedule(viewChannelingSchedule
+                            .ChannelingSchedule);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
@@ -317,7 +336,6 @@ namespace HospitalMgrSystemUI.Controllers
                     return RedirectToAction("Index");
                 }
             }
-
         }
 
         private List<CashierSession> GetActiveCashierSession(int id)
@@ -329,10 +347,12 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     CashierSessionList = new CashierSessionService().GetACtiveCashierSessions(id);
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return CashierSessionList;
         }
 
@@ -341,10 +361,11 @@ namespace HospitalMgrSystemUI.Controllers
             ChannelingSchedule channelingSchedule = new ChannelingSchedule();
             using (var httpClient = new HttpClient())
             {
-
                 try
                 {
-                    channelingSchedule = new ChannelingScheduleService().CreateChannelingSchedule(viewChannelingSchedule.ChannelingSchedule);
+                    channelingSchedule =
+                        new ChannelingScheduleService().CreateChannelingSchedule(viewChannelingSchedule
+                            .ChannelingSchedule);
                     string APIUrl = _configuration.GetValue<string>("MainAPI:APIURL");
                     httpClient.BaseAddress = new Uri(APIUrl + "SheduleGetByConsultantIdandDate/");
                     var postObj = httpClient.PostAsJsonAsync<ChannelingSchedule>("DeleteDrug?", myChannelingShedule);
@@ -364,10 +385,10 @@ namespace HospitalMgrSystemUI.Controllers
             ChannelingSchedule channelingSchedule = new ChannelingSchedule();
             using (var httpClient = new HttpClient())
             {
-
                 try
                 {
-                    channelingSchedule = new ChannelingScheduleService().DeleteChannelingShedule(myChannelingShedule.Id);
+                    channelingSchedule =
+                        new ChannelingScheduleService().DeleteChannelingShedule(myChannelingShedule.Id);
                     //string APIUrl = _configuration.GetValue<string>("MainAPI:APIURL");
                     //httpClient.BaseAddress = new Uri(APIUrl + "ChannelingShedule/");
                     //var postObj = httpClient.PostAsJsonAsync<ChannelingSchedule>("DeleteChannelingShedule?", myChannelingShedule);
