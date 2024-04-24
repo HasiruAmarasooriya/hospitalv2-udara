@@ -42,6 +42,7 @@ public class ChannelingController : Controller
 
         return View(oPDDto);
     }
+
     public IActionResult FilterForm()
     {
         var channelingDto = new OPDDto()
@@ -62,39 +63,36 @@ public class ChannelingController : Controller
                 resultSet = new ChannelingService().GetAllChannelingByAllFilters(_OPDDto.StartTime, _OPDDto.EndTime,
                     _OPDDto.SpecialistId, _OPDDto.paymentStatus, _OPDDto.channellingScheduleStatus);
 
-            if(_OPDDto.channeling.ChannelingScheduleID != 0)
+            if (_OPDDto.channeling.ChannelingScheduleID != 0)
             {
                 resultSet = new ChannelingService().ChannelingGetBySheduleId(_OPDDto.channeling.ChannelingScheduleID);
             }
 
-            if(resultSet != null)
+            if (resultSet != null)
             {
-    
-            foreach (var item in resultSet)
-                oPDTbDto.Add(new OPDTbDto()
-                {
-                    Id = item.Id,
-                    roomName = item.room.Name,
-                    Description = item.Description,
-                    consaltantName = item.consultant.Name,
-                    FullName = item.patient.FullName,
-                    MobileNumber = item.patient.MobileNumber,
-                    DateTime = item.DateTime,
-                    Sex = (SexStatus)item.patient.Sex,
-                    Status = item.Status,
-                    AppoimentNo = item.AppoimentNo,
-                    paymentStatus = item.paymentStatus,
-                    schedularId = item.schedularId,
-                    specialistData = item.consultant.Specialist,
-                    consaltantId = item.ConsultantID,
-                    channelingScheduleData = item.channelingScheduleData
-                });
+                foreach (var item in resultSet)
+                    oPDTbDto.Add(new OPDTbDto()
+                    {
+                        Id = item.Id,
+                        roomName = item.room.Name,
+                        Description = item.Description,
+                        consaltantName = item.consultant.Name,
+                        FullName = item.patient.FullName,
+                        MobileNumber = item.patient.MobileNumber,
+                        DateTime = item.DateTime,
+                        Sex = (SexStatus)item.patient.Sex,
+                        Status = item.Status,
+                        AppoimentNo = item.AppoimentNo,
+                        paymentStatus = item.paymentStatus,
+                        schedularId = item.schedularId,
+                        specialistData = item.consultant.Specialist,
+                        consaltantId = item.ConsultantID,
+                        channelingScheduleData = item.channelingScheduleData
+                    });
 
                 channelingDto.listOPDTbDto = oPDTbDto;
                 channelingDto.listConsultants = new ConsultantService().GetAllConsultantThatHaveSchedulings();
                 return View("Index", channelingDto);
-
-
             }
             else
             {
@@ -722,6 +720,8 @@ public class ChannelingController : Controller
                     _OPDDto.sex = sex;
                     _OPDDto.phone = phone;
                     _OPDDto.TotalAmount = OPDobj.HospitalFee + OPDobj.ConsultantFee;
+                    _OPDDto.RoomNumber = OPDobj.RoomID;
+                    _OPDDto.ConsultantName = new ConsultantService().GetAllConsultantByID(OPDobj.ConsultantID).Name;
                 }
 
                 if (oPDDto.isVOGScan == 1)
@@ -984,13 +984,15 @@ public class ChannelingController : Controller
         opdDto.opd = new OPDService().GetAllOPDByID(Id);
         opdDto.opdId = Id;
 
-        var name = opdDto.opd.patient.FullName;
-        var age = opdDto.opd.patient.Age;
+        var name = opdDto.opd.patient?.FullName;
+        var age = opdDto.opd.patient!.Age;
         var months = opdDto.opd.patient.Months;
         var days = opdDto.opd.patient.Days;
         var phone = opdDto.opd.patient.MobileNumber;
         var sex = opdDto.opd.patient.Sex;
         var totalAmount = opdDto.opd.TotalAmount;
+        var consultant = new ConsultantService().GetAllConsultantByID(opdDto.opd.ConsultantID);
+        var roomNumber = opdDto.opd.RoomID;
 
         _OPDDto.opdId = Id;
         _OPDDto.name = name;
@@ -1000,6 +1002,8 @@ public class ChannelingController : Controller
         _OPDDto.sex = sex;
         _OPDDto.phone = phone;
         _OPDDto.TotalAmount = totalAmount;
+        _OPDDto.ConsultantName = consultant.Name;
+        _OPDDto.RoomNumber = roomNumber;
 
         return PartialView("_PartialQR", _OPDDto);
     }
