@@ -6,7 +6,6 @@ namespace HospitalMgrSystemUI.Models
 {
     public class OPDDto
     {
-
         public int opdId { get; set; }
 
         public int isPoP { get; set; }
@@ -15,14 +14,17 @@ namespace HospitalMgrSystemUI.Models
         public DateTime EndTime { get; set; }
         public int sessionType { get; set; }
         public int paidStatus { get; set; }
-        public string name { get; set; }
+        public string? name { get; set; }
         public int age { get; set; }
         public int months { get; set; }
         public int days { get; set; }
         public int sex { get; set; }
-        public string phone { get; set; }
+        public string? phone { get; set; }
         public int OpdType { get; set; }
         public decimal? TotalAmount { get; set; }
+        public string? ConsultantName { get; set; }
+        public int RoomNumber { get; set; }
+        public string? CreatedUserName { get; set; }
 
         public OPD? opd { get; set; }
         public Patient? patient { get; set; }
@@ -48,6 +50,7 @@ namespace HospitalMgrSystemUI.Models
         public List<OPDItem>? OPDItemList { get; set; }
 
         #region ChannelingSchema
+
         public int chID { get; set; }
         public List<Patient> PatientList { get; set; }
         public List<Channeling> ChannelingList { get; set; }
@@ -77,6 +80,7 @@ namespace HospitalMgrSystemUI.Models
         public Scan? vogScan { get; set; }
         public Scan? echoScan { get; set; }
         public Drug? exerciseBook { get; set; }
+
         #endregion
     }
 }
