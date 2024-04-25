@@ -3,8 +3,8 @@
 *@
 @model ChannelingSheduleDto
 @{
-
 }
+
 @section Styles {
     <style>
         .select2-selection__rendered {
@@ -20,11 +20,14 @@
         }
     </style>
 }
+
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
         <h3 class="text-themecolor m-b-0 m-t-0">Channeling Shedule Details</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0)">Home</a>
+            </li>
             <li class="breadcrumb-item active">Channeling Shedule Details</li>
         </ol>
     </div>
@@ -117,51 +120,57 @@
                 <div class="table-responsive">
                     <table id="basic-2" class="display">
                         <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Date</th>
-                                <th>Consultant Name</th>
-                                <th>Speciality</th>
-                                <th>Active Appointment</th>
-                                <th>Paid Appointment</th>
-                                <th>Refund Appointment</th>
-                                <th>Doctor Fee</th>
-                                <th>Hospital Fee</th>
-                                <th>Total Amount</th>
-                                <th>Status</th>
-                                <th>View</th>
-                                <th>Delete</th>
-                            </tr>
+                        <tr>
+                            <th>Id</th>
+                            <th>Date</th>
+                            <th>Consultant Name</th>
+                            <th>Speciality</th>
+                            <th>Room Number</th>
+                            <th>Active Appointment</th>
+                            <th>Paid Appointment</th>
+                            <th>Refund Appointment</th>
+                            <th>Doctor Fee</th>
+                            <th>Hospital Fee</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>View</th>
+                            <th>Delete</th>
+                        </tr>
                         </thead>
                         <tbody id="tblBodyPayments">
-                            @if (Model != null)
+                        @if (Model != null)
+                        {
+                            @foreach (var channelingShedule in Model.ChannelingScheduleList)
                             {
-                                @foreach (var channelingShedule in Model.ChannelingScheduleList)
-                                {
-                                    <tr>
-                                        <td>@channelingShedule.Id</td>
-                                        <td>@channelingShedule.DateTime</td>
-                                        <td>@channelingShedule.Consultant.Name</td>
-                                        <td>@channelingShedule.Consultant.Specialist.Name</td>
-                                        <td>@channelingShedule.booked / @channelingShedule.NoOfAppointment</td>
-                                        <td>@channelingShedule.paid</td>
-                                        <td>@channelingShedule.refund</td>
-                                        <td>@channelingShedule.ConsultantFee</td>
-                                        <td>@channelingShedule.HospitalFee</td>
-                                        <td>@channelingShedule.totalAmount</td>
-                                        <td>@channelingShedule.scheduleStatus</td>
-                                        <td>
-                                            <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@channelingShedule.Id);><i class='fa fa-eye'></i></button>  &nbsp;
-                                        </td>
-                                        <td>
-                                            @using (Html.BeginForm("DeleteChannelingShedule", "ChannelingShedule", new { Id = @channelingShedule.Id }, FormMethod.Post))
-                                            {
-                                                <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
-                                            }
-                                        </td>
-                                    </tr>
-                                }
+                                <tr>
+                                    <td>@channelingShedule.Id</td>
+                                    <td>@channelingShedule.DateTime</td>
+                                    <td>@channelingShedule.Consultant?.Name</td>
+                                    <td>@channelingShedule.Consultant?.Specialist.Name</td>
+                                    <td>@channelingShedule.Room?.Name</td>
+                                    <td>@channelingShedule.booked / @channelingShedule.NoOfAppointment</td>
+                                    <td>@channelingShedule.paid</td>
+                                    <td>@channelingShedule.refund</td>
+                                    <td>@channelingShedule.ConsultantFee</td>
+                                    <td>@channelingShedule.HospitalFee</td>
+                                    <td>@channelingShedule.totalAmount</td>
+                                    <td>@channelingShedule.scheduleStatus</td>
+                                    <td>
+                                        <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@channelingShedule.Id);>
+                                            <i class='fa fa-eye'></i>
+                                        </button> &nbsp;
+                                    </td>
+                                    <td>
+                                        @using (Html.BeginForm("DeleteChannelingShedule", "ChannelingShedule", new { Id = @channelingShedule.Id }, FormMethod.Post))
+                                        {
+                                            <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>
+                                                <i class='fa fa-trash'></i>
+                                            </button>
+                                        }
+                                    </td>
+                                </tr>
                             }
+                        }
                         </tbody>
                     </table>
                 </div>
