@@ -15,51 +15,41 @@ namespace HospitalMgrSystem.Model
         public DateTime DateTime { get; set; }
         public int ConsultantId { get; set; }
 
-        [ForeignKey("ConsultantId")]
-        public Consultant? Consultant { get; set; }
+        [ForeignKey("ConsultantId")] public Consultant? Consultant { get; set; }
+
+        public int? RoomId { get; set; }
+
+        [ForeignKey("RoomId")] public Room? Room { get; set; }
         public decimal ConsultantFee { get; set; }
         public decimal HospitalFee { get; set; }
         public decimal OtherFee { get; set; }
         public CommonStatus Status { get; set; }
         public ChannellingScheduleStatus scheduleStatus { get; set; }
 
-        [NotMapped]
-        public decimal totalAmount { get; set; }
+        [NotMapped] public decimal totalAmount { get; set; }
 
-        [NotMapped]
-        public int booked { get; set; }
+        [NotMapped] public int booked { get; set; }
 
-        [NotMapped]
-        public int paid { get; set; }
+        [NotMapped] public int paid { get; set; }
 
-        [NotMapped]
-        public int refund { get; set; }
+        [NotMapped] public int refund { get; set; }
 
-        [NotMapped]
-        public int patientCount { get; set; }
+        [NotMapped] public int patientCount { get; set; }
 
-        [NotMapped]
-        public int refundPatientCount { get; set; }
+        [NotMapped] public int refundPatientCount { get; set; }
 
-        [NotMapped]
-        public decimal actualPatientCount { get; set; }
+        [NotMapped] public decimal actualPatientCount { get; set; }
 
-        [NotMapped]
-        public int totalRefundDoctorFeeCount { get; set; }
+        [NotMapped] public int totalRefundDoctorFeeCount { get; set; }
 
-        [NotMapped]
-        public int totalRefundHospitalFeeCount { get; set; }
+        [NotMapped] public int totalRefundHospitalFeeCount { get; set; }
 
-        [NotMapped]
-        public decimal totalRefundDoctorFeeAmount { get; set; }
+        [NotMapped] public decimal totalRefundDoctorFeeAmount { get; set; }
 
-        [NotMapped]
-        public decimal totalRefundHospitalFeeAmount { get; set; }
+        [NotMapped] public decimal totalRefundHospitalFeeAmount { get; set; }
 
-        [NotMapped]
-        public decimal totalHospitalFeeAmount { get; set; }
+        [NotMapped] public decimal totalHospitalFeeAmount { get; set; }
 
-        [NotMapped]
-        public decimal totalDoctorFeeAmount { get; set; }
+        [NotMapped] public decimal totalDoctorFeeAmount { get; set; }
     }
 }
