@@ -8,6 +8,7 @@ namespace HospitalMgrSystemUI.Models
     {
         public List<Specialist> Specialists { get; set; }
         public List<Consultant> Consultants { get; set; }
+        public List<Room> Rooms { get; set; }
         public ChannelingSchedule ChannelingSchedule { get; set; }
         public List<ChannelingSchedule> ChannelingScheduleList { get; set; }
         public string ConsultantName { get; set; }
