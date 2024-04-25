@@ -445,6 +445,9 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.Property<decimal>("OtherFee")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -454,6 +457,8 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ConsultantId");
+
+                    b.HasIndex("RoomId");
 
                     b.ToTable("ChannelingSchedule");
                 });
@@ -1985,7 +1990,13 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("HospitalMgrSystem.Model.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId");
+
                     b.Navigation("Consultant");
+
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("HospitalMgrSystem.Model.ClaimBill", b =>
