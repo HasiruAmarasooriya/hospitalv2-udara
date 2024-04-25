@@ -17,6 +17,7 @@ using HospitalMgrSystem.Model.Enums;
 using HospitalMgrSystem.Service.CashierSession;
 using HospitalMgrSystem.Service.OtherTransactions;
 using HospitalMgrSystem.Service.Cashier;
+using HospitalMgrSystem.Service.Room;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -123,6 +124,8 @@ namespace HospitalMgrSystemUI.Controllers
             ChannelingSheduleDto channelingSheduleDto = new ChannelingSheduleDto();
             channelingSheduleDto.Specialists = LoadSpecialists();
             channelingSheduleDto.Consultants = LoadConsultants();
+            channelingSheduleDto.Rooms = LoadRooms();
+
             if (Id > 0)
             {
                 using (var httpClient = new HttpClient())
@@ -172,6 +175,23 @@ namespace HospitalMgrSystemUI.Controllers
             }
 
             return consultants;
+        }
+
+        private List<Room> LoadRooms()
+        {
+            var rooms = new List<Room>();
+
+            using var httpClient = new HttpClient();
+            try
+            {
+                rooms = new RoomService().GetRooms();
+            }
+            catch (Exception ex)
+            {
+                // ignored
+            }
+
+            return rooms;
         }
 
 
