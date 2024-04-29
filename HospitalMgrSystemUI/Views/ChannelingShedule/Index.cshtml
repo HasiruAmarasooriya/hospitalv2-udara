@@ -235,8 +235,12 @@
             $('#date-format').bootstrapMaterialDatePicker({
                 time: true,
                 format: "YYYY-MM-DD HH:mm"
-
             });
+            
+            /*$('#previous-date-format').bootstrapMaterialDatePicker({
+                time: true,
+                format: "YYYY-MM-DD HH:mm"
+            });*/
 
         });
 
@@ -245,9 +249,12 @@
             $('#date-format').bootstrapMaterialDatePicker({
                 time: true,
                 format: "YYYY-MM-DD hh:mm"
-
             });
-
+            
+            /*$('#previous-date-format').bootstrapMaterialDatePicker({
+                time: true,
+                format: "YYYY-MM-DD hh:mm"
+            });*/
         });
 
         $('body').on('focus', "#date-format-start", function () {
@@ -255,7 +262,6 @@
             $('#date-format-start').bootstrapMaterialDatePicker({
                 time: false,
                 format: "YYYY-MM-DD"
-
             });
 
         });
@@ -264,7 +270,6 @@
             $('#date-format-end').bootstrapMaterialDatePicker({
                 time: false,
                 format: "YYYY-MM-DD"
-
             });
 
         });
