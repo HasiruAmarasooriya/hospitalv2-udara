@@ -82,14 +82,14 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="companyName">Consultant Fee:</label>
-                        <input class="form-control " type="text" style="text-align:right;" asp-for="ChannelingSchedule.ConsultantFee" id="DoctorFee" placeholder="Amount" disabled="@(Model.ChannelingSchedule != null)" />
+                        <input class="form-control " type="text" style="text-align:right;" asp-for="ChannelingSchedule.ConsultantFee" id="DoctorFee" placeholder="Amount" disabled="@(Model.ChannelingSchedule != null)"/>
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="companyName">Hospital Fee:</label>
-                        <input class="form-control " type="text" style="text-align:right;" asp-for="ChannelingSchedule.HospitalFee" placeholder="Amount" disabled="@(Model.ChannelingSchedule != null)" />
+                        <input class="form-control " type="text" style="text-align:right;" asp-for="ChannelingSchedule.HospitalFee" placeholder="Amount" disabled="@(Model.ChannelingSchedule != null)"/>
                     </div>
 
                 </div>
@@ -99,7 +99,8 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="companyName">Channeling Date</label>
-                        <input type="text" id="date-format" asp-format="{0:dd.MM.yyyy HH:mm}" asp-for="ChannelingSchedule.DateTime" class="form-control" placeholder="Saturday 24 June 2017 - 21:44" disabled="@(Model.ChannelingSchedule != null)">
+                        <input type="text" id="previous-date-format" asp-format="{0:dd.MM.yyyy HH:mm}" asp-for="PreviousDateTime" class="form-control" hidden>
+                        <input type="text" id="date-format" asp-format="{0:dd.MM.yyyy HH:mm}" asp-for="ChannelingSchedule.DateTime" class="form-control" placeholder="Saturday 24 June 2017 - 21:44">
                     </div>
                 </div>
             </div>
@@ -107,8 +108,20 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
+                        <label for="companyName">Room Number</label>
+                        <select class="form-control ddlSearchList" asp-for="ChannelingSchedule.RoomId" id="rooms">
+                            <option value="0">Select Room</option>
+                            @foreach (var item in Model.Rooms)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
                         <label for="companyName">No of Appoinment</label>
-                        <input class="form-control " type="text" asp-for="ChannelingSchedule.NoOfAppointment" placeholder="NO Of Appoinment" />
+                        <input class="form-control " type="text" asp-for="ChannelingSchedule.NoOfAppointment" placeholder="NO Of Appoinment"/>
                     </div>
                 </div>
 
@@ -130,33 +143,33 @@
 
             @if (Model.ChannelingSchedule != null)
             {
-                <hr />
+                <hr/>
                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="companyName">No of Registered Patients</label>
-                            <input class="form-control " type="text" asp-for="ChannelingSchedule.patientCount" placeholder="NO Of Appoinment" />
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.patientCount" placeholder="NO Of Appoinment"/>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="companyName">No of Actual Registered Patients</label>
-                            <input class="form-control " type="text" asp-for="ChannelingSchedule.actualPatientCount" placeholder="NO Of Appoinment" />
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.actualPatientCount" placeholder="NO Of Appoinment"/>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="companyName">Total Refund Doctor Fee Count</label>
-                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalRefundDoctorFeeCount" placeholder="NO Of Appoinment" />
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalRefundDoctorFeeCount" placeholder="NO Of Appoinment"/>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="companyName">Total Refund Hospital Fee Count</label>
-                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalRefundHospitalFeeCount" placeholder="NO Of Appoinment" />
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalRefundHospitalFeeCount" placeholder="NO Of Appoinment"/>
                         </div>
                     </div>
                 </div>
@@ -165,7 +178,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="companyName">Total Refund Doctor Fee Amount</label>
-                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalRefundDoctorFeeAmount" placeholder="NO Of Appoinment" />
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalRefundDoctorFeeAmount" placeholder="NO Of Appoinment"/>
                         </div>
                     </div>
 
@@ -173,21 +186,21 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="companyName">Total Refund Hospital Fee Amount</label>
-                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalRefundHospitalFeeAmount" placeholder="NO Of Appoinment" />
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalRefundHospitalFeeAmount" placeholder="NO Of Appoinment"/>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="companyName">Total Doctor Fee Amount</label>
-                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalDoctorFeeAmount" placeholder="NO Of Appoinment" />
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalDoctorFeeAmount" placeholder="NO Of Appoinment"/>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="companyName">Total Hospital Fee Amount</label>
-                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalHospitalFeeAmount" placeholder="NO Of Appoinment" />
+                            <input class="form-control " type="text" asp-for="ChannelingSchedule.totalHospitalFeeAmount" placeholder="NO Of Appoinment"/>
                         </div>
                     </div>
                 </div>
@@ -201,4 +214,3 @@
         </div>
     </form>
 </div>
-

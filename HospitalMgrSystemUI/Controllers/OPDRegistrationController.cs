@@ -19,24 +19,20 @@ using HospitalMgrSystem.Model.Enums;
 using HospitalMgrSystem.Service.CashierSession;
 using HospitalMgrSystem.Service.NightShiftSession;
 using System.ComponentModel.DataAnnotations.Schema;
+using HospitalMgrSystem.Service.User;
 
 namespace HospitalMgrSystemUI.Controllers
 {
     public class OPDRegistrationController : Controller
     {
-        [BindProperty]
-        public Patient myPatient { get; set; }
+        [BindProperty] public Patient myPatient { get; set; }
 
-        [BindProperty]
-        public OPDDto _OPDDto { get; set; }
+        [BindProperty] public OPDDto _OPDDto { get; set; }
 
-        [BindProperty]
-        public OPD myOPD { get; set; }
-        [BindProperty]
-        public string SearchValue { get; set; }
+        [BindProperty] public OPD myOPD { get; set; }
+        [BindProperty] public string SearchValue { get; set; }
 
-        [BindProperty]
-        public int opdId { get; set; }
+        [BindProperty] public int opdId { get; set; }
 
         #region Shift Management
 
@@ -47,23 +43,21 @@ namespace HospitalMgrSystemUI.Controllers
             int userId = Convert.ToInt32(userIdCookie);
             NightShiftSessionList = GetActiveShiftSession();
 
- 
+
             if (NightShiftSessionList.Count > 0)
             {
                 //if opd user already has OPD session (Day or night)
                 foreach (NightShiftSession item in NightShiftSessionList)
                 {
+                    item.shiftSessionStatus = ShiftSessionStatus.END;
+                    item.EndTime = DateTime.Now;
+                    item.ModifiedDate = DateTime.Now;
+                    item.ModifiedUser = userId;
+                    //mark as current shit over
+                    new NightShiftSessionService().CreateNightShiftSession(item);
 
-                        item.shiftSessionStatus = ShiftSessionStatus.END;
-                        item.EndTime = DateTime.Now;
-                        item.ModifiedDate = DateTime.Now;
-                        item.ModifiedUser = userId;
-                        //mark as current shit over
-                        new NightShiftSessionService().CreateNightShiftSession(item);
-
-                    if (item.userID == userId) {
-
-
+                    if (item.userID == userId)
+                    {
                         // then create new session
                         if (item.shift == Shift.NIGHT_SHIFT)
                         {
@@ -99,15 +93,13 @@ namespace HospitalMgrSystemUI.Controllers
                                     newCashierSession.cashierSessionStatus = CashierSessionStatus.END;
                                     newCashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
                                     newCashierSession.ModifiedDate = DateTime.Now;
-                                    newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
+                                    newCashierSession =
+                                        new CashierSessionService().CreateCashierSession(newCashierSession);
                                 }
-
-
                             }
                         }
                         else
                         {
-
                             NightShiftSession nightShiftSession = new NightShiftSession();
 
                             nightShiftSession.userID = userId;
@@ -128,7 +120,6 @@ namespace HospitalMgrSystemUI.Controllers
                             mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
                             if (mtList.Count == 0)
                             {
-
                                 newCashierSession.userID = Convert.ToInt32(userIdCookie);
                                 newCashierSession.StartingTime = DateTime.Now;
                                 newCashierSession.StartBalence = 0;
@@ -141,19 +132,10 @@ namespace HospitalMgrSystemUI.Controllers
                                 newCashierSession.ModifiedDate = DateTime.Now;
                                 newCashierSession.UserRole = UserRole.OPDNURSE;
                                 newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
-
                             }
-
-
-
                         }
-
-
                     }
-
                 }
-
-
             }
             //else
             //{
@@ -245,6 +227,7 @@ namespace HospitalMgrSystemUI.Controllers
 
             return RedirectToAction("Index");
         }
+
         public void CreateFirstShift()
         {
             List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
@@ -253,17 +236,16 @@ namespace HospitalMgrSystemUI.Controllers
             bool session = new NightShiftSessionService().checkIsNightShift();
             if (session)
             {
-                NightShiftSessionList = GetACtiveNtShiftSessionsByUserID(userId,Shift.NIGHT_SHIFT);
+                NightShiftSessionList = GetACtiveNtShiftSessionsByUserID(userId, Shift.NIGHT_SHIFT);
             }
             else
             {
-                NightShiftSessionList = GetACtiveNtShiftSessionsByUserID(userId,Shift.DAY_SHIFT);
+                NightShiftSessionList = GetACtiveNtShiftSessionsByUserID(userId, Shift.DAY_SHIFT);
             }
-         
+
 
             if (NightShiftSessionList.Count == 0)
             {
-               
                 if (!session)
                 {
                     // if Day shift 
@@ -282,11 +264,9 @@ namespace HospitalMgrSystemUI.Controllers
 
                     //create day shift
                     new NightShiftSessionService().CreateNightShiftSession(nightShiftSession);
-
                 }
                 else
                 {
-
                     NightShiftSession nightShiftSession = new NightShiftSession();
 
                     nightShiftSession.userID = userId;
@@ -307,7 +287,6 @@ namespace HospitalMgrSystemUI.Controllers
                     mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
                     if (mtList.Count == 0)
                     {
-
                         newCashierSession.userID = Convert.ToInt32(userIdCookie);
                         newCashierSession.StartingTime = DateTime.Now;
                         newCashierSession.StartBalence = 0;
@@ -320,17 +299,15 @@ namespace HospitalMgrSystemUI.Controllers
                         newCashierSession.ModifiedDate = DateTime.Now;
                         newCashierSession.UserRole = UserRole.OPDNURSE;
                         newCashierSession = new CashierSessionService().CreateCashierSession(newCashierSession);
-
                     }
                 }
-
             }
-
-
         }
+
         #endregion
 
-        #region OPD Management 
+        #region OPD Management
+
         public IActionResult Index(int isPop)
         {
             CreateFirstShift();
@@ -356,7 +333,8 @@ namespace HospitalMgrSystemUI.Controllers
                 {
                     OPDDto oPDDto = new OPDDto();
                     List<OPDTbDto> oPDTbDto = new List<OPDTbDto>();
-                    var result = new OPDService().GetAllOPDByAndDateRangePaidStatus(_OPDDto.StartTime, _OPDDto.EndTime, (PaymentStatus)_OPDDto.paidStatus);
+                    var result = new OPDService().GetAllOPDByAndDateRangePaidStatus(_OPDDto.StartTime, _OPDDto.EndTime,
+                        (PaymentStatus)_OPDDto.paidStatus);
 
                     foreach (var item in result)
                     {
@@ -372,12 +350,11 @@ namespace HospitalMgrSystemUI.Controllers
                             Status = item.Status,
                             TotalAmount = item.TotalAmount,
                             paymentStatus = item.paymentStatus
-
                         });
                     }
+
                     oPDDto.listOPDTbDto = oPDTbDto;
                     return View("Index", oPDDto);
-
                 }
                 catch (Exception ex)
                 {
@@ -405,6 +382,7 @@ namespace HospitalMgrSystemUI.Controllers
                         Status = item.Status
                     });
                 }
+
                 oPDDto.listOPDTbDto = oPDTbDto;
                 return View("Index", oPDDto);
             }
@@ -416,8 +394,6 @@ namespace HospitalMgrSystemUI.Controllers
 
         public ActionResult CreateOPDReg(int Id)
         {
-
-
             OPDDto oPDDto = new OPDDto();
             oPDDto.consultantList = LoadActiveConsultants();
             oPDDto.patientsList = LoadPatients();
@@ -434,7 +410,6 @@ namespace HospitalMgrSystemUI.Controllers
                 {
                     try
                     {
-
                         oPDDto.opd = new OPDService().GetAllOPDByID(Id);
                         oPDDto.OPDDrugusList = GetOPDDrugus(Id);
                         oPDDto.opdId = Id;
@@ -445,14 +420,12 @@ namespace HospitalMgrSystemUI.Controllers
                         return RedirectToAction("Index");
                     }
                 }
-
             }
             else
             {
                 oPDDto.opd = opdObject;
                 return PartialView("_PartialAddOPDRegistration", oPDDto);
             }
-
         }
 
         //Create user modify user details should be include
@@ -469,7 +442,6 @@ namespace HospitalMgrSystemUI.Controllers
                 patient = CreatePatient(oPDDto.patient);
                 if (patient != null)
                 {
-
                     decimal hospitalFee = new DefaultService().GetDefailtHospitalPrice();
                     OPD OPDobj = new OPD();
                     oPDDto.opd.PatientID = patient.Id;
@@ -494,7 +466,7 @@ namespace HospitalMgrSystemUI.Controllers
                     {
                         List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
                         NightShiftSessionList = GetActiveShiftSession();
-                        if(NightShiftSessionList.Count > 0)
+                        if (NightShiftSessionList.Count > 0)
                         {
                             oPDDto.opd.shiftID = NightShiftSessionList[0].Id;
                             if (NightShiftSessionList[0].shift == Shift.NIGHT_SHIFT)
@@ -502,6 +474,7 @@ namespace HospitalMgrSystemUI.Controllers
                                 oPDDto.opd.isOnOPD = 1;
                             }
                         }
+
                         OPDobj = new OPDService().CreateOPD(oPDDto.opd);
                     }
 
@@ -516,7 +489,6 @@ namespace HospitalMgrSystemUI.Controllers
                             new OPDService().CreateOPDDrugus(drugusItem);
                         }
                     }
-
                 }
 
                 return RedirectToAction("Index");
@@ -581,13 +553,12 @@ namespace HospitalMgrSystemUI.Controllers
                                 oPDDto.opd.isOnOPD = 1;
                             }
                         }
+
                         OPDobj = new OPDService().CreateOPD(oPDDto.opd);
                     }
 
                     if (OPDobj != null)
                     {
-                        
-
                         foreach (var drugusItem in oPDDto.OPDDrugusList)
                         {
                             drugusItem.opdId = OPDobj.Id;
@@ -600,15 +571,17 @@ namespace HospitalMgrSystemUI.Controllers
                         OPD opdDataForQr = new OPDService().GetAllOPDByID(OPDobj.Id);
 
                         _OPDDto.opdId = OPDobj.Id;
-                        _OPDDto.name = opdDataForQr.patient.FullName;
+                        _OPDDto.name = opdDataForQr.patient?.FullName;
                         _OPDDto.age = opdDataForQr.patient.Age;
                         _OPDDto.months = opdDataForQr.patient.Months;
                         _OPDDto.days = opdDataForQr.patient.Days;
                         _OPDDto.sex = opdDataForQr.patient.Sex;
                         _OPDDto.phone = opdDataForQr.patient.MobileNumber;
                         _OPDDto.TotalAmount = opdDataForQr.TotalAmount;
+                        _OPDDto.CreatedUserName = new UserService().GetUserByID(opdDataForQr.CreatedUser).FullName;
                     }
                 }
+
                 return PartialView("_PartialQR", _OPDDto);
                 // return View("Index", _OPDDto);
             }
@@ -631,6 +604,7 @@ namespace HospitalMgrSystemUI.Controllers
                 return RedirectToAction("Index");
             }
         }
+
         public IActionResult searchPateint(string SearchValue)
         {
             OPDDto oPDDto = new OPDDto();
@@ -642,9 +616,9 @@ namespace HospitalMgrSystemUI.Controllers
                 }
                 catch (Exception ex)
                 {
-
                 }
             }
+
             return View("Index", oPDDto);
         }
 
@@ -657,10 +631,12 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     consultants = new ConsultantService().GetAllConsultantByStatus();
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return consultants;
         }
 
@@ -685,14 +661,15 @@ namespace HospitalMgrSystemUI.Controllers
                                 {
                                     consultants.Add(opdScheduler.Consultant);
                                 }
-
                             }
                         }
                     }
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return consultants;
         }
 
@@ -705,12 +682,15 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     patients = new PatientService().GetAllPatientByStatus();
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return patients;
         }
+
         private List<OPDTbDto> LoadOPD()
         {
             List<OPD> opd = new List<OPD>();
@@ -737,16 +717,15 @@ namespace HospitalMgrSystemUI.Controllers
                             paymentStatus = item.paymentStatus
                         });
                     }
-
                 }
                 catch (Exception ex)
                 {
                     return null;
                 }
             }
+
             return oPDTbDto;
         }
-
 
 
         public Patient CreatePatient(Patient patientObj)
@@ -768,8 +747,8 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 return null;
             }
-
         }
+
         private Patient LoadPatientByID(int id)
         {
             Patient patient = new Patient();
@@ -779,16 +758,18 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     patient = new PatientService().GetAllPatientByID(id);
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return patient;
         }
+
         #endregion
 
-        #region Drugs  Management 
-
+        #region Drugs  Management
 
         public List<Drug> DrugsSearch()
         {
@@ -797,12 +778,13 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 try
                 {
-
                     drugs = new DrugsService().GetAllDrugsByStatus();
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return drugs;
         }
 
@@ -815,10 +797,12 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     oPDDrugus = new OPDService().GetOPDDrugus(id);
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return oPDDrugus;
         }
 
@@ -826,7 +810,6 @@ namespace HospitalMgrSystemUI.Controllers
         {
             using (var httpClient = new HttpClient())
             {
-
                 try
                 {
                     new OPDService().DeleteOPDDrugus(Id);
@@ -838,6 +821,7 @@ namespace HospitalMgrSystemUI.Controllers
                 }
             }
         }
+
         #endregion
 
 
@@ -851,8 +835,6 @@ namespace HospitalMgrSystemUI.Controllers
 
         private IActionResult print()
         {
-
-
             using (var httpClient = new HttpClient())
             {
                 try
@@ -866,7 +848,6 @@ namespace HospitalMgrSystemUI.Controllers
                     return RedirectToAction("Index");
                 }
             }
-
         }
 
         public ActionResult OpenQR(int Id)
@@ -882,6 +863,7 @@ namespace HospitalMgrSystemUI.Controllers
             var phone = opdDto.opd.patient.MobileNumber;
             var sex = opdDto.opd.patient.Sex;
             var totalAmount = opdDto.opd.TotalAmount;
+            var createdUser = new UserService().GetUserByID(opdDto.opd.ModifiedUser).FullName;
 
             _OPDDto.opdId = Id;
             _OPDDto.name = name;
@@ -891,6 +873,7 @@ namespace HospitalMgrSystemUI.Controllers
             _OPDDto.sex = sex;
             _OPDDto.phone = phone;
             _OPDDto.TotalAmount = totalAmount;
+            _OPDDto.CreatedUserName = createdUser;
 
             return PartialView("_PartialQR", _OPDDto);
         }
@@ -905,14 +888,16 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     NightShiftSessionList = new NightShiftSessionService().GetACtiveNtShiftSessions();
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return NightShiftSessionList;
         }
 
-        private List<NightShiftSession> GetACtiveNtShiftSessionsByUserID(int id , Shift shift)
+        private List<NightShiftSession> GetACtiveNtShiftSessionsByUserID(int id, Shift shift)
         {
             List<NightShiftSession> NightShiftSessionList = new List<NightShiftSession>();
 
@@ -921,10 +906,12 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     NightShiftSessionList = new NightShiftSessionService().GetACtiveNtShiftSessionsByUserID(id, shift);
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return NightShiftSessionList;
         }
 
@@ -937,10 +924,12 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     CashierSessionList = new CashierSessionService().GetACtiveCashierSessions(id);
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return CashierSessionList;
         }
 
@@ -954,13 +943,13 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     CashierSessionList = new CashierSessionService().GetAllNightsiftActiveCashierSession();
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return CashierSessionList;
         }
-
-
     }
 }

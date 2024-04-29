@@ -435,7 +435,7 @@
                                     @if (item.price != 0)
                                     {
                                         cashierBillingItemDtoListTotal += item.amount;
-                                        
+
                                         <tr>
                                             <td>@item.billingItemName (@item.billingItemsTypeName)</td>
                                             <td>@item.price</td>
@@ -488,21 +488,21 @@
                                         </tr>
                                     }
                                 }
-                            
-                            @if (Model.cashierBilledItemDtoList.Count > 0)
-                            {
-                                <tr class="font-weight-bold">
-                                    <td>Total</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>@cashierBilledItemDtoListTotal</td>
-                                    <td></td>
-                                </tr>
-                            }
+
+                                @if (Model.cashierBilledItemDtoList.Count > 0)
+                                {
+                                    <tr class="font-weight-bold">
+                                        <td>Total</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>@cashierBilledItemDtoListTotal</td>
+                                        <td></td>
+                                    </tr>
+                                }
 
 
-                            </tbody>
+                                </tbody>
 
 
                             </table>
@@ -726,6 +726,12 @@
                             <td>CUSTOMER NAME</td>
                             <td>
                                 <input class="form-control " type="text" asp-for="customerName" id="customerNameID" placeholder=""/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CONSULTANT NAME</td>
+                            <td>
+                                <input class="form-control " type="text" asp-for="consaltantName" id="consultantName" disabled/>
                             </td>
                         </tr>
                         <tr>

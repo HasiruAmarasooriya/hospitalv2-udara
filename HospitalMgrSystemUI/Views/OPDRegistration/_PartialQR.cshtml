@@ -10,14 +10,16 @@
 <script type="text/javascript">
 
 
-    var opdId = @Html.Raw(Json.Serialize(Model.opdId));
-    var fullName = @Html.Raw(Json.Serialize(Model.name));
-    var age = @Html.Raw(Json.Serialize(Model.age));
-    var months = @Html.Raw(Json.Serialize(Model.months));
-    var days = @Html.Raw(Json.Serialize(Model.days));
-    var sex = @Html.Raw(Json.Serialize(Model.sex == 1 ? "Male" : Model.sex == 2 ? "Female" : "None"));
-    var telephoneNumber = @Html.Raw(Json.Serialize(Model.phone));
-    var totalAmount = @Html.Raw(Json.Serialize(Model.TotalAmount));
+    const opdId = @Html.Raw(Json.Serialize(Model.opdId));
+    const fullName = @Html.Raw(Json.Serialize(Model.name));
+    const age = @Html.Raw(Json.Serialize(Model.age));
+    const months = @Html.Raw(Json.Serialize(Model.months));
+    const days = @Html.Raw(Json.Serialize(Model.days));
+    const sex = @Html.Raw(Json.Serialize(Model.sex == 1 ? "Male" : Model.sex == 2 ? "Female" : "None"));
+    const telephoneNumber = @Html.Raw(Json.Serialize(Model.phone));
+    const totalAmount = @Html.Raw(Json.Serialize(Model.TotalAmount));
+    const createdUser = @Html.Raw(Json.Serialize(Model.CreatedUserName));
+    
 
     function generateQRCode(size) {
         console.log("generate QR");
@@ -50,13 +52,14 @@
         printWindow.document.write('<div style="text-align: center;">');
         printWindow.document.write('<table style="margin: auto;">');
         printWindow.document.write('<tr><td>OPD:</td><td>' + opdId + '</td></tr>');
+        printWindow.document.write('<tr><td>OPD Nurse:</td><td>' + createdUser + '</td></tr>');
         printWindow.document.write('<tr><td>Name:</td><td>' + fullName + '</td></tr>');
         printWindow.document.write('<tr><td>Age:</td><td> Years - ' + age + ' / Months - ' + months +' / Days - ' + days +  '</td></tr>');
         // printWindow.document.write('<tr><td>Months:</td><td>' + months + '</td></tr>');
         // printWindow.document.write('<tr><td>Days:</td><td>' + days + '</td></tr>');
         printWindow.document.write('<tr><td>Sex:</td><td>' + sex + '</td></tr>');
         printWindow.document.write('<tr><td>Telephone:</td><td>' + telephoneNumber + '</td></tr>');
-        printWindow.document.write('<tr><td>Total Amount: Rs.</td><td>' + totalAmount + '</td></tr>');
+        printWindow.document.write('<tr><td>Total Amount:</td><td>Rs. ' + totalAmount + '</td></tr>');
         printWindow.document.write('</table>');
         printWindow.document.write('</div>');
 
