@@ -14,6 +14,7 @@ namespace HospitalMgrSystemUI.Models
         public string ConsultantName { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public DateTime PreviousDateTime { get; set; }
         public int SpecialistId { get; set; }
         public ChannellingScheduleStatus channellingScheduleStatus { get; set; }
     }
