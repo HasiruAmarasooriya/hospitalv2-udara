@@ -239,9 +239,7 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 try
                 {
-                    if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus !=
-                        ChannellingScheduleStatus.NOT_ACTIVE &&
-                        viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.ACTIVE)
+                    if (viewChannelingSchedule.PreviousDateTime != viewChannelingSchedule.ChannelingSchedule.DateTime)
                     {
                         ChannelingSMS channelingSMS = new ChannelingSMS();
 
@@ -257,7 +255,28 @@ namespace HospitalMgrSystemUI.Controllers
                             "0702869830";
 
                         SMSService sMSService = new SMSService();
-                        //await sMSService.SendSMSToken(channelingSMS);
+                        // await sMSService.SendSMSToken(channelingSMS);
+                    }
+                    else if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus !=
+                             ChannellingScheduleStatus.NOT_ACTIVE &&
+                             viewChannelingSchedule.ChannelingSchedule.scheduleStatus !=
+                             ChannellingScheduleStatus.ACTIVE)
+                    {
+                        ChannelingSMS channelingSMS = new ChannelingSMS();
+
+                        channelingSMS.channeling =
+                            new OPDService().GetAllOPDBySchedularID(viewChannelingSchedule.ChannelingSchedule.Id);
+                        channelingSMS.channelingSchedule =
+                            LoadChannelingSheduleByID(viewChannelingSchedule.ChannelingSchedule.Id);
+                        channelingSMS.ChannellingScheduleStatus =
+                            viewChannelingSchedule.ChannelingSchedule.scheduleStatus;
+
+                        // Add temp mobile number to last record
+                        channelingSMS.channeling[channelingSMS.channeling.Count - 1].patient.MobileNumber =
+                            "0702869830";
+
+                        SMSService sMSService = new SMSService();
+                        // await sMSService.SendSMSToken(channelingSMS);
                     }
 
                     if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus ==
