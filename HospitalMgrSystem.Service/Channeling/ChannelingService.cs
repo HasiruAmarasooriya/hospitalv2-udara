@@ -288,7 +288,51 @@ namespace HospitalMgrSystem.Service.Channeling
 
                 for (int i = 0; i < mtList.Count; i++)
                 {
+                    int refundItem = 0;
                     mtList[i].channelingScheduleData = schedularIdList.Where(o => o.Id == mtList[i].schedularId).SingleOrDefault();
+                    if(mtList[i].paymentStatus == PaymentStatus.PAID)
+                    {
+                        //get invoice by opd id
+                        Invoice invoiceObj = new Invoice();
+                        invoiceObj = GetInvoiceByServiceIDAndInvoiceType(mtList[i].Id, InvoiceType.CHE);
+                        //get invoice item by invoice id
+                        List<Model.InvoiceItem> mtListInvoiceItem = new List<Model.InvoiceItem>();
+                        mtListInvoiceItem = GetInvoiceItemByInvoicedID(invoiceObj.Id);
+                        //check invoice item refund or not
+                        if (mtListInvoiceItem != null && mtListInvoiceItem.Count > 0)
+                        {
+                            for (int y = 0; y < mtListInvoiceItem.Count; y++)
+                            {
+                                if (mtListInvoiceItem[y].itemInvoiceStatus == ItemInvoiceStatus.Remove)
+                                {
+                                    refundItem = 1;
+                                    if (y == 0)
+                                    {
+                                        mtList[i].refundedItem = mtList[i].refundedItem + "(" + mtListInvoiceItem[y].billingItemsType.ToString();
+                                    }
+                                    else
+                                    {
+                                        if(y == mtListInvoiceItem.Count - 1)
+                                        {
+                                            mtList[i].refundedItem = mtList[i].refundedItem + "," + mtListInvoiceItem[y].billingItemsType.ToString() + ")";
+                                        }
+                                        else
+                                        {
+                                            mtList[i].refundedItem = mtList[i].refundedItem + "," + mtListInvoiceItem[y].billingItemsType.ToString();
+                                        }
+                                       
+                                    }
+                                   
+                                }
+                            }
+                            mtList[i].isRefund =refundItem;
+                        }
+                        else
+                        {
+                            mtList[i].refundedItem ="-";
+                        }
+                    }
+
                 }
 
             }
@@ -379,6 +423,28 @@ namespace HospitalMgrSystem.Service.Channeling
                     .ToList();
             }
 
+            return mtList;
+        }
+
+        public Model.Invoice GetInvoiceByServiceIDAndInvoiceType(int serviceID, InvoiceType invoiceType)
+        {
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                Model.Invoice result = (from p in dbContext.Invoices where p.ServiceID == serviceID && p.InvoiceType == invoiceType select p).SingleOrDefault();
+                return result;
+            }
+
+        }
+
+        public List<Model.InvoiceItem> GetInvoiceItemByInvoicedID(int invoiceID)
+        {
+
+            List<Model.InvoiceItem> mtList = new List<Model.InvoiceItem>();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.InvoiceItems.Where(c => c.InvoiceId == invoiceID).ToList<Model.InvoiceItem>();
+
+            }
             return mtList;
         }
     }

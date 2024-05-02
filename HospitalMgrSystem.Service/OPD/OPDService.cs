@@ -206,6 +206,18 @@ namespace HospitalMgrSystem.Service.OPD
             return mtList;
         }
 
+        public List<Model.OPD> GetAllOPDByDescription(string desctiption)
+        {
+            List<Model.OPD> mtList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.OPD.Include(c => c.patient).Include(c => c.consultant).Include(c => c.room).Where(o => o.Status == 0 && o.invoiceType == InvoiceType.OPD && o.Description==desctiption).OrderByDescending(o => o.Id).ToList();
+
+            }
+            return mtList;
+        }
+
+
         public List<Model.OPD> GetAllOPDBySessionID()
         {
             List<Model.OPD> mtList = new List<Model.OPD>();

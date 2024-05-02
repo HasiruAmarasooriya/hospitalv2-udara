@@ -195,7 +195,39 @@ public class ChannelingController : Controller
     //    }
     //}
 
+    public ActionResult CreateChannelingAddOn(int Id)
+    {
+        var oPDChannelingDto = new OPDDto();
+        oPDChannelingDto.vogScan = new DefaultService().GetScanChannelingFee(2);
+        oPDChannelingDto.echoScan = new DefaultService().GetScanChannelingFee(3);
+        oPDChannelingDto.exerciseBook = new DefaultService().GetExerciseBookFee();
+        using (var httpClient = new HttpClient())
+        {
+            try
+            {
+                if (Id > 0)
+                {
+                oPDChannelingDto.opd = LoadChannelingByID(Id);
+                oPDChannelingDto.opdId = Id;
+                oPDChannelingDto.channelingSchedule = new ChannelingScheduleService().SheduleGetById(oPDChannelingDto.opd.schedularId);
+                oPDChannelingDto.channelingSchedule.ConsultantFee = oPDChannelingDto.opd.ConsultantFee;
+                oPDChannelingDto.channelingSchedule.HospitalFee = oPDChannelingDto.opd.HospitalFee;
+                return PartialView("_PartialAddOn", oPDChannelingDto);
+                }
+                else
+                {
+                    return RedirectToAction("Index");
+                }
 
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+
+    }
     public ActionResult CreateChanneling(int Id)
     {
         var oPDChannelingDto = new OPDDto();
@@ -366,6 +398,8 @@ public class ChannelingController : Controller
                         schedularId = item.schedularId,
                         specialistData = item.consultant.Specialist,
                         consaltantId = item.ConsultantID,
+                        isRefund = item.isRefund,
+                        refundedItem = item.refundedItem,
                         channelingScheduleData = item.channelingScheduleData
                     });
             }
@@ -429,6 +463,257 @@ public class ChannelingController : Controller
             return RedirectToAction("Index");
         }
     }
+
+
+    public async Task<IActionResult> AddOnAsync([FromBody] OPDDto oPDDto)
+    {
+        var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+
+        var NightShiftSessionList = new List<NightShiftSession>();
+        NightShiftSessionList = GetActiveShiftSession();
+
+        try
+        {
+            OPD channelingObj = new OPD();
+            var channelingSchedule = new ChannelingSchedule();
+            var ScanObj = new Scan();
+
+
+            if (oPDDto == null || oPDDto.opd == null) return RedirectToAction("Index");
+
+            channelingObj = LoadChannelingByID(oPDDto.opd.Id);
+            if (channelingObj != null)
+            {
+            channelingSchedule = ChannelingScheduleGetByID(channelingObj.schedularId);
+               
+
+
+            if (channelingSchedule == null) return RedirectToAction("Index");
+
+            if (oPDDto.isCardioScan == 1)
+            {
+                oPDDto.scanId = 3;
+
+            }
+            if(oPDDto.isVOGScan == 1)
+            {
+                oPDDto.scanId = 2;
+
+            }
+            if (oPDDto.isExerciseBook == 1)
+            {
+                oPDDto.scanId = 0;
+                oPDDto.opd.Description = "Exercise Book";
+
+            }
+
+            if (oPDDto.scanId != 0)
+            {
+                ScanObj = ScanGetByID(oPDDto.scanId);
+            }
+                    
+            var OPDobj = new OPD();
+            oPDDto.opd.Id =0;
+            oPDDto.opd.PatientID = channelingObj.PatientID;
+            oPDDto.opd.ConsultantID = channelingSchedule.ConsultantId;
+            oPDDto.opd.DateTime = DateTime.Now;
+            oPDDto.opd.RoomID = 1;
+            oPDDto.opd.schedularId = channelingSchedule.Id;
+            oPDDto.opd.AppoimentNo = channelingObj.AppoimentNo;
+            oPDDto.opd.HospitalFee = ScanObj.HospitalFee;
+            oPDDto.opd.ConsultantFee = ScanObj.DoctorFee;
+            oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
+            oPDDto.opd.invoiceType = InvoiceType.CHE;
+            oPDDto.opd.shiftID = NightShiftSessionList[0].Id;
+            oPDDto.opd.ModifiedUser = Convert.ToInt32(userIdCookie);
+            oPDDto.opd.CreatedUser = Convert.ToInt32(userIdCookie);
+            oPDDto.opd.CreateDate = DateTime.Now;
+            oPDDto.opd.ModifiedDate = DateTime.Now;
+
+               
+
+                if (ScanObj != null && ScanObj.Id != 0)
+                {
+                    oPDDto.opd.Description = ScanObj.ItemName;
+                    oPDDto.opd.HospitalFee = ScanObj.HospitalFee;
+                    oPDDto.opd.ConsultantFee = ScanObj.DoctorFee;
+                }
+
+                OPDobj = new OPDService().CreateOPD(oPDDto.opd);
+
+                if (oPDDto.isExerciseBook == 1)
+                {
+                    var drugScan = new Drug();
+                    drugScan = new DefaultService().GetExerciseBookFee();
+                    var Exercise = new OPDDrugus();
+                    Exercise.opdId = OPDobj.Id;
+                    Exercise.itemInvoiceStatus = ItemInvoiceStatus.Add;
+                    Exercise.Amount = drugScan.Price;
+                    Exercise.IsRefund = 0;
+                    Exercise.DrugId = drugScan.Id;
+                    Exercise.Type = 0;
+                    Exercise.Qty = 1;
+                    Exercise.Price = drugScan.Price;
+                    Exercise.billingItemsType = BillingItemsType.Items;
+                    Exercise.Status = CommonStatus.Active;
+                    Exercise.CreateUser = Convert.ToInt32(userIdCookie);
+                    Exercise.ModifiedUser = Convert.ToInt32(userIdCookie);
+                    Exercise.CreateDate = DateTime.Now;
+                    Exercise.ModifiedDate = DateTime.Now;
+
+                    new OPDService().CreateOPDDrugus(Exercise);
+
+                    //var channelingSMS = new ChannelingSMS();
+
+                    //channelingSMS.channelingForOnePatient = LoadChannelingByID(OPDobj.Id);
+                    //channelingSMS.channelingSchedule = ChannelingScheduleGetByID(channelingSMS.channelingForOnePatient.schedularId);
+                    //channelingSMS.ChannellingScheduleStatus = channelingSMS.channelingSchedule.scheduleStatus;
+                    //var sMSService = new SMSService();
+                    //await sMSService.SendSMSTokenForNewChannel(channelingSMS);
+                }
+            
+            }
+            return RedirectToAction("Index");
+        }
+        catch (Exception ex)
+        {
+            return RedirectToAction("Index");
+        }
+    }
+
+    public async Task<IActionResult> AddOnWithQRAsync([FromBody] OPDDto oPDDto)
+    {
+        var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+
+        var NightShiftSessionList = new List<NightShiftSession>();
+        NightShiftSessionList = GetActiveShiftSession();
+
+        try
+        {
+            OPD channelingObj = new OPD();
+            var channelingSchedule = new ChannelingSchedule();
+            var ScanObj = new Scan();
+
+
+            if (oPDDto == null || oPDDto.opd == null) return RedirectToAction("Index");
+
+            channelingObj = LoadChannelingByID(oPDDto.opd.Id);
+            if (channelingObj != null)
+            {
+                channelingSchedule = ChannelingScheduleGetByID(channelingObj.schedularId);
+
+
+
+                if (channelingSchedule == null) return RedirectToAction("Index");
+
+                if (oPDDto.isCardioScan == 1)
+                {
+                    oPDDto.scanId = 1;
+
+                }
+                if (oPDDto.isVOGScan == 1)
+                {
+                    oPDDto.scanId = 2;
+
+                }
+                if (oPDDto.isExerciseBook == 3)
+                {
+                    oPDDto.scanId = 0;
+                    oPDDto.opd.Description = "Exercise Book";
+
+                }
+                decimal total = 0;
+                if (oPDDto.scanId != 0)
+                {
+                    ScanObj = ScanGetByID(oPDDto.scanId);
+                    total = ScanObj.HospitalFee + ScanObj.DoctorFee;
+                }
+
+
+
+                var OPDobj = new OPD();
+                oPDDto.opd.PatientID = channelingObj.PatientID;
+                oPDDto.opd.DateTime = DateTime.Now;
+                oPDDto.opd.RoomID = 0;
+                oPDDto.opd.schedularId = channelingSchedule.Id;
+                oPDDto.opd.AppoimentNo = channelingObj.AppoimentNo;
+                oPDDto.opd.HospitalFee = ScanObj.HospitalFee;
+                oPDDto.opd.ConsultantFee = ScanObj.DoctorFee;
+                oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
+                oPDDto.opd.invoiceType = InvoiceType.CHE;
+                oPDDto.opd.shiftID = NightShiftSessionList[0].Id;
+                oPDDto.opd.ModifiedUser = Convert.ToInt32(userIdCookie);
+                oPDDto.opd.CreatedUser = Convert.ToInt32(userIdCookie);
+                oPDDto.opd.CreateDate = DateTime.Now;
+                oPDDto.opd.ModifiedDate = DateTime.Now;
+
+
+
+                if (ScanObj != null && ScanObj.Id != 0)
+                {
+                    oPDDto.opd.Description = ScanObj.ItemName;
+                    oPDDto.opd.HospitalFee = ScanObj.HospitalFee;
+                    oPDDto.opd.ConsultantFee = ScanObj.DoctorFee;
+                }
+
+                OPDobj = new OPDService().CreateOPD(oPDDto.opd);
+
+                if (oPDDto.isExerciseBook == 3)
+                {
+                    var drugScan = new Drug();
+                    drugScan = new DefaultService().GetExerciseBookFee();
+                    var Exercise = new OPDDrugus();
+                    Exercise.opdId = OPDobj.Id;
+                    Exercise.itemInvoiceStatus = ItemInvoiceStatus.Add;
+                    Exercise.Amount = drugScan.Price;
+                    Exercise.IsRefund = 0;
+                    Exercise.DrugId = drugScan.Id;
+                    Exercise.Type = 0;
+                    Exercise.Qty = 1;
+                    Exercise.Price = drugScan.Price;
+                    Exercise.billingItemsType = BillingItemsType.Items;
+                    Exercise.Status = CommonStatus.Active;
+                    Exercise.CreateUser = Convert.ToInt32(userIdCookie);
+                    Exercise.ModifiedUser = Convert.ToInt32(userIdCookie);
+                    Exercise.CreateDate = DateTime.Now;
+                    Exercise.ModifiedDate = DateTime.Now;
+                    total= drugScan.Price;
+                    new OPDService().CreateOPDDrugus(Exercise);
+
+
+
+                    //var channelingSMS = new ChannelingSMS();
+
+                    //channelingSMS.channelingForOnePatient = LoadChannelingByID(OPDobj.Id);
+                    //channelingSMS.channelingSchedule = ChannelingScheduleGetByID(channelingSMS.channelingForOnePatient.schedularId);
+                    //channelingSMS.ChannellingScheduleStatus = channelingSMS.channelingSchedule.scheduleStatus;
+                    //var sMSService = new SMSService();
+                    //await sMSService.SendSMSTokenForNewChannel(channelingSMS);
+                }
+
+                if (channelingObj != null)
+                {
+                    _OPDDto.opdId = channelingObj.Id;
+                    _OPDDto.name = channelingObj.patient.FullName;
+                    _OPDDto.age = channelingObj.patient.Age;
+                    _OPDDto.months = channelingObj.patient.Months;
+                    _OPDDto.days = channelingObj.patient.Days;
+                    _OPDDto.sex = channelingObj.patient.Sex;
+                    _OPDDto.phone = channelingObj.patient.TelephoneNumber;
+                    _OPDDto.TotalAmount = total;
+                    _OPDDto.RoomNumber = OPDobj.RoomID;
+                    _OPDDto.ConsultantName = new ConsultantService().GetAllConsultantByID(OPDobj.ConsultantID).Name;
+                }
+
+            }
+            return PartialView("_PartialQR", _OPDDto);
+        }
+        catch (Exception ex)
+        {
+            return RedirectToAction("Index");
+        }
+    }
+
 
     public async Task<IActionResult> AddNewChannelAsync([FromBody] OPDDto oPDDto)
     {

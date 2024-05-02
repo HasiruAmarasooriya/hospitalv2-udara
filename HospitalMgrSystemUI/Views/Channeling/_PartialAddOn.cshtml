@@ -1,0 +1,272 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model OPDDto;
+@{
+
+}
+@inject IConfiguration Configuration
+<script type="text/javascript">
+    var isCheckedVOG = 0;
+    var isCheckedECO = 0;
+    var isCheckedEXE = 0;
+    var channelingID = 0;
+    var appoinmentNo = 0;
+
+
+
+
+
+    function submitChannelingAddOn(mode) {
+
+        var opdID = $('#opdIndexNumber').val();
+
+
+        var opdObject = {
+            Id: opdID
+        };
+
+        var opdDtoObject = {
+            opd: opdObject,
+            isVOGScan: isCheckedVOG,
+            isCardioScan: isCheckedECO,
+            isExerciseBook: isCheckedEXE
+        };
+
+        var jsonOb = JSON.stringify(opdDtoObject);
+        console.log(opdDtoObject);
+        if (mode == 1) {
+            $.ajax({
+                url: '/Channeling/AddOnWithQR',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(opdDtoObject),
+                success: function (data) {
+                    drugusList = [];
+                    document.getElementById("tblBodyPayments2").innerHTML = "";
+                    var opdId = @Html.Raw(Json.Serialize(Model.opdId));
+
+                    $("#AddEditContainerModel").html(data);
+
+                },
+                error: function (error) {
+                    console.error('Error submitting drugus items:', error);
+                }
+            });
+
+        } else {
+            $.ajax({
+                url: '/Channeling/AddOn',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(opdDtoObject),
+                success: function (data) {
+                    drugusList = [];
+                    document.getElementById("tblBodyPayments2").innerHTML = "";
+
+                    window.location.href = '/Channeling/Index';
+
+                },
+                error: function (error) {
+                    console.error('Error submitting drugus items:', error);
+                }
+            });
+        }
+
+    }
+
+
+
+    function select_onchange_addon(value) {
+        //console.log(value);
+        var hpFeeToatal = 0;
+        var drFeeToatal = 0;
+        var subTotalAddon = 0;
+
+
+        isCheckedVOG = 0;
+        isCheckedECO = 0;
+        isCheckedEXE = 0;
+        if (value == 1) {
+            var vogScanHPFee = parseFloat($('#vogScanHPFeeId').val());
+            var vogScanDRFee = parseFloat($('#vogScanDRFeeId').val());
+            var total = vogScanHPFee + vogScanDRFee
+            hpFeeToatal = vogScanHPFee;
+            drFeeToatal = vogScanDRFee;
+            subTotalAddon = total;
+            isCheckedVOG = 1;
+
+        } else if (value == 2) {
+            var echoScanHPFee = parseFloat($('#cardioScanHPFee').val());
+            var echoScanDRFee = parseFloat($('#cardioScanDRFee').val());
+            var total = echoScanHPFee + echoScanDRFee
+
+            hpFeeToatal = echoScanHPFee;
+            drFeeToatal = echoScanDRFee;
+            subTotalAddon = total;
+            isCheckedECO = 1;
+
+        } else if (value == 3) {
+            var exBookFee = parseFloat($('#exersiceBookFee').val());
+            hpFeeToatal = 0;
+            drFeeToatal = exBookFee;
+            subTotalAddon = exBookFee;
+            isCheckedEXE = 1;
+        } else {
+            hpFeeToatal = 0;
+            drFeeToatal = 0;
+            subTotalAddon = 0;
+
+            isCheckedVOG = 0;
+            isCheckedECO = 0;
+            isCheckedEXE = 0;
+        }
+        $('#doctorFeeAddOn').val(hpFeeToatal);
+        $('#hospitalFeeAddon').val(drFeeToatal);
+        $('#subTotalAddOn').val(subTotalAddon);
+    }
+
+</script>
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/EditChanneling</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form>
+        <input type="hidden" id="opdIndexNumber" asp-for="opdId">
+
+        <input type="hidden" id="vogScanText" asp-for="vogScan.ItemName">
+        <input type="hidden" id="vogScanHPFeeId" asp-for="vogScan.HospitalFee">
+        <input type="hidden" id="vogScanDRFeeId" asp-for="vogScan.DoctorFee">
+
+        <input type="hidden" id="cardiopScanText" asp-for="echoScan.ItemName">
+        <input type="hidden" id="cardioScanHPFee" asp-for="echoScan.HospitalFee">
+        <input type="hidden" id="cardioScanDRFee" asp-for="echoScan.DoctorFee">
+
+        <input type="hidden" id="exersiceBookFee" asp-for="exerciseBook.Price">
+
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Patient Name</label>
+                            @{
+                                if (Model.opdId > 0)
+                                {
+                                           <input class="form-control" type="text" id="txtAddOnPatient" value="@Model.opd.patient.FullName" placeholder="Consultant Name" name="@Model.opd.consultant.Id" disabled />
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Mobile Number</label>
+                        @{
+                            if (Model.opdId > 0)
+                            {
+                                       <input class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" type="tel" maxlength="10" minlength="10" id="txtMobileNumberAddOn" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" disabled />
+                            }
+                        }
+                       
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Doctor Name</label>
+                        @{
+                            if (Model.opdId > 0)
+                            {
+                                        <input class="form-control" type="text" id="txtAddOnDoctor" value="@Model.opd.consultant.Name" placeholder="Consultant Name" name="@Model.opd.consultant.Id" disabled />
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Channeling Shedule</label>
+                        @{
+                            if (Model.opdId > 0)
+                            {
+                                         <input class="form-control" type="text" id="txtAddOnShedule" value="@Model.channelingSchedule.DateTime" style="text-align:right;" placeholder="Schedule Time" disabled />
+                            }
+
+                        }
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Appoinment Number</label>
+                        @{
+                            if (Model.opdId > 0)
+                            {
+                                       <input class="form-control" type="text" id="txtAddOnNoOfAppoinment" value="@Model.opd.AppoimentNo" style="text-align:right;" placeholder="Appoinment Number" disabled />
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="form-group">
+                        @{
+                            if (Model.opdId > 0)
+                            {
+                                                        <label for="companyName">Add On</label>
+
+                                                        <select class="form-control" id="drpAddOn" onchange="javascript:select_onchange_addon(this.value);">
+                                                            <option value="0">Select one</option>
+                                                            <option value="1">VOG Scan</option>
+                                                            <option value="2">ECO Scan</option>
+                                                            <option value="3">Exercise Book</option>
+
+                                                        </select>
+                            }
+                        }
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Doctor Fee: </label>
+                        <input id="doctorFeeAddOn" class="form-control"  type="text" placeholder="0" readonly>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Hospital Fee: </label>
+                        <input id="hospitalFeeAddon" class="form-control" type="text" placeholder="0" readonly>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Sub Total: </label>
+                        <input id="subTotalAddOn" class="form-control"  type="text" placeholder="0" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+
+            <button type="button" class="btn  waves-effect btn-primary" onclick="submitChannelingAddOn(0)"><i class="fa fa-save"></i>&nbsp;Save</button>
+            <button type="button" class="btn waves-effect btn-primary ms-2" onclick="submitChannelingAddOn(1)">
+                <i class='fa fa-print'></i>&nbsp;Print & Save
+            </button>
+        </div>
+    </form>
+</div>

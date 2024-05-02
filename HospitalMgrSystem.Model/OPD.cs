@@ -74,6 +74,12 @@ namespace HospitalMgrSystem.Model
         [NotMapped]
         public ChannelingSchedule channelingScheduleData { get; set; }
 
+        [NotMapped]
+        public int? isRefund { get; set; }
+
+        [NotMapped]
+        public string? refundedItem { get; set; }
+
 
     }
 }

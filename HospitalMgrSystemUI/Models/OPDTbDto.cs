@@ -25,5 +25,7 @@ namespace HospitalMgrSystemUI.Models
         public PaymentStatus paymentStatus { get; set; }
         public int schedularId { get; set; }
         public ChannelingSchedule channelingScheduleData { get; set; }
+        public int? isRefund { get; set; }
+        public string? refundedItem { get; set; }
     }
 }

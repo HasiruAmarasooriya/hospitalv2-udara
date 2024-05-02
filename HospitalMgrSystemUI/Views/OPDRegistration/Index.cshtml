@@ -152,16 +152,16 @@
                     <table id="basic-2" class="display">
                         <thead>
                         <tr>
-                            <th>OPD Id</th>
-                            <th>Pt's Full Name</th>
+                            <th>Ref No</th>
+                                <th>Go to Cashier</th>
+                                <th>QR</th>
+                            <th>Pt's Name</th>
                             <th>Payment Status</th>
                             <th>Consultant</th>
-                            <th>contact no</th>
+                            <th>Telephone No/th>
                             <th>Date & Time</th>
-                            <th>Print</th>
-                            <th>View OPD</th>
-                            <th>Go to Cashier</th>
-                            <th>Delete OPD</th>
+                            <th>View</th>
+                            <th>Delete</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -174,6 +174,22 @@
                             {
                                 <tr>
                                     <td>@item.Id</td>
+                                        <td>
+                                            @if (Model != null)
+                                            {
+                                                <a href="/Cashier?PreID=OPD+@item.Id">
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'>
+                                                        <i class='fa fa-money'></i>
+                                                    </button>
+                                                </a>
+                                            }
+
+                                        </td>
+                                        <td>
+                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);>
+                                                <i class='fa fa-print'></i>
+                                            </button>
+                                        </td>
                                     <td>@item.FullName</td>
                                     <td>@item.paymentStatus</td>
                                     <td>
@@ -198,27 +214,13 @@
                                 } *@
                                     <td>@item.MobileNumber</td>
                                     <td>@item.DateTime</td>
-                                    <td>
-                                        <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);>
-                                            <i class='fa fa-print'></i>
-                                        </button>
-                                    </td>
+
                                     <td>
                                         <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);>
                                             <i class='fa fa-eye'></i>
                                         </button> &nbsp;
                                     </td>
-                                    <td>
-                                        @if (Model != null)
-                                        {
-                                            <a href="/Cashier?PreID=OPD+@item.Id">
-                                                <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'>
-                                                    <i class='fa fa-money'></i>
-                                                </button>
-                                            </a>
-                                        }
 
-                                    </td>
                                     <td>
                                         @if (Model != null)
                                         {
