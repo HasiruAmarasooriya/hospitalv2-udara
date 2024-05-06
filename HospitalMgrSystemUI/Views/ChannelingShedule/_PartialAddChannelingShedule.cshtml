@@ -7,6 +7,7 @@
     Layout = null;
 }
 @inject IConfiguration Configuration
+
 <script type="text/javascript">
 
     function select_onchange_Specialist(value) {
@@ -144,7 +145,7 @@
             @if (Model.ChannelingSchedule != null)
             {
                 <hr/>
-                <div class="row">
+@*                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="companyName">No of Registered Patients</label>
@@ -154,21 +155,21 @@
 
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="companyName">No of Actual Registered Patients</label>
+                            <label for="companyName">No of Paid Patients</label>
                             <input class="form-control " type="text" asp-for="ChannelingSchedule.actualPatientCount" placeholder="NO Of Appoinment"/>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="companyName">Total Refund Doctor Fee Count</label>
+                            <label for="companyName">Refund Doctor Fee Count</label>
                             <input class="form-control " type="text" asp-for="ChannelingSchedule.totalRefundDoctorFeeCount" placeholder="NO Of Appoinment"/>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="companyName">Total Refund Hospital Fee Count</label>
+                            <label for="companyName">Refund Hospital Fee Count</label>
                             <input class="form-control " type="text" asp-for="ChannelingSchedule.totalRefundHospitalFeeCount" placeholder="NO Of Appoinment"/>
                         </div>
                     </div>
@@ -202,6 +203,78 @@
                             <label for="companyName">Total Hospital Fee Amount</label>
                             <input class="form-control " type="text" asp-for="ChannelingSchedule.totalHospitalFeeAmount" placeholder="NO Of Appoinment"/>
                         </div>
+                    </div>
+                </div> *@
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <div class="table-responsive">
+
+                                    <table class="table" style="">
+
+
+@*                                         <tr>
+                                            <td style="border-bottom: 1px solid white;"></td>
+                                            <td style="border-bottom: 1px solid white;"><b></b></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-bottom: 1px solid white;"></td>
+                                            <td style="border-bottom: 1px solid white;"><b></b></td>
+                                        </tr> *@
+
+                                        <tr>
+                                            <td style="border-bottom: 1px solid white;">No of Registered Appoinmnent</td>
+                                            <td style="border-bottom: 1px solid white;"> <input class="form-control" type="text" asp-for="ChannelingSchedule.patientCount" placeholder="No Of Appointment" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-bottom: 1px solid white;">No of Paid Appoinmnent</td>
+                                            <td style="border-bottom: 1px solid white;"><input class="form-control" type="text" asp-for="ChannelingSchedule.actualPatientCount" placeholder="No Of Appointment" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-bottom: 1px solid white;">Refund Doctor Fee Count</td>
+                                            <td style="border-bottom: 1px solid white;"><input class="form-control" type="text" asp-for="ChannelingSchedule.totalRefundDoctorFeeCount" placeholder="No Of Appointment" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-bottom: 1px solid white;">Refund Hospital Fee Count</td>
+                                            <td style="border-bottom: 1px solid white;"><input class="form-control" type="text" asp-for="ChannelingSchedule.totalRefundHospitalFeeCount" placeholder="No Of Appointment" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-bottom: 1px solid white;">Total Refund Doctor Fee Amount</td>
+                                            <td style="border-bottom: 1px solid white;"><input class="form-control" type="text" asp-for="ChannelingSchedule.totalRefundDoctorFeeAmount" placeholder="No Of Appointment" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-bottom: 1px solid white;">Total Refund Hospital Fee Amount</td>
+                                            <td style="border-bottom: 1px solid white;"><input class="form-control" type="text" asp-for="ChannelingSchedule.totalRefundHospitalFeeAmount" placeholder="No Of Appointment" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-bottom: 1px solid white;">Total Doctor Fee Amount</td>
+                                            <td style="border-bottom: 1px solid white;"><input class="form-control" type="text" asp-for="ChannelingSchedule.totalDoctorFeeAmount" placeholder="No Of Appointment" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-bottom: 1px solid white;">Total Hospital Fee Amount</td>
+                                            <td style="border-bottom: 1px solid white;"><input class="form-control" type="text" asp-for="ChannelingSchedule.totalHospitalFeeAmount" placeholder="No Of Appointment" /></td>
+                                        </tr>
+
+                                    </table>
+
+
+
+
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <table id="myTable2" class="table table-striped table-bordered dataTable fonts-8" cellspacing="0" width="100%">
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                        
                     </div>
                 </div>
             }

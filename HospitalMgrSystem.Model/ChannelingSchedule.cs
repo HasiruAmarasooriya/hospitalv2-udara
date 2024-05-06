@@ -26,7 +26,10 @@ namespace HospitalMgrSystem.Model
         public CommonStatus Status { get; set; }
         public ChannellingScheduleStatus scheduleStatus { get; set; }
 
+        [NotMapped] public decimal allBookedAppoinment { get; set; }
         [NotMapped] public decimal totalAmount { get; set; }
+
+        [NotMapped] public decimal? totalPaidAmount { get; set; }
 
         [NotMapped] public int booked { get; set; }
 
@@ -46,6 +49,7 @@ namespace HospitalMgrSystem.Model
 
         [NotMapped] public decimal totalRefundDoctorFeeAmount { get; set; }
 
+        [NotMapped] public decimal? totalRefund { get; set; }
         [NotMapped] public decimal totalRefundHospitalFeeAmount { get; set; }
 
         [NotMapped] public decimal totalHospitalFeeAmount { get; set; }

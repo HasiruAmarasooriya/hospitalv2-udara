@@ -49,7 +49,8 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 try
                 {
-                    channelingSheduleDto.ChannelingScheduleList = new ChannelingScheduleService().SheduleGetByStatus();
+
+                    channelingSheduleDto.ChannelingScheduleList = new ChannelingScheduleService().SheduleGetBySelected(DateTime.Today);
                     return View(channelingSheduleDto);
                 }
                 catch (Exception ex)
@@ -77,25 +78,23 @@ namespace HospitalMgrSystemUI.Controllers
                 if (viewChannelingSchedule.SpecialistId == -2 && viewChannelingSchedule.channellingScheduleStatus ==
                     ChannellingScheduleStatus.ALL)
                 {
-                    resultSet = new ChannelingScheduleService().GetAllChannelingScheduleByDateTime(
-                        viewChannelingSchedule.StartTime, viewChannelingSchedule.EndTime);
+                    resultSet = new ChannelingScheduleService().SheduleGetBySelected(viewChannelingSchedule.StartTime);
                 }
 
                 // When the user select the speciality
                 else if (viewChannelingSchedule.SpecialistId != -2 &&
                          viewChannelingSchedule.channellingScheduleStatus == ChannellingScheduleStatus.ALL)
                 {
-                    resultSet = new ChannelingScheduleService().GetAllChannelingScheduleByDateTimeWithSpeciality(
-                        viewChannelingSchedule.StartTime, viewChannelingSchedule.EndTime,
-                        viewChannelingSchedule.SpecialistId);
+                    resultSet = new ChannelingScheduleService().SheduleGetBySelectedByConsultantID(
+                        viewChannelingSchedule.StartTime, viewChannelingSchedule.SpecialistId);
                 }
 
                 // When the user select the status
                 else if (viewChannelingSchedule.SpecialistId == -2 &&
                          viewChannelingSchedule.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
                 {
-                    resultSet = new ChannelingScheduleService().GetAllChannelingScheduleByDateTimeWithStatus(
-                        viewChannelingSchedule.StartTime, viewChannelingSchedule.EndTime,
+                    resultSet = new ChannelingScheduleService().SheduleGetBySelectedByStatus(
+                        viewChannelingSchedule.StartTime,
                         viewChannelingSchedule.channellingScheduleStatus);
                 }
 
@@ -104,9 +103,9 @@ namespace HospitalMgrSystemUI.Controllers
                          viewChannelingSchedule.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
                 {
                     resultSet =
-                        new ChannelingScheduleService().GetAllChannelingScheduleByDateTimeWithSpecialityAndStatus(
-                            viewChannelingSchedule.StartTime, viewChannelingSchedule.EndTime,
-                            viewChannelingSchedule.channellingScheduleStatus, viewChannelingSchedule.SpecialistId);
+                        new ChannelingScheduleService().SheduleGetBySelectedByConsultantIDAndStatus(
+                            viewChannelingSchedule.StartTime, viewChannelingSchedule.SpecialistId,
+                            viewChannelingSchedule.channellingScheduleStatus);
                 }
 
                 channelingSheduleDto.ChannelingScheduleList = resultSet;
@@ -257,10 +256,7 @@ namespace HospitalMgrSystemUI.Controllers
                         SMSService sMSService = new SMSService();
                         // await sMSService.SendSMSToken(channelingSMS);
                     }
-                    else if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus !=
-                             ChannellingScheduleStatus.NOT_ACTIVE &&
-                             viewChannelingSchedule.ChannelingSchedule.scheduleStatus !=
-                             ChannellingScheduleStatus.ACTIVE)
+                    else if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.NOT_ACTIVE && viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.ACTIVE)
                     {
                         ChannelingSMS channelingSMS = new ChannelingSMS();
 
@@ -279,8 +275,7 @@ namespace HospitalMgrSystemUI.Controllers
                         // await sMSService.SendSMSToken(channelingSMS);
                     }
 
-                    if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus ==
-                        ChannellingScheduleStatus.SESSION_END)
+                    if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus == ChannellingScheduleStatus.SESSION_END)
                     {
                         List<CashierSession> mtList = new List<CashierSession>();
                         ChannelingSchedule channelingScheduleData =

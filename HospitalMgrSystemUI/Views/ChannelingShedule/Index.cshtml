@@ -49,7 +49,7 @@
     <div class="col-12">
         <div class="card">
             <div class="modal-body">
-                <form asp-action="FilterForm" method="post">
+                <form asp-action="FilterForm" method="post" id="filterFrm">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
@@ -58,16 +58,16 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="form-group">
+@*                             <div class="form-group">
                                 <label for="companyName">End Date</label>
                                 <input type="text" id="date-format-end" asp-format="{0:yyyy-MM-dd}" class="form-control" asp-for="EndTime" placeholder="">
-                            </div>
+                            </div> *@
                         </div>
 
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="companyName">Doctor Speciality</label>
-                                <select class="form-control ddlSearchList" id="dropPaidStatus" asp-for="SpecialistId">
+                                <select class="form-control ddlSearchList" id="drpDrSpeciality" asp-for="SpecialistId">
                                     <option value="-2">All</option>
                                     @if (Model != null)
                                     {
@@ -122,15 +122,16 @@
                         <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Date</th>
+                                <th>Schedule Time</th>
                             <th>Consultant Name</th>
                             <th>Speciality</th>
                             <th>Room Number</th>
                             <th>Active Appointment</th>
                             <th>Paid Appointment</th>
-                            <th>Refund Appointment</th>
-                            <th>Doctor Fee</th>
-                            <th>Hospital Fee</th>
+                            <th>Total Paid</th>
+                            <th>Total Refund</th>
+@*                             <th>Doctor Fee</th>
+                            <th>Hospital Fee</th> *@
                             <th>Total Amount</th>
                             <th>Status</th>
                             <th>View</th>
@@ -149,11 +150,12 @@
                                     <td>@channelingShedule.Consultant?.Specialist.Name</td>
                                     <td>@channelingShedule.Room?.Name</td>
                                     <td>@channelingShedule.booked / @channelingShedule.NoOfAppointment</td>
-                                    <td>@channelingShedule.paid</td>
-                                    <td>@channelingShedule.refund</td>
-                                    <td>@channelingShedule.ConsultantFee</td>
-                                    <td>@channelingShedule.HospitalFee</td>
-                                    <td>@channelingShedule.totalAmount</td>
+                                    <td>@channelingShedule.paid / @channelingShedule.allBookedAppoinment</td>
+                                    <td>@(channelingShedule.totalPaidAmount != null ? channelingShedule.totalPaidAmount.Value.ToString("0.00") : "0.00")</td>
+                                    <td>@(channelingShedule.totalRefund != null ? channelingShedule.totalRefund.Value.ToString("0.00") : "0.00")</td>
+@*                                     <td>@channelingShedule.ConsultantFee</td>
+                                    <td>@channelingShedule.HospitalFee</td> *@
+                                        <td>@((channelingShedule.totalAmount - (channelingShedule.totalRefund != null ? channelingShedule.totalRefund.Value : 0)).ToString("0.00"))</td>
                                     <td>@channelingShedule.scheduleStatus</td>
                                     <td>
                                         <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@channelingShedule.Id);>
@@ -188,6 +190,19 @@
 @section scripts {
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+
+        $(document).ready(function () {
+            $('#drpDrSpeciality').select2({
+                width: '100%',
+                height: "auto !important",
+                dropdownCssClass: "bigdrop",
+                dropdownParent: $('#filterFrm'),
+                placeholder: 'Select one',
+                allowClear: false,
+            });
+
+
+        });
 
         function handleClear() {
             window.location.href = '/ChannelingShedule/';
