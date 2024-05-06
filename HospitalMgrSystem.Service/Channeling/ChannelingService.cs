@@ -339,6 +339,82 @@ namespace HospitalMgrSystem.Service.Channeling
             return mtList;
         }
 
+        public List<Model.OPD> GetAllChannelingBySelectedSchedule(DateTime dateTime)
+        {
+            List<Model.OPD> mtList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule.ToList();
+
+                var scheduleIds = dbContext.ChannelingSchedule
+                    .Where(x => x.Status == Model.Enums.CommonStatus.Active && x.DateTime > dateTime)
+                    .Select(x => x.Id)
+                    .Distinct()
+                    .ToList();
+
+
+                mtList = dbContext.OPD
+                    .Include(c => c.patient)
+                    .Include(c => c.consultant)
+                    .Include(c => c.room)
+                    .Include(c => c.consultant.Specialist)
+                    .Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && scheduleIds.Contains(o.schedularId))
+                    .OrderByDescending(o => o.Id)
+                    .ToList();
+
+                for (int i = 0; i < mtList.Count; i++)
+                {
+                    int refundItem = 0;
+                    mtList[i].channelingScheduleData = schedularIdList.Where(o => o.Id == mtList[i].schedularId).SingleOrDefault();
+                    if (mtList[i].paymentStatus == PaymentStatus.PAID)
+                    {
+                        //get invoice by opd id
+                        Invoice invoiceObj = new Invoice();
+                        invoiceObj = GetInvoiceByServiceIDAndInvoiceType(mtList[i].Id, InvoiceType.CHE);
+                        //get invoice item by invoice id
+                        List<Model.InvoiceItem> mtListInvoiceItem = new List<Model.InvoiceItem>();
+                        mtListInvoiceItem = GetInvoiceItemByInvoicedID(invoiceObj.Id);
+                        //check invoice item refund or not
+                        if (mtListInvoiceItem != null && mtListInvoiceItem.Count > 0)
+                        {
+                            for (int y = 0; y < mtListInvoiceItem.Count; y++)
+                            {
+                                if (mtListInvoiceItem[y].itemInvoiceStatus == ItemInvoiceStatus.Remove)
+                                {
+                                    refundItem = 1;
+                                    if (y == 0)
+                                    {
+                                        mtList[i].refundedItem = mtList[i].refundedItem + "(" + mtListInvoiceItem[y].billingItemsType.ToString();
+                                    }
+                                    else
+                                    {
+                                        if (y == mtListInvoiceItem.Count - 1)
+                                        {
+                                            mtList[i].refundedItem = mtList[i].refundedItem + "," + mtListInvoiceItem[y].billingItemsType.ToString() + ")";
+                                        }
+                                        else
+                                        {
+                                            mtList[i].refundedItem = mtList[i].refundedItem + "," + mtListInvoiceItem[y].billingItemsType.ToString();
+                                        }
+
+                                    }
+
+                                }
+                            }
+                            mtList[i].isRefund = refundItem;
+                        }
+                        else
+                        {
+                            mtList[i].refundedItem = "-";
+                        }
+                    }
+
+                }
+
+            }
+            return mtList;
+        }
+
 
 
         public List<Model.OPD> ChannelingGetBySheduleId(int id)

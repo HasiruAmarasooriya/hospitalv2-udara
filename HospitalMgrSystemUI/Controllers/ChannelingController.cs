@@ -33,9 +33,9 @@ public class ChannelingController : Controller
         {
             StartTime = DateTime.Now,
             EndTime = DateTime.Now.AddDays(1),
-            listOPDTbDto = GetAllChannelingByStatus(),
+            listOPDTbDto = GetAllChannelingBySelectedSchedule(DateTime.Today),
             listSpecialists = new ChannelingService().GetAllSpecialists(),
-            listConsultants = new ConsultantService().GetAllConsultantThatHaveSchedulingsByDate(DateTime.Now),
+            listConsultants = new ConsultantService().GetAllConsultantThatHaveSchedulingsByDate(DateTime.Today),
             paymentStatus = PaymentStatus.ALL,
             channellingScheduleStatus = ChannellingScheduleStatus.ALL
         };
@@ -197,22 +197,38 @@ public class ChannelingController : Controller
 
     public ActionResult CreateChannelingAddOn(int Id)
     {
-        var oPDChannelingDto = new OPDDto();
-        oPDChannelingDto.vogScan = new DefaultService().GetScanChannelingFee(2);
-        oPDChannelingDto.echoScan = new DefaultService().GetScanChannelingFee(3);
-        oPDChannelingDto.exerciseBook = new DefaultService().GetExerciseBookFee();
+
         using (var httpClient = new HttpClient())
         {
             try
             {
                 if (Id > 0)
                 {
-                oPDChannelingDto.opd = LoadChannelingByID(Id);
-                oPDChannelingDto.opdId = Id;
-                oPDChannelingDto.channelingSchedule = new ChannelingScheduleService().SheduleGetById(oPDChannelingDto.opd.schedularId);
-                oPDChannelingDto.channelingSchedule.ConsultantFee = oPDChannelingDto.opd.ConsultantFee;
-                oPDChannelingDto.channelingSchedule.HospitalFee = oPDChannelingDto.opd.HospitalFee;
-                return PartialView("_PartialAddOn", oPDChannelingDto);
+
+                    var oPDChannelingDto = new OPDDto();
+                    oPDChannelingDto.opd = LoadChannelingByID(Id);
+                    oPDChannelingDto.opdId = Id;
+                    oPDChannelingDto.channelingSchedule = new ChannelingScheduleService().SheduleGetById(oPDChannelingDto.opd.schedularId);
+                    if (oPDChannelingDto.channelingSchedule.Consultant.Specialist.Id == 12)
+                    {
+                        //Radiologist
+                        oPDChannelingDto.scanList = new DefaultService().GetAllScanChannelingFee(4);
+                    }
+                    if (oPDChannelingDto.channelingSchedule.Consultant.Specialist.Id == 13)
+                    {
+                        //Cardiologist
+                        oPDChannelingDto.scanList = new DefaultService().GetAllScanChannelingFee(3);
+                    }
+                    if (oPDChannelingDto.channelingSchedule.Consultant.Specialist.Id == 44)
+                    {
+                        //VOG
+                        oPDChannelingDto.scanList = new DefaultService().GetAllScanChannelingFee(2);
+                    }
+                    
+                    oPDChannelingDto.exerciseBook = new DefaultService().GetExerciseBookFee();
+                    oPDChannelingDto.channelingSchedule.ConsultantFee = oPDChannelingDto.opd.ConsultantFee;
+                    oPDChannelingDto.channelingSchedule.HospitalFee = oPDChannelingDto.opd.HospitalFee;
+                    return PartialView("_PartialAddOn", oPDChannelingDto);
                 }
                 else
                 {
@@ -412,6 +428,48 @@ public class ChannelingController : Controller
         return oPDTbDto;
     }
 
+    private List<OPDTbDto> GetAllChannelingBySelectedSchedule(DateTime dateTime)
+    {
+        var opd = new List<OPD>();
+        var oPDTbDto = new List<OPDTbDto>();
+        using (var httpClient = new HttpClient())
+        {
+            try
+            {
+                opd = new ChannelingService().GetAllChannelingBySelectedSchedule(dateTime);
+                var result = opd;
+
+                foreach (var item in result)
+                    oPDTbDto.Add(new OPDTbDto()
+                    {
+                        Id = item.Id,
+                        roomName = item.room.Name,
+                        Description = item.Description,
+                        consaltantName = item.consultant.Name,
+                        FullName = item.patient.FullName,
+                        MobileNumber = item.patient.MobileNumber,
+                        DateTime = item.DateTime,
+                        Sex = (SexStatus)item.patient.Sex,
+                        Status = item.Status,
+                        AppoimentNo = item.AppoimentNo,
+                        paymentStatus = item.paymentStatus,
+                        schedularId = item.schedularId,
+                        specialistData = item.consultant.Specialist,
+                        consaltantId = item.ConsultantID,
+                        isRefund = item.isRefund,
+                        refundedItem = item.refundedItem,
+                        channelingScheduleData = item.channelingScheduleData
+                    });
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        return oPDTbDto;
+    }
+
     [HttpGet("GetSheduleGetById")]
     private ActionResult<ChannelingSchedule> GetSheduleGetById(int Id)
     {
@@ -482,61 +540,55 @@ public class ChannelingController : Controller
             if (oPDDto == null || oPDDto.opd == null) return RedirectToAction("Index");
 
             channelingObj = LoadChannelingByID(oPDDto.opd.Id);
+
             if (channelingObj != null)
             {
-            channelingSchedule = ChannelingScheduleGetByID(channelingObj.schedularId);
+                channelingSchedule = ChannelingScheduleGetByID(channelingObj.schedularId);
                
+                if (channelingSchedule == null) return RedirectToAction("Index");
 
 
-            if (channelingSchedule == null) return RedirectToAction("Index");
-
-            if (oPDDto.isCardioScan == 1)
-            {
-                oPDDto.scanId = 3;
-
-            }
-            if(oPDDto.isVOGScan == 1)
-            {
-                oPDDto.scanId = 2;
-
-            }
-            if (oPDDto.isExerciseBook == 1)
-            {
-                oPDDto.scanId = 0;
-                oPDDto.opd.Description = "Exercise Book";
-
-            }
-
-            if (oPDDto.scanId != 0)
-            {
-                ScanObj = ScanGetByID(oPDDto.scanId);
-            }
+                if (oPDDto.scanId != 0)
+                {
+                    //if Exercise Book
+                    if (oPDDto.scanId == 564)
+                    {
+                        oPDDto.scanId = 0;
+                        oPDDto.opd.Description = "Exercise Book";
+                        oPDDto.isExerciseBook = 1;
+                        ScanObj.HospitalFee = 0;
+                        ScanObj.DoctorFee=0;
+                    }
+                    else
+                    {
+                        ScanObj = ScanGetByID(oPDDto.scanId);
+                    }
+                   
+                }
                     
-            var OPDobj = new OPD();
-            oPDDto.opd.Id =0;
-            oPDDto.opd.PatientID = channelingObj.PatientID;
-            oPDDto.opd.ConsultantID = channelingSchedule.ConsultantId;
-            oPDDto.opd.DateTime = DateTime.Now;
-            oPDDto.opd.RoomID = 1;
-            oPDDto.opd.schedularId = channelingSchedule.Id;
-            oPDDto.opd.AppoimentNo = channelingObj.AppoimentNo;
-            oPDDto.opd.HospitalFee = ScanObj.HospitalFee;
-            oPDDto.opd.ConsultantFee = ScanObj.DoctorFee;
-            oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
-            oPDDto.opd.invoiceType = InvoiceType.CHE;
-            oPDDto.opd.shiftID = NightShiftSessionList[0].Id;
-            oPDDto.opd.ModifiedUser = Convert.ToInt32(userIdCookie);
-            oPDDto.opd.CreatedUser = Convert.ToInt32(userIdCookie);
-            oPDDto.opd.CreateDate = DateTime.Now;
-            oPDDto.opd.ModifiedDate = DateTime.Now;
+                var OPDobj = new OPD();
+                oPDDto.opd.Id =0;
+                oPDDto.opd.PatientID = channelingObj.PatientID;
+                oPDDto.opd.ConsultantID = channelingSchedule.ConsultantId;
+                oPDDto.opd.DateTime = DateTime.Now;
+                oPDDto.opd.RoomID = 1;
+                oPDDto.opd.schedularId = channelingSchedule.Id;
+                oPDDto.opd.AppoimentNo = channelingObj.AppoimentNo;
+                oPDDto.opd.HospitalFee = ScanObj.HospitalFee;
+                oPDDto.opd.ConsultantFee = ScanObj.DoctorFee;
+                oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
+                oPDDto.opd.invoiceType = InvoiceType.CHE;
+                oPDDto.opd.shiftID = NightShiftSessionList[0].Id;
+                oPDDto.opd.ModifiedUser = Convert.ToInt32(userIdCookie);
+                oPDDto.opd.CreatedUser = Convert.ToInt32(userIdCookie);
+                oPDDto.opd.CreateDate = DateTime.Now;
+                oPDDto.opd.ModifiedDate = DateTime.Now;
 
                
-
                 if (ScanObj != null && ScanObj.Id != 0)
                 {
                     oPDDto.opd.Description = ScanObj.ItemName;
-                    oPDDto.opd.HospitalFee = ScanObj.HospitalFee;
-                    oPDDto.opd.ConsultantFee = ScanObj.DoctorFee;
+
                 }
 
                 OPDobj = new OPDService().CreateOPD(oPDDto.opd);
@@ -606,35 +658,37 @@ public class ChannelingController : Controller
 
                 if (channelingSchedule == null) return RedirectToAction("Index");
 
-                if (oPDDto.isCardioScan == 1)
-                {
-                    oPDDto.scanId = 1;
 
-                }
-                if (oPDDto.isVOGScan == 1)
-                {
-                    oPDDto.scanId = 2;
-
-                }
-                if (oPDDto.isExerciseBook == 3)
-                {
-                    oPDDto.scanId = 0;
-                    oPDDto.opd.Description = "Exercise Book";
-
-                }
                 decimal total = 0;
+
                 if (oPDDto.scanId != 0)
                 {
-                    ScanObj = ScanGetByID(oPDDto.scanId);
-                    total = ScanObj.HospitalFee + ScanObj.DoctorFee;
-                }
+                    //if Exercise Book
+                    if (oPDDto.scanId == 564)
+                    {
+                        oPDDto.scanId = 0;
+                        oPDDto.opd.Description = "Exercise Book";
+                        oPDDto.isExerciseBook = 1;
+                        ScanObj.HospitalFee = 0;
+                        ScanObj.DoctorFee = 0;
+                        _OPDDto.Description = oPDDto.opd.Description;
+                    }
+                    else
+                    {
+                        ScanObj = ScanGetByID(oPDDto.scanId);
+                        _OPDDto.Description = ScanObj.ItemName;
+                        total = ScanObj.HospitalFee + ScanObj.DoctorFee;
+                    }
 
+                }
 
 
                 var OPDobj = new OPD();
+                oPDDto.opd.Id = 0;
                 oPDDto.opd.PatientID = channelingObj.PatientID;
+                oPDDto.opd.ConsultantID = channelingSchedule.ConsultantId;
                 oPDDto.opd.DateTime = DateTime.Now;
-                oPDDto.opd.RoomID = 0;
+                oPDDto.opd.RoomID = 1;
                 oPDDto.opd.schedularId = channelingSchedule.Id;
                 oPDDto.opd.AppoimentNo = channelingObj.AppoimentNo;
                 oPDDto.opd.HospitalFee = ScanObj.HospitalFee;
@@ -652,13 +706,11 @@ public class ChannelingController : Controller
                 if (ScanObj != null && ScanObj.Id != 0)
                 {
                     oPDDto.opd.Description = ScanObj.ItemName;
-                    oPDDto.opd.HospitalFee = ScanObj.HospitalFee;
-                    oPDDto.opd.ConsultantFee = ScanObj.DoctorFee;
                 }
 
                 OPDobj = new OPDService().CreateOPD(oPDDto.opd);
 
-                if (oPDDto.isExerciseBook == 3)
+                if (oPDDto.isExerciseBook == 1)
                 {
                     var drugScan = new Drug();
                     drugScan = new DefaultService().GetExerciseBookFee();
@@ -694,12 +746,14 @@ public class ChannelingController : Controller
                 if (channelingObj != null)
                 {
                     _OPDDto.opdId = channelingObj.Id;
+                    _OPDDto.Description = oPDDto.opd.Description;
+                    _OPDDto.appoinmentNo = oPDDto.opd.AppoimentNo;
                     _OPDDto.name = channelingObj.patient.FullName;
                     _OPDDto.age = channelingObj.patient.Age;
                     _OPDDto.months = channelingObj.patient.Months;
                     _OPDDto.days = channelingObj.patient.Days;
                     _OPDDto.sex = channelingObj.patient.Sex;
-                    _OPDDto.phone = channelingObj.patient.TelephoneNumber;
+                    _OPDDto.phone = channelingObj.patient.MobileNumber;
                     _OPDDto.TotalAmount = total;
                     _OPDDto.RoomNumber = OPDobj.RoomID;
                     _OPDDto.ConsultantName = new ConsultantService().GetAllConsultantByID(OPDobj.ConsultantID).Name;
@@ -1004,6 +1058,8 @@ public class ChannelingController : Controller
                     _OPDDto.days = days;
                     _OPDDto.sex = sex;
                     _OPDDto.phone = phone;
+                    _OPDDto.Description = oPDDto.opd.Description;
+                    _OPDDto.appoinmentNo = oPDDto.opd.AppoimentNo;
                     _OPDDto.TotalAmount = OPDobj.HospitalFee + OPDobj.ConsultantFee;
                     _OPDDto.RoomNumber = OPDobj.RoomID;
                     _OPDDto.ConsultantName = new ConsultantService().GetAllConsultantByID(OPDobj.ConsultantID).Name;

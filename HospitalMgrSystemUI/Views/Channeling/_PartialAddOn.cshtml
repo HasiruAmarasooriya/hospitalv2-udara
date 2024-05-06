@@ -8,13 +8,7 @@
 }
 @inject IConfiguration Configuration
 <script type="text/javascript">
-    var isCheckedVOG = 0;
-    var isCheckedECO = 0;
-    var isCheckedEXE = 0;
-    var channelingID = 0;
-    var appoinmentNo = 0;
-
-
+    var selectedID = 0;
 
 
 
@@ -22,6 +16,7 @@
 
         var opdID = $('#opdIndexNumber').val();
 
+        var slValue = parseInt($('#drpAddOn').val());
 
         var opdObject = {
             Id: opdID
@@ -29,102 +24,96 @@
 
         var opdDtoObject = {
             opd: opdObject,
-            isVOGScan: isCheckedVOG,
-            isCardioScan: isCheckedECO,
-            isExerciseBook: isCheckedEXE
+            scanId: slValue
         };
 
         var jsonOb = JSON.stringify(opdDtoObject);
         console.log(opdDtoObject);
-        if (mode == 1) {
-            $.ajax({
-                url: '/Channeling/AddOnWithQR',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(opdDtoObject),
-                success: function (data) {
-                    drugusList = [];
-                    document.getElementById("tblBodyPayments2").innerHTML = "";
-                    var opdId = @Html.Raw(Json.Serialize(Model.opdId));
+        if (slValue != 0) {
+            if (mode == 1) {
+                $.ajax({
+                    url: '/Channeling/AddOnWithQR',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(opdDtoObject),
+                    success: function (data) {
+                        $("#AddEditContainerModel").html(data);
+                    },
+                    error: function (error) {
+                        console.error('Error submitting drugus items:', error);
+                    }
+                });
 
-                    $("#AddEditContainerModel").html(data);
-
-                },
-                error: function (error) {
-                    console.error('Error submitting drugus items:', error);
-                }
-            });
-
-        } else {
-            $.ajax({
-                url: '/Channeling/AddOn',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(opdDtoObject),
-                success: function (data) {
-                    drugusList = [];
-                    document.getElementById("tblBodyPayments2").innerHTML = "";
-
-                    window.location.href = '/Channeling/Index';
-
-                },
-                error: function (error) {
-                    console.error('Error submitting drugus items:', error);
-                }
-            });
+            }
+            else {
+                $.ajax({
+                    url: '/Channeling/AddOn',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(opdDtoObject),
+                    success: function (data) {                   
+                        window.location.href = '/Channeling/Index';
+                    },
+                    error: function (error) {
+                        console.error('Error submitting drugus items:', error);
+                    }
+                });
+            }
         }
+       
 
     }
 
 
 
     function select_onchange_addon(value) {
-        //console.log(value);
+        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
         var hpFeeToatal = 0;
         var drFeeToatal = 0;
         var subTotalAddon = 0;
 
+        if (value != null && value != 0) {
 
-        isCheckedVOG = 0;
-        isCheckedECO = 0;
-        isCheckedEXE = 0;
-        if (value == 1) {
-            var vogScanHPFee = parseFloat($('#vogScanHPFeeId').val());
-            var vogScanDRFee = parseFloat($('#vogScanDRFeeId').val());
-            var total = vogScanHPFee + vogScanDRFee
-            hpFeeToatal = vogScanHPFee;
-            drFeeToatal = vogScanDRFee;
-            subTotalAddon = total;
-            isCheckedVOG = 1;
+            if (value == 564) {
+              
+                selectedID == 564;
+                hpFeeToatal = parseFloat($('#exersiceBookFee').val());
+                drFeeToatal = 0;
+                subTotalAddon = hpFeeToatal;
+                $('#doctorFeeAddOn').val(drFeeToatal);
+                $('#hospitalFeeAddon').val(hpFeeToatal);
+                $('#subTotalAddOn').val(subTotalAddon);
+                
+            } 
+            else 
+            {
 
-        } else if (value == 2) {
-            var echoScanHPFee = parseFloat($('#cardioScanHPFee').val());
-            var echoScanDRFee = parseFloat($('#cardioScanDRFee').val());
-            var total = echoScanHPFee + echoScanDRFee
+                var settings = {
+                    url: commonUrl + "Default/ChannelingScanGetByID?Id=" + value,
+                    "method": "GET",
+                    "headers": {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                };
+                $.ajax(settings).done(function (response) {
+                    console.log(response);
+                    var data = response;
+                    if (data != null) {
+                        selectedID = data.id;
+                        hpFeeToatal = parseFloat(data.hospitalFee);
+                        drFeeToatal = parseFloat(data.doctorFee);
+                        subTotalAddon = hpFeeToatal + drFeeToatal;
+                        $('#doctorFeeAddOn').val(drFeeToatal);
+                        $('#hospitalFeeAddon').val(hpFeeToatal);
+                        $('#subTotalAddOn').val(subTotalAddon);
 
-            hpFeeToatal = echoScanHPFee;
-            drFeeToatal = echoScanDRFee;
-            subTotalAddon = total;
-            isCheckedECO = 1;
+                    }
+                });
+            }
 
-        } else if (value == 3) {
-            var exBookFee = parseFloat($('#exersiceBookFee').val());
-            hpFeeToatal = 0;
-            drFeeToatal = exBookFee;
-            subTotalAddon = exBookFee;
-            isCheckedEXE = 1;
-        } else {
-            hpFeeToatal = 0;
-            drFeeToatal = 0;
-            subTotalAddon = 0;
-
-            isCheckedVOG = 0;
-            isCheckedECO = 0;
-            isCheckedEXE = 0;
         }
-        $('#doctorFeeAddOn').val(hpFeeToatal);
-        $('#hospitalFeeAddon').val(drFeeToatal);
-        $('#subTotalAddOn').val(subTotalAddon);
+
     }
 
 </script>
@@ -137,17 +126,7 @@
     </div>
     <form>
         <input type="hidden" id="opdIndexNumber" asp-for="opdId">
-
-        <input type="hidden" id="vogScanText" asp-for="vogScan.ItemName">
-        <input type="hidden" id="vogScanHPFeeId" asp-for="vogScan.HospitalFee">
-        <input type="hidden" id="vogScanDRFeeId" asp-for="vogScan.DoctorFee">
-
-        <input type="hidden" id="cardiopScanText" asp-for="echoScan.ItemName">
-        <input type="hidden" id="cardioScanHPFee" asp-for="echoScan.HospitalFee">
-        <input type="hidden" id="cardioScanDRFee" asp-for="echoScan.DoctorFee">
-
         <input type="hidden" id="exersiceBookFee" asp-for="exerciseBook.Price">
-
         <div class="modal-body">
             <div class="row">
                 <div class="col-md-6">
@@ -156,7 +135,7 @@
                             @{
                                 if (Model.opdId > 0)
                                 {
-                                           <input class="form-control" type="text" id="txtAddOnPatient" value="@Model.opd.patient.FullName" placeholder="Consultant Name" name="@Model.opd.consultant.Id" disabled />
+                                       <input class="form-control" type="text" id="txtAddOnPatient" value="@Model.opd.patient.FullName" placeholder="Consultant Name" name="@Model.opd.consultant.Id" disabled />
                                 }
                             }
                         </select>
@@ -168,7 +147,7 @@
                         @{
                             if (Model.opdId > 0)
                             {
-                                       <input class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" type="tel" maxlength="10" minlength="10" id="txtMobileNumberAddOn" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" disabled />
+                                   <input class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" type="tel" maxlength="10" minlength="10" id="txtMobileNumberAddOn" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" disabled />
                             }
                         }
                        
@@ -184,7 +163,7 @@
                         @{
                             if (Model.opdId > 0)
                             {
-                                        <input class="form-control" type="text" id="txtAddOnDoctor" value="@Model.opd.consultant.Name" placeholder="Consultant Name" name="@Model.opd.consultant.Id" disabled />
+                                                                    <input class="form-control" type="text" id="txtAddOnDoctor" value="@Model.opd.consultant.Name" placeholder="Consultant Name" name="@Model.opd.consultant.Id" disabled />
                             }
                         }
                     </div>
@@ -195,7 +174,7 @@
                         @{
                             if (Model.opdId > 0)
                             {
-                                         <input class="form-control" type="text" id="txtAddOnShedule" value="@Model.channelingSchedule.DateTime" style="text-align:right;" placeholder="Schedule Time" disabled />
+                                                                     <input class="form-control" type="text" id="txtAddOnShedule" value="@Model.channelingSchedule.DateTime" style="text-align:right;" placeholder="Schedule Time" disabled />
                             }
 
                         }
@@ -212,7 +191,7 @@
                         @{
                             if (Model.opdId > 0)
                             {
-                                       <input class="form-control" type="text" id="txtAddOnNoOfAppoinment" value="@Model.opd.AppoimentNo" style="text-align:right;" placeholder="Appoinment Number" disabled />
+                                                                   <input class="form-control" type="text" id="txtAddOnNoOfAppoinment" value="@Model.opd.AppoimentNo" style="text-align:right;" placeholder="Appoinment Number" disabled />
                             }
                         }
                     </div>
@@ -222,15 +201,25 @@
                         @{
                             if (Model.opdId > 0)
                             {
-                                                        <label for="companyName">Add On</label>
+                                <label for="companyName">Add On</label>
 
-                                                        <select class="form-control" id="drpAddOn" onchange="javascript:select_onchange_addon(this.value);">
-                                                            <option value="0">Select one</option>
-                                                            <option value="1">VOG Scan</option>
-                                                            <option value="2">ECO Scan</option>
-                                                            <option value="3">Exercise Book</option>
-
-                                                        </select>
+                                    <select class="form-control" id="drpAddOn" onchange="javascript:select_onchange_addon(this.value);">
+                                    <option value="0">Select one</option>
+                                    @if (Model != null)
+                                    {
+                                        @if (Model.scanList != null)
+                                        {
+                                            @foreach (var item in Model.scanList)
+                                            {
+                                                <option value="@item.Id">@item.ItemName</option>
+                                            }
+                                        }
+                                        @if (Model.exerciseBook != null)
+                                        {
+                                           <option value="@Model.exerciseBook.Id">@Model.exerciseBook.DrugName</option>
+                                        }                                      
+                                    }                                                         
+                                </select>
                             }
                         }
 

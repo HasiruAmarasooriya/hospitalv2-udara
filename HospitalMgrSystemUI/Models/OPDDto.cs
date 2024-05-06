@@ -81,6 +81,9 @@ namespace HospitalMgrSystemUI.Models
         public Scan? echoScan { get; set; }
         public Drug? exerciseBook { get; set; }
 
+        public List<Scan>? scanList { get; set; }
+        public int appoinmentNo { get; set; }
+
         #endregion
     }
 }

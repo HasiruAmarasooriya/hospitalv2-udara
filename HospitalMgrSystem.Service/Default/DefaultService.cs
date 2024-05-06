@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace HospitalMgrSystem.Service.Default
 {
-    public class DefaultService
+    public class DefaultService : IDefaultService
     {
         public Decimal GetDefailtHospitalPrice()
         {
@@ -54,6 +54,18 @@ namespace HospitalMgrSystem.Service.Default
 
             }
             return scanFee;
+        }
+
+
+        public List<Scan> GetAllScanChannelingFee(int tag)
+        {
+            List<Model.Scan> scanFeeList = new List<Model.Scan>();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                scanFeeList = dbContext.ChannelingItems.Where(o => o.Tag1 == tag).ToList();
+
+            }
+            return scanFeeList;
         }
 
         public Drug GetExerciseBookFee()

@@ -144,6 +144,7 @@
                 <div class="table-responsive">
                     <table id="basic-2" class="display">
                         <thead>
+
                             <tr>
                                 <th>Ref No</th>
                                 <th>Cashier</th>
@@ -151,8 +152,8 @@
                                 <th>Pt's Name</th>
                                 <th>Pt's Contact Number</th>
                                 <th>Appoinment No</th>
-                                <th>Refunded Items</th>
-                                <th>Appoinment No</th>
+                                <th>Description</th>
+                                <th>Refund Items</th>
                                 <th>Consultant</th>
                                 <th>Specialist</th>
                                 <th>Shedule</th>
@@ -172,7 +173,7 @@
                                     {
                                         <tr class="table-warning">
 
-                                            <td>CHE @item.Id</td>
+                                            <td>CHE`@item.Id</td>
                                             <td>
                                                 @if (Model != null)
                                                 {
@@ -197,7 +198,7 @@
                                                 <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
                                             </td>
                                             <td>
-                                                    <button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.Id,@item.schedularId);><i class='fa fa-plus'></i></button>
+                                                    <button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.Id);><i class='fa fa-plus'></i></button>
                                             </td>
                                             <td>
                                                 @if (@item.channelingScheduleData.scheduleStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_END && @item.channelingScheduleData.scheduleStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_CANCEL)
@@ -453,7 +454,7 @@
         function handleClear() {
             window.location.href = '/Channeling/';
         }
-        function ShowAddOnDetails(id, csID) {
+        function ShowAddOnDetails(id) {
 
             console.log(id);
 
@@ -465,45 +466,8 @@
                 dataType: "html",
                 success: function (response) {
                     $("#AddEditContainerModel").html(response);
-                    if (csID > 0) {
-                        select_onchange_shedule(csID)
-                    }
-
                     $("#AddShiftModel").modal('show');
 
-                    $('#dropPatient').select2({
-                        width: '100%',
-                        height: "auto !important",
-                        dropdownCssClass: "bigdrop",
-                        placeholder: 'Select one',
-                        dropdownParent: $('#AddShiftModel'),
-                        allowClear: false,
-                        tags: true,
-                        createTag: function (params) {
-                            return params.term.trim() !== '' ? {
-                                id: 0,
-                                text: params.term,
-                                newTag: true
-                            } : null;
-                        }
-                    });
-
-                    $('#dropDoctor').select2({
-                        width: '100%',
-                        height: "auto !important",
-                        dropdownCssClass: "bigdrop",
-                        dropdownParent: $('#AddShiftModel'),
-                        placeholder: 'Select one',
-                        allowClear: false,
-                    });
-
-                    //drug dropdown
-                    $("#drugus").select2({
-                        width: '100%',
-                        height: "auto !important",
-                        dropdownCssClass: "bigdrop",
-                        dropdownParent: $('#AddShiftModel')
-                    });
                 },
                 failure: function (response) {
                     alert(response.responseText);
