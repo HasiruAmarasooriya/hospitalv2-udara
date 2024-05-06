@@ -482,7 +482,7 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 try
                 {
-                    drugs = new DrugsService().GetAllDrugsByStatus();
+                    drugs = new DrugsService().GetAllXrayyStatus();
                 }
                 catch (Exception ex)
                 {

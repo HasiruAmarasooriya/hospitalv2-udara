@@ -84,6 +84,18 @@ namespace HospitalMgrSystem.Service.Drugs
             }
             return mtList;
         }
+
+        public List<Model.Drug> GetAllXrayyStatus()
+        {
+            List<Model.Drug> mtList = new List<Model.Drug>();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.Drugs.Include(c => c.DrugsCategory).Include(c => c.DrugsCategory).Where(o => o.Status == 0 && o.DrugsSubCategoryId == 22).ToList<Model.Drug>();
+
+            }
+            return mtList;
+        }
+
         public List<Model.Drug> GetAllDrugsByCategory(int drugCategory,int drugSubCategory)
         {
             List<Model.Drug> mtList = new List<Model.Drug>();

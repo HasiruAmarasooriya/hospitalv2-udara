@@ -10,7 +10,7 @@
 
 <div class="modal-content">
     <div class="modal-header">
-        <h4 class="modal-title" id="myLargeModalLabel">Add New OPD</h4>
+        <h4 class="modal-title" id="myLargeModalLabel">Add New X-Ray</h4>
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     </div>
     <div class="modal-body" id="newOpdFrm">
@@ -107,9 +107,9 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="companyName">Name</label>
+                        <label for="companyName">Scan Name</label>
                         <select class="form-control ddlSearchList" onchange="javascript:select_onchange_drug(this.value);" id="drugus" asp-for="opdDrugus.DrugId">
-                            <option value="0">Select Drug</option>
+                            <option value="0">Select X-Ray</option>
                             @foreach (var item in Model.Drugs)
                             {
                                 <option value="@item.Id">@item.DrugName - @item.DrugsCategory.Category</option>
@@ -119,20 +119,20 @@
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-2">
                     <div class="form-group">
                         <label for="companyName">Qty </label>
                         <input class="form-control " type="text" style="text-align:right;" onkeyup="javascript:select_onchange_qty();" value="1.00" id="txtQty" placeholder="Qty" />
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-2">
                     <div class="form-group">
                         <label for="companyName">Price</label>
                         <input class="form-control " type="text" style="text-align:right;" id="txtPrice" value="0.00" placeholder="Price" />
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-2">
                     <div class="form-group">
                         <label for="companyName">Amount</label>
                         <input class="form-control " type="text" style="text-align:right;" id="txtAmount" value="0.00" placeholder="Amount" disabled />
@@ -152,7 +152,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="table-responsive">
+
                         <table id="myTable2" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
@@ -167,7 +167,7 @@
                             <tbody id="tblBodyPayments2">
                             </tbody>
                         </table>
-                    </div>
+
                 </div>
             </div>
 
@@ -194,7 +194,7 @@
     <div class="modal-footer">
         <hr>
         <div class="col-md-12">
-            <div class="table-responsive">
+
                 <table id="myTable" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
                     <thead>
                         <tr>
@@ -275,7 +275,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+
         </div>
     </div>
 </div>
