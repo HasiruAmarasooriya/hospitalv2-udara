@@ -217,6 +217,8 @@ namespace HospitalMgrSystemUI.Controllers
         public IActionResult AddNewOPDWithQR([FromBody] OPDDto oPDDto)
         {
             var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+            var NightShiftSessionList = new List<NightShiftSession>();
+            NightShiftSessionList = GetActiveShiftSession();
 
             try
             {
@@ -250,7 +252,7 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
                     oPDDto.opd.invoiceType = InvoiceType.OPD;
                     oPDDto.opd.ConsultantFee = 0;
-
+                    oPDDto.opd.shiftID = NightShiftSessionList[0].Id;
 
                     if (oPDDto.opd.Id > 0)
                     {
@@ -258,6 +260,7 @@ namespace HospitalMgrSystemUI.Controllers
                     }
                     else
                     {
+
 
                         OPDobj = new OPDService().CreateOPD(oPDDto.opd);
                     }
