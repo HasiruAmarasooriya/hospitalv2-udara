@@ -158,7 +158,7 @@
                             <th>Pt's Name</th>
                             <th>Payment Status</th>
                             <th>Consultant</th>
-                            <th>Telephone No/th>
+                            <th>Telephone No</th>
                             <th>Date & Time</th>
                             <th>View</th>
                             <th>Delete</th>
@@ -605,7 +605,7 @@
             var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
             var doctortID = parseInt(docId);
             var opdID = $('#opdIndexNumber').val();
-            var opdType = parseInt(docId) == 82 ? 0 : parseInt(docId) == 83 ? 2 : 1;
+            var opdType = parseInt(docId) == 82 ? 0 : 1;
 
             var patientObject = {
                 Id: patientID,

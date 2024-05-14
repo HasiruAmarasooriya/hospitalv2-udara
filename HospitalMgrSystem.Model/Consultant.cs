@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace HospitalMgrSystem.Model
         public string? Name { get; set; }
         public int? Gender { get; set; }
         public int? Age { get; set; }
+        public int? isSystemDr { get; set; }
         public string? ContectNumber { get; set; }
         public string? Email { get; set; }
         public int? SpecialistId { get; set; }
@@ -22,5 +24,11 @@ namespace HospitalMgrSystem.Model
         public int? ModifiedUser { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
+        [NotMapped]
+        public int ptCount { get; set; }
+        [NotMapped]
+        public decimal hospitalIncome { get; set; }
+        [NotMapped]
+        public decimal doctorIncome { get; set; }
     }
 }
