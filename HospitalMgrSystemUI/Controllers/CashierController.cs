@@ -1004,7 +1004,9 @@ namespace HospitalMgrSystemUI.Controllers
                 List<InvoiceItem> invoiceItems = new List<InvoiceItem>();
                 Payment payments = new Payment();
 
-                if (_CashierDto.cash < _CashierDto.total)
+                decimal totalOfPaymentType = _CashierDto.cash + _CashierDto.cheque + _CashierDto.giftCard + _CashierDto.credit + _CashierDto.debit;
+
+                if (totalOfPaymentType < _CashierDto.total)
                 {
                     return RedirectToAction("Index", new { PreID = _CashierDto.PreID });
                 }
