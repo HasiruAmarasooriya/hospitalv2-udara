@@ -94,6 +94,17 @@ namespace HospitalMgrSystem.Service.Consultant
             return mtList;
         }
 
+        public List<Model.Consultant> GetAllNotInSystemConsultant()
+        {
+            List<Model.Consultant> mtList = new List<Model.Consultant>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.Consultants.Include(c => c.Specialist).Where(o => o.Status == 0 && o.isSystemDr==0).ToList();
+
+            }
+            return mtList;
+        }
+
         public List<Model.Consultant> GetAllOPDConsultantByStatus()
         {
             List<Model.Consultant> mtList = new List<Model.Consultant>();

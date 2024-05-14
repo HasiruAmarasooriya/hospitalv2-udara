@@ -5,7 +5,39 @@
 @{
     Layout = null;
 }
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Hide dropBenificaryDr by default
+        $('#dropBenificaryDr').hide();
+    });
 
+    function select_onchange_invoice_type(value) {
+        console.log(value);
+        if (value != null) {
+            
+
+        if (value === "7") {
+            // If value is 7, show dropBenificaryDr and hide dropBenificaryOther
+            $('#dropBenificaryDr').show();
+            $('#dropBenificaryOther').hide();
+        } else {
+            // If value is not 7, show dropBenificaryOther and hide dropBenificaryDr
+            $('#dropBenificaryDr').hide();
+            $('#dropBenificaryOther').show();
+        }
+
+
+            $('#hiddenBenificaryID').val(value);
+        }
+    }
+
+    function select_onchange_benificiary(value) {
+        console.log(value);
+        if (value != null) {
+            $('#hiddenBenificaryID').val(value);
+        }
+    }
+</script>
 
 <div class="modal-content">
     <div class="modal-header">
@@ -17,6 +49,7 @@
             <input type="hidden" id="custId" >
             <div class="row">
                 <input type="hidden" asp-for="otherTransactions.Id">
+                <input type="hidden" asp-for="otherTransactions.BeneficiaryID" id="hiddenBenificaryID">
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="companyName">Select Session</label>
@@ -26,11 +59,11 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Invoice Type</label>
-                        <select class="form-control ddlSearchList" asp-for="otherTransactions.InvoiceType" id="dropSex">
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_invoice_type(this.value);" asp-for="otherTransactions.InvoiceType" id="dropSex">
                             <option value="3">OTHER_INCOME</option>
                             <option value="4">OTHER_EXPENSES</option>
-@*                            <option value="5">CASHIER_TRANSFER_IN</option>*@
                             <option value="6">CASHIER_TRANSFER_OUT</option>
+                            <option value="7">DOCTOR_PAYMENT</option>
 
                         </select>
                     </div>
@@ -50,13 +83,25 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Beneficiary</label>
-                        <select class="form-control ddlSearchList" asp-for="otherTransactions.BeneficiaryID" id="dropBenificary">
-                            <option value="0">Select Beneficiary</option>
+                        <select class="form-control ddlSearchList" id="dropBenificaryOther" asp-for="otherTransactions.BeneficiaryID" onchange="javascript:select_onchange_benificiary(this.value);">
+                            <option value="0">Select Beneficiary Other</option>
                             @if (Model.benificaryList != null){
 
                                 @foreach (var item in Model.benificaryList)
                                 {
                                     <option value="@item.Id">@item.FullName</option>
+                                }
+                            }
+
+                        </select>
+                        <select class="form-control ddlSearchList" id="dropBenificaryDr" asp-for="otherTransactions.BeneficiaryID" onchange="javascript:select_onchange_benificiary(this.value);">
+                            <option value="0">Select Beneficiary Dr</option>
+                            @if (Model.benificaryDrList != null)
+                            {
+
+                                @foreach (var item in Model.benificaryDrList)
+                                {
+                                    <option value="@item.Id">@item.Name</option>
                                 }
                             }
 

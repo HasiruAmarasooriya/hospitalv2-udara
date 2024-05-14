@@ -2,6 +2,7 @@
 using HospitalMgrSystem.Model.Enums;
 using HospitalMgrSystem.Service.Cashier;
 using HospitalMgrSystem.Service.CashierSession;
+using HospitalMgrSystem.Service.Consultant;
 using HospitalMgrSystem.Service.OPD;
 using HospitalMgrSystem.Service.OtherTransactions;
 using HospitalMgrSystem.Service.User;
@@ -27,6 +28,7 @@ namespace HospitalMgrSystemUI.Controllers
         public ActionResult CreateOtherIncome(int id)
         {
             List<User> cashierUserList = new List<User>();
+            List<Consultant> consultantList = new List<Consultant>();
             var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
             int userID = Convert.ToInt32(userIdCookie);
 
@@ -35,7 +37,8 @@ namespace HospitalMgrSystemUI.Controllers
             List<CashierSession> CashierSessionList = new List<CashierSession>();
             CashierSessionList = GetActiveCashierSession(userID);
             cashierUserList = GetUsersByUserRole(UserRole.CASHIER);
-            if (CashierSessionList != null)
+            consultantList = GetAllNotInSystemConsultant();
+            if (CashierSessionList != null && consultantList != null)
             {
                 if (CashierSessionList.Count > 0)
                 {
@@ -44,7 +47,7 @@ namespace HospitalMgrSystemUI.Controllers
                     otherTransactionsDto.sessionDetails = cashierSessiont.CreateDate + " -" + cashierSessiont.User.FullName;
                     otherTransactionsDto.username = cashierSessiont.User.FullName;
                     otherTransactionsDto.benificaryList = cashierUserList;
-
+                    otherTransactionsDto.benificaryDrList = consultantList;
                     otherTransactionsDto.benificaryOutTransactionList = GetAllCashierOutTransactionsByBenificaryID(userID);
 
                 }
@@ -205,8 +208,14 @@ namespace HospitalMgrSystemUI.Controllers
                                         payments.BillingType = BillingType.OTHER_OUT;
                                         payments.CashAmount = otherTransactions.Amount * -1;
                                     }
+                                    if (otherTransactions.InvoiceType == InvoiceType.DOCTOR_PAYMENT)
+                                    {
+                                        payments.CashierStatus = CashierStatus.CashierIn;
+                                        payments.BillingType = BillingType.OTHER_IN;
+                                        payments.CashAmount = otherTransactions.Amount;
+                                    }
 
-                                    Payment resPayment = new CashierService().AddPayments(payments);
+                                Payment resPayment = new CashierService().AddPayments(payments);
 
                                     otherTransactions.otherTransactionsStatus = OtherTransactionsStatus.Completed;
                                     otherTransactions.ModifiedUser = Convert.ToInt32(userIdCookie);
@@ -608,6 +617,22 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     userList = new UserService().GetUsersByRole(userRole);
+
+                }
+                catch (Exception ex) { }
+            }
+            return userList;
+        }
+
+        private List<Consultant> GetAllNotInSystemConsultant()
+        {
+            List<Consultant> userList = new List<Consultant>();
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    userList = new ConsultantService().GetAllNotInSystemConsultant();
 
                 }
                 catch (Exception ex) { }

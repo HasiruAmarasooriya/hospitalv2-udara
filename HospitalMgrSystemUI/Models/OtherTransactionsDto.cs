@@ -11,6 +11,8 @@ namespace HospitalMgrSystemUI.Models
         public User user { get; set; }
         public List<OtherTransactions> benificaryOutTransactionList { get; set; }
         public List<User> benificaryList { get; set; }
+
+        public List<Consultant> benificaryDrList { get; set; }
         public DateTime sessionDate { get; set; }
         public string sessionDetails { get; set; }
 

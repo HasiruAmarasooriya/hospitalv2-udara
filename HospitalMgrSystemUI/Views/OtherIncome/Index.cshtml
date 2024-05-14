@@ -62,7 +62,6 @@
                                     <th>Status</th>
                                     <th>Aproved By</th>
                                     <th>Action</th>
-                                    <th>Action</th>
                                     <th>View</th>
                                 </tr>
                             </thead>
@@ -77,32 +76,47 @@
                                     <td>@item.Amount</td>
                                     <td>@item.CreateDate</td>
                                     <td>@item.otherTransactionsStatus</td>
-                                    <td>
-                                        @item.ApprovedBy.FullName
-                                    </td>
+                               
+                                        @if(item.otherTransactionsStatus != HospitalMgrSystem.Model.Enums.OtherTransactionsStatus.Requested)
+                                        {
+                                        <td>@item.ApprovedBy.FullName</td>
+                                            
+                                        }
+                                        else
+                                        {
+                                        <td>NOT YET</td>
+                                        }
+
+              
                                     <td>
                                         @if (Model != null)
                                         {
-
-                                            @using (Html.BeginForm("ApproveOtherIncome", "OtherIncome", new { Id = @item.Id }, FormMethod.Post))
+                                            @if (item.otherTransactionsStatus == HospitalMgrSystem.Model.Enums.OtherTransactionsStatus.Requested)
                                             {
 
-                                                <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-success'>Approve</button>
+                                                @using (Html.BeginForm("ApproveOtherIncome", "OtherIncome", new { Id = @item.Id }, FormMethod.Post))
+                                                {
+
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-success'>Approve</button>
+
+                                                }
 
                                             }
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (Model != null)
-                                        {
-
-                                            @using (Html.BeginForm("CompleteOtherIncome", "OtherIncome", new { Id = @item.Id }, FormMethod.Post))
+                                            @if (item.otherTransactionsStatus == HospitalMgrSystem.Model.Enums.OtherTransactionsStatus.Approved)
                                             {
 
-                                                <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-success'>Done</button>
+
+                                                @using (Html.BeginForm("CompleteOtherIncome", "OtherIncome", new { Id = @item.Id }, FormMethod.Post))
+                                                {
+
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-success'>Done</button>
+
+                                                }
 
                                             }
-                                        }
+         
+
+                                    }
                                     </td>
                                     <td>
                                         <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
