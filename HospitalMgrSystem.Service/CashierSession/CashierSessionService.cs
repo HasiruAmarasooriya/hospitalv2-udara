@@ -1,7 +1,9 @@
 ﻿using HospitalMgrSystem.Model;
 using HospitalMgrSystem.Model.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,300 +17,287 @@ namespace HospitalMgrSystem.Service.CashierSession
         {
             // Handle not implemented exception
             Model.CashierSession cashierSessionAmounts = new Model.CashierSession();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                List<int> InvoiceIds = dbContext.Payments.Where(o => o.sessionID == sessionId)
+                                       .Select(r => r.InvoiceID).Distinct().ToList();
 
-            Model.CashierSession OPDPayementData = OPDTotalAmount(sessionId);
-            Model.CashierSession XRAYPayementData = XRAYTotalAmount(sessionId);
-            Model.CashierSession OTHERPayementData = OtherTotalAmount(sessionId);
-            Model.CashierSession ChannelingPayementData = ChannelingTotalAmount(sessionId);
+                Model.CashierSession cashierSession = GetCashierSessionByID(sessionId);
 
-            cashierSessionAmounts.OPDTotalAmount = OPDPayementData.OPDTotalAmount;
-            cashierSessionAmounts.OPDTotalPaidAmount = OPDPayementData.OPDTotalPaidAmount;
-            cashierSessionAmounts.OPDTotalRefund = OPDPayementData.OPDTotalRefund;
+                Model.CashierSession OPDPayementData = PaymentDetailsOPD(sessionId, InvoiceIds);
+                Model.CashierSession XRAYPayementData = PaymentDetailsXRAY(sessionId, InvoiceIds);
+                Model.CashierSession OTHERPayementData = PaymentDetailsOtherMS(sessionId,InvoiceIds);
+                Model.CashierSession ChannelingPayementData = PaymentDetailsCHE(sessionId, InvoiceIds);
+                Model.CashierSession otherHospitalIncome = PaymentDetailsOtherTransactrion(sessionId, InvoiceIds);
 
-            cashierSessionAmounts.XRAYTotalAmount = XRAYPayementData.XRAYTotalAmount;
-            cashierSessionAmounts.XRAYTotalPaidAmount = XRAYPayementData.XRAYTotalPaidAmount;
-            cashierSessionAmounts.XRAYTotalRefund = XRAYPayementData.XRAYTotalRefund;
+                cashierSessionAmounts.OPDTotalAmount = OPDPayementData.OPDTotalAmount;
+                cashierSessionAmounts.OPDTotalPaidAmount = OPDPayementData.OPDTotalPaidAmount;
+                cashierSessionAmounts.OPDTotalRefund = OPDPayementData.OPDTotalRefund;
+                cashierSessionAmounts.OPDCashBalence = OPDPayementData.OPDCashBalence;
+                cashierSessionAmounts.OPDTotalPaidCardAmount = OPDPayementData.OPDTotalPaidCardAmount;
 
-            cashierSessionAmounts.OtherTotalAmount = OTHERPayementData.OtherTotalAmount;
-            cashierSessionAmounts.OtherTotalPaidAmount = OTHERPayementData.OtherTotalPaidAmount;
-            cashierSessionAmounts.OtherTotalRefund = OTHERPayementData.OtherTotalRefund;
+                cashierSessionAmounts.XRAYTotalAmount = XRAYPayementData.XRAYTotalAmount;
+                cashierSessionAmounts.XRAYTotalPaidAmount = XRAYPayementData.XRAYTotalPaidAmount;
+                cashierSessionAmounts.XRAYTotalRefund = XRAYPayementData.XRAYTotalRefund;
+                cashierSessionAmounts.XRAYCashBalence = XRAYPayementData.XRAYCashBalence;
+                cashierSessionAmounts.XRAYTotalPaidCardAmount = XRAYPayementData.XRAYTotalPaidCardAmount;
 
-            cashierSessionAmounts.ChannelingTotalAmount = ChannelingPayementData.ChannelingTotalAmount;
-            cashierSessionAmounts.ChannelingTotalPaidAmount = ChannelingPayementData.ChannelingTotalPaidAmount;
-            cashierSessionAmounts.ChannelingTotalRefund = ChannelingPayementData.ChannelingTotalRefund;
+                cashierSessionAmounts.OtherTotalAmount = OTHERPayementData.OtherTotalAmount;
+                cashierSessionAmounts.OtherTotalPaidAmount = OTHERPayementData.OtherTotalPaidAmount;
+                cashierSessionAmounts.OtherTotalRefund = OTHERPayementData.OtherTotalRefund;
+                cashierSessionAmounts.OtherCashBalence = OTHERPayementData.OtherCashBalence;
+                cashierSessionAmounts.OPDTotalPaidAmount = OTHERPayementData.OPDTotalPaidAmount;
 
-            return cashierSessionAmounts;
+                cashierSessionAmounts.ChannelingTotalAmount = ChannelingPayementData.ChannelingTotalAmount;
+                cashierSessionAmounts.ChannelingTotalPaidAmount = ChannelingPayementData.ChannelingTotalPaidAmount;
+                cashierSessionAmounts.ChannelingTotalRefund = ChannelingPayementData.ChannelingTotalRefund;
+                cashierSessionAmounts.ChannelingTotalDoctorPayment = ChannelingPayementData.ChannelingTotalDoctorPayment;
+                cashierSessionAmounts.ChannelingTotalPaidCardAmount = ChannelingPayementData.ChannelingTotalPaidCardAmount;
+                cashierSessionAmounts.ChannelingCashBalence = ChannelingPayementData.ChannelingCashBalence;
+
+                cashierSessionAmounts.AllServiceTotalPaidAmount = cashierSessionAmounts.OPDTotalPaidAmount + cashierSessionAmounts.XRAYTotalPaidAmount + cashierSessionAmounts.OtherTotalPaidAmount + cashierSessionAmounts.ChannelingTotalPaidAmount;
+                cashierSessionAmounts.AllServiceTotalPaidCardAmount = cashierSessionAmounts.OPDTotalPaidCardAmount + cashierSessionAmounts.XRAYTotalPaidCardAmount + cashierSessionAmounts.OtherTotalPaidCardAmount + cashierSessionAmounts.ChannelingTotalPaidCardAmount;
+                cashierSessionAmounts.AllServiceTotalRefund = cashierSessionAmounts.OPDTotalRefund + cashierSessionAmounts.XRAYTotalRefund + cashierSessionAmounts.OtherTotalRefund + cashierSessionAmounts.ChannelingTotalRefund;
+                cashierSessionAmounts.AllServiceTotalAmount = cashierSessionAmounts.OPDTotalAmount + cashierSessionAmounts.XRAYTotalAmount + cashierSessionAmounts.OtherTotalAmount + cashierSessionAmounts.ChannelingTotalAmount;
+                cashierSessionAmounts.AllServiceCashBalence = cashierSession.EndBalence-cashierSession.StartBalence;
+
+
+                cashierSessionAmounts.notInSyestemConsultantList = otherHospitalIncome.notInSyestemConsultantList;
+                cashierSessionAmounts.totalHospitaOtherIncome = otherHospitalIncome.totalHospitaOtherIncome;
+                cashierSessionAmounts.totalGrandIncome = cashierSessionAmounts.AllServiceTotalAmount + cashierSessionAmounts.totalHospitaOtherIncome;
+                return cashierSessionAmounts;
+            }
+
+
+
+
 
         }
 
-        private Model.CashierSession ChannelingTotalAmount(int sessionId)
+        private Model.CashierSession PaymentDetailsOtherTransactrion(int sessionId, List<int> InvoiceIds)
+        {
+            Model.CashierSession cashierSession = new Model.CashierSession();
+
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                List<Model.Consultant> notInSyestemConsultantList = new List<Model.Consultant>();
+                Model.Consultant notInSyestemConsultant = new Model.Consultant();
+                List<int> DrPaymentsServiceIdsList = dbContext.Invoices.Where(o => InvoiceIds.Contains(o.Id) && o.InvoiceType == InvoiceType.DOCTOR_PAYMENT && o.Status == 0).Select(r => r.ServiceID).ToList();
+
+                int ptCount = 0;
+
+                //for doctor payments
+                List<Model.Consultant> doctorOfNotInSystem = dbContext.Consultants.Include(c => c.Specialist).Where(o => o.isSystemDr == 0 && o.Status == 0).ToList();
+                List<int> doctorIdsOfNotInSystem = doctorOfNotInSystem.Select(r => r.Id).ToList();
+
+                List<Model.OtherTransactions> otherServiceList = dbContext.OtherTransactions.Where(o => doctorIdsOfNotInSystem.Contains(o.BeneficiaryID) && DrPaymentsServiceIdsList.Contains(o.Id) && o.Status == CommonStatus.Active && o.InvoiceType == InvoiceType.DOCTOR_PAYMENT).ToList();
+                List<int> otherServiceIds = otherServiceList.Select(r => r.Id).ToList();
+
+                List<Invoice> doctorPaymentInvoiceList = dbContext.Invoices.Where(o => otherServiceIds.Contains(o.ServiceID) && o.InvoiceType == InvoiceType.DOCTOR_PAYMENT && o.Status == 0).ToList();
+
+                List<int> doctorPaymentServiceIdsList = doctorPaymentInvoiceList.Select(r => r.Id).ToList();
+
+                decimal totalOtherHospitalIncome = 0;
+                foreach (var itemDr in doctorOfNotInSystem)
+                {
+                    decimal totalOtherHospitalIncomeByDr = 0;
+                    foreach (var itemDrIn in doctorPaymentInvoiceList)
+                    {
+                        int drId = otherServiceList.Where(o => o.BeneficiaryID == itemDr.Id && o.Id == itemDrIn.ServiceID && o.Status == CommonStatus.Active).Select(o => o.BeneficiaryID).FirstOrDefault();
+                        if(drId == itemDr.Id)
+                        {
+
+                            totalOtherHospitalIncomeByDr = totalOtherHospitalIncomeByDr +dbContext.Payments
+                                                           .Where(o => o.BillingType == BillingType.OTHER_IN && o.sessionID == sessionId && o.InvoiceID == itemDrIn.Id)
+                                                           .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+
+                        }
+
+                    }
+                    notInSyestemConsultant = itemDr;
+                    notInSyestemConsultant.hospitalIncome= totalOtherHospitalIncomeByDr;
+                    notInSyestemConsultantList.Add(notInSyestemConsultant);
+                    totalOtherHospitalIncome = totalOtherHospitalIncome + totalOtherHospitalIncomeByDr;
+                }
+                cashierSession.totalHospitaOtherIncome = totalOtherHospitalIncome;
+                cashierSession.notInSyestemConsultantList=notInSyestemConsultantList;
+
+
+
+                //cashierSessionAmounts.ChannelingTotalPaidCardAmount = totalCashierCardAmount;
+                return cashierSession;
+            }
+        }
+
+        private Model.CashierSession PaymentDetailsCHE(int sessionId, List<int> InvoiceIds)
         {
             Model.CashierSession cashierSessionAmounts = new Model.CashierSession();
 
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                /*List<int> opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.invoiceType == InvoiceType.CHE).Select(r => r.Id).ToList();
-                List<int> invoiceList = dbContext.Invoices.Where(o => opdIds.Contains(o.ServiceID)).Select(r => r.Id).ToList();
 
-                decimal totalCashierAmount = dbContext.Payments
-                    .Where(o => invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                List<int> CHEinvoiceList = dbContext.Invoices.Where(o => InvoiceIds.Contains(o.Id) && o.InvoiceType == InvoiceType.CHE && o.Status == 0).Select(r => r.Id).ToList();
 
-                return totalCashierAmount;*/
+                List<int> DrPaymentsServiceIdsList = dbContext.Invoices.Where(o => InvoiceIds.Contains(o.Id) && o.InvoiceType == InvoiceType.DOCTOR_PAYMENT && o.Status == 0).Select(r => r.ServiceID).ToList();
 
-                List<int> opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.invoiceType == InvoiceType.CHE && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
-                List<int> invoiceList = dbContext.Invoices.Where(o => opdIds.Contains(o.ServiceID)).Select(r => r.Id).ToList();
 
-                List<int> opdIdsNeedToPay = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.invoiceType == InvoiceType.CHE && o.paymentStatus == PaymentStatus.NEED_TO_PAY).Select(r => r.Id).ToList();
-                List<int> invoiceListNeedToPay = dbContext.Invoices.Where(o => opdIdsNeedToPay.Contains(o.ServiceID)).Select(r => r.Id).ToList();
 
-                List<int> opdIdsNotPaid = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.invoiceType == InvoiceType.CHE && o.paymentStatus == PaymentStatus.NOT_PAID).Select(r => r.Id).ToList();
-                List<int> invoiceListNotPaid = dbContext.Invoices.Where(o => opdIdsNotPaid.Contains(o.ServiceID)).Select(r => r.Id).ToList();
+                //for doctor payments
+                List<int> doctorIdsOfNotInSystem = dbContext.Consultants.Where(o => o.isSystemDr == 0 && o.Status == 0).Select(r => r.Id).ToList();
 
-                decimal totalCashierAmount = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.CASHIER && invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                List<int> otherServiceIds = dbContext.OtherTransactions.Where(o => !doctorIdsOfNotInSystem.Contains(o.BeneficiaryID) && DrPaymentsServiceIdsList.Contains(o.Id) && o.Status == CommonStatus.Active && o.InvoiceType == InvoiceType.DOCTOR_PAYMENT).Select(r => r.Id).ToList();
 
-                decimal totalBalanceAmount = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.BALENCE && invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                List<int> doctorPaymentServiceIdsList = dbContext.Invoices.Where(o => otherServiceIds.Contains(o.ServiceID) && o.InvoiceType == InvoiceType.DOCTOR_PAYMENT && o.Status == 0).Select(r => r.Id).ToList();
 
-                decimal totalRefundAmount = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.REFUND && invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
-                decimal totalRefundAmountInNeedToPay = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.REFUND && invoiceListNeedToPay.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
-                List<int> invoiceListNotPaidHasSessionId = dbContext.Payments
-                    .Where(o => invoiceListNotPaid.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Select(o => o.InvoiceID).ToList();
+                decimal totalDoctorPaymentAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.OTHER_OUT && o.sessionID == sessionId && doctorPaymentServiceIdsList.Contains(o.InvoiceID))
+                                                .Sum(o => o.CashAmount);
 
-                List<int> invoiceListNeedToPayHasSessionId = dbContext.Payments
-                    .Where(o => invoiceListNeedToPay.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Select(o => o.InvoiceID).ToList();
+                decimal totalCashierCashAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.CASHIER &&  o.sessionID == sessionId && CHEinvoiceList.Contains(o.InvoiceID))
+                                                .Sum(o => o.CashAmount);
 
-                decimal removedItemSumNeedToPay = dbContext.InvoiceItems.Where(o => o.itemInvoiceStatus == ItemInvoiceStatus.Remove && invoiceListNeedToPayHasSessionId.Contains(o.InvoiceId)).Sum(o => o.price * o.qty);
-                decimal removedItemSumRefund = dbContext.InvoiceItems.Where(o => o.itemInvoiceStatus == ItemInvoiceStatus.Remove && invoiceListNotPaidHasSessionId.Contains(o.InvoiceId)).Sum(o => o.price * o.qty);
+                decimal totalCashierCardAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.CASHIER && o.sessionID == sessionId && CHEinvoiceList.Contains(o.InvoiceID))
+                                                .Sum(o => o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
-                decimal totalRefund = removedItemSumNeedToPay + removedItemSumRefund;
-                decimal totalAmount = totalCashierAmount + totalBalanceAmount + removedItemSumNeedToPay + removedItemSumRefund;
-                decimal totalPaidAmount = totalAmount + totalRefundAmount;
+                decimal balanceAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.BALENCE && o.sessionID == sessionId && CHEinvoiceList.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
 
-                decimal oldPaidAmount = totalPaidAmount - (totalRefundAmount + totalRefundAmountInNeedToPay);
-                decimal actRefundAmount = oldPaidAmount - totalPaidAmount;
-                decimal needToPayTotal = totalRefund - actRefundAmount;
+                decimal refundAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.REFUND && o.sessionID == sessionId && CHEinvoiceList.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
 
-                cashierSessionAmounts.ChannelingTotalAmount = oldPaidAmount;
-                cashierSessionAmounts.ChannelingTotalRefund = actRefundAmount;
-                cashierSessionAmounts.ChannelingTotalPaidAmount = totalPaidAmount;
+          
+                cashierSessionAmounts.ChannelingTotalPaidCardAmount = totalCashierCardAmount;
+                cashierSessionAmounts.ChannelingCashBalence = balanceAmount;
+                cashierSessionAmounts.ChannelingTotalRefund = refundAmount;
+                cashierSessionAmounts.ChannelingTotalDoctorPayment = totalDoctorPaymentAmount;
+                cashierSessionAmounts.ChannelingTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
+                cashierSessionAmounts.ChannelingTotalAmount = cashierSessionAmounts.ChannelingTotalPaidAmount + totalCashierCardAmount;
+
 
                 return cashierSessionAmounts;
             }
         }
-
-        private Model.CashierSession OPDTotalAmount(int sessionId)
+        private Model.CashierSession PaymentDetailsOPD(int sessionId, List<int> InvoiceIds)
         {
             Model.CashierSession cashierSessionAmounts = new Model.CashierSession();
 
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                /*List<int> opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == "OPD").Select(r => r.Id).ToList();
-                List<int> invoiceList = dbContext.Invoices.Where(o => opdIds.Contains(o.ServiceID)).Select(r => r.Id).ToList();
 
-                decimal totalCashierAmount = dbContext.Payments
-                    .Where(o => invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                List<Invoice> invoiceList = dbContext.Invoices.Where(o => InvoiceIds.Contains(o.Id) && o.InvoiceType == InvoiceType.OPD && o.Status == 0).ToList();
 
-                return totalCashierAmount;*/
+                List<int> invoiceServiceIdList = invoiceList.Select(o => o.ServiceID).ToList();
 
-                List<int> opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == "OPD" && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
-                List<int> invoiceList = dbContext.Invoices.Where(o => opdIds.Contains(o.ServiceID)).Select(r => r.Id).ToList();
+                List<int> opdIds = dbContext.OPD.Where(o => invoiceServiceIdList.Contains(o.Id) && o.Status == CommonStatus.Active && o.Description == "OPD" && o.invoiceType == InvoiceType.OPD && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
 
-                List<int> opdIdsNeedToPay = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == "OPD" && o.paymentStatus == PaymentStatus.NEED_TO_PAY).Select(r => r.Id).ToList();
-                List<int> invoiceListNeedToPay = dbContext.Invoices.Where(o => opdIdsNeedToPay.Contains(o.ServiceID)).Select(r => r.Id).ToList();
+                List<int> invoiceIds = invoiceList.Where(o => opdIds.Contains(o.ServiceID) && o.InvoiceType == InvoiceType.OPD && o.Status == 0).Select(o => o.Id).ToList();
 
-                List<int> opdIdsNotPaid = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == "OPD" && o.paymentStatus == PaymentStatus.NOT_PAID).Select(r => r.Id).ToList();
-                List<int> invoiceListNotPaid = dbContext.Invoices.Where(o => opdIdsNotPaid.Contains(o.ServiceID)).Select(r => r.Id).ToList();
+   
 
-                decimal totalCashierAmount = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.CASHIER && invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                decimal totalCashierCashAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.CASHIER && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                                .Sum(o => o.CashAmount);
 
-                decimal totalBalanceAmount = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.BALENCE && invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                decimal totalCashierCardAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.CASHIER && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                                .Sum(o => o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
-                decimal totalRefundAmount = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.REFUND && invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                decimal balanceAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.BALENCE && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
 
-                decimal totalRefundAmountInNeedToPay = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.REFUND && invoiceListNeedToPay.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                decimal refundAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.REFUND && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
 
-                List<int> invoiceListNotPaidHasSessionId = dbContext.Payments
-                    .Where(o => invoiceListNotPaid.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Select(o => o.InvoiceID).ToList();
 
-                List<int> invoiceListNeedToPayHasSessionId = dbContext.Payments
-                    .Where(o => invoiceListNeedToPay.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Select(o => o.InvoiceID).ToList();
+                cashierSessionAmounts.OPDTotalPaidCardAmount = totalCashierCardAmount;
+                cashierSessionAmounts.OPDCashBalence = balanceAmount;
+                cashierSessionAmounts.OPDTotalRefund = refundAmount;
+                cashierSessionAmounts.OPDTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
+                cashierSessionAmounts.OPDTotalAmount = cashierSessionAmounts.OPDTotalPaidAmount + totalCashierCardAmount;
 
-                decimal removedItemSumNeedToPay = dbContext.InvoiceItems.Where(o => o.itemInvoiceStatus == ItemInvoiceStatus.Remove && invoiceListNeedToPayHasSessionId.Contains(o.InvoiceId)).Sum(o => o.price * o.qty);
-                decimal removedItemSumRefund = dbContext.InvoiceItems.Where(o => o.itemInvoiceStatus == ItemInvoiceStatus.Remove && invoiceListNotPaidHasSessionId.Contains(o.InvoiceId)).Sum(o => o.price * o.qty);
-
-                decimal totalRefund = removedItemSumNeedToPay + removedItemSumRefund;
-                decimal totalAmount = totalCashierAmount + totalBalanceAmount + removedItemSumNeedToPay + removedItemSumRefund;
-                decimal totalPaidAmount = totalAmount + totalRefundAmount;
-
-                decimal oldPaidAmount = totalPaidAmount - (totalRefundAmount + totalRefundAmountInNeedToPay);
-                decimal actRefundAmount = oldPaidAmount - totalPaidAmount;
-                decimal needToPayTotal = totalRefund - actRefundAmount;
-
-                cashierSessionAmounts.OPDTotalAmount = oldPaidAmount;
-                cashierSessionAmounts.OPDTotalRefund = actRefundAmount;
-                cashierSessionAmounts.OPDTotalPaidAmount = totalPaidAmount;
 
                 return cashierSessionAmounts;
             }
         }
-
-        private Model.CashierSession XRAYTotalAmount(int sessionId)
+        private Model.CashierSession PaymentDetailsXRAY(int sessionId, List<int> InvoiceIds)
         {
             Model.CashierSession cashierSessionAmounts = new Model.CashierSession();
 
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                /*List<int> opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == "X-RAY").Select(r => r.Id).ToList();
-                List<int> invoiceList = dbContext.Invoices.Where(o => opdIds.Contains(o.ServiceID)).Select(r => r.Id).ToList();
 
-                decimal totalCashierAmount = dbContext.Payments
-                    .Where(o => invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                List<Invoice> invoiceList = dbContext.Invoices.Where(o => InvoiceIds.Contains(o.Id) && o.InvoiceType == InvoiceType.OPD && o.Status == 0).ToList();
 
-                return totalCashierAmount;*/
+                List<int> invoiceServiceIdList = invoiceList.Select(o => o.ServiceID).ToList();
 
-                List<int> opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == "X-RAY" && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
-                List<int> invoiceList = dbContext.Invoices.Where(o => opdIds.Contains(o.ServiceID)).Select(r => r.Id).ToList();
+                List<int> opdIds = dbContext.OPD.Where(o => invoiceServiceIdList.Contains(o.Id) && o.Status == CommonStatus.Active && o.Description == "X-RAY" && o.invoiceType == InvoiceType.OPD && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
 
-                List<int> opdIdsNeedToPay = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == "X-RAY" && o.paymentStatus == PaymentStatus.NEED_TO_PAY).Select(r => r.Id).ToList();
-                List<int> invoiceListNeedToPay = dbContext.Invoices.Where(o => opdIdsNeedToPay.Contains(o.ServiceID)).Select(r => r.Id).ToList();
+                List<int> invoiceIds = invoiceList.Where(o => opdIds.Contains(o.ServiceID) && o.InvoiceType == InvoiceType.OPD && o.Status == 0).Select(o => o.Id).ToList();
 
-                List<int> opdIdsNotPaid = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == "X-RAY" && o.paymentStatus == PaymentStatus.NOT_PAID).Select(r => r.Id).ToList();
-                List<int> invoiceListNotPaid = dbContext.Invoices.Where(o => opdIdsNotPaid.Contains(o.ServiceID)).Select(r => r.Id).ToList();
 
-                decimal totalCashierAmount = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.CASHIER && invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
-                decimal totalBalanceAmount = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.BALENCE && invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                decimal totalCashierCashAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.CASHIER && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                                .Sum(o => o.CashAmount);
 
-                decimal totalRefundAmount = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.REFUND && invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                decimal totalCashierCardAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.CASHIER && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                                .Sum(o => o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
-                decimal totalRefundAmountInNeedToPay = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.REFUND && invoiceListNeedToPay.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                decimal balanceAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.BALENCE && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
 
-                List<int> invoiceListNotPaidHasSessionId = dbContext.Payments
-                    .Where(o => invoiceListNotPaid.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Select(o => o.InvoiceID).ToList();
+                decimal refundAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.REFUND && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
 
-                List<int> invoiceListNeedToPayHasSessionId = dbContext.Payments
-                    .Where(o => invoiceListNeedToPay.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Select(o => o.InvoiceID).ToList();
 
-                decimal removedItemSumNeedToPay = dbContext.InvoiceItems.Where(o => o.itemInvoiceStatus == ItemInvoiceStatus.Remove && invoiceListNeedToPayHasSessionId.Contains(o.InvoiceId)).Sum(o => o.price * o.qty);
-                decimal removedItemSumRefund = dbContext.InvoiceItems.Where(o => o.itemInvoiceStatus == ItemInvoiceStatus.Remove && invoiceListNotPaidHasSessionId.Contains(o.InvoiceId)).Sum(o => o.price * o.qty);
+                cashierSessionAmounts.XRAYTotalPaidCardAmount = totalCashierCardAmount;
+                cashierSessionAmounts.XRAYCashBalence = balanceAmount;
+                cashierSessionAmounts.XRAYTotalRefund = refundAmount;
+                cashierSessionAmounts.XRAYTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
+                cashierSessionAmounts.XRAYTotalAmount = cashierSessionAmounts.XRAYTotalPaidAmount + totalCashierCardAmount;
 
-                decimal totalRefund = removedItemSumNeedToPay + removedItemSumRefund;
-                decimal totalAmount = totalCashierAmount + totalBalanceAmount + removedItemSumNeedToPay + removedItemSumRefund;
-                decimal totalPaidAmount = totalAmount + totalRefundAmount;
-
-                decimal oldPaidAmount = totalPaidAmount - (totalRefundAmount + totalRefundAmountInNeedToPay);
-                decimal actRefundAmount = oldPaidAmount - totalPaidAmount;
-                decimal needToPayTotal = totalRefund - actRefundAmount;
-
-                cashierSessionAmounts.XRAYTotalAmount = oldPaidAmount;
-                cashierSessionAmounts.XRAYTotalRefund = actRefundAmount;
-                cashierSessionAmounts.XRAYTotalPaidAmount = totalPaidAmount;
 
                 return cashierSessionAmounts;
             }
         }
-
-        private Model.CashierSession OtherTotalAmount(int sessionId)
+        private Model.CashierSession PaymentDetailsOtherMS(int sessionId, List<int> InvoiceIds)
         {
             Model.CashierSession cashierSessionAmounts = new Model.CashierSession();
 
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                /*List<int> opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == "Other").Select(r => r.Id).ToList();
-                List<int> invoiceList = dbContext.Invoices.Where(o => opdIds.Contains(o.ServiceID)).Select(r => r.Id).ToList();
 
-                decimal totalCashierAmount = dbContext.Payments
-                    .Where(o => invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                List<Invoice> invoiceList = dbContext.Invoices.Where(o => InvoiceIds.Contains(o.Id) && o.InvoiceType == InvoiceType.OPD && o.Status == 0).ToList();
 
-                return totalCashierAmount;*/
+                List<int> invoiceServiceIdList = invoiceList.Select(o => o.ServiceID).ToList();
 
-                List<int> opdIds = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == "Other" && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
-                List<int> invoiceList = dbContext.Invoices.Where(o => opdIds.Contains(o.ServiceID)).Select(r => r.Id).ToList();
+                List<int> opdIds = dbContext.OPD.Where(o => invoiceServiceIdList.Contains(o.Id) && o.Status == CommonStatus.Active && o.Description == "Other" && o.invoiceType == InvoiceType.OPD && o.paymentStatus == PaymentStatus.PAID).Select(r => r.Id).ToList();
 
-                List<int> opdIdsNeedToPay = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == "Other" && o.paymentStatus == PaymentStatus.NEED_TO_PAY).Select(r => r.Id).ToList();
-                List<int> invoiceListNeedToPay = dbContext.Invoices.Where(o => opdIdsNeedToPay.Contains(o.ServiceID)).Select(r => r.Id).ToList();
+                List<int> invoiceIds = invoiceList.Where(o => opdIds.Contains(o.ServiceID) && o.InvoiceType == InvoiceType.OPD && o.Status == 0).Select(o => o.Id).ToList();
 
-                List<int> opdIdsNotPaid = dbContext.OPD.Where(o => o.Status == CommonStatus.Active && o.Description == "Other" && o.paymentStatus == PaymentStatus.NOT_PAID).Select(r => r.Id).ToList();
-                List<int> invoiceListNotPaid = dbContext.Invoices.Where(o => opdIdsNotPaid.Contains(o.ServiceID)).Select(r => r.Id).ToList();
 
-                decimal totalCashierAmount = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.CASHIER && invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
-                decimal totalBalanceAmount = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.BALENCE && invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                decimal totalCashierCashAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.CASHIER && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                                .Sum(o => o.CashAmount);
 
-                decimal totalRefundAmount = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.REFUND && invoiceList.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                decimal totalCashierCardAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.CASHIER && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                                .Sum(o => o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
-                decimal totalRefundAmountInNeedToPay = dbContext.Payments
-                    .Where(o => o.BillingType == BillingType.REFUND && invoiceListNeedToPay.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                decimal balanceAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.BALENCE && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
 
-                List<int> invoiceListNotPaidHasSessionId = dbContext.Payments
-                    .Where(o => invoiceListNotPaid.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Select(o => o.InvoiceID).ToList();
+                decimal refundAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.REFUND && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
 
-                List<int> invoiceListNeedToPayHasSessionId = dbContext.Payments
-                    .Where(o => invoiceListNeedToPay.Contains(o.InvoiceID) && o.sessionID == sessionId)
-                    .Select(o => o.InvoiceID).ToList();
 
-                decimal removedItemSumNeedToPay = dbContext.InvoiceItems.Where(o => o.itemInvoiceStatus == ItemInvoiceStatus.Remove && invoiceListNeedToPayHasSessionId.Contains(o.InvoiceId)).Sum(o => o.price * o.qty);
-                decimal removedItemSumRefund = dbContext.InvoiceItems.Where(o => o.itemInvoiceStatus == ItemInvoiceStatus.Remove && invoiceListNotPaidHasSessionId.Contains(o.InvoiceId)).Sum(o => o.price * o.qty);
+                cashierSessionAmounts.OtherTotalPaidCardAmount = totalCashierCardAmount;
+                cashierSessionAmounts.OtherCashBalence = balanceAmount;
+                cashierSessionAmounts.OtherTotalRefund = refundAmount;
+                cashierSessionAmounts.OtherTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
+                cashierSessionAmounts.OtherTotalAmount = cashierSessionAmounts.OtherTotalPaidAmount + totalCashierCardAmount;
 
-                decimal totalRefund = removedItemSumNeedToPay + removedItemSumRefund;
-                decimal totalAmount = totalCashierAmount + totalBalanceAmount + removedItemSumNeedToPay + removedItemSumRefund;
-                decimal totalPaidAmount = totalAmount + totalRefundAmount;
-
-                decimal oldPaidAmount = totalPaidAmount - (totalRefundAmount + totalRefundAmountInNeedToPay);
-                decimal actRefundAmount = oldPaidAmount - totalPaidAmount;
-                decimal needToPayTotal = totalRefund - actRefundAmount;
-
-                cashierSessionAmounts.OtherTotalAmount = oldPaidAmount;
-                cashierSessionAmounts.OtherTotalRefund = actRefundAmount;
-                cashierSessionAmounts.OtherTotalPaidAmount = totalPaidAmount;
 
                 return cashierSessionAmounts;
             }
         }
-
         public Model.CashierSession CreateCashierSession(Model.CashierSession cashierSession)
         {
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
@@ -333,7 +322,7 @@ namespace HospitalMgrSystem.Service.CashierSession
                     result.col8 = cashierSession.col8;
                     result.col9 = cashierSession.col9;
                     result.col10 = cashierSession.col10;
-
+                    result.EndCardBalence = cashierSession.EndCardBalence;
                     result.cashierSessionStatus = cashierSession.cashierSessionStatus;
                     result.ModifiedUser = cashierSession.ModifiedUser;
                     result.ModifiedDate = cashierSession.ModifiedDate;
@@ -360,7 +349,7 @@ namespace HospitalMgrSystem.Service.CashierSession
                     .Select(g => new
                     {
                         sessionID = g.Key,
-                        Total = g.Sum(c => c.CashAmount)
+                        Total = g.Sum(c => c.CashAmount+ c.CreditAmount + c.DdebitAmount + c.ChequeAmount + c.GiftCardAmount)
                     }).ToList();
 
                 foreach (var item in mtList)
@@ -384,7 +373,24 @@ namespace HospitalMgrSystem.Service.CashierSession
 
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
             {
+                
                 HospitalMgrSystem.Model.CashierSession result = dbContext.CashierSessions.Include(c => c.User).Where(o => o.Status == 0 && o.Id == id).SingleOrDefault();
+                if (result != null)
+                {
+                    result.col10Total = result.col10 * 5000;
+                    result.col9Total = result.col9 * 1000;
+                    result.col8Total = result.col8 * 500;
+                    result.col7Total = result.col7 * 100;
+                    result.col6Total = result.col6 * 50;
+                    result.col5Total = result.col5 * 20;
+                    result.col4Total = result.col4 * 10;
+                    result.col3Total = result.col3 * 5;
+                    result.col2Total = result.col2 * 2;
+                    result.col1Total = result.col1 * 1;
+
+                    result.totalCashAmountHandover = result.col10Total + result.col9Total + result.col8Total + result.col7Total + result.col6Total + result.col5Total + result.col4Total + result.col3Total + result.col2Total+ result.col2Total + result.col1Total;
+                    result.totalAmountHandover = result.totalCashAmountHandover + result.EndCardBalence;
+                }
                 return result;
             }
         }

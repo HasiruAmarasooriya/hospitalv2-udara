@@ -11,6 +11,7 @@ namespace HospitalMgrSystemUI.Models
         public CashierSession CashierPaymentData { get; set; }
         public User user { get; set; }
         public DateTime sessionDate { get; set; }
+        public DateTime printDate { get; set; }
         public int sessionId { get; set; }
     }
 }

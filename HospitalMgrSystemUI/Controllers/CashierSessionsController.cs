@@ -25,11 +25,9 @@ namespace HospitalMgrSystemUI.Controllers
 
             CashierSessionDto cashierSessionDto = new CashierSessionDto();
             CashierSessionService cashierSessionService = new CashierSessionService();
-
+            cashierSessionDto.printDate = DateTime.Now;
+            cashierSessionDto.cashierSession = GetCashierSessionById(cashierSessionDtoData.sessionId);
             cashierSessionDto.CashierPaymentData = cashierSessionService.GetCashierSessionPaymentData(cashierSessionDtoData.sessionId);
-            cashierSessionDto.cashierSessionID = cashierSessionDtoData.sessionId;
-            cashierSessionDto.sessionDate = DateTime.Now;
-
             return PartialView("_PartialViewSummary", cashierSessionDto);
         }
 

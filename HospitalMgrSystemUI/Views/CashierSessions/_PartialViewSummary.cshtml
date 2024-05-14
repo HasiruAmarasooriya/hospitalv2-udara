@@ -13,7 +13,7 @@
 <head>
     <style>
         body {
-            font-family: Arial, sans-serif;
+           /*  font-family: Arial, sans-serif; */
             text-align: center;
         }
 
@@ -47,14 +47,310 @@
     <div id="address">
         No 48, Kandy Road, Mathale,<br />
         Tel: 066 22 22 2444 | 066 22 30 027<br />
-        Date: @Model.sessionDate.Date.ToShortDateString()<br />
+        Date: @Model.printDate<br />
     </div>
 
-    <h1>Cashier Session Summary (@Model.cashierSessionID)</h1>
+    <h4>Cashier Session Summary</h4>
+    <table class="table" style="">
+        <tr>
+            <th colspan="2">Session Details</th>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left; padding: 8px;">Session ID</td>
+            <td style="border-bottom: 1px solid white; text-align: left;  padding: 8px;">@Model.cashierSession.Id</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left; padding: 8px;">User</td>
+            <td style="border-bottom: 1px solid white; text-align: left; padding: 8px;">@Model.cashierSession.User.FullName</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left; padding: 8px;">Session Start Time</td>
+            <td style="border-bottom: 1px solid white; text-align: left; padding: 8px;">@Model.cashierSession.StartingTime</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left; padding: 8px;">Session End Time</td>
+            @if(Model.cashierSession.cashierSessionStatus == HospitalMgrSystem.Model.Enums.CashierSessionStatus.END)
+            {
+                <td style="border-bottom: 1px solid white; text-align: left; padding: 8px;">@Model.cashierSession.EndTime</td>
+            }
+            else
+            {
+               <td style="border-bottom: 1px solid white; text-align: left; padding: 8px;">NOT YET</td>
+            }
+           
+        </tr>
+    </table>
 
-    <!-- OPD Summary -->
-    <h2>OPD Summary</h2>
-    <table border="1">
+
+    <table class="table" style="">
+        <tr>
+            <th colspan="2">Channeling  & Scanning Payment</th>
+            <th colspan="2">OPD Payment</th>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Cash Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.ChannelingTotalPaidAmount</td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Cash Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.OPDTotalPaidAmount</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Refund</td>
+            <td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.ChannelingTotalRefund</td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Refund</td>
+            <td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.OPDTotalRefund</td>
+        </tr>
+@*         <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Cash Balance</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.ChannelingCashBalence</td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Cash Balance</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.OPDTotalAmount</td>
+        </tr> *@
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Card Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.ChannelingTotalPaidCardAmount</td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Card Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.OPDTotalPaidCardAmount</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Paid Doctor Payment Total</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.ChannelingTotalDoctorPayment</td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.OPDTotalAmount</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.ChannelingTotalAmount</td>
+            <td style="border-bottom: 1px solid white; text-align: left;"></td>
+            <td style="border-bottom: 1px solid white; text-align: right;"></td>
+        </tr>
+    </table>
+    <table class="table" style="">
+        <tr>
+            <th colspan="2">X-Ray Payment</th>
+            <th colspan="2">Medical Services Payment</th>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Cash Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.XRAYTotalPaidAmount</td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Cash Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.OtherTotalPaidAmount</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Refund</td>
+            <td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.XRAYTotalRefund</td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Refund</td>
+            <td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.OtherTotalRefund</td>
+        </tr>
+@*         <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Cash Balance</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.XRAYCashBalence</td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Cash Balance</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.OtherCashBalence</td>
+        </tr> *@
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Card Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.XRAYTotalPaidCardAmount</td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Card Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.OtherTotalPaidCardAmount</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.XRAYTotalAmount</td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.OtherTotalAmount</td>
+        </tr>
+    </table>
+
+    <table class="table" style="">
+        <tr>
+            <th colspan="2">All Department Payment Summary</th>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Cash Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.AllServiceTotalPaidAmount</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Card Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AllServiceTotalPaidCardAmount</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Refund</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AllServiceTotalRefund</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AllServiceTotalAmount</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid #ddd; text-align: left;">Total Cash Balence</td>
+            <td style="border-bottom: 1px solid #ddd; text-align: right;">@Model.CashierPaymentData.AllServiceCashBalence</td>
+        </tr>
+
+    </table>
+    <br />
+    <h4>Daily Settlement Summary</h4>
+    <table class="table" style="">
+        <tr>
+            <th colspan="2">Opening Balence Report</th>
+            <th colspan="2">Other Income Report</th>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Opening Balance</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.StartBalence</td>
+            @if (@Model.CashierPaymentData.notInSyestemConsultantList[0] != null)
+            {
+                <td style="border-bottom: 1px solid white; text-align: left;">@Model.CashierPaymentData.notInSyestemConsultantList[0].Name </td>
+                <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.notInSyestemConsultantList[0].hospitalIncome</td>
+            }
+            else
+            {
+                <td style="border-bottom: 1px solid white; text-align: left;">DR KAPILA DHARMASENA </td>
+                <td style="border-bottom: 1px solid white; text-align: right;">0.00</td>
+            }
+
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;"></td>
+            <td style="border-bottom: 1px solid white; text-align: right;"></td>
+            @if (@Model.CashierPaymentData.notInSyestemConsultantList[1] != null)
+            {
+                <td style="border-bottom: 1px solid white; text-align: left;">@Model.CashierPaymentData.notInSyestemConsultantList[1].Name </td>
+                <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.notInSyestemConsultantList[1].hospitalIncome</td>
+            }
+            else
+            {
+                <td style="border-bottom: 1px solid white; text-align: left;">MRS JAYANTHI MEELA</td>
+                <td style="border-bottom: 1px solid white; text-align: right;"> 0.00</td>
+            }
+
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;"></td>
+            <td style="border-bottom: 1px solid white; text-align: right;"></td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Other Income</td>
+            <td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.totalHospitaOtherIncome</td>
+        </tr>
+    </table>
+
+
+    <table class="table" style="">
+        <tr>
+            <th colspan="2">Grand Cash Total</th>
+            <th colspan="2">@Model.CashierPaymentData.totalGrandIncome</th>
+        </tr>
+    </table>
+    <table class="table" style="">
+        <tr>
+            <th colspan="2">Final Balence</th>
+            <th colspan="2">Cash Handover Report</th>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Final Cash Balance</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AllServiceCashBalence</td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Sakuni</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.totalCashAmountHandover</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Final Income</td>
+            <td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.AllServiceTotalAmount</td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Total Cash Handover</td>
+            <td style="border-bottom: 1px solid white; text-align: right;"> @Model.cashierSession.totalCashAmountHandover</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">Final Profit & Loss</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.EndBalence</td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Card Payment</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.EndCardBalence</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;"></td>
+            <td style="border-bottom: 1px solid white; text-align: right;"></td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Final Handover Total</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.totalAmountHandover</td>
+        </tr>
+
+    </table>
+    <table class="table" style="">
+        <tr>
+            <th colspan="2">All Department Payment Summary</th>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">5000 * @Model.cashierSession.col10</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.col10Total</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">1000 * @Model.cashierSession.col9</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.col9Total</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">500 * @Model.cashierSession.col8</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.col8Total</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">100 * @Model.cashierSession.col7</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.col7Total</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">50 * @Model.cashierSession.col6</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.col6Total</td>
+        </tr>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">20 * @Model.cashierSession.col5</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.col5Total</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">10 * @Model.cashierSession.col4</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.col4Total</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">5 * @Model.cashierSession.col3</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.col3Total</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">2 * @Model.cashierSession.col2</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.col2Total</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;">1 * @Model.cashierSession.col1</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.col1Total</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid #ddd; text-align: left;">Total Cash</td>
+            <td style="border-bottom: 1px solid #ddd; text-align: right;">@Model.cashierSession.totalCashAmountHandover</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid #ddd; text-align: left;">Cash Variance</td>
+            <td style="border-bottom: 1px solid #ddd; text-align: right;">@(Model.CashierPaymentData.totalGrandIncome-@Model.cashierSession.totalAmountHandover)</td>
+        </tr>
+
+    </table>
+
+    <table class="table" style="">
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: cener;" colspan="2"></td>
+            <td style="border-bottom: 1px solid white; text-align: center;" colspan="2"></td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: cener;" colspan="2"></td>
+            <td style="border-bottom: 1px solid white; text-align: center;" colspan="2"></td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: cener;" colspan="2">........................................</td>
+            <td style="border-bottom: 1px solid white; text-align: center;" colspan="2">........................................</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid #ddd; text-align: center;" colspan="2">Account Manager Signature</td>
+            <td style="border-bottom: 1px solid #ddd; text-align: center;" colspan="2">Cashier Signature</td>
+        </tr>
+    </table>
+
+
+
+
+
+
+@*     <table border="1">
         <tr>
             <th>Category</th>
             <th>Total Amount</th>
@@ -118,31 +414,9 @@
             <td>@Model.CashierPaymentData.ChannelingTotalPaidAmount</td>
             <td>@Model.CashierPaymentData.ChannelingTotalRefund</td>
         </tr>
-    </table>
+    </table> *@
 
-    @* <h1>Cashier Session Number: @Model.sessionId</h1>
 
-    <h1>OPD Total Amount: @Model.CashierPaymentData.OPDTotalAmount</h1>
-    <h1>OPD Total Paid Amount: @Model.CashierPaymentData.OPDTotalPaidAmount</h1>
-    <h1>OPD Total Refund: @Model.CashierPaymentData.OPDTotalRefund</h1>
-
-    <hr />
-
-    <h1>X-RAY Total Amount: @Model.CashierPaymentData.XRAYTotalAmount</h1>
-    <h1>X-RAY Total Paid Amount: @Model.CashierPaymentData.XRAYTotalPaidAmount</h1>
-    <h1>X-RAY Total Refund: @Model.CashierPaymentData.XRAYTotalRefund</h1>
-
-    <hr />
-
-    <h1>OTHER Total Amount: @Model.CashierPaymentData.OtherTotalAmount</h1>
-    <h1>OTHER Total Paid Amount: @Model.CashierPaymentData.OtherTotalPaidAmount</h1>
-    <h1>OTHER Total Refund: @Model.CashierPaymentData.OtherTotalRefund</h1>
-
-    <hr />
-
-    <h1>Channeling Total Amount: @Model.CashierPaymentData.ChannelingTotalAmount</h1>
-    <h1>Channeling Total Paid Amount: @Model.CashierPaymentData.ChannelingTotalPaidAmount</h1>
-    <h1>Channeling Total Refund: @Model.CashierPaymentData.ChannelingTotalRefund</h1> *@
 
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script type="text/javascript">
