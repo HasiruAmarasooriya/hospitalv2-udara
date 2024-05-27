@@ -11,7 +11,7 @@ namespace HospitalMgrSystemUI.Models
         public int InvoicedType { get; set; }
 
         #region OPD DATA
-        public List<OPD>? listopd { get; set; }
+        public (List<OPD>?, int?, decimal?) listopd { get; set; }
         public List<OPD>? listPartialPaidOPD { get; set; }
         public List<OPD>? listNeedToPayOPD { get; set; }
         public List<OPD>? listNightShiftOPD { get; set; }
@@ -32,7 +32,7 @@ namespace HospitalMgrSystemUI.Models
         #endregion
 
         #region XRAY DATA
-        public List<OPD>? listXRAY { get; set; }
+        public (List<OPD>?, int?, decimal?) listXRAY { get; set; }
         public List<OPD>? listPartialPaidXRAY { get; set; }
         public List<OPD>? listNeedToPayXRAY { get; set; }
         public List<OPD>? listNightShiftXRAY { get; set; }
@@ -42,13 +42,19 @@ namespace HospitalMgrSystemUI.Models
         #endregion
 
         #region OTHER DATA
-        public List<OPD>? listOTHER { get; set; }
+        public (List<OPD>?, int?, decimal?) listOTHER { get; set; }
         public List<OPD>? listPartialPaidOTHER { get; set; }
         public List<OPD>? listNeedToPayOTHER { get; set; }
         public List<OPD>? listNightShiftOTHER { get; set; }
         public List<OPD>? listNotPaidOTHER { get; set; }
         public Payment? OTHERPaymentData { get; set; }
         public List<OPDDrugus>? listOTHERGrugs { get; set; }
+        #endregion
+
+        #region CHANNELING SCHEDULE
+
+        public List<ChannelingSchedule> ChannelingSchedules { get; set; }
+
         #endregion
 
     }
