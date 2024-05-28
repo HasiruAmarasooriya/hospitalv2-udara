@@ -1,0 +1,474 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Report;
+@{
+}
+@inject IConfiguration Configuration
+
+@section Styles {
+	<style>
+		.select2-selection__rendered {
+			line-height: 31px !important;
+		}
+
+		.select2-container .select2-selection--single {
+			height: 35px !important;
+		}
+
+		.select2-selection__arrow {
+			height: 34px !important;
+		}
+	</style>
+}
+
+<div class="row page-titles">
+	<div class="col-md-5 col-8 align-self-center">
+		<h3 class="text-themecolor m-b-0 m-t-0">Summary Reports</h3>
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item">
+				<a href="javascript:void(0)">Home</a>
+			</li>
+			<li class="breadcrumb-item active">Summary Reports</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-12">
+		<div class="card">
+			<div class="modal-body">
+				<form asp-action="filterForm" method="post">
+					<input type="hidden" id="opid">
+					<div class="row">
+
+						<div class="col-md-2">
+							<div class="form-group">
+								<label for="companyName">Start Date</label>
+								<input type="text" id="date-format-start" asp-format="{0:yyyy.MM.dd}" class="form-control" asp-for="StartTime" placeholder="">
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label for="companyName">End Date</label>
+								<input type="text" id="date-format-end" asp-format="{0:yyyy.MM.dd}" class="form-control" asp-for="EndTime" placeholder="">
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label for="companyName">Invoiced Type</label>
+								<select class="form-control ddlSearchList" id="dropSessionType" asp-for="InvoicedType">
+									<option value="0">OPD</option>
+									<option value="1">Channeling</option>
+									<option value="2">Other</option>
+									<option value="3">X-RAY</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<br />
+							<div class="form-group">
+								<div class="spark-chart form-material">
+									<ol class="list-unstyled d-flex">
+
+										<li class="mr-2">
+											<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal" onclick="handleClear()">&nbsp;Clear</button>
+										</li>
+
+										<li class="mr-2">
+											<button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Filter</button>
+										</li>
+									</ol>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</form>
+				@using (Html.BeginForm("customSearch", "Report", new { value = 1 }, FormMethod.Post))
+				{
+					<div class="modal-footer d-flex justify-content-between">
+
+						<div class="form-group">
+							<label for="companyName">Invoiced Type</label>
+							<select class="form-control ddlSearchList" id="dropSessionType" asp-for="InvoicedType">
+								<option value="0">OPD</option>
+								<option value="1">Channeling</option>
+								<option value="2">Other</option>
+							</select>
+						</div>
+						<div class="spark-chart form-material">
+							<ol class="list-unstyled d-flex">
+
+								<li class="mr-2">
+									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Today</button>
+								</li>
+
+								<li class="mr-2">
+									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Yesterday</button>
+								</li>
+
+								<li class="mr-2">
+									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Week</button>
+								</li>
+
+								<li class="mr-2">
+									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Month</button>
+								</li>
+
+							</ol>
+						</div>
+
+					</div>
+				}
+
+				<button class="btn waves-effect btn-warning" onclick="printReport()"><i class="fa-solid fa-moon"></i>Download All</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@if (Model != null)
+{
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-body">
+					<h4 class="card-title" style="font-weight: bold">XRAY Paid (@Model.listXRAY.Item2)</h4>
+
+					<div class="table-responsive">
+						<table class="table">
+							<thead class="table-success">
+								<tr>
+									<th>No</th>
+									<th>Invoice ID</th>
+									<th>OPD ID</th>
+									<th>Patient</th>
+									<th>Doctor</th>
+									<th>Cashier</th>
+									<th>Issued By</th>
+									<th>Issued Date</th>
+									<th style="text-align: right;">Total Amount</th>
+									<th style="text-align: right;">Total Paid Amount</th>
+									<th style="text-align: right;">Deviation</th>
+								</tr>
+							</thead>
+							<tbody>
+
+								@if (Model.listXRAY.Item1 != null)
+								{
+									var i = 1;
+									decimal totalAmountOfTotalAmount = 0;
+									decimal totalAmountOfTotalPaidAmount = 0;
+									decimal totalDeviation = 0;
+									@foreach (var item in Model.listXRAY.Item1)
+									{
+										<tr>
+											<td>@i</td>
+											<td>@item.invoiceID</td>
+											<td>@item.Id</td>
+											<td>@item.patient!.FullName</td>
+											<td>@item.consultant!.Name</td>
+											<td>@item.cashier!.FullName</td>
+											<td>@item.issuedUser!.FullName</td>
+											<td>@item.CreateDate</td>
+											<td style="text-align: right;">@item.TotalAmount</td>
+											<td style="text-align: right;">@item.TotalPaidAmount</td>
+											<td style="text-align: right;">@item.deviation</td>
+										</tr>
+
+										totalAmountOfTotalAmount += (item.TotalAmount ?? 0m);
+										totalAmountOfTotalPaidAmount += (item.TotalPaidAmount ?? 0m);
+										totalDeviation += (item.deviation ?? 0m);
+
+										i++;
+									}
+
+									<tr class="table-success">
+										<td colspan="8">Total</td>
+										<td style="text-align: right;">@totalAmountOfTotalAmount</td>
+										<td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
+										<td style="text-align: right;">@totalDeviation</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+
+					<br>
+
+					<h4 class="card-title" style="font-weight: bold">XRAY Refund</h4>
+
+					<div class="table-responsive">
+						<table class="table">
+							<thead class="table-danger">
+								<tr>
+									<th>No</th>
+									<th>Invoice ID</th>
+									<th>OPD ID</th>
+									<th>Cashier</th>
+									<th>Issued By</th>
+									<th>Issued Date</th>
+									<th style="text-align: right;">Total Old Paid Amount</th>
+									<th style="text-align: right;">Total Paid Amount</th>
+									<th style="text-align: right;">Total Refund</th>
+									<th style="text-align: right;">To be refunded</th>
+								</tr>
+							</thead>
+							<tbody>
+								@if (Model.listNeedToPayXRAY != null && Model.listNeedToPayXRAY.Count > 0)
+								{
+									var i = 1;
+									decimal totalAmountOfTotalOldAmount = 0;
+									decimal totalAmountOfTotalPaidAmount = 0;
+									decimal totalAmountOfTotalRefund = 0;
+									decimal totalAmountOfTotalNeedToRefund = 0;
+
+									@foreach (var item in Model.listNeedToPayXRAY)
+									{
+										<tr>
+											<td>@i</td>
+											<td>@item.invoiceID</td>
+											<td>@item.Id</td>
+											<td>@item.cashier!.FullName</td>
+											<td>@item.issuedUser!.FullName</td>
+											<td>@item.CreateDate</td>
+											<td style="text-align: right;">@item.TotalOldAmount</td>
+											<td style="text-align: right;">@item.TotalPaidAmount</td>
+											<td style="text-align: right;">@item.TotalRefund</td>
+											<td style="text-align: right;">@item.TotalNeedToRefund</td>
+										</tr>
+
+										totalAmountOfTotalOldAmount += (item.TotalOldAmount ?? 0m);
+										totalAmountOfTotalPaidAmount += (item.TotalPaidAmount ?? 0m);
+										totalAmountOfTotalRefund += (item.TotalRefund ?? 0m);
+										totalAmountOfTotalNeedToRefund += (item.TotalNeedToRefund ?? 0m);
+										i++;
+									}
+
+									<tr class="table-danger">
+										<td colspan="6">Total</td>
+										<td style="text-align: right;">@totalAmountOfTotalOldAmount</td>
+										<td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
+										<td style="text-align: right;">@totalAmountOfTotalRefund</td>
+										<td style="text-align: right;">@totalAmountOfTotalNeedToRefund</td>
+									</tr>
+								}
+								else
+								{
+									<tr class="table-danger">
+										<td colspan="10" style="text-align: center; font-weight: bold">No Records Available</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+
+					<br>
+
+					@if (Model.listXRAYGrugs != null)
+					{
+						var i = 1;
+						decimal totalAmountOfTotalAmount = 0;
+
+						<h4 class="card-title" style="font-weight: bold">OTHER Drugs (@Model.listXRAYGrugs.Count)</h4>
+						<div class="table-responsive">
+							<table class="table">
+								<thead class="table-success">
+									<tr>
+										<th>Drug ID</th>
+										<th>Drug Name</th>
+										<th>Unit Amount</th>
+										<th>Quantity</th>
+										<th>Total Amount</th>
+										<th>Print</th>
+									</tr>
+								<tbody>
+										@foreach (var item in Model.listXRAYGrugs)
+										{
+										<tr>
+											<td>@item.DrugId</td>
+											<td>@item.Drug!.DrugName</td>
+											<td>@item.Drug!.Price</td>
+											<td>@item.Qty</td>
+											<td>@item.Amount</td>
+											<td>
+												<button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);>
+													<i class='fa fa-print'></i>
+												</button>
+											</td>
+										</tr>
+
+											totalAmountOfTotalAmount += item.Amount;
+											i++;
+										}
+
+									<tr class="table-success">
+										<td colspan="4">Total</td>
+										<td>@totalAmountOfTotalAmount</td>
+										<td></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-body">
+					<h3 class="card-title" style="text-align: center;">Other Payment Summary</h3>
+					<div class="table-responsive">
+						@if (Model.StartTime != null && Model.EndTime != null && Model.XRAYPaymentData != null)
+						{
+							<table class="table">
+								<thead class="table-success">
+									<tr>
+										<th style="text-align: right; width:50%">From:</th>
+										<th style="text-align: left;">@Model.StartTime</th>
+									</tr>
+									<tr>
+										<th style="text-align: right; width:50%">To:</th>
+										<th style="text-align: left;">@Model.EndTime</th>
+									</tr>
+									<tr>
+										<th style="text-align: right;">Total Amount:</th>
+										<th style="text-align: left;">@Model.XRAYPaymentData.TotalAmountOld LKR</th>
+									</tr>
+									<tr>
+										<th style="text-align: right;">Total Refunded Amount:</th>
+										<th style="text-align: left;">@Model.XRAYPaymentData.TotalAmountRefunded LKR</th>
+									</tr>
+								</thead>
+								<tbody class="table-primary">
+									<tr>
+										<th style="text-align: right;">Total Paid Amount:</th>
+										<th style="text-align: left;">@Model.XRAYPaymentData.TotalPaidAmount LKR</th>
+									</tr>
+								</tbody>
+							</table>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+
+<div id="AddShiftModel" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+	<div class="modal-dialog modal-lg" id="AddEditContainerModel">
+	</div>
+</div>
+<div id="AddShiftModel2" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+	<div class="modal-dialog modal-lg" id="AddEditContainerModel2">
+	</div>
+</div>
+
+
+@section scripts {
+
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+	<script>
+
+		function printReport() {
+			var logoImage = new Image();
+			var barcodeImage = new Image();
+			var imagesLoaded = 0;
+
+
+			logoImage.src = "https://kumuduhospital.com/assets/images/kumudu_logo2.jpg"; // Replace with your actual logo URL
+			barcodeImage.src = "https://png.pngtree.com/png-clipart/20220424/original/pngtree-black-and-white-icons-of-barcode-numbers-png-image_7554658.png"; // Replace with your actual barcode URL
+
+			// Callback function to check if all images are loaded
+			function checkImagesLoaded() {
+				imagesLoaded++;
+
+				if (imagesLoaded === 2) { // You may need to adjust this count if you have more images
+					openPrintWindow();
+				}
+			}
+
+			// Set the load event listeners for the images
+			logoImage.onload = checkImagesLoaded;
+			barcodeImage.onload = checkImagesLoaded;
+
+			function openPrintWindow() {
+				var startDate = $('#date-format-start').val();
+				var endDate = $('#date-format-end').val();
+
+
+				$.ajax({
+					type: "POST",
+					url: "/Report/DownloadReport",
+					data: JSON.stringify({ StartTime: startDate, EndTime: endDate }),
+					contentType: "application/json; charset=utf-8",
+					dataType: "html",
+					success: function (response) {
+						var printWindow = window.open('', '_blank', 'width=600,height=600,location=no,menubar=no');
+						printWindow.document.open();
+						printWindow.document.write(response);
+						//printWindow.document.getElementsByTagName('body')[0].style.setProperty('width', '600px'); // Set the width as needed
+						//printWindow.document.getElementsByTagName('body')[0].style.setProperty('margin', '0'); // Remove any margins
+						printWindow.document.close();
+						printWindow.print();
+						printWindow.close();
+					},
+					failure: function (response) {
+						alert(response.responseText);
+					},
+					error: function (response) {
+						alert(response.responseText);
+					}
+				});
+			}
+
+			// If the images are already cached, the load event may not fire, so check immediately
+			if (logoImage.complete && barcodeImage.complete) {
+				openPrintWindow();
+			}
+		}
+
+
+
+
+
+		$('body').on('focus', "#date-format", function () {
+
+			$('#date-format').bootstrapMaterialDatePicker({
+				time: true,
+				format: "YYYY-MM-DD hh:mm"
+
+			});
+
+		});
+
+		$('body').on('focus', "#date-format-start", function () {
+
+			$('#date-format-start').bootstrapMaterialDatePicker({
+				time: false,
+				format: "YYYY-MM-DD"
+
+			});
+
+		});
+		$('body').on('focus', "#date-format-end", function () {
+
+			$('#date-format-end').bootstrapMaterialDatePicker({
+				time: false,
+				format: "YYYY-MM-DD"
+
+			});
+
+		});
+
+	</script>
+
+
+}
