@@ -206,6 +206,17 @@ namespace HospitalMgrSystem.Service.OPD
             return mtList;
         }
 
+        public List<Model.OPD> GetAllOPDByStatusWithoutXray()
+        {
+            List<Model.OPD> mtList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.OPD.Include(c => c.patient).Include(c => c.consultant).Include(c => c.room).Where(o => o.Status == 0 && o.invoiceType == InvoiceType.OPD && o.Description != "X-RAY").OrderByDescending(o => o.Id).ToList();
+
+            }
+            return mtList;
+        }
+
         public List<Model.OPD> GetAllOPDByDescription(string desctiption)
         {
             List<Model.OPD> mtList = new List<Model.OPD>();
@@ -235,6 +246,17 @@ namespace HospitalMgrSystem.Service.OPD
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
                 mtList = dbContext.OPD.Include(c => c.patient).Include(c => c.consultant).Include(c => c.room).Where(o => o.Status == 0 && o.schedularId == schedularId).OrderByDescending(o => o.Id).ToList();
+
+            }
+            return mtList;
+        }
+
+        public List<Model.OPD> GetAllOPDBySchedularIDForCHE(int schedularId)
+        {
+            List<Model.OPD> mtList = new List<Model.OPD>();
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.OPD.Include(c => c.patient).Include(c => c.consultant).Include(c => c.room).Where(o => o.Status == 0 && o.schedularId == schedularId && o.invoiceType == InvoiceType.CHE).OrderByDescending(o => o.Id).ToList();
 
             }
             return mtList;

@@ -100,8 +100,8 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="companyName">Channeling Date</label>
-                        <input type="text" id="previous-date-format" asp-format="{0:dd.MM.yyyy HH:mm}" asp-for="PreviousDateTime" class="form-control" hidden>
-                        <input type="text" id="date-format" asp-format="{0:dd.MM.yyyy HH:mm}" asp-for="ChannelingSchedule.DateTime" class="form-control" placeholder="Saturday 24 June 2017 - 21:44">
+                        <input type="text" id="previous-date-format"  asp-format="{0:yyyy-MM-dd HH:mm}" asp-for="PreviousDateTime" class="form-control" hidden>
+                        <input type="text" id="date-format" asp-format="{0:yyyy-MM-dd HH:mm}" asp-for="ChannelingSchedule.DateTime" class="form-control" placeholder="Saturday 24 June 2017 - 21:44">
                     </div>
                 </div>
             </div>

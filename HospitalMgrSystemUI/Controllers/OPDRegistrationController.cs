@@ -699,7 +699,7 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 try
                 {
-                    opd = new OPDService().GetAllOPDByStatus();
+                    opd = new OPDService().GetAllOPDByStatusWithoutXray();
                     var result = opd;
 
                     foreach (var item in result)

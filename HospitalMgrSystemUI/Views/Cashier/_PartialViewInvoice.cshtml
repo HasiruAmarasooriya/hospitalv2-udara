@@ -78,7 +78,15 @@
                 {
                     @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
                     {
-                        <h5 style="margin: 0; padding: 0;">OPD Bill</h5>
+                        @if (Model.opd != null && Model.opd.Description == "X-RAY")
+                        {
+                            <h5 style="margin: 0; padding: 0;"> @Model.opd.Description</h5>
+                        }
+                        else
+                        {
+                            <h5 style="margin: 0; padding: 0;">OPD Bill</h5>
+                        }
+                       
                     }
 
                     @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
@@ -93,7 +101,36 @@
             }
         </div>
         <hr>
-        <h5 style="margin: 0; padding: 0;">Ref No:@Model.PreID</h5>
+        
+        @if (Model.cashierBillingItemDtoList != null)
+        {
+            @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
+            {
+                @if (Model.opd != null && Model.opd.Description == "X-RAY")
+                {
+                    <h5 style="margin: 0; padding: 0;">Ref No:XRAY-@Model.opd.Id</h5>
+                }
+                else
+                {
+                    <h5 style="margin: 0; padding: 0;">Ref No:OPD-@Model.opd.Id</h5>
+                }
+
+            }
+
+            @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
+            {
+
+                    <h5 style="margin: 0; padding: 0;">Ref No:CHE-@Model.opd.Id</h5>
+                
+            }
+            @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
+            {
+
+                    <h5 style="margin: 0; padding: 0;">Ref No:ADM-@Model.opd.Id</h5>
+                
+            }
+        }
+
         <hr>
         @if (Model != null)
         {

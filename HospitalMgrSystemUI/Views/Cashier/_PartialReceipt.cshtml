@@ -135,17 +135,25 @@
                         {
                             @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
                             {
-                                <p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">Invoice</p>
+                                
+                                @if (Model.opd != null && Model.opd.Description == "X-RAY")
+                                {
+                                    <p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">X-RAY Invoice</p>
+                                }
+                                else
+                                {
+                                    <p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">OPD Invoice</p>
+                                }
                             }
 
                             @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
                             {
-                                <p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">Invoice</p>
+                                <p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">Channeling Invoice</p>
                             }
 
                             @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
                             {
-                                <p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">Invoice</p>
+                                <p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">Admission Invoice</p>
                             }
                         }
 
@@ -161,12 +169,6 @@
                     <p class="font-bold" style="margin: auto; margin-top: 10px">
                         Name: <span style="font-weight: normal;">@Model.customerName</span>
                     </p>
-                    @* <p class="text-sm" style="margin: auto; margin-top: 10px">
-                        Patient Age: <span style="font-weight: normal;">@Model.patientAge</span>
-                    </p>
-                    <p class="text-sm" style="margin: auto; margin-top: 10px">
-                        Patient Sex: <span style="font-weight: normal;">@Model.patientSex</span>
-                    </p> *@
                     <p class="font-bold text-sm" style="margin: auto; margin-top: 10px">
                         Contact Number: <span style="font-weight: normal;">@Model.patientContactNo</span>
                     </p>
@@ -174,7 +176,7 @@
                         Doctor Name: <span style="font-weight: normal;">@Model.consaltantName</span>
                     </p>
                     <p class="text-sm font-bold" style="margin: auto; margin-top: 10px">
-                        Ref No. <span class="pl-1 font-normal">@Model.PreID</span>
+                        Ref No. <span class="pl-1 font-normal">@Model.opd.Id</span>
                     </p>
                 </div>
             }

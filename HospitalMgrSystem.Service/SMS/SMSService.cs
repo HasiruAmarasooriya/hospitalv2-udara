@@ -132,6 +132,22 @@ namespace HospitalMgrSystem.Service.SMS
             }
         }
 
+
+        public string generateMessageBodyForChannelingScheduleForTimeChange(ChannelingSMS channelingSMS)
+        {
+
+            string message = "";
+            message = "KUMUDU HOSPITAL(PVT)LTD\n"
+                    + "\n" + channelingSMS.channelingSchedule.Consultant.Name
+                    + "\nSorry... The Session time has been changed to at"
+                     + channelingSMS.channelingSchedule.DateTime.ToString("f")
+                    + "\nකණගාටුයි... රෝගීන් පරීක්ෂා කරන වෙලාව වෙනස් කොට ඇත"
+                    + "\nTEL: 066 22 22 244 || 066 22 30 027";
+
+            return message;
+
+        }
+
         public string generateMessageBodyForChannelingSchedule(ChannelingSMS channelingSMS)
         {
 
@@ -140,45 +156,41 @@ namespace HospitalMgrSystem.Service.SMS
             if (channelingSMS.ChannellingScheduleStatus == Model.Enums.ChannellingScheduleStatus.SESSION_START)
             {
                 message = "KUMUDU HOSPITAL(PVT)LTD\n"
-                    + channelingSMS.channelingSchedule.Consultant.Name
+                    +"\n" + channelingSMS.channelingSchedule.Consultant.Name
                     + "\nThe Session was Started at "
-                    + channelingSMS.channelingSchedule.DateTime
-                    + "\nරෝගීන් පරීක්ෂා කරන කාලය ආරම්භ විය"
-                    + "\nTEL: 066 22 22 244 || 066 22 30 027"
-                    + "\nwww.kumuduhospital.lk";
+                     + channelingSMS.channelingSchedule.DateTime.ToString("f")
+                    + "\nරෝගීන් පරික්ෂා කරන කාලය ආරම්භ විය."
+                    + "\nTEL: 066 22 22 244 || 066 22 30 027";
             }
 
             else if (channelingSMS.ChannellingScheduleStatus == Model.Enums.ChannellingScheduleStatus.SESSION_END)
             {
                 message = "KUMUDU HOSPITAL(PVT)LTD\n"
-                    + channelingSMS.channelingSchedule.Consultant.Name
+                    + "\n" + channelingSMS.channelingSchedule.Consultant.Name
                     + "\nThe Session was Ended at "
-                    + channelingSMS.channelingSchedule.DateTime
+                     + DateTime.Now.ToString("f")
                     + "\nරෝගීන් පර්ක්ෂා කිරීම අවසන් විය"
-                    + "\nTEL: 066 22 22 244 || 066 22 30 027"
-                    + "\nwww.kumuduhospital.lk";
+                    + "\nTEL: 066 22 22 244 || 066 22 30 027";
             }
 
             else if (channelingSMS.ChannellingScheduleStatus == Model.Enums.ChannellingScheduleStatus.PENDING)
             {
                 message = "KUMUDU HOSPITAL(PVT)LTD\n"
-                    + channelingSMS.channelingSchedule.Consultant.Name
-                    + "\nSorry...!The Session was Started at "
-                    + channelingSMS.channelingSchedule.DateTime
-                    + "\nරෝගීන් පර්ක්ෂා කිරීම අවසන් විය"
-                    + "\nTEL: 066 22 22 244 || 066 22 30 027"
-                    + "\nwww.kumuduhospital.lk";
+                    + "\n" + channelingSMS.channelingSchedule.Consultant.Name
+                    + "\n( " + channelingSMS.channelingSchedule.DateTime + ")" 
+                    + "\nSorry... The Session has been temporarily cancelled"
+                    + "\nකණගාටුයි... රෝගීන් පරික්ෂා කිරීම තාවකාලිකව අවලංගු කොට ඇත "
+                    + "\nTEL: 066 22 22 244 || 066 22 30 027";
             }
 
             else if (channelingSMS.ChannellingScheduleStatus == Model.Enums.ChannellingScheduleStatus.SESSION_CANCEL)
             {
                 message = "KUMUDU HOSPITAL(PVT)LTD\n"
-                    + channelingSMS.channelingSchedule.Consultant.Name
-                    + "\nSorry...!The Session was Canceled at "
-                    + channelingSMS.channelingSchedule.DateTime
-                    + "\nරෝගීන් පර්ක්ෂා කිරීම අවසන් විය"
-                    + "\nTEL: 066 22 22 244 || 066 22 30 027"
-                    + "\nwww.kumuduhospital.lk";
+                    + "\n" + channelingSMS.channelingSchedule.Consultant.Name
+                    + "\n( " + channelingSMS.channelingSchedule.DateTime + ")"
+                    + "\nSorry... The Session has been cancelled. "
+                    + "\nකණගාටුයි... රෝගීන් පරික්ෂා කිරීම අවලංගු කොට ඇත."
+                    + "\nTEL: 066 22 22 244 || 066 22 30 027";
             }
             return message;
 
@@ -188,7 +200,7 @@ namespace HospitalMgrSystem.Service.SMS
         {
             string message = "KUMUDU HOSPITAL(PVT)LTD\n"
                             + "\nRef No : CHE-" + channelingSMS.channelingForOnePatient.Id
-                            + channelingSMS.channelingSchedule.Consultant.Name
+                            + "\n" + channelingSMS.channelingSchedule.Consultant.Name
                             + "\nName :" + channelingSMS.channelingForOnePatient.patient.FullName
                             + "\nNo :" + channelingSMS.channelingForOnePatient.AppoimentNo
                             + "\nDate :" + channelingSMS.channelingSchedule.DateTime
@@ -289,6 +301,93 @@ namespace HospitalMgrSystem.Service.SMS
             }
         }
 
+
+        public async Task<string> SendSMSTokenTimeChange(ChannelingSMS channelingSMS)
+        {
+            SMSAPILogin _smsApiLogin = new SMSAPILogin();
+            SMSCampaign _SMSCampaign = new SMSCampaign();
+
+            using (var httpClient = new HttpClient())
+            {
+                _smsApiLogin = await GetAccessToken();
+                if (_smsApiLogin != null && _smsApiLogin != null)
+                {
+                    SMSCampaign smsCampaign = new SMSCampaign();
+                    _SMSCampaign.CampaignID = 0;
+                    _SMSCampaign.CampaignCost = 0;
+                    _SMSCampaign.duplicateNo = 0;
+                    _SMSCampaign.invaliedNo = 0;
+                    _SMSCampaign.maskBlockedUser = 0;
+                    _SMSCampaign.CreateDate = DateTime.Now;
+                    _SMSCampaign.CreateUser = 0;
+                    _SMSCampaign.sceduleID = channelingSMS.channelingSchedule.Id;
+
+                    smsCampaign = createSMSCampaign(_SMSCampaign);
+
+                    var mobileNumbers = new List<MobileNumber>();
+                    foreach (var item in channelingSMS.channeling)
+                    {
+                        mobileNumbers.Add(new MobileNumber { mobile = item.patient.MobileNumber });
+                    }
+
+                    var messageBody = generateMessageBodyForChannelingScheduleForTimeChange(channelingSMS);
+
+                    var request = new SMSTokenRequest
+                    {
+                        msisdn = mobileNumbers,
+                        sourceAddress = "Kumudu hos ",
+                        message = messageBody,
+                        transaction_id = smsCampaign.Id,
+                        payment_method = 0,
+                        push_notification_url = ""
+                    };
+
+                    var jsonRequest = JsonSerializer.Serialize(request);
+                    var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+                    // Add Authorization header
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _smsApiLogin.Token);
+
+                    var response = await httpClient.PostAsync("https://e-sms.dialog.lk/api/v2/sms", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        var responseObject = JsonSerializer.Deserialize<ApiResponse>(responseContent);
+
+                        if (responseObject.status == "success")
+                        {
+                            var campaignId = responseObject.data.campaignId;
+                            var campaignCost = responseObject.data.campaignCost;
+
+                            smsCampaign.CampaignID = campaignId;
+                            smsCampaign.CampaignCost = campaignCost;
+                            smsCampaign.duplicateNo = responseObject.data.duplicatesRemoved;
+                            smsCampaign.invaliedNo = responseObject.data.invalidNumbers;
+                            smsCampaign.maskBlockedUser = responseObject.data.mask_blocked_numbers;
+
+                            // Handle success case
+                            return $"Campaign ID: {campaignId}, Campaign Cost: {campaignCost}";
+                        }
+                        else
+                        {
+                            var errorCode = responseObject.errCode;
+                            var reason = responseObject.comment;
+                            // Handle failure case
+                            throw new Exception($"API call failed. Reason: {reason}, Error Code: {errorCode}");
+                        }
+                    }
+                    else
+                    {
+                        // Handle HTTP error response
+                        var statusCode = response.StatusCode;
+                        throw new Exception($"HTTP request failed with status code {statusCode}");
+                    }
+                }
+                return null;
+            }
+        }
+
         public async Task<string> SendSMSToken(ChannelingSMS channelingSMS)
         {
             SMSAPILogin _smsApiLogin = new SMSAPILogin();
@@ -314,11 +413,7 @@ namespace HospitalMgrSystem.Service.SMS
                     var mobileNumbers = new List<MobileNumber>();
                     foreach (var item in channelingSMS.channeling)
                     {
-                        if(item.patient.MobileNumber == "0702869830")
-                        {
-
-                            mobileNumbers.Add(new MobileNumber { mobile = item.patient.MobileNumber });
-                        }
+                      mobileNumbers.Add(new MobileNumber { mobile = item.patient.MobileNumber });
                     }
 
                     var messageBody = generateMessageBodyForChannelingSchedule(channelingSMS);

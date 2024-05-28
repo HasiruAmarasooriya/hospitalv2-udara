@@ -132,6 +132,7 @@ namespace HospitalMgrSystemUI.Controllers
                     try
                     {
                         channelingSheduleDto.ChannelingSchedule = LoadChannelingSheduleByID(Id);
+                        channelingSheduleDto.PreviousDateTime = channelingSheduleDto.ChannelingSchedule.DateTime;
                         return PartialView("_PartialAddChannelingShedule", channelingSheduleDto);
                     }
                     catch (Exception ex)
@@ -238,7 +239,7 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 try
                 {
-                    if (viewChannelingSchedule.PreviousDateTime != viewChannelingSchedule.ChannelingSchedule.DateTime)
+                    if (viewChannelingSchedule.ChannelingSchedule.Id != 0 && viewChannelingSchedule.PreviousDateTime != viewChannelingSchedule.ChannelingSchedule.DateTime)
                     {
                         ChannelingSMS channelingSMS = new ChannelingSMS();
 
@@ -250,11 +251,11 @@ namespace HospitalMgrSystemUI.Controllers
                             viewChannelingSchedule.ChannelingSchedule.scheduleStatus;
 
                         // Add temp mobile number to last record
-                        channelingSMS.channeling[channelingSMS.channeling.Count - 1].patient.MobileNumber =
-                            "0702869830";
+                        //channelingSMS.channeling[channelingSMS.channeling.Count - 1].patient.MobileNumber =
+                        //    "0702869830";
 
                         SMSService sMSService = new SMSService();
-                        // await sMSService.SendSMSToken(channelingSMS);
+                        await sMSService.SendSMSTokenTimeChange(channelingSMS);
                     }
                     else if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.NOT_ACTIVE && viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.ACTIVE)
                     {
@@ -268,11 +269,11 @@ namespace HospitalMgrSystemUI.Controllers
                             viewChannelingSchedule.ChannelingSchedule.scheduleStatus;
 
                         // Add temp mobile number to last record
-                        channelingSMS.channeling[channelingSMS.channeling.Count - 1].patient.MobileNumber =
-                            "0702869830";
+                        //channelingSMS.channeling[channelingSMS.channeling.Count - 1].patient.MobileNumber =
+                        //    "0702869830";
 
                         SMSService sMSService = new SMSService();
-                        // await sMSService.SendSMSToken(channelingSMS);
+                        await sMSService.SendSMSToken(channelingSMS);
                     }
 
                     if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus == ChannellingScheduleStatus.SESSION_END)

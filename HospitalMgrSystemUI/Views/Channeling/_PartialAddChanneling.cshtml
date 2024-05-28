@@ -700,6 +700,26 @@
             }
         });
     }
+
+    function validateMobileNumber() {
+        // Get the input field and its value
+        var mobileInput = document.getElementById('txtMobileNumber');
+        var mobileNumber = mobileInput.value;
+
+        // Get the validator message element
+        var validatorMessage = document.getElementById('mValidator');
+
+        // Check if the mobile number contains exactly 10 digits and only numbers
+        var isValid = /^[0-9]{10}$/.test(mobileNumber);
+
+        if (isValid) {
+            validatorMessage.innerText = "Valid mobile number.";
+            validatorMessage.style.color = "green";
+        } else {
+            validatorMessage.innerText = "Invalid mobile number. It should contain exactly 10 digits.";
+            validatorMessage.style.color = "red";
+        }
+    }
 </script>
 
 
@@ -741,7 +761,10 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Mobile Number </label>
-                        <input class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" type="tel" maxlength="10" minlength="10" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" required />
+@*                         <input class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" type="tel" maxlength="10" minlength="10" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" required /> *@
+                        <input class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" type="tel" maxlength="10" minlength="10" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber"  onchange="validateMobileNumber()" />
+                        <br />
+                        <h6 id="mValidator"></h6>
                     </div>
                 </div>
 
@@ -881,7 +904,7 @@
                                         }
                                         else
                                         {
-                                            <option>Select one</option>
+                                            // <option>Select one</option>
                                         }
 
                                     }
