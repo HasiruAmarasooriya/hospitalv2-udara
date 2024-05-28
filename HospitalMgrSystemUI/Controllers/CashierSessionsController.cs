@@ -10,9 +10,8 @@ namespace HospitalMgrSystemUI.Controllers
 {
     public class CashierSessionsController : Controller
     {
+        [BindProperty] public CashierSessionDto viewCashierSessionDto { get; set; }
 
-        [BindProperty]
-        public CashierSessionDto viewCashierSessionDto { get; set; }
         public IActionResult Index()
         {
             CashierSessionDto cashierSessionDto = new CashierSessionDto();
@@ -22,13 +21,22 @@ namespace HospitalMgrSystemUI.Controllers
 
         public ActionResult DownloadCashierPayment([FromBody] CashierSessionDto cashierSessionDtoData)
         {
-
             CashierSessionDto cashierSessionDto = new CashierSessionDto();
             CashierSessionService cashierSessionService = new CashierSessionService();
-            cashierSessionDto.printDate = DateTime.Now;
-            cashierSessionDto.cashierSession = GetCashierSessionById(cashierSessionDtoData.sessionId);
-            cashierSessionDto.CashierPaymentData = cashierSessionService.GetCashierSessionPaymentData(cashierSessionDtoData.sessionId);
-            return PartialView("_PartialViewSummary", cashierSessionDto);
+            
+            try
+            {
+                cashierSessionDto.printDate = DateTime.Now;
+                cashierSessionDto.cashierSession = GetCashierSessionById(cashierSessionDtoData.sessionId);
+                cashierSessionDto.CashierPaymentData =
+                    cashierSessionService.GetCashierSessionPaymentData(cashierSessionDtoData.sessionId);
+                return PartialView("_PartialViewSummary", cashierSessionDto);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return RedirectToAction("Index");
+            }
         }
 
 
@@ -60,7 +68,6 @@ namespace HospitalMgrSystemUI.Controllers
             CashierSession cashierSession = new CashierSession();
             using (var httpClient = new HttpClient())
             {
-
                 try
                 {
                     var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
@@ -68,7 +75,6 @@ namespace HospitalMgrSystemUI.Controllers
                     {
                         if (viewCashierSessionDto.cashierSession.Id != 0)
                         {
-
                             viewCashierSessionDto.cashierSession.userID = Convert.ToInt32(userIdCookie);
                             viewCashierSessionDto.cashierSession.EndTime = DateTime.Now;
                             viewCashierSessionDto.cashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
@@ -76,9 +82,8 @@ namespace HospitalMgrSystemUI.Controllers
                             viewCashierSessionDto.cashierSession.Deviation = 0;
                             viewCashierSessionDto.cashierSession.cashierSessionStatus = CashierSessionStatus.END;
                             viewCashierSessionDto.cashierSession.UserRole = UserRole.CASHIER;
-                            cashierSession = new CashierSessionService().CreateCashierSession(viewCashierSessionDto.cashierSession);
-
-
+                            cashierSession =
+                                new CashierSessionService().CreateCashierSession(viewCashierSessionDto.cashierSession);
                         }
                         else
                         {
@@ -86,7 +91,6 @@ namespace HospitalMgrSystemUI.Controllers
                             mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
                             if (mtList.Count == 0)
                             {
-
                                 viewCashierSessionDto.cashierSession.userID = Convert.ToInt32(userIdCookie);
                                 viewCashierSessionDto.cashierSession.StartingTime = DateTime.Now;
                                 viewCashierSessionDto.cashierSession.EndTime = DateTime.Now;
@@ -96,21 +100,18 @@ namespace HospitalMgrSystemUI.Controllers
                                 viewCashierSessionDto.cashierSession.ModifiedUser = Convert.ToInt32(userIdCookie);
                                 viewCashierSessionDto.cashierSession.ModifiedDate = DateTime.Now;
                                 viewCashierSessionDto.cashierSession.UserRole = UserRole.CASHIER;
-                                cashierSession = new CashierSessionService().CreateCashierSession(viewCashierSessionDto.cashierSession);
-
+                                cashierSession =
+                                    new CashierSessionService().CreateCashierSession(viewCashierSessionDto
+                                        .cashierSession);
                             }
                         }
-
-
                     }
-
                 }
                 catch (Exception ex)
                 {
-
                 }
-                return RedirectToAction("Index");
 
+                return RedirectToAction("Index");
             }
         }
 
@@ -123,12 +124,15 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     CashierSessionList = new CashierSessionService().GetAllCashierSession();
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return CashierSessionList;
         }
+
         private List<CashierSession> GetActiveCashierSession(int id)
         {
             List<CashierSession> CashierSessionList = new List<CashierSession>();
@@ -138,12 +142,15 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     CashierSessionList = new CashierSessionService().GetACtiveCashierSessions(id);
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return CashierSessionList;
         }
+
         private CashierSession GetCashierSessionById(int id)
         {
             CashierSession CashierSession = new CashierSession();
@@ -153,10 +160,12 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     CashierSession = new CashierSessionService().GetCashierSessionByID(id);
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return CashierSession;
         }
 
@@ -169,10 +178,12 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     user = new UserService().GetUserByID(id);
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                }
             }
+
             return user;
         }
     }
