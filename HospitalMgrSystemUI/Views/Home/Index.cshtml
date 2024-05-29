@@ -58,49 +58,59 @@
 
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 
-        <div class="row">
+    <div class="row">
 
-        <div class="col-md-4 col-xl-3 mt-5" id="admissionDiv">
-                <div class="card bg-c-blue order-card">
-                    <div class="card-block">
-                    <h2 class="m-b-20">Admission</h2>
-                    <h2 class="text-right"><i class="fa fa-bed f-left"></i><span>486</span></h2>
-                        @*<p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
-                    </div>
-                </div>
-            </div>
+	    <div class="col-md-4 col-xl-3 mt-5" id="admissionDiv">
+		    <div class="card bg-c-blue order-card">
+			    <div class="card-block">
+				    <h2 class="m-b-20">Admission</h2>
+				    <h2 class="text-right"><i class="fa fa-bed f-left"></i><span>486</span></h2>
+				    @*<p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
+			    </div>
+		    </div>
+	    </div>
 
-        <div class="col-md-4 col-xl-3 mt-5" id="opdDiv">
-                <div class="card bg-c-green order-card">
-                    <div class="card-block">
-                        <h2 class="m-b-20">OPD</h2>
-                    <h2 class="text-right"><i class="fa fa-stethoscope f-left"></i><span>486</span></h2>
-@*                        <p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
-                    </div>
-                </div>
-            </div>
+	    <div class="col-md-4 col-xl-3 mt-5" id="opdDiv">
+		    <div class="card bg-c-green order-card">
+			    <div class="card-block">
+				    <h2 class="m-b-20">OPD</h2>
+				    <h2 class="text-right"><i class="fa fa-stethoscope f-left"></i><span>486</span></h2>
+				    @*                        <p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
+			    </div>
+		    </div>
+	    </div>
 
-        <div class="col-md-4 col-xl-3 mt-5" id="channelingDiv">
-                <div class="card bg-c-yellow order-card">
-                    <div class="card-block">
-                        <h2 class="m-b-20">Channeling</h2>
-                    <h2 class="text-right"><i class="fa fa-user-md f-left"></i><span>486</span></h2>
-                        @*<p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
-                    </div>
-                </div>
-            </div>
+	    <div class="col-md-4 col-xl-3 mt-5" id="channelingDiv">
+		    <div class="card bg-c-yellow order-card">
+			    <div class="card-block">
+				    <h2 class="m-b-20">Channeling</h2>
+				    <h2 class="text-right"><i class="fa fa-user-md f-left"></i><span>486</span></h2>
+				    @*<p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
+			    </div>
+		    </div>
+	    </div>
+        
+	    <div class="col-md-4 col-xl-3 mt-5" id="xrayDiv">
+		    <div class="card bg-info order-card">
+			    <div class="card-block">
+				    <h2 class="m-b-20">X-RAY</h2>
+				    <h2 class="text-right"><i class="fa fa-money f-left"></i><span>486</span></h2>
+				    @* <p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
+			    </div>
+		    </div>
+	    </div>
 
-        <div class="col-md-4 col-xl-3 mt-5" id="cashierDiv">
-                <div class="card bg-c-pink order-card">
-                    <div class="card-block">
-                        <h2 class="m-b-20">Cashier</h2>
-                    <h2 class="text-right"><i class="fa fa-money f-left"></i><span>486</span></h2>
-                       @* <p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
-                    </div>
-                </div>
-            </div>
-        </div>
-  
+	    <div class="col-md-4 col-xl-3 mt-5" id="cashierDiv">
+		    <div class="card bg-c-pink order-card">
+			    <div class="card-block">
+				    <h2 class="m-b-20">Cashier</h2>
+				    <h2 class="text-right"><i class="fa fa-money f-left"></i><span>486</span></h2>
+				    @* <p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
+			    </div>
+		    </div>
+	    </div>
+    </div>
+    
 
     @section scripts{
 
@@ -118,6 +128,9 @@
         });
         $("#cashierDiv").click(function () {
             window.location.href = "@Url.Action("Index", "Cashier")";
+        });
+        $("#xrayDiv").click(function () {
+            window.location.href = "@Url.Action("Index", "XRAY")";
         });
     </script>
 
