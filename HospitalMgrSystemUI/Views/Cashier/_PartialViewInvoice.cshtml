@@ -141,14 +141,6 @@
                     <td style="text-align: left;">@Model.customerName</td>
                 </tr>
                 <tr>
-                    <td style="text-align: left;">Age:</td>
-                    <td style="text-align: left;">@Model.patientAge</td>
-                </tr>
-                <tr>
-                    <td style="text-align: left;">Gender:</td>
-                    <td style="text-align: left;">@Model.patientSex</td>
-                </tr>
-                <tr>
                     <td style="text-align: left;">Phone No:</td>
                     <td style="text-align: left;">@Model.patientContactNo</td>
                 </tr>
@@ -158,10 +150,14 @@
                 </tr>
                 @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
                 {
-                    <tr>
-                        <td style="text-align: left;">No:</td>
-                        <td style="text-align: left;">@Model.opd.AppoimentNo</td>
-                    </tr>
+	                <tr>
+		                <td style="text-align: left;">Appointment No:</td>
+		                <td style="text-align: left;">@Model.opd!.AppoimentNo</td>
+	                </tr>
+	                <tr>
+		                <td style="text-align: left;">Room No:</td>
+		                <td style="text-align: left;">@Model.ChannelingSchedule.Room!.Name</td>
+	                </tr>
                     <tr>
                         <td style="text-align: left;">Time:</td>
                         <td style="text-align: left;">@Model.opd.DateTime</td>
