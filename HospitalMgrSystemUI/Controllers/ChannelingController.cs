@@ -1323,6 +1323,7 @@ public class ChannelingController : Controller
     {
         var opdDto = new OPDDto();
         opdDto.opd = new OPDService().GetAllOPDByID(Id);
+        var channelingSchedule = new ChannelingScheduleService().SheduleGetById(opdDto.opd.schedularId);
         opdDto.opdId = Id;
 
         var name = opdDto.opd.patient?.FullName;
@@ -1333,7 +1334,9 @@ public class ChannelingController : Controller
         var sex = opdDto.opd.patient.Sex;
         var totalAmount = opdDto.opd.TotalAmount;
         var consultant = new ConsultantService().GetAllConsultantByID(opdDto.opd.ConsultantID);
-        var roomNumber = opdDto.opd.RoomID;
+        var roomNumber = channelingSchedule.RoomId;
+        var appointmentNumber = opdDto.opd.AppoimentNo;
+        var description = opdDto.opd.Description;
 
         _OPDDto.opdId = Id;
         _OPDDto.name = name;
@@ -1345,6 +1348,8 @@ public class ChannelingController : Controller
         _OPDDto.TotalAmount = totalAmount;
         _OPDDto.ConsultantName = consultant.Name;
         _OPDDto.RoomNumber = roomNumber;
+        _OPDDto.appoinmentNo = appointmentNumber;
+        _OPDDto.Description = description;
 
         return PartialView("_PartialQR", _OPDDto);
     }
