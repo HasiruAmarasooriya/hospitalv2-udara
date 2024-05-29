@@ -1352,6 +1352,7 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                     .Include(c => c.Consultant)
                     .Include(c => c.Consultant.Specialist)
                     .Include(c => c.Consultant)
+                    .Include(c => c.Room)
                     .Where(o => o.Id == id)
                     .SingleOrDefault();
 
