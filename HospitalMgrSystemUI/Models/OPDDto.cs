@@ -24,7 +24,7 @@ namespace HospitalMgrSystemUI.Models
         public decimal? TotalAmount { get; set; }
         public string? ConsultantName { get; set; }
         public int? RoomNumber { get; set; }
-        
+        public string? RoomName { get; set; }
         public string? CreatedUserName { get; set; }
 
         public OPD? opd { get; set; }

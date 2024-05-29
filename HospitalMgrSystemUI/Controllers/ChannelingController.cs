@@ -1334,7 +1334,7 @@ public class ChannelingController : Controller
         var sex = opdDto.opd.patient.Sex;
         var totalAmount = opdDto.opd.TotalAmount;
         var consultant = new ConsultantService().GetAllConsultantByID(opdDto.opd.ConsultantID);
-        var roomNumber = channelingSchedule.RoomId;
+        var roomNumber = channelingSchedule.Room!.Name;
         var appointmentNumber = opdDto.opd.AppoimentNo;
         var description = opdDto.opd.Description;
 
@@ -1347,7 +1347,7 @@ public class ChannelingController : Controller
         _OPDDto.phone = phone;
         _OPDDto.TotalAmount = totalAmount;
         _OPDDto.ConsultantName = consultant.Name;
-        _OPDDto.RoomNumber = roomNumber;
+        _OPDDto.RoomName = roomNumber;
         _OPDDto.appoinmentNo = appointmentNumber;
         _OPDDto.Description = description;
 
