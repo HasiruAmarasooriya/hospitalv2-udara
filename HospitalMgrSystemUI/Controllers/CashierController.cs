@@ -120,7 +120,7 @@ namespace HospitalMgrSystemUI.Controllers
                     var number = GetNumber(cashierDto.PreID);
 
                     var opdData = new OPDService().GetAllOPDByID(number);
-                    var channelingSchedule = new ChannelingScheduleService().SheduleGetById(opdData.schedularId);
+                    var channelingSchedule = new ChannelingScheduleService().OnlyScheduleGetById(opdData.schedularId);
 
                     cashierDto = GetCashierAlldetails(cashierDto.PreID);
 

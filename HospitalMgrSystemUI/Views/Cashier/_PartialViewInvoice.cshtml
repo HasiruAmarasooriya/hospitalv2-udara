@@ -146,6 +146,14 @@
 				<td style="text-align: left;">Doctor Name:</td>
 				<td style="text-align: left;">@Model.consaltantName</td>
 			</tr>
+			@if (Model.ChannelingSchedule != null)
+			{
+				<tr>
+					<td style="text-align: left;">Specialist:</td>
+					<td style="text-align: left;">@Model.ChannelingSchedule!.Consultant!.Specialist!.Name</td>
+				</tr>
+			}
+
 			@if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
 			{
 				<tr>
