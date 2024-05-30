@@ -126,6 +126,8 @@ namespace HospitalMgrSystemUI.Controllers
 
                     cashierDto.cashierRemoveBillingItemDtoList = GetCashierAllRemoveddetails(cashierDto.PreID);
                     cashierDto.ChannelingSchedule = channelingSchedule;
+                    cashierDto.ItemName = opdData.Description;
+                    
 
                     return PartialView("_PartialViewInvoice", cashierDto);
                 }
