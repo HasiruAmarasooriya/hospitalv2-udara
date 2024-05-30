@@ -305,7 +305,7 @@ namespace HospitalMgrSystemUI.Controllers
                         {
                             try
                             {
-                                if(channelingSMS.channelingSchedule.scheduleStatus != ChannellingScheduleStatus.SESSION_END)
+                                if(viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.SESSION_END)
                                 {
                                     await sMSService.SendSMSToken(channelingSMS);
                                 }
