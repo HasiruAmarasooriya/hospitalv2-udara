@@ -1381,9 +1381,39 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 			return result;
 		}
 
+        public decimal GetDoctorPaidAppoinment(int schedularID)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                // get totalRefundDoctorFeeCount according to the schedularId
+                List<Model.OtherTransactions> mtOtherTransactionsList = new List<Model.OtherTransactions>();
+                List<Model.Invoice> mtInvoiceList = new List<Model.Invoice>();
+
+                mtOtherTransactionsList = dbContext.OtherTransactions
+                    .Where(o => o.Status == 0 && o.SchedularId == schedularID  && o.InvoiceType == InvoiceType.DOCTOR_PAYMENT && o.otherTransactionsStatus == OtherTransactionsStatus.Cashier_Out)
+                    .OrderByDescending(o => o.Id)
+                    .ToList();
+                var otherIds = mtOtherTransactionsList.Select(o => o.Id).ToList();
+
+                mtInvoiceList = dbContext.Invoices
+                     .Where(o => o.Status == 0 && o.InvoiceType == InvoiceType.DOCTOR_PAYMENT && otherIds.Contains(o.ServiceID))
+                     .OrderByDescending(o => o.Id)
+                     .ToList();
+
+                List<int> invoiceIds = mtInvoiceList.Select(o => o.Id).ToList();
+
+                decimal totalPaidAppoiment = dbContext.Payments.Where(o => o.BillingType == BillingType.OTHER_OUT  && invoiceIds.Contains(o.InvoiceID))
+                                .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+
+                return totalPaidAppoiment;
 
 
-		public Model.ChannelingSchedule SheduleGetById(int id)
+            }
+        }
+
+
+
+        public Model.ChannelingSchedule SheduleGetById(int id)
 		{
 			using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
 			{
@@ -1412,15 +1442,16 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 
 				result.Status = 0;
 				result.patientCount = patientCount;
-				result.actualPatientCount = actualPatientCount;
+				result.totalPatientCount = actualPatientCount;
 				result.totalRefundHospitalFeeCount = GetTotalRefundHospitalFeeCount(id);
 				result.totalRefundDoctorFeeCount = GetTotalRefundDoctorFeeCount(id);
 				result.totalRefundDoctorFeeAmount = GetTotalRefundDoctorFeeAmount(id, result.HospitalFee);
 				result.totalRefundHospitalFeeAmount = GetTotalRefundHospitalFeeAmount(id, result.HospitalFee);
 				result.totalHospitalFeeAmount = GetTotalHospitalFeeAmount(id, result.HospitalFee);
 				result.totalDoctorFeeAmount = GetTotalDoctorFeeAmount(id, result.HospitalFee);
-
-				dbContext.SaveChanges();
+                result.doctorPaidAppoinment = GetDoctorPaidAppoinment(id);
+				result.actualPatientCount = result.totalPatientCount - result.totalRefundDoctorFeeCount;
+                dbContext.SaveChanges();
 
 				return result;
 			}

@@ -134,10 +134,18 @@ namespace HospitalMgrSystem.Model
         public List<Consultant> notInSyestemConsultantList { get; set; }
 
         [NotMapped]
+        public List<OtherTransactions> otherIncomeList { get; set; }
+
+        [NotMapped]
         public decimal totalHospitaOtherIncome { get; set; }
 
         [NotMapped]
         public decimal totalGrandIncome { get; set; }
+        [NotMapped]
+        public decimal totalCashierTransferIn { get; set; }
+
+        [NotMapped]
+        public decimal totalCashierTransferOut{ get; set; }
         #endregion
     }
 }

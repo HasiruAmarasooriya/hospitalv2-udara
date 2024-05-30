@@ -28,7 +28,9 @@ namespace HospitalMgrSystem.Service.CashierSession
                 Model.CashierSession XRAYPayementData = PaymentDetailsXRAY(sessionId, InvoiceIds);
                 Model.CashierSession OTHERPayementData = PaymentDetailsOtherMS(sessionId,InvoiceIds);
                 Model.CashierSession ChannelingPayementData = PaymentDetailsCHE(sessionId, InvoiceIds);
-                Model.CashierSession otherHospitalIncome = PaymentDetailsOtherTransactrion(sessionId, InvoiceIds);
+                //Model.CashierSession otherHospitalIncome = PaymentDetailsOtherTransactrion(sessionId, InvoiceIds);
+                Model.CashierSession otherHospitalIncome = PaymentDetailsOtherIcome(sessionId, InvoiceIds);
+                Model.CashierSession cashierTransferInAndOut = CashierTransferDetails(sessionId, InvoiceIds);
 
                 cashierSessionAmounts.OPDTotalAmount = OPDPayementData.OPDTotalAmount;
                 cashierSessionAmounts.OPDTotalPaidAmount = OPDPayementData.OPDTotalPaidAmount;
@@ -46,7 +48,7 @@ namespace HospitalMgrSystem.Service.CashierSession
                 cashierSessionAmounts.OtherTotalPaidAmount = OTHERPayementData.OtherTotalPaidAmount;
                 cashierSessionAmounts.OtherTotalRefund = OTHERPayementData.OtherTotalRefund;
                 cashierSessionAmounts.OtherCashBalence = OTHERPayementData.OtherCashBalence;
-                cashierSessionAmounts.OPDTotalPaidAmount = OTHERPayementData.OPDTotalPaidAmount;
+                cashierSessionAmounts.OtherTotalPaidCardAmount = OTHERPayementData.OtherTotalPaidCardAmount;
 
                 cashierSessionAmounts.ChannelingTotalAmount = ChannelingPayementData.ChannelingTotalAmount;
                 cashierSessionAmounts.ChannelingTotalPaidAmount = ChannelingPayementData.ChannelingTotalPaidAmount;
@@ -58,13 +60,17 @@ namespace HospitalMgrSystem.Service.CashierSession
                 cashierSessionAmounts.AllServiceTotalPaidAmount = cashierSessionAmounts.OPDTotalPaidAmount + cashierSessionAmounts.XRAYTotalPaidAmount + cashierSessionAmounts.OtherTotalPaidAmount + cashierSessionAmounts.ChannelingTotalPaidAmount;
                 cashierSessionAmounts.AllServiceTotalPaidCardAmount = cashierSessionAmounts.OPDTotalPaidCardAmount + cashierSessionAmounts.XRAYTotalPaidCardAmount + cashierSessionAmounts.OtherTotalPaidCardAmount + cashierSessionAmounts.ChannelingTotalPaidCardAmount;
                 cashierSessionAmounts.AllServiceTotalRefund = cashierSessionAmounts.OPDTotalRefund + cashierSessionAmounts.XRAYTotalRefund + cashierSessionAmounts.OtherTotalRefund + cashierSessionAmounts.ChannelingTotalRefund;
-                cashierSessionAmounts.AllServiceTotalAmount = cashierSessionAmounts.OPDTotalAmount + cashierSessionAmounts.XRAYTotalAmount + cashierSessionAmounts.OtherTotalAmount + cashierSessionAmounts.ChannelingTotalAmount;
+                cashierSessionAmounts.AllServiceTotalAmount = cashierSessionAmounts.OPDTotalAmount + cashierSessionAmounts.XRAYTotalAmount + cashierSessionAmounts.OtherTotalAmount + cashierSessionAmounts.ChannelingTotalAmount+ cashierTransferInAndOut.totalCashierTransferIn+ cashierTransferInAndOut.totalCashierTransferOut+ otherHospitalIncome.totalHospitaOtherIncome;
                 cashierSessionAmounts.AllServiceCashBalence = cashierSession.EndBalence-cashierSession.StartBalence;
 
 
-                cashierSessionAmounts.notInSyestemConsultantList = otherHospitalIncome.notInSyestemConsultantList;
+                //cashierSessionAmounts.notInSyestemConsultantList = otherHospitalIncome.notInSyestemConsultantList;
+                cashierSessionAmounts.totalCashierTransferIn = cashierTransferInAndOut.totalCashierTransferIn;
+                cashierSessionAmounts.totalCashierTransferOut = cashierTransferInAndOut.totalCashierTransferOut;
                 cashierSessionAmounts.totalHospitaOtherIncome = otherHospitalIncome.totalHospitaOtherIncome;
-                cashierSessionAmounts.totalGrandIncome = cashierSessionAmounts.AllServiceTotalAmount + cashierSessionAmounts.totalHospitaOtherIncome;
+                cashierSessionAmounts.otherIncomeList = otherHospitalIncome.otherIncomeList;
+                cashierSessionAmounts.totalHospitaOtherIncome = otherHospitalIncome.totalHospitaOtherIncome;
+                cashierSessionAmounts.totalGrandIncome = cashierSessionAmounts.OPDTotalAmount + cashierSessionAmounts.XRAYTotalAmount + cashierSessionAmounts.OtherTotalAmount + cashierSessionAmounts.ChannelingTotalAmount+ otherHospitalIncome.totalHospitaOtherIncome; ;
                 return cashierSessionAmounts;
             }
 
@@ -104,10 +110,10 @@ namespace HospitalMgrSystem.Service.CashierSession
                     foreach (var itemDrIn in doctorPaymentInvoiceList)
                     {
                         int drId = otherServiceList.Where(o => o.BeneficiaryID == itemDr.Id && o.Id == itemDrIn.ServiceID && o.Status == CommonStatus.Active).Select(o => o.BeneficiaryID).FirstOrDefault();
-                        if(drId == itemDr.Id)
+                        if (drId == itemDr.Id)
                         {
 
-                            totalOtherHospitalIncomeByDr = totalOtherHospitalIncomeByDr +dbContext.Payments
+                            totalOtherHospitalIncomeByDr = totalOtherHospitalIncomeByDr + dbContext.Payments
                                                            .Where(o => o.BillingType == BillingType.OTHER_IN && o.sessionID == sessionId && o.InvoiceID == itemDrIn.Id)
                                                            .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
 
@@ -115,14 +121,157 @@ namespace HospitalMgrSystem.Service.CashierSession
 
                     }
                     notInSyestemConsultant = itemDr;
-                    notInSyestemConsultant.hospitalIncome= totalOtherHospitalIncomeByDr;
+                    notInSyestemConsultant.hospitalIncome = totalOtherHospitalIncomeByDr;
                     notInSyestemConsultantList.Add(notInSyestemConsultant);
                     totalOtherHospitalIncome = totalOtherHospitalIncome + totalOtherHospitalIncomeByDr;
                 }
                 cashierSession.totalHospitaOtherIncome = totalOtherHospitalIncome;
-                cashierSession.notInSyestemConsultantList=notInSyestemConsultantList;
+                cashierSession.notInSyestemConsultantList = notInSyestemConsultantList;
 
 
+
+                //cashierSessionAmounts.ChannelingTotalPaidCardAmount = totalCashierCardAmount;
+                return cashierSession;
+            }
+        }
+
+
+        private Model.CashierSession PaymentDetailsOtherIcome(int sessionId, List<int> InvoiceIds)
+        {
+            Model.CashierSession cashierSession = new Model.CashierSession();
+
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                List<Model.OtherTransactions> otherIncomeList = new List<Model.OtherTransactions>();
+
+
+
+                List<Model.OtherTransactions> otherServiceList = dbContext.OtherTransactions.Where(o =>  o.Status == CommonStatus.Active && o.InvoiceType == InvoiceType.OTHER_INCOME && o.SessionID==sessionId).ToList();
+                List<int> otherServiceIds = otherServiceList.Select(r => r.Id).ToList();
+
+                List<Invoice> otherIncomeInvoiceList = dbContext.Invoices.Where(o => otherServiceIds.Contains(o.ServiceID)).ToList();
+
+                List<int> otherIncomeInvoiceListIdsList = otherIncomeInvoiceList.Select(r => r.Id).ToList();
+
+                decimal totalOtherHospitalIncome = 0;
+
+                foreach (var itemOther in otherServiceList)
+                {
+
+                    decimal totalOtherHospitalIncomeByServiceID = 0;
+                    foreach (var item in otherIncomeInvoiceList)
+                    {
+                        if(itemOther.Id== item.ServiceID)
+                        {
+                            totalOtherHospitalIncomeByServiceID = totalOtherHospitalIncomeByServiceID + dbContext.Payments
+                               .Where(o => o.BillingType == BillingType.OTHER_IN && o.sessionID == sessionId && o.InvoiceID == item.Id)
+                               .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                        }
+
+
+
+
+                    }
+                    totalOtherHospitalIncome = totalOtherHospitalIncome + totalOtherHospitalIncomeByServiceID;
+                    itemOther.TotalOtherIncome= totalOtherHospitalIncomeByServiceID;
+                    otherIncomeList.Add(itemOther);
+
+                }
+
+
+
+                cashierSession.totalHospitaOtherIncome = totalOtherHospitalIncome;
+                cashierSession.otherIncomeList = otherIncomeList;        
+
+                //cashierSessionAmounts.ChannelingTotalPaidCardAmount = totalCashierCardAmount;
+                return cashierSession;
+            }
+        }
+
+
+        private Model.CashierSession CashierTransferDetails(int sessionId, List<int> InvoiceIds)
+        {
+            Model.CashierSession cashierSession = new Model.CashierSession();
+
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                Model.CashierSession otherTransferInAndOut = new Model.CashierSession();
+
+
+
+                List<Model.OtherTransactions> otherServiceList = dbContext.OtherTransactions.Where(o => o.Status == CommonStatus.Active && o.InvoiceType == InvoiceType.CASHIER_TRANSFER_OUT && o.SessionID == sessionId).ToList();
+                List<int> otherServiceIds = otherServiceList.Select(r => r.Id).ToList();
+
+                List<Invoice> otherIncomeInvoiceList = dbContext.Invoices.Where(o => otherServiceIds.Contains(o.ServiceID)).ToList();
+
+                List<int> otherIncomeInvoiceListIdsList = otherIncomeInvoiceList.Select(r => r.Id).ToList();
+
+
+
+                List<Model.OtherTransactions> otherServiceListIn = dbContext.OtherTransactions.Where(o => o.Status == CommonStatus.Active && o.InvoiceType == InvoiceType.CASHIER_TRANSFER_IN && o.SessionID == sessionId).ToList();
+                List<int> otherServiceIdsIn = otherServiceListIn.Select(r => r.Id).ToList();
+
+                List<Invoice> otherIncomeInvoiceListIn = dbContext.Invoices.Where(o => otherServiceIdsIn.Contains(o.ServiceID)).ToList();
+
+                List<int> otherIncomeInvoiceListIdsListIn = otherIncomeInvoiceListIn.Select(r => r.Id).ToList();
+
+
+                decimal totalOtherTransferOut = 0;
+
+                foreach (var itemOther in otherServiceList)
+                {
+
+                    decimal totalOtherTransferOutByServiceID = 0;
+                    foreach (var item in otherIncomeInvoiceList)
+                    {
+                        if (itemOther.Id == item.ServiceID)
+                        {
+                            totalOtherTransferOutByServiceID = totalOtherTransferOutByServiceID + dbContext.Payments
+                               .Where(o => o.sessionID == sessionId && o.InvoiceID == item.Id)
+                               .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                        }
+
+
+
+
+                    }
+                    totalOtherTransferOut = totalOtherTransferOut + totalOtherTransferOutByServiceID;
+
+
+
+                }
+
+
+
+
+                decimal totalOtherTransferIn= 0;
+
+                foreach (var itemOther in otherServiceListIn)
+                {
+
+                    decimal totalOtherTransferInByServiceIDIn = 0;
+                    foreach (var item in otherIncomeInvoiceListIn)
+                    {
+                        if (itemOther.Id == item.ServiceID)
+                        {
+                            totalOtherTransferInByServiceIDIn = totalOtherTransferInByServiceIDIn + dbContext.Payments
+                               .Where(o => o.sessionID == sessionId && o.InvoiceID == item.Id)
+                               .Sum(o => o.CashAmount + o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                        }
+
+
+
+
+                    }
+                    totalOtherTransferIn = totalOtherTransferIn + totalOtherTransferInByServiceIDIn;
+
+                 
+                }
+
+
+
+                cashierSession.totalCashierTransferOut = totalOtherTransferOut;
+                cashierSession.totalCashierTransferIn = totalOtherTransferIn;
 
                 //cashierSessionAmounts.ChannelingTotalPaidCardAmount = totalCashierCardAmount;
                 return cashierSession;
@@ -143,9 +292,9 @@ namespace HospitalMgrSystem.Service.CashierSession
 
 
                 //for doctor payments
-                List<int> doctorIdsOfNotInSystem = dbContext.Consultants.Where(o => o.isSystemDr == 0 && o.Status == 0).Select(r => r.Id).ToList();
+                //List<int> doctorIdsOfNotInSystem = dbContext.Consultants.Where(o => o.isSystemDr == 0 && o.Status == 0).Select(r => r.Id).ToList();
 
-                List<int> otherServiceIds = dbContext.OtherTransactions.Where(o => !doctorIdsOfNotInSystem.Contains(o.BeneficiaryID) && DrPaymentsServiceIdsList.Contains(o.Id) && o.Status == CommonStatus.Active && o.InvoiceType == InvoiceType.DOCTOR_PAYMENT).Select(r => r.Id).ToList();
+                List<int> otherServiceIds = dbContext.OtherTransactions.Where(o =>  DrPaymentsServiceIdsList.Contains(o.Id) && o.Status == CommonStatus.Active && o.InvoiceType == InvoiceType.DOCTOR_PAYMENT).Select(r => r.Id).ToList();
 
                 List<int> doctorPaymentServiceIdsList = dbContext.Invoices.Where(o => otherServiceIds.Contains(o.ServiceID) && o.InvoiceType == InvoiceType.DOCTOR_PAYMENT && o.Status == 0).Select(r => r.Id).ToList();
 
@@ -172,7 +321,7 @@ namespace HospitalMgrSystem.Service.CashierSession
                 cashierSessionAmounts.ChannelingTotalRefund = refundAmount;
                 cashierSessionAmounts.ChannelingTotalDoctorPayment = totalDoctorPaymentAmount;
                 cashierSessionAmounts.ChannelingTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
-                cashierSessionAmounts.ChannelingTotalAmount = cashierSessionAmounts.ChannelingTotalPaidAmount + totalCashierCardAmount;
+                cashierSessionAmounts.ChannelingTotalAmount = cashierSessionAmounts.ChannelingTotalPaidAmount + totalCashierCardAmount + totalDoctorPaymentAmount;
 
 
                 return cashierSessionAmounts;

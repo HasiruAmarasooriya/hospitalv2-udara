@@ -331,7 +331,7 @@
             var selectedPaymentStatus = $(this).val();
 
             $('#basic-2 tbody tr').each(function () {
-                var rowPaymentStatus = $(this).find('td:eq(10)').text(); // Index of the payment status column (zero-based)
+                var rowPaymentStatus = $(this).find('td:eq(11)').text(); // Index of the payment status column (zero-based)
 
                 if (selectedPaymentStatus === '' || rowPaymentStatus === selectedPaymentStatus) {
                     $(this).show();

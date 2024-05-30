@@ -480,6 +480,23 @@ namespace HospitalMgrSystem.Service.Channeling
             return opd;
         }
 
+        public bool GetChannelByAppointmentNoAndScheduleID(int apNo, int shID)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                var opd = dbContext.OPD.SingleOrDefault(
+                    o => o.AppoimentNo == apNo &&
+                         o.schedularId == shID &&
+                         o.Status == CommonStatus.Active &&
+                         o.invoiceType == InvoiceType.CHE
+                );
+
+                return opd != null;
+            }
+        }
+
+
+
         public List<Model.Consultant> GetAllConsultantThatHaveSchedulingsByDate(DateTime scheduleDate)
         {
             List<Model.Consultant> mtList = new List<Model.Consultant>();

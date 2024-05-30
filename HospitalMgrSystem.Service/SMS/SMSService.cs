@@ -602,6 +602,18 @@ namespace HospitalMgrSystem.Service.SMS
 
             }
         }
+
+        public Model.SMSActivation GetSMSServiceStatus()
+        {
+            Model.SMSActivation sMSActivation = new Model.SMSActivation();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                sMSActivation = dbContext.sMSActivations.First(o => o.Id == 1);
+
+            }
+            return sMSActivation;
+        }
+
         public class ApiResponse
         {
             [JsonPropertyName("status")]

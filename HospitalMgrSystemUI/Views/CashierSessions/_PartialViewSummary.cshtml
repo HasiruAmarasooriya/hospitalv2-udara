@@ -174,13 +174,13 @@
             <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AllServiceTotalRefund</td>
         </tr>
         <tr>
-            <td style="border-bottom: 1px solid white; text-align: left;">Total Amount</td>
-            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AllServiceTotalAmount</td>
+            <td style="border-bottom: 1px solid #ddd; text-align: left;">Total Amount</td>
+            <td style="border-bottom: 1px solid #ddd; text-align: right;">@Model.CashierPaymentData.AllServiceTotalAmount</td>
         </tr>
-        <tr>
+@*         <tr>
             <td style="border-bottom: 1px solid #ddd; text-align: left;">Total Cash Balence</td>
             <td style="border-bottom: 1px solid #ddd; text-align: right;">@Model.CashierPaymentData.AllServiceCashBalence</td>
-        </tr>
+        </tr> *@
 
     </table>
     <br />
@@ -192,18 +192,18 @@
         </tr>
         <tr>
             <td style="border-bottom: 1px solid white; text-align: left;">Total Opening Balance</td>
-            <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.StartBalence</td>
-            @if (@Model.CashierPaymentData.notInSyestemConsultantList != null)
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.totalCashierTransferIn</td>
+            @if (@Model.CashierPaymentData.otherIncomeList != null)
             {
                 <td style="border-bottom: 1px solid white; text-align: left;" colspan="2">
                     <table style="width: 100%; border-collapse: collapse; border: none;">
-                        @foreach (var consultant in @Model.CashierPaymentData.notInSyestemConsultantList)
+                        @foreach (var income in @Model.CashierPaymentData.otherIncomeList)
                         {
-                            @if (@consultant.hospitalIncome > 0)
+                            @if (income.TotalOtherIncome > 0)
                             {
                                 <tr style="border: none;">
-                                    <td style="border: none; text-align: left;">@consultant.Name</td>
-                                    <td style="border: none; text-align: right;">@consultant.hospitalIncome</td>
+                                    <td style="border: none; text-align: left;">@income.Description</td>
+                                    <td style="border: none; text-align: right;">@income.TotalOtherIncome</td>
                                 </tr>
                             }
 
@@ -257,7 +257,7 @@
         <tr>
             <td style="border-bottom: 1px solid white; text-align: left;">Final Cash Balance</td>
             <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AllServiceCashBalence</td>
-            <td style="border-bottom: 1px solid white; text-align: left;">Sakuni</td>
+            <td style="border-bottom: 1px solid white; text-align: left;">@Model.cashierSession.User.FullName</td>
             <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.totalCashAmountHandover</td>
         </tr>
         <tr>
@@ -268,7 +268,7 @@
         </tr>
         <tr>
             <td style="border-bottom: 1px solid white; text-align: left;">Final Profit & Loss</td>
-            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.EndBalence</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@(Model.CashierPaymentData.AllServiceCashBalence- Model.CashierPaymentData.AllServiceTotalAmount)</td>
             <td style="border-bottom: 1px solid white; text-align: left;">Card Payment</td>
             <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.EndCardBalence</td>
         </tr>
@@ -277,6 +277,12 @@
             <td style="border-bottom: 1px solid white; text-align: right;"></td>
             <td style="border-bottom: 1px solid white; text-align: left;">Final Handover Total</td>
             <td style="border-bottom: 1px solid white; text-align: right;">@Model.cashierSession.totalAmountHandover</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid white; text-align: left;"></td>
+            <td style="border-bottom: 1px solid white; text-align: right;"></td>
+            <td style="border-bottom: 1px solid white; text-align: left;">Cashier Transfer Amount</td>
+            <td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.totalCashierTransferOut</td>
         </tr>
 
     </table>
@@ -331,7 +337,7 @@
         </tr>
         <tr>
             <td style="border-bottom: 1px solid #ddd; text-align: left;">Cash Variance</td>
-            <td style="border-bottom: 1px solid #ddd; text-align: right;">@(Model.cashierSession.totalAmountHandover - Model.CashierPaymentData.totalGrandIncome)</td>
+            <td style="border-bottom: 1px solid #ddd; text-align: right;">@(Model.cashierSession.totalAmountHandover - Model.CashierPaymentData.totalGrandIncome - Model.CashierPaymentData.totalCashierTransferIn - Model.CashierPaymentData.totalCashierTransferOut)</td>
         </tr>
 
     </table>

@@ -115,7 +115,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Channeling Shedule Details</h4>
+                <h4 class="card-title">Today Channeling Shedule Details</h4>
                 <div class="row"></div>
                 <div class="table-responsive">
                     <table id="basic-2" class="display">
@@ -141,37 +141,46 @@
                         <tbody id="tblBodyPayments">
                         @if (Model != null)
                         {
-                            @foreach (var channelingShedule in Model.ChannelingScheduleList)
-                            {
-                                <tr>
-                                    <td>@channelingShedule.Id</td>
-                                    <td>@channelingShedule.DateTime</td>
-                                    <td>@channelingShedule.Consultant?.Name</td>
-                                    <td>@channelingShedule.Consultant?.Specialist.Name</td>
-                                    <td>@channelingShedule.Room?.Name</td>
-                                    <td>@channelingShedule.booked / @channelingShedule.NoOfAppointment</td>
-                                    <td>@channelingShedule.paid / @channelingShedule.allBookedAppoinment</td>
-                                    <td>@(channelingShedule.totalPaidAmount != null ? channelingShedule.totalPaidAmount.Value.ToString("0.00") : "0.00")</td>
-                                    <td>@(channelingShedule.totalRefund != null ? channelingShedule.totalRefund.Value.ToString("0.00") : "0.00")</td>
-@*                                     <td>@channelingShedule.ConsultantFee</td>
-                                    <td>@channelingShedule.HospitalFee</td> *@
-                                        <td>@((channelingShedule.totalAmount - (channelingShedule.totalRefund != null ? channelingShedule.totalRefund.Value : 0)).ToString("0.00"))</td>
-                                    <td>@channelingShedule.scheduleStatus</td>
-                                    <td>
-                                        <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@channelingShedule.Id);>
-                                            <i class='fa fa-eye'></i>
-                                        </button> &nbsp;
-                                    </td>
-                                    <td>
-                                        @using (Html.BeginForm("DeleteChannelingShedule", "ChannelingShedule", new { Id = @channelingShedule.Id }, FormMethod.Post))
-                                        {
-                                            <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>
-                                                <i class='fa fa-trash'></i>
-                                            </button>
-                                        }
-                                    </td>
-                                </tr>
-                            }
+                                // Get today's date
+                                var tomorrow = DateTime.Now.AddDays(1).Date;
+
+                                @foreach (var channelingShedule in Model.ChannelingScheduleList)
+                                {
+                                    if (channelingShedule.DateTime < tomorrow)
+                                    {
+
+                                        <tr>
+                                            <td>@channelingShedule.Id</td>
+                                            <td>@channelingShedule.DateTime</td>
+                                            <td>@channelingShedule.Consultant?.Name</td>
+                                            <td>@channelingShedule.Consultant?.Specialist.Name</td>
+                                            <td>@channelingShedule.Room?.Name</td>
+                                            <td>@channelingShedule.booked / @channelingShedule.NoOfAppointment</td>
+                                            <td>@channelingShedule.paid / @channelingShedule.allBookedAppoinment</td>
+                                            <td>@(channelingShedule.totalPaidAmount != null ? channelingShedule.totalPaidAmount.Value.ToString("0.00") : "0.00")</td>
+                                            <td>@(channelingShedule.totalRefund != null ? channelingShedule.totalRefund.Value.ToString("0.00") : "0.00")</td>
+                                            @*                                     <td>@channelingShedule.ConsultantFee</td>
+                                <td>@channelingShedule.HospitalFee</td> *@
+                                            <td>@((channelingShedule.totalAmount - (channelingShedule.totalRefund != null ? channelingShedule.totalRefund.Value : 0)).ToString("0.00"))</td>
+                                            <td>@channelingShedule.scheduleStatus</td>
+                                            <td>
+                                                <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@channelingShedule.Id);>
+                                                    <i class='fa fa-eye'></i>
+                                                </button> &nbsp;
+                                            </td>
+                                            <td>
+                                                @using (Html.BeginForm("DeleteChannelingShedule", "ChannelingShedule", new { Id = @channelingShedule.Id }, FormMethod.Post))
+                                                {
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>
+                                                        <i class='fa fa-trash'></i>
+                                                    </button>
+                                                }
+                                            </td>
+                                        </tr>
+
+                                    }
+
+                                }
                         }
                         </tbody>
                     </table>
@@ -180,6 +189,87 @@
         </div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Upcoming  Channeling Shedule Details</h4>
+                <div class="row"></div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Schedule Time</th>
+                                <th>Consultant Name</th>
+                                <th>Speciality</th>
+                                <th>Room Number</th>
+                                <th>Active Appointment</th>
+                                <th>Paid Appointment</th>
+                                <th>Total Paid</th>
+                                <th>Total Refund</th>
+                                @*                             <th>Doctor Fee</th>
+                                <th>Hospital Fee</th> *@
+                                <th>Total Amount</th>
+                                <th>Status</th>
+                                <th>View</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+
+                                // Get today's date
+                                var tomorrow = DateTime.Now.AddDays(1).Date;
+
+                                @foreach (var channelingShedule in Model.ChannelingScheduleList)
+                                {
+                                    if (channelingShedule.DateTime > tomorrow)
+                                    {
+
+                                        <tr>
+                                            <td>@channelingShedule.Id</td>
+                                            <td>@channelingShedule.DateTime</td>
+                                            <td>@channelingShedule.Consultant?.Name</td>
+                                            <td>@channelingShedule.Consultant?.Specialist.Name</td>
+                                            <td>@channelingShedule.Room?.Name</td>
+                                            <td>@channelingShedule.booked / @channelingShedule.NoOfAppointment</td>
+                                            <td>@channelingShedule.paid / @channelingShedule.allBookedAppoinment</td>
+                                            <td>@(channelingShedule.totalPaidAmount != null ? channelingShedule.totalPaidAmount.Value.ToString("0.00") : "0.00")</td>
+                                            <td>@(channelingShedule.totalRefund != null ? channelingShedule.totalRefund.Value.ToString("0.00") : "0.00")</td>
+                                            @*                                     <td>@channelingShedule.ConsultantFee</td>
+                                <td>@channelingShedule.HospitalFee</td> *@
+                                            <td>@((channelingShedule.totalAmount - (channelingShedule.totalRefund != null ? channelingShedule.totalRefund.Value : 0)).ToString("0.00"))</td>
+                                            <td>@channelingShedule.scheduleStatus</td>
+                                            <td>
+                                                <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@channelingShedule.Id);>
+                                                    <i class='fa fa-eye'></i>
+                                                </button> &nbsp;
+                                            </td>
+                                            <td>
+                                                @using (Html.BeginForm("DeleteChannelingShedule", "ChannelingShedule", new { Id = @channelingShedule.Id }, FormMethod.Post))
+                                                {
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>
+                                                        <i class='fa fa-trash'></i>
+                                                    </button>
+                                                }
+                                            </td>
+                                        </tr>
+
+                                    }
+
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div id="AddShiftModel" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-lg" id="AddEditContainerModel">
@@ -263,7 +353,7 @@
 
             $('#date-format').bootstrapMaterialDatePicker({
                 time: true,
-                format: "YYYY-MM-DD hh:mm"
+                format: "YYYY-MM-DD HH:mm"
             });
             
             /*$('#previous-date-format').bootstrapMaterialDatePicker({

@@ -27,6 +27,8 @@ public class ChannelingController : Controller
 
     [BindProperty] public OPDDto _OPDDto { get; set; }
 
+    private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1, 1);
+
     public IActionResult Index()
     {
         var oPDDto = new OPDDto()
@@ -778,6 +780,11 @@ public class ChannelingController : Controller
 
         try
         {
+            await Semaphore.WaitAsync();
+
+            //check appoint numer already taken or not
+
+
             var channelingSchedule = new ChannelingSchedule();
             var ScanObj = new Scan();
             var patient = new Patient();
@@ -786,6 +793,12 @@ public class ChannelingController : Controller
 
             channelingSchedule = ChannelingScheduleGetByID(oPDDto.opd.schedularId);
             if (channelingSchedule == null) return RedirectToAction("Index");
+
+            if (CheckAppoinmentNumberTaken(oPDDto.opd.AppoimentNo, oPDDto.opd.schedularId))
+            {
+                //if apoinment already taken
+                return RedirectToAction("Index");
+            }
 
 
             if (oPDDto.scanId != 0) ScanObj = ScanGetByID(oPDDto.scanId);
@@ -964,8 +977,26 @@ public class ChannelingController : Controller
                         ChannelingScheduleGetByID(channelingSMS.channelingForOnePatient.schedularId);
                     channelingSMS.ChannellingScheduleStatus = channelingSMS.channelingSchedule.scheduleStatus;
 
-                    var sMSService = new SMSService();
-                    await sMSService.SendSMSTokenForNewChannel(channelingSMS);
+                    //var sMSService = new SMSService();
+                    //await sMSService.SendSMSTokenForNewChannel(channelingSMS);
+                    SMSService sMSService = new SMSService();
+                    SMSActivation sMSActivation = new SMSActivation();
+                    sMSActivation = sMSService.GetSMSServiceStatus();
+                    if (sMSActivation.isActivate == SMSStatus.Active)
+                    {
+                        try
+                        {
+
+                            await sMSService.SendSMSTokenForNewChannel(channelingSMS);
+
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error sending SMS token time change: {ex.Message}");
+                        }
+
+                    }
                 }
             }
 
@@ -974,6 +1005,10 @@ public class ChannelingController : Controller
         catch (Exception ex)
         {
             return RedirectToAction("Index");
+        }
+        finally
+        {
+            Semaphore.Release();
         }
     }
 
@@ -986,6 +1021,8 @@ public class ChannelingController : Controller
 
         try
         {
+            await Semaphore.WaitAsync();
+
             var channelingSchedule = new ChannelingSchedule();
             var ScanObj = new Scan();
             var patient = new Patient();
@@ -994,7 +1031,11 @@ public class ChannelingController : Controller
 
             channelingSchedule = ChannelingScheduleGetByID(oPDDto.opd.schedularId);
             if (channelingSchedule == null) return RedirectToAction("Index");
-
+            if (CheckAppoinmentNumberTaken(oPDDto.opd.AppoimentNo, oPDDto.opd.schedularId))
+            {
+                //if apoinment already taken
+                return RedirectToAction("Index");
+            }
 
             if (oPDDto.scanId != 0) ScanObj = ScanGetByID(oPDDto.scanId);
 
@@ -1196,8 +1237,28 @@ public class ChannelingController : Controller
                         ChannelingScheduleGetByID(channelingSMS.channelingForOnePatient.schedularId);
                     channelingSMS.ChannellingScheduleStatus = channelingSMS.channelingSchedule.scheduleStatus;
 
-                    var sMSService = new SMSService();
-                    await sMSService.SendSMSTokenForNewChannel(channelingSMS);
+                    //var sMSService = new SMSService();
+                    //await sMSService.SendSMSTokenForNewChannel(channelingSMS);
+
+
+                    SMSService sMSService = new SMSService();
+                    SMSActivation sMSActivation = new SMSActivation();
+                    sMSActivation = sMSService.GetSMSServiceStatus();
+                    if (sMSActivation.isActivate == SMSStatus.Active)
+                    {
+                        try
+                        {
+
+                            await sMSService.SendSMSTokenForNewChannel(channelingSMS);
+
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error sending SMS token time change: {ex.Message}");
+                        }
+
+                    }
                 }
             }
 
@@ -1206,6 +1267,10 @@ public class ChannelingController : Controller
         catch (Exception ex)
         {
             return RedirectToAction("Index");
+        }
+        finally
+        {
+            Semaphore.Release();
         }
     }
 
@@ -1282,7 +1347,24 @@ public class ChannelingController : Controller
 
         return channeling;
     }
+    private bool CheckAppoinmentNumberTaken(int apNo, int shID)
+    {
+      
 
+        using (var httpClient = new HttpClient())
+        {
+            try
+            {
+                return new ChannelingService().GetChannelByAppointmentNoAndScheduleID(apNo,shID);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+    }
     private ChannelingSchedule ChannelingScheduleGetByID(int id)
     {
         var channelingSchedule = new ChannelingSchedule();

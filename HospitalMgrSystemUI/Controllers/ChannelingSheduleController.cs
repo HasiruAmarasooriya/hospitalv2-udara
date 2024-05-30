@@ -231,6 +231,27 @@ namespace HospitalMgrSystemUI.Controllers
             return channelingSchedule;
         }
 
+        private decimal GetDoctorPaidAppoinment(int id)
+        {
+            
+
+            using (var httpClient = new HttpClient())
+            {
+
+                try
+                {
+                 decimal   channelingSchedule = new ChannelingScheduleService().GetDoctorPaidAppoinment(id);
+                 return channelingSchedule;
+                }
+                catch (Exception ex)
+                {
+                 return 0;
+                }
+            }
+
+            
+        }
+
         public async Task<IActionResult> AddNewChannelingSheduleAsync()
         {
             var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
@@ -250,12 +271,21 @@ namespace HospitalMgrSystemUI.Controllers
                         channelingSMS.ChannellingScheduleStatus =
                             viewChannelingSchedule.ChannelingSchedule.scheduleStatus;
 
-                        // Add temp mobile number to last record
-                        //channelingSMS.channeling[channelingSMS.channeling.Count - 1].patient.MobileNumber =
-                        //    "0702869830";
-
                         SMSService sMSService = new SMSService();
-                        await sMSService.SendSMSTokenTimeChange(channelingSMS);
+                        SMSActivation sMSActivation = new SMSActivation();
+                        sMSActivation = sMSService.GetSMSServiceStatus();
+                        if (sMSActivation.isActivate == SMSStatus.Active) {
+                            try
+                            {
+                                await sMSService.SendSMSTokenTimeChange(channelingSMS);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error sending SMS token time change: {ex.Message}");
+                            }
+                            
+                        }
+                        
                     }
                     else if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.NOT_ACTIVE && viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.ACTIVE)
                     {
@@ -268,12 +298,26 @@ namespace HospitalMgrSystemUI.Controllers
                         channelingSMS.ChannellingScheduleStatus =
                             viewChannelingSchedule.ChannelingSchedule.scheduleStatus;
 
-                        // Add temp mobile number to last record
-                        //channelingSMS.channeling[channelingSMS.channeling.Count - 1].patient.MobileNumber =
-                        //    "0702869830";
-
                         SMSService sMSService = new SMSService();
-                        await sMSService.SendSMSToken(channelingSMS);
+                        SMSActivation sMSActivation = new SMSActivation();
+                        sMSActivation = sMSService.GetSMSServiceStatus();
+                        if (sMSActivation.isActivate == SMSStatus.Active)
+                        {
+                            try
+                            {
+                                if(channelingSMS.channelingSchedule.scheduleStatus != ChannellingScheduleStatus.SESSION_END)
+                                {
+                                    await sMSService.SendSMSToken(channelingSMS);
+                                }
+                                
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error sending SMS token time change: {ex.Message}");
+                            }
+
+                        }
+                       
                     }
 
                     if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus == ChannellingScheduleStatus.SESSION_END)
@@ -291,7 +335,7 @@ namespace HospitalMgrSystemUI.Controllers
                             otherTransactions.SessionID = mtList[0].Id;
                             otherTransactions.ConvenerID = Convert.ToInt32(userIdCookie);
                             otherTransactions.InvoiceType = InvoiceType.DOCTOR_PAYMENT;
-                            otherTransactions.Amount = channelingScheduleData.totalDoctorFeeAmount;
+                            otherTransactions.Amount = channelingScheduleData.totalDoctorFeeAmount+channelingScheduleData.doctorPaidAppoinment;
                             otherTransactions.Description = "DOCTOR_PAYMENT";
                             otherTransactions.ApprovedByID = Convert.ToInt32(userIdCookie);
                             otherTransactions.Status = CommonStatus.Active;
@@ -327,7 +371,7 @@ namespace HospitalMgrSystemUI.Controllers
                             invoiceItem.InvoiceId = savedInvoice.Id;
                             invoiceItem.ItemID = 2;
                             invoiceItem.billingItemsType = BillingItemsType.OTHER;
-                            invoiceItem.price = channelingScheduleData.totalDoctorFeeAmount;
+                            invoiceItem.price = otherTransactions.Amount;
                             invoiceItem.qty = 1;
                             invoiceItem.Discount = 0;
                             invoiceItem.Total = invoiceItem.price * invoiceItem.qty;

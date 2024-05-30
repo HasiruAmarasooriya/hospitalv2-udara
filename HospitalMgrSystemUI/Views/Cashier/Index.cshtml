@@ -33,6 +33,16 @@
     });
 
 
+    function disableButton(button) {
+        // Disable the button to prevent double submission
+        button.disabled = true;
+
+        // Optionally, you can change the button text to indicate that it's processing
+        button.innerText = 'Processing...';
+
+        // Submit the form
+        button.form.submit();
+    }
     // $(window).load(function () {
     //     // Extract the PreID from the URL
 
@@ -852,7 +862,7 @@
                             {
                                 @if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.CASHIER)
                                 {
-                                    <button type="submit" class="btn btn-success">END SALE</button>
+                                        <button type="submit" class="btn btn-success" onclick="disableButton(this)">END SALE</button>
                                 }
 
                                 @if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.OPDNURSE)
@@ -863,7 +873,7 @@
                                         {
                                             @if (Model.opd.nightShiftSession.shift == HospitalMgrSystem.Model.Enums.Shift.NIGHT_SHIFT)
                                             {
-                                                <button type="submit" class="btn btn-success">END SALE</button>
+                                                    <button type="submit" class="btn btn-success" onclick="disableButton(this)">END SALE</button>
                                             }
                                         }
                                     }
@@ -884,13 +894,13 @@
                                         <td style="border-bottom: 1px solid white;">USER PASSWORD</td>
                                         <td style="border-bottom: 1px solid white;">
                                             <b>
-                                                <input class="form-control danger" type="password" name="userPassword" id="userPassword" placeholder="Enter password"/>
+                                                <input class="form-control danger" type="password"  name="userPassword" id="userPassword" placeholder="Enter password"/>
                                             </b>
                                         </td>
                                     </tr>
                                 </table>
 
-                                <button id='link_copy' type="submit" class='btn waves-effect waves-light  btn-danger'>Refund</button>
+                                    <button id='link_copy' type="submit" class='btn waves-effect waves-light  btn-danger' id="refundButton">Refund</button>
                             }
 
                             @* <form asp-action="Refund" method="post">
@@ -916,7 +926,7 @@
                                 {
                                     @using (Html.BeginForm("MarkAsPaid", "Cashier", new { Id = Model.invoiceID }, FormMethod.Post))
                                     {
-                                        <button id='link_copy' type="submit" class='btn waves-effect waves-light  btn-danger'>Mark as paid</button>
+                                            <button id='link_copy' type="submit" class='btn waves-effect waves-light  btn-danger' id="markAsPaidButton">Mark as paid</button>
                                     }
                                 }
                             }

@@ -37,5 +37,8 @@ namespace HospitalMgrSystem.Model
         public int? ModifiedUser { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
+
+        [NotMapped]
+        public decimal TotalOtherIncome { get; set; }
     }
 }
