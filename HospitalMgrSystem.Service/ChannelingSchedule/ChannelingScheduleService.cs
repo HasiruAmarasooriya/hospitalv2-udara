@@ -1080,6 +1080,42 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
             return mtList;
         }
 
+        public List<Model.OPD> GetRefundedOpdList(DateTime startDate, DateTime endDate)
+        {
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+                // Get the list of OPD entries with specified conditions
+                List<Model.OPD> mtOPDList = dbContext.OPD
+                    .Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.DateTime >= startDate && o.DateTime <= endDate)
+                    .OrderByDescending(o => o.Id)
+                    .ToList();
+
+                // Get the IDs of OPD entries that have a PAID payment status
+                var opdIds = mtOPDList.Where(o => o.paymentStatus == PaymentStatus.PAID).Select(o => o.Id).ToList();
+
+                // Get the list of invoices associated with the filtered OPD entries
+                List<Model.Invoice> mtInvoiceList = dbContext.Invoices
+                    .Where(o => o.Status == 0 && o.InvoiceType == InvoiceType.CHE && opdIds.Contains(o.ServiceID))
+                    .OrderByDescending(o => o.Id)
+                    .ToList();
+
+                // Get the IDs of the filtered invoices
+                var invoiceIds = mtInvoiceList.Select(o => o.Id).ToList();
+
+                // Get the list of refunded invoice items related to hospital fees
+                var refundedInvoiceItems = dbContext.InvoiceItems
+                    .Where(o => o.Status == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.Remove && o.billingItemsType == BillingItemsType.Hospital && invoiceIds.Contains(o.InvoiceId))
+                    .ToList();
+
+                // Get the OPD IDs of the refunded invoice items
+                var refundedOPDIds = mtInvoiceList.Where(i => refundedInvoiceItems.Any(ii => ii.InvoiceId == i.Id)).Select(i => i.ServiceID).ToList();
+
+                // Return the list of OPDs that have been refunded
+                return mtOPDList.Where(opd => refundedOPDIds.Contains(opd.Id)).ToList();
+            }
+        }
+
+
         public int GetTotalRefundHospitalFeeCount(int id)
         {
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
