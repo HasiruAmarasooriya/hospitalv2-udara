@@ -1,6 +1,7 @@
 ﻿using HospitalMgrSystem.DataAccess;
 using HospitalMgrSystem.Model;
 using HospitalMgrSystem.Model.Enums;
+using HospitalMgrSystem.Service.ChannelingSchedule;
 using HospitalMgrSystem.Service.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -189,6 +190,7 @@ namespace HospitalMgrSystem.Service.Report
 		{
 			using var dbContext = new HospitalDBContext();
 			var opds = new List<Model.OPD>();
+			var channelingScheduleService = new ChannelingScheduleService();
 
 			var opdChannelingData = dbContext.OPD
 				.Include(o => o.consultant)
@@ -199,27 +201,31 @@ namespace HospitalMgrSystem.Service.Report
 				.Select(g => new { SchedularId = g.Key, BillCount = g.Count(), Consultant = g.First().consultant}) 
 				.ToList();
 
-			var channelingScheduleDates = dbContext.ChannelingSchedule
+			/*var channelingScheduleDates = dbContext.ChannelingSchedule
 				.Where(o => o.Status == 0 && o.DateTime >= startDate && o.DateTime <= endDate)
-				.ToList();
+				.ToList();*/
 
 
-
-
-			foreach (var channel in opdChannelingData)
+            foreach (var channel in opdChannelingData)
 			{
 				var schedularId = channel.SchedularId.schedularId;
 
-				var opd = new Model.OPD
+                var channelingSchedule = channelingScheduleService.SheduleGetById(schedularId);
+
+                var opd = new Model.OPD
 				{
 					schedularId = schedularId,
-					BillCount = channel.BillCount,
+					BillCount = (channelingSchedule.actualPatientCount - channelingSchedule.totalRefundDoctorFeeCount),
 					consultant = channel.Consultant,
 					DoctorAmount = GetTotalPaidDoctorFeeAmount(schedularId),
 					HospitalAmount = GetTotalPaidHospitalFeeAmount(schedularId),
-					DateTime = channelingScheduleDates.Where(o => o.Id == schedularId).Select(o => o.DateTime).FirstOrDefault(),
-					channelingScheduleData = channelingScheduleDates.FirstOrDefault(o => o.Id == schedularId)!
-				};
+					DateTime = channelingSchedule.DateTime,
+					channelingScheduleData = channelingSchedule,
+                    DoctorRefundCount = channelingSchedule.totalRefundDoctorFeeCount,
+                    HospitalRefundCount = channelingSchedule.totalRefundHospitalFeeCount,
+                    HospitalDiscountAmount = 0M,
+                    DoctorDiscountAmount = 0M
+                };
 
 				opds.Add(opd);
 			}

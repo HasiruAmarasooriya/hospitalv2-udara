@@ -148,6 +148,10 @@
 									<th>Consultant Name</th>
 									<th>Specialist</th>
 									<th>Bill Count</th>
+									<th>Doctor Refund Count</th>
+									<th>Hospital Refund Count</th>
+									<th>Hospital Discount Amount</th>
+									<th>Doctor Discount Amount</th>
 									<th>Doctor Fee</th>
 									<th>Hospital Fee</th>
 									<th style="text-align: right;">Total Amount</th>
@@ -162,6 +166,10 @@
 									decimal? totalAmountOfDoctorFee = 0;
 									decimal? totalAmountOfHospitalFee = 0;
 									decimal? totalAmountOfTotalAmount = 0;
+									int? totalDoctorRefundCount = 0;
+									int? totalHospitalRefundCount = 0;
+									decimal? totalHospitalDiscountAmount = 0;
+									decimal? totalDoctorDiscountAmount = 0;
 									
 									@foreach (var item in Model.listChanneling)
 									{
@@ -174,6 +182,10 @@
 											<td>@item.consultant!.Name</td>
 											<td>@item.consultant!.Specialist!.Name</td>
 											<td>@item.BillCount</td>
+											<td>@item.DoctorRefundCount</td>
+											<td>@item.HospitalRefundCount</td>
+											<td>@item.HospitalDiscountAmount</td>
+											<td>@item.DoctorDiscountAmount</td>
 											<td>@item.DoctorAmount</td>
 											<td>@item.HospitalAmount</td>
 											<td style="text-align: right;">@totalAmount</td>
@@ -183,6 +195,10 @@
 										totalAmountOfHospitalFee += item.HospitalAmount;
 										totalAmountOfTotalAmount += totalAmount;
 										totalBillCount += item.BillCount;
+										totalDoctorRefundCount += item.DoctorRefundCount;
+										totalHospitalRefundCount += item.HospitalRefundCount;
+										totalHospitalDiscountAmount += item.HospitalDiscountAmount;
+										totalDoctorDiscountAmount += item.DoctorDiscountAmount;
 
 										i++;
 									}
@@ -190,6 +206,10 @@
 									<tr class="table-success">
 										<td colspan="5">Total</td>
 										<td>@totalBillCount</td>
+										<td>@totalDoctorRefundCount</td>
+										<td>@totalHospitalRefundCount</td>
+										<td>@totalHospitalDiscountAmount</td>
+										<td>@totalDoctorDiscountAmount</td>
 										<td>@totalAmountOfDoctorFee</td>
 										<td>@totalAmountOfHospitalFee</td>
 										<td style="text-align: right;">@totalAmountOfTotalAmount</td>

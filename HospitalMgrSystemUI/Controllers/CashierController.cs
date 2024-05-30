@@ -28,6 +28,7 @@ using static iTextSharp.text.pdf.AcroFields;
 using HospitalMgrSystem.Service.CashierSession;
 using HospitalMgrSystem.Service.User;
 using HospitalMgrSystem.Service.NightShiftSession;
+using HospitalMgrSystem.Service.ChannelingSchedule;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -116,9 +117,17 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
                     cashierDto.PreID = cashierDtoPar.PreID;
+                    var number = GetNumber(cashierDto.PreID);
+
+                    var opdData = new OPDService().GetAllOPDByID(number);
+                    var channelingSchedule = new ChannelingScheduleService().OnlyScheduleGetById(opdData.schedularId);
 
                     cashierDto = GetCashierAlldetails(cashierDto.PreID);
+
                     cashierDto.cashierRemoveBillingItemDtoList = GetCashierAllRemoveddetails(cashierDto.PreID);
+                    cashierDto.ChannelingSchedule = channelingSchedule;
+                    cashierDto.ItemName = opdData.Description;
+                    
 
                     return PartialView("_PartialViewInvoice", cashierDto);
                 }

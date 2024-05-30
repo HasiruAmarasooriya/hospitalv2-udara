@@ -56,5 +56,7 @@ namespace HospitalMgrSystemUI.Models
         public Payment payment { get; set; }
 
         public Channeling channel{ get; set; }
+        public ChannelingSchedule ChannelingSchedule { get; set; }
+        public string? ItemName { get; set; }
     }
 }
