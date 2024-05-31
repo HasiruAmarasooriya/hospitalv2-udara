@@ -347,7 +347,7 @@ namespace HospitalMgrSystem.Service.Channeling
                 List<Model.ChannelingSchedule> schedularIdList = dbContext.ChannelingSchedule.ToList();
 
                 var scheduleIds = dbContext.ChannelingSchedule
-                    .Where(x => x.Status == Model.Enums.CommonStatus.Active && x.DateTime > dateTime)
+                    .Where(x => x.Status == Model.Enums.CommonStatus.Active && x.DateTime > dateTime &&  x.DateTime < dateTime.AddDays(1))
                     .Select(x => x.Id)
                     .Distinct()
                     .ToList();

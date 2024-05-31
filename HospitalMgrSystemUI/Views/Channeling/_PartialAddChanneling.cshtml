@@ -33,6 +33,11 @@
         var months = $('#txtMonths').val();
         var days = $('#txtDays').val();
 
+        //remove  non-letter characters
+        var lettersAndSpacesOnlyName = fullName.replace(/[^a-zA-Z\s]/g, '');
+        fullName = lettersAndSpacesOnlyName.toUpperCase();
+
+
         var patientObject = {
             Id: patientID,
             FullName: fullName,
@@ -86,6 +91,10 @@
         var months = $('#txtMonths').val();
         var days = $('#txtDays').val();
         // selectedDoctorId
+
+        //remove  non-letter characters
+        var lettersAndSpacesOnlyName = fullName.replace(/[^a-zA-Z\s]/g, '');
+        fullName = lettersAndSpacesOnlyName.toUpperCase();
 
         var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
         var doctortID = parseInt(docId);
@@ -153,6 +162,10 @@
         var appoinmentNumber = $('#dropNoOfAppoinment').val();
         var schedularId = $('#dropShedule').val();
         // selectedDoctorId
+
+        //remove  non-letter characters
+        var lettersAndSpacesOnlyName = fullName.replace(/[^a-zA-Z\s]/g, '');
+        fullName = lettersAndSpacesOnlyName.toUpperCase();
 
         var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
         var doctortID = parseInt(docId);
@@ -752,7 +765,7 @@
                             <option value="-2">Select one</option>
                             @foreach (var item in Model.PatientList)
                             {
-                                <option value="@item.Id">@item.FullName</option>
+                                <option value="@item.Id">@item.FullName-@item.MobileNumber</option>
                             }
                         </select>
                     </div>

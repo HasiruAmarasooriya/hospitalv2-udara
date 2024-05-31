@@ -135,7 +135,7 @@
                             <select id="paymentFilter" class="form-control">
                                 <option value="">All</option>
                                 <option value="PAID">PAID</option>
-                                <option value="NEED_TO_PAY">NEED TO PAY</option>
+                                <option value="REFUND">REFUND</option>
                                 <option value="NOT_PAID">NOT PAID</option>
                             </select>
                         </div>
@@ -156,7 +156,8 @@
                                 <th>Refund Items</th>
                                 <th>Consultant</th>
                                 <th>Specialist</th>
-                                <th>Shedule</th>
+                                <th>Create Date</th>
+                                <th>Schedule Date</th>
                                 <th>Payment Status</th>
                                 <th>Schedule Status</th>
                                 <th>View</th>
@@ -192,6 +193,7 @@
                                             <td>@item.consaltantName</td>
                                             <td>@item.specialistData.Name</td>
                                             <td>@item.DateTime</td>
+                                            <td>@item.channelingScheduleData.DateTime</td>
                                             <td>@item.paymentStatus</td>
                                             <td>@item.channelingScheduleData.scheduleStatus</td>
                                             <td>
@@ -242,7 +244,8 @@
                                                 <td>@item.consaltantName</td>
                                                 <td>@item.specialistData.Name</td>
                                                 <td>@item.DateTime</td>
-                                                <td>@item.paymentStatus</td>
+                                                <td>@item.channelingScheduleData.DateTime</td>
+                                                <td>REFUND</td>
                                                 <td>@item.channelingScheduleData.scheduleStatus</td>
                                                 <td>
                                                     <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
@@ -278,6 +281,7 @@
                                                 <td>@item.consaltantName</td>
                                                 <td>@item.specialistData.Name</td>
                                                 <td>@item.DateTime</td>
+                                                <td>@item.channelingScheduleData.DateTime</td>
                                                 <td>@item.paymentStatus</td>
                                                 <td>@item.channelingScheduleData.scheduleStatus</td>
                                                 <td>
@@ -331,7 +335,7 @@
             var selectedPaymentStatus = $(this).val();
 
             $('#basic-2 tbody tr').each(function () {
-                var rowPaymentStatus = $(this).find('td:eq(11)').text(); // Index of the payment status column (zero-based)
+                var rowPaymentStatus = $(this).find('td:eq(12)').text(); // Index of the payment status column (zero-based)
 
                 if (selectedPaymentStatus === '' || rowPaymentStatus === selectedPaymentStatus) {
                     $(this).show();
@@ -419,6 +423,7 @@
                     option.text = dateTime + item.consultant.name + "(" + item.consultant.specialist.name + ")";
                     select.add(option);
                 }
+
             });
         }
 
