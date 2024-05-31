@@ -270,6 +270,9 @@ namespace HospitalMgrSystemUI.Controllers
                             LoadChannelingSheduleByID(viewChannelingSchedule.ChannelingSchedule.Id);
                         channelingSMS.ChannellingScheduleStatus =
                             viewChannelingSchedule.ChannelingSchedule.scheduleStatus;
+                        channelingSMS.channelingSchedule.DateTime = viewChannelingSchedule.ChannelingSchedule.DateTime;
+                        channelingSMS.ChannellingScheduleStatus =
+                            viewChannelingSchedule.ChannelingSchedule.scheduleStatus;
 
                         SMSService sMSService = new SMSService();
                         SMSActivation sMSActivation = new SMSActivation();
