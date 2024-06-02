@@ -57,5 +57,9 @@ namespace HospitalMgrSystem.Model
         [NotMapped] public decimal totalHospitalFeeAmount { get; set; }
 
         [NotMapped] public decimal totalDoctorFeeAmount { get; set; }
-    }
+
+		[NotMapped] public List<Model.Scan> scanList { get; set; }
+
+
+	}
 }

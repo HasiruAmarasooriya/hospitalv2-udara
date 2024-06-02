@@ -186,5 +186,29 @@ namespace HospitalMgrSystemUI.Controllers
 
             return user;
         }
+
+        public IActionResult UpdateCashierSessionStatus(int Id)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+                    CashierSessionDto cashierSessionDto = new CashierSessionDto();
+                    int userID = Convert.ToInt32(userIdCookie);
+                    if (userID > 0 && Id > 0)
+                    {
+                        new CashierSessionService().UpdateCashierSessionStatus(Id, userID);
+                    }
+       
+
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+        }
     }
 }

@@ -1115,6 +1115,263 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 			}
 		}
 
+		public List<Model.Scan> GetScanListByScheduleID(int id)
+		{
+			using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+			{
+				List<Model.OPD> mtOPDList = new List<Model.OPD>();
+				List<Model.Invoice> mtInvoiceList = new List<Model.Invoice>();
+				List<Model.InvoiceItem> mtInvoiceItemList = new List<Model.InvoiceItem>();
+
+				List<Model.Scan> scan = new List<Model.Scan>();
+
+				mtOPDList = dbContext.OPD
+					.Include(o => o.consultant!.Specialist)
+					.Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.schedularId == id)
+					.OrderByDescending(o => o.Id)
+					.ToList();
+
+				var opdIds = mtOPDList.Select(o => o.Id).ToList();
+
+				mtInvoiceList = dbContext.Invoices
+					 .Where(o => o.Status == 0 && o.InvoiceType == InvoiceType.CHE && opdIds.Contains(o.ServiceID))
+					 .OrderByDescending(o => o.Id)
+					 .ToList();
+
+
+
+				var invoiceIds = mtInvoiceList.Select(o => o.Id).ToList();
+
+				var serviceIds = mtInvoiceList.Select(o => o.ServiceID).ToList();
+
+				mtInvoiceItemList = dbContext.InvoiceItems
+									 .Where(o => o.Status == 0 && invoiceIds.Contains(o.InvoiceId))
+									 .ToList();
+
+				List<Model.OPD>  FilterredmtOPDList = mtOPDList
+							.Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && serviceIds.Contains(o.Id))
+							.OrderByDescending(o => o.Id)
+							.ToList();
+
+
+
+				var filteredOPDList = FilterredmtOPDList
+											.Where(o => o.Status == 0)
+											.GroupBy(o => o.Description)
+											.Select(g => new { ScanName = g.Key, count = g.Count() })
+											.ToList();
+
+				if (mtInvoiceItemList != null && filteredOPDList.Count > 0)
+				{
+
+					foreach (var filteredOPDItem in filteredOPDList)
+					{
+						Model.Scan scanDetails = new Model.Scan();
+						int TotalHospitalcount = 0;
+						int TotalConsultantcount = 0;
+						int TotalHospitalcountRefund = 0;
+						int TotalConsultantcountRefund = 0;
+
+						decimal GtotalHospitalFeeAmount = 0;
+						decimal GtotalConsultantFeeAmount = 0;
+						decimal GtotalHospitalFeeRefundAmount = 0;
+						decimal GtotalConsultantFeeRefundAmount = 0;
+
+						if (filteredOPDItem.ScanName != null && filteredOPDItem.ScanName != "")
+						{
+							foreach (var FilterredmtOPDItem in FilterredmtOPDList)
+							{
+								if(FilterredmtOPDItem.Description == filteredOPDItem.ScanName)
+								{
+									//get invoice by sevice id
+									Invoice mtInvoiceItem = mtInvoiceList.Where(o => o.ServiceID == FilterredmtOPDItem.Id).SingleOrDefault();
+
+									int Hospitalcount = mtInvoiceItemList
+														 .Where(o => o.Status == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED && o.billingItemsType == BillingItemsType.Hospital && o.InvoiceId== mtInvoiceItem.Id)
+														 .Count();
+
+									int Consultantcount = mtInvoiceItemList
+														 .Where(o => o.Status == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED && o.billingItemsType == BillingItemsType.Consultant && o.InvoiceId == mtInvoiceItem.Id)
+														 .Count();
+
+									int HospitalcountRefund = mtInvoiceItemList
+										 .Where(o => o.Status == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.Remove && o.billingItemsType == BillingItemsType.Hospital && o.InvoiceId == mtInvoiceItem.Id)
+										 .Count();
+
+									int ConsultantcountRefund = mtInvoiceItemList
+														 .Where(o => o.Status == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.Remove && o.billingItemsType == BillingItemsType.Consultant && o.InvoiceId == mtInvoiceItem.Id)
+														 .Count();
+
+
+
+
+									var HospitalAmountInvoice = mtInvoiceItemList
+									.Where(o => o.Status == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED && o.billingItemsType == BillingItemsType.Hospital && o.InvoiceId == mtInvoiceItem.Id)
+									.GroupBy(o => o.InvoiceId)
+									.Select(g => new { InvoiceId = g.Key, Total = g.Sum(o => o.price * o.qty) })
+									.ToList();
+
+									decimal totalHospitalFeeAmount = 0;
+									if (mtInvoiceItemList != null && HospitalAmountInvoice.Count > 0)
+									{
+										if (mtInvoiceItemList.Count > 0)
+										{
+											scanDetails.HospitalFee = HospitalAmountInvoice[0].Total;
+										}
+										foreach (var invoice in HospitalAmountInvoice)
+										{
+											decimal invT = invoice.Total != null ? invoice.Total : 0;
+											totalHospitalFeeAmount = totalHospitalFeeAmount + invT;
+										}
+
+									}
+
+
+
+
+									var DoctorAmountInvoice = mtInvoiceItemList
+																	.Where(o => o.Status == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED && o.billingItemsType == BillingItemsType.Consultant && o.InvoiceId == mtInvoiceItem.Id)
+																	.GroupBy(o => o.InvoiceId)
+																	.Select(g => new { InvoiceId = g.Key, Total = g.Sum(o => o.price * o.qty) })
+																	.ToList();
+
+									decimal totalDoctorFeeAmount = 0;
+									if (mtInvoiceItemList != null && DoctorAmountInvoice.Count > 0)
+									{
+										if (mtInvoiceItemList.Count > 0)
+										{
+											scanDetails.DoctorFee = DoctorAmountInvoice[0].Total;
+										}
+										foreach (var invoice in DoctorAmountInvoice)
+										{
+											decimal invT = invoice.Total != null ? invoice.Total : 0;
+											totalDoctorFeeAmount = totalDoctorFeeAmount + invT;
+										}
+
+									}
+
+
+
+
+									var DoctorRefundAmountInvoice = mtInvoiceItemList
+																	.Where(o => o.Status == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.Remove && o.billingItemsType == BillingItemsType.Consultant && o.InvoiceId == mtInvoiceItem.Id)
+																	.GroupBy(o => o.InvoiceId)
+																	.Select(g => new { InvoiceId = g.Key, Total = g.Sum(o => o.price * o.qty) })
+																	.ToList();
+
+									decimal totalRefundDoctorFeeAmount = 0;
+									if (mtInvoiceItemList != null && DoctorRefundAmountInvoice.Count > 0)
+									{
+										foreach (var invoice in DoctorRefundAmountInvoice)
+										{
+											decimal invT = invoice.Total != null ? invoice.Total : 0;
+											totalRefundDoctorFeeAmount = totalRefundDoctorFeeAmount + invT;
+										}
+
+									}
+
+									var HospitalRefundAmountInvoice = mtInvoiceItemList
+													.Where(o => o.Status == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.Remove && o.billingItemsType == BillingItemsType.Hospital && o.InvoiceId == mtInvoiceItem.Id)
+													.GroupBy(o => o.InvoiceId)
+													.Select(g => new { InvoiceId = g.Key, Total = g.Sum(o => o.price * o.qty) })
+													.ToList();
+
+									decimal totalRefundHospitalFeeAmount = 0;
+									if (mtInvoiceItemList != null && HospitalRefundAmountInvoice.Count > 0)
+									{
+										foreach (var invoice in HospitalRefundAmountInvoice)
+										{
+											decimal invT = invoice.Total != null ? invoice.Total : 0;
+											totalRefundHospitalFeeAmount = totalRefundHospitalFeeAmount + invT;
+										}
+
+									}
+
+
+									TotalHospitalcount = TotalHospitalcount + Hospitalcount;
+									TotalConsultantcount = TotalConsultantcount + Consultantcount;
+									TotalHospitalcountRefund = TotalHospitalcountRefund + HospitalcountRefund;
+									TotalConsultantcountRefund = TotalConsultantcountRefund + ConsultantcountRefund;
+
+									GtotalConsultantFeeAmount = GtotalConsultantFeeAmount + totalDoctorFeeAmount;
+									GtotalHospitalFeeAmount = GtotalHospitalFeeAmount + totalHospitalFeeAmount;
+									GtotalConsultantFeeRefundAmount = GtotalConsultantFeeRefundAmount +totalRefundDoctorFeeAmount;
+									GtotalHospitalFeeRefundAmount = GtotalHospitalFeeRefundAmount +totalRefundHospitalFeeAmount;
+
+
+								}
+
+
+							}
+						}
+
+						scanDetails.totalDoctorFeeCount = TotalConsultantcount;
+						scanDetails.totalHospitalFeeCount = TotalConsultantcount;
+						scanDetails.totalDoctorFeeRefundCount = TotalConsultantcountRefund;
+						scanDetails.totalHospitalFeeRefundCount = TotalHospitalcountRefund;
+
+
+						scanDetails.totalDoctorFeeAmount = GtotalConsultantFeeAmount;
+						scanDetails.totalHospitalFeeAmount = GtotalHospitalFeeAmount;
+						scanDetails.totalRefundDoctorFeeAmount = GtotalConsultantFeeRefundAmount;
+						scanDetails.totalRefundHospitalFeeAmount = GtotalHospitalFeeRefundAmount;
+						scanDetails.ItemName = filteredOPDItem.ScanName;
+						scanDetails.TotalChannelingWithoutRefund = filteredOPDItem.count;
+						scan.Add(scanDetails);
+
+					}
+
+				}
+
+
+
+				return scan;
+
+			}
+		}
+
+
+		public List<Model.Specialist> GetScanDoctorsList()
+		{
+			using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+			{
+				List<Model.Specialist> mtSpecialistList = new List<Model.Specialist>();
+
+				int[] scanSpList = { 44 ,13,12};
+
+				mtSpecialistList = dbContext.Specialists
+					.Where(o => scanSpList.Contains(o.Id))
+					.OrderByDescending(o => o.Id)
+					.ToList();
+
+
+
+
+				return mtSpecialistList;
+			}
+		}
+
+
+		public List<Model.Specialist> GetScanListByDoctorsList(int id)
+		{
+			using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+			{
+				List<Model.Specialist> mtSpecialistList = new List<Model.Specialist>();
+
+				int[] scanSpList = { 44, 13, 12 };
+
+				mtSpecialistList = dbContext.Specialists
+					.Where(o => scanSpList.Contains(o.Id))
+					.OrderByDescending(o => o.Id)
+					.ToList();
+
+
+
+
+				return mtSpecialistList;
+			}
+		}
+
 
 		public int GetTotalRefundHospitalFeeCount(int id)
 		{
@@ -1417,6 +1674,8 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 		{
 			using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
 			{
+
+				List<Model.Specialist> mtSpecialist = new List<Model.Specialist>();
 				// get number of patients according to the schedularId
 				int patientCount = dbContext.OPD
 					.Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.schedularId == id)
@@ -1440,6 +1699,7 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 					.Where(o => o.Id == id)
 					.SingleOrDefault();
 
+
 				result.Status = 0;
 				result.patientCount = patientCount;
 				result.totalPatientCount = actualPatientCount;
@@ -1451,7 +1711,19 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 				result.totalDoctorFeeAmount = GetTotalDoctorFeeAmount(id, result.HospitalFee);
                 result.doctorPaidAppoinment = GetDoctorPaidAppoinment(id);
 				result.actualPatientCount = result.totalPatientCount - result.totalRefundDoctorFeeCount;
-                dbContext.SaveChanges();
+
+				int[] scanSpList = { 44, 13, 12 };
+				if (scanSpList.Contains(result.Consultant.Specialist.Id))
+				{
+					result.scanList = GetScanListByScheduleID(id);
+				}
+				else
+				{
+					result.scanList = null;
+				}
+
+
+				dbContext.SaveChanges();
 
 				return result;
 			}

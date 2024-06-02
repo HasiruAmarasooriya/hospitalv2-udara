@@ -133,12 +133,12 @@ namespace HospitalMgrSystemUI.Controllers
                     // If the user selects the Channeling option
                     case 1:
                         oPdDto.listChanneling =
-                            reportsService.GetAllChannelingConsultantsGroups(_OPDDto.StartTime, _OPDDto.EndTime);
+                            reportsService.GetAllChannelingConsultantsGroups2(_OPDDto.StartTime, _OPDDto.EndTime);
                         oPdDto.listNeedToPayChanneling =
-                            reportsService.GetAllChannelingByDateRangeAndNeedToPayStatus(_OPDDto.StartTime,
+                            reportsService.GetAllChannelingByDateRangeAndNeedToPayStatus2(_OPDDto.StartTime,
                                 _OPDDto.EndTime);
                         oPdDto.channelingPaymentData =
-                            reportsService.GetAllOPDPaymentsData(_OPDDto.StartTime, _OPDDto.EndTime, null);
+                            reportsService.GetAllChannelingPaymentsData(_OPDDto.StartTime, _OPDDto.EndTime);
 
                         return View("ChannelingIndex", oPdDto);
 

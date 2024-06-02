@@ -203,7 +203,7 @@
 										i++;
 									}
 
-									<tr class="table-success">
+									<tr class="table-success" style="font-weight: bold">
 										<td colspan="5">Total</td>
 										<td>@totalBillCount</td>
 										<td>@totalDoctorRefundCount</td>
@@ -220,6 +220,128 @@
 					</div>
 
 					<br>
+					<h4 class="card-title" style="font-weight: bold">Scan Details</h4>
+					<div class="table-responsive">
+						@if (Model.listChanneling != null)
+						{
+							@foreach (var item in Model.listChanneling)
+							{
+								@if (item.scanDoctorSessionDetails != null)
+								{
+									<table class="table">
+										<thead class="table-success">
+											<tr>	
+												<th>@item.consultant!.Name</th>
+												<th>Bill Count</th>
+												<th>Doctor Fee Count</th>
+												<th>Doctor Refund Count</th>
+												<th>Doctor Fee </th>
+												<th>Doctor Fee Amount</th>
+												<th>Doctor Refund Amount</th>
+											
+												<th>Hospital Fee  Count</th>
+												<th>Hospital Refund Count</th>
+												<th>Hospital Fee</th>
+												<th>Hospital Fee Amount</th>
+												<th>Hospital Refund Amount</th>
+												<th style="text-align: right;">Total Amount</th>
+											</tr>
+										</thead>
+										<tbody>
+
+											@if (Model.listChanneling != null)
+											{
+											var i = 1;
+											decimal? totalBillCount = 0;
+
+											decimal? totalAmountOfDoctorFee = 0;
+											decimal? totalAmountOfHospitalFee = 0;
+											decimal? totalRefundAmountOfDoctorFee = 0;
+											decimal? totalRefundAmountOfHospitalFee = 0;
+
+											decimal? totalAmountOfTotalAmount = 0;
+
+											int? totalDoctorRefundCount = 0;
+											int? totalHospitalRefundCount = 0;
+										    int? totalDoctorFeeCount = 0;
+										    int? totalHospitalFeeCount = 0;
+
+
+											@foreach (var title in item.scanDoctorSessionDetails)
+											{
+												@if (title.ItemName != null && title.ItemName != "")
+												{
+														var totalAmount = title.totalDoctorFeeAmount + title.totalHospitalFeeAmount;
+													<tr>
+														<td>@title.ItemName</td>
+														<td>@title.TotalChannelingWithoutRefund</td>
+														<td>@title.totalDoctorFeeCount</td>
+														<td>@title.totalDoctorFeeRefundCount</td>
+														<td>@title.DoctorFee</td>
+														<td>@title.totalDoctorFeeAmount</td>
+														<td>@title.totalRefundDoctorFeeAmount</td>
+
+														<td>@title.totalHospitalFeeCount</td>
+														<td>@title.totalHospitalFeeRefundCount</td>
+														<td>@title.HospitalFee</td>
+														<td>@title.totalHospitalFeeAmount</td>
+														<td>@title.totalRefundHospitalFeeAmount</td>
+													    <td style="text-align: right;">@totalAmount</td>
+													</tr>
+
+														totalAmountOfTotalAmount += totalAmount;
+
+														totalDoctorRefundCount += title.totalDoctorFeeRefundCount;
+														totalDoctorFeeCount += title.totalDoctorFeeCount;
+														totalAmountOfDoctorFee += title.totalDoctorFeeAmount;
+														totalRefundAmountOfDoctorFee += title.totalRefundDoctorFeeAmount;
+
+														totalHospitalRefundCount += title.totalHospitalFeeRefundCount;
+														totalHospitalFeeCount += title.totalHospitalFeeCount;
+														totalAmountOfHospitalFee += title.totalHospitalFeeAmount;
+														totalRefundAmountOfHospitalFee += title.totalRefundHospitalFeeAmount;
+
+														totalBillCount += title.TotalChannelingWithoutRefund;
+
+
+			
+
+														i++;
+
+												}
+
+											}
+
+												<tr class="table-success" style="font-weight: bold">
+													<td>Total</td>
+													<td>@totalBillCount</td>
+													<td>@totalDoctorFeeCount</td>
+													<td>@totalDoctorRefundCount</td>
+													<td>-</td>
+													<td>@totalAmountOfDoctorFee</td>
+													<td>@totalRefundAmountOfDoctorFee</td>
+
+													<td>@totalHospitalFeeCount</td>
+													<td>@totalHospitalRefundCount</td>
+													<td>-</td>
+													<td>@totalAmountOfHospitalFee</td>
+													<td>@totalRefundAmountOfHospitalFee</td>
+
+
+													<td style="text-align: right;">@totalAmountOfTotalAmount</td>
+												</tr>
+											
+										}
+										</tbody>
+									</table>
+									
+								}
+							}
+
+
+					}
+
+					</div>
 
 					<h4 class="card-title" style="font-weight: bold">Channeling Refund</h4>
 
@@ -230,8 +352,8 @@
 									<th>No</th>
 									<th>Invoice ID</th>
 									<th>OPD ID</th>
-									<th>Cashier</th>
 									<th>Issued By</th>
+									<th>Cashier</th>
 									<th>Issued Date</th>
 									<th style="text-align: right;">Total Old Paid Amount</th>
 									<th style="text-align: right;">Total Paid Amount</th>

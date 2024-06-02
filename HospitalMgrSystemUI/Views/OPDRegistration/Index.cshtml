@@ -224,12 +224,16 @@
                                     <td>
                                         @if (Model != null)
                                         {
-                                            @using (Html.BeginForm("DeleteOPD", "OPDRegistration", new { item.Id }, FormMethod.Post))
-                                            {
-                                                <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>
-                                                    <i class='fa fa-trash'></i>
-                                                </button>
-                                            }
+                                                @if (item.paymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.NOT_PAID)
+                                                {
+                                                    @using (Html.BeginForm("DeleteOPD", "OPDRegistration", new { item.Id }, FormMethod.Post))
+                                                    {
+                                                        <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>
+                                                            <i class='fa fa-trash'></i>
+                                                        </button>
+                                                    }
+                                                }
+
                                         }
 
                                     </td>

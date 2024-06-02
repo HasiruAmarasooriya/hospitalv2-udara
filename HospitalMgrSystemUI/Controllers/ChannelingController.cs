@@ -359,9 +359,9 @@ public class ChannelingController : Controller
         {
             try
             {
-                var channelingItems = new ChannelingService().LoadChannelingItems();
+                var channelingItems = new DefaultService().GetAllScanChannelingFee(4);
 
-                return channelingItems;
+				return channelingItems;
             }
             catch (Exception ex)
             {

@@ -567,5 +567,20 @@ namespace HospitalMgrSystem.Service.CashierSession
             return mtList;
         }
 
+        public Model.CashierSession UpdateCashierSessionStatus(int id,int userID)
+        {
+
+
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                HospitalMgrSystem.Model.CashierSession result = (from p in dbContext.CashierSessions where p.Id == id select p).SingleOrDefault();
+                result.cashierSessionStatus = CashierSessionStatus.START;
+                result.ModifiedDate = DateTime.Now;
+                result.ModifiedUser = userID;
+                dbContext.SaveChanges();
+                return result;
+            }
+        }
+
     }
 }

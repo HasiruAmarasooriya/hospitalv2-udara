@@ -64,6 +64,7 @@
                                     <th>End Balence</th>
                                     <th>Total Amount</th>
                                     <th>Action</th>
+                                    <th>Restart</th>
                                 </tr>
                             </thead>
                             <tbody id="tblBodyCashierSession">
@@ -86,8 +87,21 @@
                                         @item.TotalAmount
                                     </td>
                                     <td>
-                                        <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
-                                        <button id='btnDownload' class='btn waves-effect waves-light btn-xs btn-warning' onclick="PrintSummary(@item.Id)"><i class='fa-solid fa-download'></i></button>  &nbsp;
+                                        <button id='btnEdit' class='btn waves-effect waves-light btn-sm btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
+                                        <button id='btnDownload' class='btn waves-effect waves-light btn-sm btn-warning' onclick="PrintSummary(@item.Id)"><i class='fa-solid fa-download'></i></button>  &nbsp;
+                                    </td>
+                                    <td>
+                                        @using (Html.BeginForm("UpdateCashierSessionStatus", "CashierSessions", new { Id = @item.Id }, FormMethod.Post))
+                                        {
+                                            if (item.cashierSessionStatus == HospitalMgrSystem.Model.Enums.CashierSessionStatus.END && item.User.userRole == HospitalMgrSystem.Model.Enums.UserRole.CASHIER)
+                                            {
+                                                <button id='link_copy' class='btn waves-effect waves-light btn-sm btn-danger'>
+                                                    <i class='fa fa-edit'></i>
+                                                </button>
+
+                                            }
+
+                                        }
                                     </td>
                                 </tr>
                             }

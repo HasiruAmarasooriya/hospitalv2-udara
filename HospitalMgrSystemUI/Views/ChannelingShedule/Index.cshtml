@@ -171,9 +171,14 @@
                                             <td>
                                                 @using (Html.BeginForm("DeleteChannelingShedule", "ChannelingShedule", new { Id = @channelingShedule.Id }, FormMethod.Post))
                                                 {
-                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>
-                                                        <i class='fa fa-trash'></i>
-                                                    </button>
+                                                    if (channelingShedule.scheduleStatus == HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.NOT_ACTIVE)
+                                                    {
+
+                                                        <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>
+                                                            <i class='fa fa-trash'></i>
+                                                        </button>
+                                                    }
+
                                                 }
                                             </td>
                                         </tr>
@@ -251,9 +256,14 @@
                                             <td>
                                                 @using (Html.BeginForm("DeleteChannelingShedule", "ChannelingShedule", new { Id = @channelingShedule.Id }, FormMethod.Post))
                                                 {
-                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>
-                                                        <i class='fa fa-trash'></i>
-                                                    </button>
+                                                    if (channelingShedule.scheduleStatus == HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.NOT_ACTIVE)
+                                                    {
+                                                        <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>
+                                                            <i class='fa fa-trash'></i>
+                                                        </button>
+                                                    
+                                                    }
+ 
                                                 }
                                             </td>
                                         </tr>
