@@ -41,6 +41,8 @@ namespace HospitalMgrSystemUI.Models
         public List<Consultant>? consultantList { get; set; }
 
         public List<OPD>? listopd { get; set; }
+
+        public List<HospitalMgrSystem.Model.DTO.AppointmentDTO> CHAppoinmentDTO { get; set; }
         public List<OPDTbDto>? listOPDTbDto { get; set; }
         public List<Drug>? Drugs { get; set; }
         public List<Investigation>? Investigations { get; set; }

@@ -4,6 +4,7 @@ using HospitalMgrSystem.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HospitalMgrSystem.DataAccess.Migrations
 {
     [DbContext(typeof(HospitalDBContext))]
-    partial class HospitalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240603175223_A110")]
+    partial class A110
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -575,13 +578,7 @@ namespace HospitalMgrSystem.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("AppoimentNo")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CSDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CSStatus")
+                    b.Property<int>("AppointmentNo")
                         .HasColumnType("int");
 
                     b.Property<decimal>("ConsultantFee")
@@ -597,7 +594,7 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedUser")
+                    b.Property<int>("CreateUser")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateTime")
@@ -613,6 +610,9 @@ namespace HospitalMgrSystem.DataAccess.Migrations
 
                     b.Property<decimal>("HospitalFee")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("InvoiceType")
+                        .HasColumnType("int");
 
                     b.Property<int>("IsOnOPD")
                         .HasColumnType("int");
@@ -642,20 +642,17 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.Property<int>("RoomID")
                         .HasColumnType("int");
 
+                    b.Property<int>("SchedulerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShiftID")
+                        .HasColumnType("int");
+
                     b.Property<string>("SpecialistName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("invoiceType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("schedularId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("shiftID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
 using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.DTO;
 
 namespace HospitalMgrSystem.Service.Channeling
 {
@@ -417,6 +418,22 @@ namespace HospitalMgrSystem.Service.Channeling
 
 
 
+        public List<AppointmentDTO> GetAllChannelingBySelectedScheduleSP(DateTime dateTime)
+        {
+            List<AppointmentDTO> mtList = new List<AppointmentDTO>();
+            using (var context = new DataAccess.HospitalDBContext())
+            {
+                mtList = context.Set<AppointmentDTO>()
+                                               .FromSqlRaw("EXEC GetOPDDataByDate @SelectedDate = {0}", dateTime)
+                                               .ToList();
+
+            }
+            return mtList;
+        }
+
+
+
+
         public List<Model.OPD> ChannelingGetBySheduleId(int id)
         {
             List<Model.OPD> mtList = new List<Model.OPD>();
@@ -439,6 +456,19 @@ namespace HospitalMgrSystem.Service.Channeling
                 {
                     mtList[i].channelingScheduleData = schedularIdList.Where(o => o.Id == mtList[i].schedularId).SingleOrDefault();
                 }
+
+            }
+            return mtList;
+        }
+
+        public List<AppointmentDTO> ChannelingGetBySheduleIdSP(int id)
+        {
+            List<AppointmentDTO> mtList = new List<AppointmentDTO>();
+            using (var context = new DataAccess.HospitalDBContext())
+            {
+                mtList = context.Set<AppointmentDTO>()
+                                               .FromSqlRaw("EXEC GetOPDDataByCSID @SelectedId = {0}", id)
+                                               .ToList();
 
             }
             return mtList;

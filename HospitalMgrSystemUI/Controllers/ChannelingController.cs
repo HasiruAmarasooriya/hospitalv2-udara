@@ -1,4 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.DTO;
 using HospitalMgrSystem.Model.Enums;
 using HospitalMgrSystem.Service.Channeling;
 using HospitalMgrSystem.Service.ChannelingSchedule;
@@ -27,7 +28,7 @@ public class ChannelingController : Controller
 
     [BindProperty] public OPDDto _OPDDto { get; set; }
 
-    private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1, 1);
+   // private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1, 1);
 
     public IActionResult Index()
     {
@@ -35,7 +36,8 @@ public class ChannelingController : Controller
         {
             StartTime = DateTime.Now,
             EndTime = DateTime.Now.AddDays(1),
-            listOPDTbDto = GetAllChannelingBySelectedSchedule(DateTime.Today),
+            //listOPDTbDto = GetAllChannelingBySelectedSchedule(DateTime.Today),
+            CHAppoinmentDTO = GetAllChannelingBySelectedSchedule(DateTime.Today),
             listSpecialists = new ChannelingService().GetAllSpecialists(),
             listConsultants = new ConsultantService().GetAllConsultantThatHaveSchedulingsByDate(DateTime.Today),
             paymentStatus = PaymentStatus.ALL,
@@ -54,45 +56,25 @@ public class ChannelingController : Controller
             listSpecialists = new ChannelingService().GetAllSpecialists()
         };
 
-        var oPDTbDto = new List<OPDTbDto>();
-        var resultSet = new List<OPD>();
+        //var oPDTbDto = new List<OPDTbDto>();
+        var resultSet = new List<AppointmentDTO>();
 
         try
         {
             // When the user selects all the options
-            if (_OPDDto.SpecialistId != -2 && _OPDDto.paymentStatus != PaymentStatus.ALL &&
-                _OPDDto.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
-                resultSet = new ChannelingService().GetAllChannelingByAllFilters(_OPDDto.StartTime, _OPDDto.EndTime,
-                    _OPDDto.SpecialistId, _OPDDto.paymentStatus, _OPDDto.channellingScheduleStatus);
+            //if (_OPDDto.SpecialistId != -2 && _OPDDto.paymentStatus != PaymentStatus.ALL &&
+            //    _OPDDto.channellingScheduleStatus != ChannellingScheduleStatus.ALL)
+            //    resultSet = new ChannelingService().GetAllChannelingByAllFilters(_OPDDto.StartTime, _OPDDto.EndTime,
+            //        _OPDDto.SpecialistId, _OPDDto.paymentStatus, _OPDDto.channellingScheduleStatus);
 
             if (_OPDDto.channeling.ChannelingScheduleID != 0)
             {
-                resultSet = new ChannelingService().ChannelingGetBySheduleId(_OPDDto.channeling.ChannelingScheduleID);
+                resultSet = new ChannelingService().ChannelingGetBySheduleIdSP(_OPDDto.channeling.ChannelingScheduleID);
             }
 
             if (resultSet != null)
-            {
-                foreach (var item in resultSet)
-                    oPDTbDto.Add(new OPDTbDto()
-                    {
-                        Id = item.Id,
-                        roomName = item.room.Name,
-                        Description = item.Description,
-                        consaltantName = item.consultant.Name,
-                        FullName = item.patient.FullName,
-                        MobileNumber = item.patient.MobileNumber,
-                        DateTime = item.DateTime,
-                        Sex = (SexStatus)item.patient.Sex,
-                        Status = item.Status,
-                        AppoimentNo = item.AppoimentNo,
-                        paymentStatus = item.paymentStatus,
-                        schedularId = item.schedularId,
-                        specialistData = item.consultant.Specialist,
-                        consaltantId = item.ConsultantID,
-                        channelingScheduleData = item.channelingScheduleData
-                    });
-
-                channelingDto.listOPDTbDto = oPDTbDto;
+            {      
+                channelingDto.CHAppoinmentDTO = resultSet;
                 channelingDto.listConsultants = new ConsultantService().GetAllConsultantThatHaveSchedulings();
                 return View("Index", channelingDto);
             }
@@ -430,38 +412,14 @@ public class ChannelingController : Controller
         return oPDTbDto;
     }
 
-    private List<OPDTbDto> GetAllChannelingBySelectedSchedule(DateTime dateTime)
+    private List<HospitalMgrSystem.Model.DTO.AppointmentDTO> GetAllChannelingBySelectedSchedule(DateTime dateTime)
     {
-        var opd = new List<OPD>();
-        var oPDTbDto = new List<OPDTbDto>();
         using (var httpClient = new HttpClient())
         {
             try
             {
-                opd = new ChannelingService().GetAllChannelingBySelectedSchedule(dateTime);
-                var result = opd;
-
-                foreach (var item in result)
-                    oPDTbDto.Add(new OPDTbDto()
-                    {
-                        Id = item.Id,
-                        roomName = item.room.Name,
-                        Description = item.Description,
-                        consaltantName = item.consultant.Name,
-                        FullName = item.patient.FullName,
-                        MobileNumber = item.patient.MobileNumber,
-                        DateTime = item.DateTime,
-                        Sex = (SexStatus)item.patient.Sex,
-                        Status = item.Status,
-                        AppoimentNo = item.AppoimentNo,
-                        paymentStatus = item.paymentStatus,
-                        schedularId = item.schedularId,
-                        specialistData = item.consultant.Specialist,
-                        consaltantId = item.ConsultantID,
-                        isRefund = item.isRefund,
-                        refundedItem = item.refundedItem,
-                        channelingScheduleData = item.channelingScheduleData
-                    });
+                List<HospitalMgrSystem.Model.DTO.AppointmentDTO> AppointmentDTOList = new ChannelingService().GetAllChannelingBySelectedScheduleSP(dateTime);
+                return AppointmentDTOList;
             }
             catch (Exception ex)
             {
@@ -469,7 +427,7 @@ public class ChannelingController : Controller
             }
         }
 
-        return oPDTbDto;
+        return null;
     }
 
     [HttpGet("GetSheduleGetById")]
@@ -780,7 +738,7 @@ public class ChannelingController : Controller
 
         try
         {
-            await Semaphore.WaitAsync();
+           // await Semaphore.WaitAsync();
 
             //check appoint numer already taken or not
 
@@ -1006,10 +964,7 @@ public class ChannelingController : Controller
         {
             return RedirectToAction("Index");
         }
-        finally
-        {
-            Semaphore.Release();
-        }
+
     }
 
     public async Task<IActionResult> AddNewChannelWithQRAsync([FromBody] OPDDto oPDDto)
@@ -1021,7 +976,7 @@ public class ChannelingController : Controller
 
         try
         {
-            await Semaphore.WaitAsync();
+            
 
             var channelingSchedule = new ChannelingSchedule();
             var ScanObj = new Scan();
@@ -1268,10 +1223,7 @@ public class ChannelingController : Controller
         {
             return RedirectToAction("Index");
         }
-        finally
-        {
-            Semaphore.Release();
-        }
+
     }
 
     private List<NightShiftSession> GetActiveShiftSession()

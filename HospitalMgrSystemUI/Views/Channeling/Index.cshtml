@@ -168,44 +168,44 @@
                         <tbody id="">
                             @if (Model != null)
                             {
-                                @foreach (var item in Model.listOPDTbDto)
+                                @foreach (var item in Model.CHAppoinmentDTO)
                                 {
-                                    if(item.paymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.NOT_PAID)
+                                    if(item.PaymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.NOT_PAID)
                                     {
                                         <tr class="table-warning">
 
-                                            <td>CHE`@item.Id</td>
+                                            <td>CHE`@item.ID</td>
                                             <td>
                                                 @if (Model != null)
                                                 {
-                                                    <a href="/Cashier?PreID=CHE+@item.Id"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
+                                                    <a href="/Cashier?PreID=CHE+@item.ID"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
                                                 }
 
                                             </td>
                                             <td>
-                                                <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>  &nbsp;
+                                                <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.ID);><i class='fa fa-print'></i></button>  &nbsp;
                                             </td>
                                             <td>@item.FullName</td>
                                             <td>@item.MobileNumber</td>
                                             <td>@item.AppoimentNo</td>
                                             <td>@item.Description</td>
                                             <td>-</td>
-                                            <td>@item.consaltantName</td>
-                                            <td>@item.specialistData.Name</td>
+                                            <td>@item.ConsultantName</td>
+                                            <td>@item.SpecialistName</td>
                                             <td>@item.DateTime</td>
-                                            <td>@item.channelingScheduleData.DateTime</td>
-                                            <td>@item.paymentStatus</td>
-                                            <td>@item.channelingScheduleData.scheduleStatus</td>
+                                            <td>@item.CSDate</td>
+                                            <td>@item.PaymentStatus</td>
+                                            <td>@item.CSStatus</td>
                                             <td>
-                                                <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
+                                                <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.ID,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
                                             </td>
                                             <td>
-                                                    <button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.Id);><i class='fa fa-plus'></i></button>
+                                                    <button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.ID);><i class='fa fa-plus'></i></button>
                                             </td>
                                             <td>
-                                                @if (@item.channelingScheduleData.scheduleStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_END && @item.channelingScheduleData.scheduleStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_CANCEL)
+                                                @if (@item.CSStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_END && @item.CSStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_CANCEL)
                                                 {
-                                                    @using (Html.BeginForm("DeleteChanneling", "Channeling", new { Id = @item.Id }, FormMethod.Post))
+                                                    @using (Html.BeginForm("DeleteChanneling", "Channeling", new { Id = @item.ID }, FormMethod.Post))
                                                     {
                                                         <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
 
@@ -219,39 +219,39 @@
                                             </td>
                                         </tr>
                                     }
-                                    if (item.paymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.PAID)
+                                    if (item.PaymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.PAID)
                                     {
-                                        if (item.isRefund == 1)
+                                        if (item.ItemIds != null)
                                         {
                                             <tr class="table-danger">
 
-                                                <td>CHE @item.Id</td>
+                                                <td>CHE @item.ID</td>
                                                 <td>
                                                     @if (Model != null)
                                                     {
-                                                        <a href="/Cashier?PreID=CHE+@item.Id"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
+                                                        <a href="/Cashier?PreID=CHE+@item.ID"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
                                                     }
 
                                                 </td>
                                                 <td>
-                                                    <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>  &nbsp;
+                                                    <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.ID);><i class='fa fa-print'></i></button>  &nbsp;
                                                 </td>
                                                 <td>@item.FullName</td>
                                                 <td>@item.MobileNumber</td>
                                                 <td>@item.AppoimentNo</td>
                                                 <td>@item.Description</td>
-                                                <td>@item.refundedItem</td>
-                                                <td>@item.consaltantName</td>
-                                                <td>@item.specialistData.Name</td>
+                                                <td>@item.ItemIds</td>
+                                                <td>@item.ConsultantName</td>
+                                                <td>@item.SpecialistName</td>
                                                 <td>@item.DateTime</td>
-                                                <td>@item.channelingScheduleData.DateTime</td>
+                                                <td>@item.CSDate</td>
                                                 <td>REFUND</td>
-                                                <td>@item.channelingScheduleData.scheduleStatus</td>
+                                                <td>@item.CSStatus</td>
                                                 <td>
-                                                    <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
+                                                    <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.ID,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
                                                 </td>
                                                 <td>
-                                                    <button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.Id,@item.schedularId);><i class='fa fa-plus'></i></button>  &nbsp;
+                                                    <button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.ID,@item.schedularId);><i class='fa fa-plus'></i></button>  &nbsp;
                                                 </td>
                                                 <td>
                                                     @* <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger' disabled><i class='fa fa-trash'></i></button> *@
@@ -262,33 +262,33 @@
                                         {
                                             <tr class="table-success">
 
-                                                <td>CHE @item.Id</td>
+                                                <td>CHE @item.ID</td>
                                                 <td>
                                                     @if (Model != null)
                                                     {
-                                                        <a href="/Cashier?PreID=CHE+@item.Id"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
+                                                        <a href="/Cashier?PreID=CHE+@item.ID"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
                                                     }
 
                                                 </td>
                                                 <td>
-                                                    <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.Id);><i class='fa fa-print'></i></button>  &nbsp;
+                                                    <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.ID);><i class='fa fa-print'></i></button>  &nbsp;
                                                 </td>
                                                 <td>@item.FullName</td>
                                                 <td>@item.MobileNumber</td>
                                                 <td>@item.AppoimentNo</td>
                                                 <td>@item.Description</td>
-                                                <td>@item.refundedItem</td>
-                                                <td>@item.consaltantName</td>
-                                                <td>@item.specialistData.Name</td>
+                                                <td>-</td>
+                                                <td>@item.ConsultantName</td>
+                                                <td>@item.SpecialistName</td>
                                                 <td>@item.DateTime</td>
-                                                <td>@item.channelingScheduleData.DateTime</td>
-                                                <td>@item.paymentStatus</td>
-                                                <td>@item.channelingScheduleData.scheduleStatus</td>
+                                                <td>@item.CSDate</td>
+                                                <td>@item.PaymentStatus</td>
+                                                <td>@item.CSStatus</td>
                                                 <td>
-                                                    <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
+                                                    <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.ID,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
                                                 </td>
                                                 <td>
-                                                    <button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.Id,@item.schedularId);><i class='fa fa-plus'></i></button>  &nbsp;
+                                                    <button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.ID,@item.schedularId);><i class='fa fa-plus'></i></button>  &nbsp;
                                                 </td>
                                                 <td>
                                                     @* <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger' disabled><i class='fa fa-trash'></i></button> *@

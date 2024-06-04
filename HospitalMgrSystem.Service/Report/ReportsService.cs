@@ -341,7 +341,7 @@ namespace HospitalMgrSystem.Service.Report
 				var opd = new Model.OPD
 				{
 					schedularId = schedularId,
-					BillCount = (channelingSchedule.actualPatientCount - channelingSchedule.totalRefundDoctorFeeCount),
+					BillCount = (channelingSchedule.actualPatientCount),
 					consultant = channel.Consultant,
 					DoctorAmount = channelingSchedule.totalDoctorFeeAmount,
 					HospitalAmount = channelingSchedule.totalHospitalFeeAmount,

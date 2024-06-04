@@ -10,9 +10,9 @@ namespace HospitalMgrSystem.Model.Enums
     {
         NOT_ACTIVE,
         ACTIVE,
-        SESSION_START, // Doctor awa
-        SESSION_END, // Doctor giyaa
-        SESSION_CANCEL, // Doctor cancel (doctor enne naa)
+        SESSION_START, 
+        SESSION_END,
+        SESSION_CANCEL, 
         PENDING,
         ALL
     }

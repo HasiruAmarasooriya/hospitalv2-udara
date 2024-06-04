@@ -4,6 +4,7 @@ using HospitalMgrSystem.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HospitalMgrSystem.DataAccess.Migrations
 {
     [DbContext(typeof(HospitalDBContext))]
-    partial class HospitalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240603175805_A111")]
+    partial class A111
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -565,102 +568,6 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.HasIndex("SpecialistId");
 
                     b.ToTable("Consultants");
-                });
-
-            modelBuilder.Entity("HospitalMgrSystem.Model.DTO.AppointmentDTO", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<int>("AppoimentNo")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CSDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CSStatus")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("ConsultantFee")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ConsultantID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConsultantName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CreatedUser")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("HospitalFee")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("IsOnOPD")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ItemIds")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MobileNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ModifiedUser")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("OtherFee")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("PatientID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PaymentStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoomID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SpecialistName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("invoiceType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("schedularId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("shiftID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("AppointmentsDTO");
                 });
 
             modelBuilder.Entity("HospitalMgrSystem.Model.Drug", b =>

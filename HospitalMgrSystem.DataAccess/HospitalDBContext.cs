@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.DTO;
 
 namespace HospitalMgrSystem.DataAccess
 {
@@ -59,9 +60,13 @@ namespace HospitalMgrSystem.DataAccess
         public DbSet<ClaimBill> ClaimBills { get; set; }
 
         public DbSet<SMSActivation> sMSActivations { get; set; }
+
+        public DbSet<AppointmentDTO> AppointmentsDTO { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-             var connectionString = "server=cebdbserver.database.windows.net;Database=KUMUDU; User Id=cebuser; Password=Anubaba@1234";
+
+            var connectionString = "Data Source=.;Initial Catalog=KUMUDU;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            //var connectionString = "server=cebdbserver.database.windows.net;Database=KUMUDU; User Id=cebuser; Password=Anubaba@1234";
             //var connectionString = "Data Source=DESKTOP-SL43NS2\\SQLEXPRESS;Initial Catalog=KUMUDU;Integrated Security=True;Encrypt=False";
             optionsBuilder.UseSqlServer(connectionString);
         }
