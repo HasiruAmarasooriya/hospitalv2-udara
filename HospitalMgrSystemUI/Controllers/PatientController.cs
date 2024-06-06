@@ -1,17 +1,7 @@
 ﻿using HospitalMgrSystem.Model;
-using HospitalMgrSystem.Service.Consultant;
 using HospitalMgrSystem.Service.Patients;
 using HospitalMgrSystemUI.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.VisualBasic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 
 namespace HospitalMgrSystemUI.Controllers
 {

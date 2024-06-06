@@ -1,17 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using HospitalMgrSystem.Model;
 using HospitalMgrSystem.Model.DTO;
+using Microsoft.Extensions.Configuration;
 
 namespace HospitalMgrSystem.DataAccess
 {
-    public class HospitalDBContext : DbContext
+	public static class ConnectionStrings
+	{
+		public static string DEVELOPMENT_DATABASE { get; } = "Data Source=23.97.180.132;Initial Catalog=KUMUDU1;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
+		public static string PRODUCTION_DATABASE { get; } = "Data Source=23.97.180.132;Initial Catalog=KUMUDU;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
+	}
+
+
+	public class HospitalDBContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
+		public static IConfiguration Configuration { get; set; }
+
+		public DbSet<User> Users { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Specialist> Specialists { get; set; }
@@ -64,11 +70,8 @@ namespace HospitalMgrSystem.DataAccess
         public DbSet<AppointmentDTO> AppointmentsDTO { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
-            var connectionString = "Data Source=.;Initial Catalog=KUMUDU;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
-            //var connectionString = "server=cebdbserver.database.windows.net;Database=KUMUDU; User Id=cebuser; Password=Anubaba@1234";
-            //var connectionString = "Data Source=DESKTOP-SL43NS2\\SQLEXPRESS;Initial Catalog=KUMUDU;Integrated Security=True;Encrypt=False";
-            optionsBuilder.UseSqlServer(connectionString);
+	        optionsBuilder.UseSqlServer(ConnectionStrings.DEVELOPMENT_DATABASE);
         }
-    }
+
+	}
 }

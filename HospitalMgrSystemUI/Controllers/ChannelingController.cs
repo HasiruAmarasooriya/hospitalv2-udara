@@ -12,11 +12,6 @@ using HospitalMgrSystem.Service.Patients;
 using HospitalMgrSystem.Service.SMS;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Utilities.Encoders;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Numerics;
 
 namespace HospitalMgrSystemUI.Controllers;
 

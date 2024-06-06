@@ -1,13 +1,6 @@
 ﻿using HospitalMgrSystem.Model;
 using HospitalMgrSystem.Model.Enums;
-using HospitalMgrSystem.Service.Default;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HospitalMgrSystem.Service.ChannelingSchedule
 {

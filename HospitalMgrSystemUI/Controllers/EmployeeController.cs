@@ -1,12 +1,7 @@
 ﻿using HospitalMgrSystem.Model;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System.Net.Http;
-using System;
 using HospitalMgrSystemUI.Models;
-using HospitalMgrSystem.Service.Consultant;
 using HospitalMgrSystem.Service.Employee;
-using HospitalMgrSystem.Service.OPD;
 
 namespace HospitalMgrSystemUI.Controllers
 {

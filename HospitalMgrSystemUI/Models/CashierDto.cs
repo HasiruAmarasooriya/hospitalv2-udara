@@ -1,6 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
 using HospitalMgrSystem.Model.Enums;
-using System.Collections.Generic;
 
 namespace HospitalMgrSystemUI.Models
 {

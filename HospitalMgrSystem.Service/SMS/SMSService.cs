@@ -1,16 +1,8 @@
 ﻿using System.Text.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using HospitalMgrSystem.Model;
 using System.Net.Http.Headers;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 using System.Text.Json.Serialization;
-using System.Drawing;
 
 namespace HospitalMgrSystem.Service.SMS
 {

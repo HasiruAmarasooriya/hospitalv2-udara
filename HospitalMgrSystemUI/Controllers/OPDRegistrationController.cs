@@ -1,24 +1,15 @@
 ﻿using HospitalMgrSystem.Model;
 using HospitalMgrSystem.Service.Consultant;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Net.Http;
-using System;
 using HospitalMgrSystem.Service.Patients;
 using HospitalMgrSystemUI.Models;
-using Microsoft.Extensions.Configuration;
-using System.Net.Http.Json;
 using HospitalMgrSystem.Service.OPD;
 using HospitalMgrSystem.Service.Drugs;
-using HospitalMgrSystem.Service.Investigation;
-using HospitalMgrSystem.Service.Item;
 using HospitalMgrSystem.Service.Default;
 using HospitalMgrSystem.Service.OPDSchedule;
-using System.Security.Cryptography;
 using HospitalMgrSystem.Model.Enums;
 using HospitalMgrSystem.Service.CashierSession;
 using HospitalMgrSystem.Service.NightShiftSession;
-using System.ComponentModel.DataAnnotations.Schema;
 using HospitalMgrSystem.Service.User;
 
 namespace HospitalMgrSystemUI.Controllers

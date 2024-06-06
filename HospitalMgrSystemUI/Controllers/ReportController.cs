@@ -1,7 +1,6 @@
 ﻿using HospitalMgrSystem.Model;
 using HospitalMgrSystem.Model.Enums;
 using HospitalMgrSystem.Service.ChannelingSchedule;
-using HospitalMgrSystem.Service.OPD;
 using HospitalMgrSystem.Service.Report;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;

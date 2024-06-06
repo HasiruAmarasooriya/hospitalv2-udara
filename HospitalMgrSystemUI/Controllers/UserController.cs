@@ -1,5 +1,4 @@
 ﻿using HospitalMgrSystem.Model;
-using HospitalMgrSystem.Service.Employee;
 using HospitalMgrSystem.Service.User;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;
