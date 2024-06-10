@@ -134,6 +134,7 @@
                             <th>Hospital Fee</th> *@
                             <th>Total Amount</th>
                             <th>Status</th>
+                            <th>SMS Status</th>
                             <th>View</th>
                             <th>Delete</th>
                         </tr>
@@ -163,6 +164,7 @@
                                 <td>@channelingShedule.HospitalFee</td> *@
                                             <td>@((channelingShedule.totalAmount - (channelingShedule.totalRefund != null ? channelingShedule.totalRefund.Value : 0)).ToString("0.00"))</td>
                                             <td>@channelingShedule.scheduleStatus</td>
+                                            <td>@channelingShedule.SMSStatus</td>
                                             <td>
                                                 <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@channelingShedule.Id);>
                                                     <i class='fa fa-eye'></i>
@@ -218,6 +220,7 @@
                                 <th>Hospital Fee</th> *@
                                 <th>Total Amount</th>
                                 <th>Status</th>
+                                <th>SMS Status</th>
                                 <th>View</th>
                                 <th>Delete</th>
                             </tr>
@@ -248,6 +251,7 @@
                                 <td>@channelingShedule.HospitalFee</td> *@
                                             <td>@((channelingShedule.totalAmount - (channelingShedule.totalRefund != null ? channelingShedule.totalRefund.Value : 0)).ToString("0.00"))</td>
                                             <td>@channelingShedule.scheduleStatus</td>
+                                            <td>@channelingShedule.SMSStatus</td>
                                             <td>
                                                 <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@channelingShedule.Id);>
                                                     <i class='fa fa-eye'></i>

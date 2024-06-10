@@ -1731,7 +1731,7 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 			}
 		}
 
-		public HospitalMgrSystem.Model.ChannelingSchedule DeleteChannelingShedule(int id)
+        public HospitalMgrSystem.Model.ChannelingSchedule DeleteChannelingShedule(int id)
 		{
 			using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext =
 				   new HospitalMgrSystem.DataAccess.HospitalDBContext())
@@ -1743,5 +1743,19 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 				return result;
 			}
 		}
-	}
+
+
+        public HospitalMgrSystem.Model.ChannelingSchedule UpdateChannelingSheduleSMSStatus(int id,ChannelingScheduleSMSStatus sMSStatus)
+        {
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext =
+                   new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                HospitalMgrSystem.Model.ChannelingSchedule result =
+                    (from p in dbContext.ChannelingSchedule where p.Id == id select p).SingleOrDefault();
+                result.SMSStatus = sMSStatus;
+                dbContext.SaveChanges();
+                return result;
+            }
+        }
+    }
 }

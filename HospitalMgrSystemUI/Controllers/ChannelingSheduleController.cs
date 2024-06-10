@@ -274,7 +274,9 @@ namespace HospitalMgrSystemUI.Controllers
                         if (sMSActivation.isActivate == SMSStatus.Active) {
                             try
                             {
+                                //update session status SESSIOM_TIME_CHANGE_SMS_SENT
                                 await sMSService.SendSMSTokenTimeChange(channelingSMS);
+                                new ChannelingScheduleService().UpdateChannelingSheduleSMSStatus(viewChannelingSchedule.ChannelingSchedule.Id, ChannelingScheduleSMSStatus.SESSIOM_TIME_CHANGE_SMS_SENT);
                             }
                             catch (Exception ex)
                             {
@@ -302,11 +304,32 @@ namespace HospitalMgrSystemUI.Controllers
                         {
                             try
                             {
-                                if(viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.SESSION_END)
+
+                                if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus == ChannellingScheduleStatus.SESSION_END && channelingSMS.channelingSchedule.SMSStatus!=ChannelingScheduleSMSStatus.SESSION_END_SMS_SENT)
                                 {
+                                    //check SMS already != to session end
                                     await sMSService.SendSMSToken(channelingSMS);
+                                    new ChannelingScheduleService().UpdateChannelingSheduleSMSStatus(viewChannelingSchedule.ChannelingSchedule.Id,ChannelingScheduleSMSStatus.SESSION_END_SMS_SENT);
                                 }
-                                
+                                if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus == ChannellingScheduleStatus.SESSION_START && channelingSMS.channelingSchedule.SMSStatus != ChannelingScheduleSMSStatus.SESSION_END_SMS_SENT && channelingSMS.channelingSchedule.SMSStatus != ChannelingScheduleSMSStatus.SESSION_START_SMS_SENT)
+                                {
+                                    //check SMS Status != to session end or session sms sent
+                                    await sMSService.SendSMSToken(channelingSMS);
+                                    new ChannelingScheduleService().UpdateChannelingSheduleSMSStatus(viewChannelingSchedule.ChannelingSchedule.Id, ChannelingScheduleSMSStatus.SESSION_START_SMS_SENT);
+                                }
+                                if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus == ChannellingScheduleStatus.SESSION_CANCEL)
+                                {
+ 
+                                    await sMSService.SendSMSToken(channelingSMS);
+                                    new ChannelingScheduleService().UpdateChannelingSheduleSMSStatus(viewChannelingSchedule.ChannelingSchedule.Id, ChannelingScheduleSMSStatus.SESSION_CANCEL_SMS_SENT);
+                                }
+                                if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus == ChannellingScheduleStatus.PENDING)
+                                {
+
+                                    await sMSService.SendSMSToken(channelingSMS);
+                                    new ChannelingScheduleService().UpdateChannelingSheduleSMSStatus(viewChannelingSchedule.ChannelingSchedule.Id, ChannelingScheduleSMSStatus.SESSION_PENDING_SMS_SENT);
+                                }
+
                             }
                             catch (Exception ex)
                             {

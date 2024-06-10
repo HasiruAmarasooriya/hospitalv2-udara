@@ -20,6 +20,7 @@ namespace HospitalMgrSystem.Model
         public decimal OtherFee { get; set; }
         public CommonStatus Status { get; set; }
         public ChannellingScheduleStatus scheduleStatus { get; set; }
+        public ChannelingScheduleSMSStatus SMSStatus { get; set; }
         [NotMapped] public decimal doctorPaidAppoinment { get; set; }
 
         [NotMapped] public decimal allBookedAppoinment { get; set; }

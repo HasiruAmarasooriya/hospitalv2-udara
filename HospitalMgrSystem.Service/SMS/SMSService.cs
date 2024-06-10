@@ -169,7 +169,7 @@ namespace HospitalMgrSystem.Service.SMS
             {
                 message = "KUMUDU HOSPITAL(PVT)LTD\n"
                     + "\n" + channelingSMS.channelingSchedule.Consultant.Name
-                    + "\n( " + channelingSMS.channelingSchedule.DateTime + ")" 
+                    + "\n( " + channelingSMS.channelingSchedule.DateTime.ToString("f") + ")" 
                     + "\nSorry... The Session has been temporarily cancelled"
                     + "\nකණගාටුයි... රෝගීන් පරික්ෂා කිරීම තාවකාලිකව අවලංගු කොට ඇත "
                     + "\nTEL: 066 22 22 244 || 066 22 30 027";
@@ -179,7 +179,7 @@ namespace HospitalMgrSystem.Service.SMS
             {
                 message = "KUMUDU HOSPITAL(PVT)LTD\n"
                     + "\n" + channelingSMS.channelingSchedule.Consultant.Name
-                    + "\n( " + channelingSMS.channelingSchedule.DateTime + ")"
+                    + "\n( " + channelingSMS.channelingSchedule.DateTime.ToString("f") + ")"
                     + "\nSorry... The Session has been cancelled. "
                     + "\nකණගාටුයි... රෝගීන් පරික්ෂා කිරීම අවලංගු කොට ඇත."
                     + "\nTEL: 066 22 22 244 || 066 22 30 027";
@@ -195,7 +195,7 @@ namespace HospitalMgrSystem.Service.SMS
                             + "\n" + channelingSMS.channelingSchedule.Consultant.Name
                             + "\nName :" + channelingSMS.channelingForOnePatient.patient.FullName
                             + "\nNo :" + channelingSMS.channelingForOnePatient.AppoimentNo
-                            + "\nDate :" + channelingSMS.channelingSchedule.DateTime
+                            + "\nDate :" + channelingSMS.channelingSchedule.DateTime.ToString("f")
                             + "\nTEL: 066 22 22 244 || 066 22 30 027"
                             + "\nwww.kumuduhospital.lk";
 
