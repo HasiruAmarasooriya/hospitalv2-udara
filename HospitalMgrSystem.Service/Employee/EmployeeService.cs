@@ -1,11 +1,4 @@
-﻿using HospitalMgrSystem.Model;
-using HospitalMgrSystem.Model.Enums;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HospitalMgrSystem.Model.Enums;
 
 namespace HospitalMgrSystem.Service.Employee
 {

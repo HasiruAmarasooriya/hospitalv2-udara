@@ -1,11 +1,5 @@
 ﻿using HospitalMgrSystem.Model.Enums;
-using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
 using HospitalMgrSystem.Model;
 using HospitalMgrSystem.Model.DTO;
 

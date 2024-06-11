@@ -67,7 +67,7 @@
 							</div>
 						</div>
 						<div class="col-md-6">
-							<br/>
+							<br />
 							<div class="form-group">
 								<div class="spark-chart form-material">
 									<ol class="list-unstyled d-flex">
@@ -134,63 +134,62 @@
 		<div class="col-12">
 			<div class="card">
 				<div class="card-body">
-					<h4 class="card-title" style="font-weight: bold">OPD Paid (@Model.listopd.Item2)</h4>
+					<h4 class="card-title" style="font-weight: bold">OPD Paid (@Model.OpdPaidDtos.Count)</h4>
 
 					<div class="table-responsive">
 						<table class="table">
 							<thead class="table-success">
-							<tr>
-								<th>No</th>
-								<th>Invoice ID</th>
-								<th>OPD ID</th>
-								<th>Patient</th>
-								<th>Doctor</th>
-								<th>Cashier</th>
-								<th>Issued By</th>
-								<th>Issued Date</th>
-								<th style="text-align: right;">Total Amount</th>
-								<th style="text-align: right;">Total Paid Amount</th>
-								<th style="text-align: right;">Deviation</th>
-							</tr>
+								<tr>
+									<th>No</th>
+									<th>Invoice ID</th>
+									<th>OPD ID</th>
+									<th>Patient</th>
+									<th>Doctor</th>
+									<th>Cashier</th>
+									<th>Issued By</th>
+									<th>Issued Date</th>
+									<th style="text-align: right;">Total Amount</th>
+									<th style="text-align: right;">Total Paid Amount</th>
+									<th style="text-align: right;">Deviation</th>
+								</tr>
 							</thead>
 							<tbody>
 
-							@if (Model.listopd.Item1 != null)
-							{
-								var i = 1;
-								decimal totalAmountOfTotalAmount = 0;
-								decimal totalAmountOfTotalPaidAmount = 0;
-								decimal totalDeviation = 0;
-								@foreach (var item in Model.listopd.Item1)
+								@if (Model.OpdPaidDtos != null)
 								{
-									<tr>
-										<td>@i</td>
-										<td>@item.invoiceID</td>
-										<td>@item.Id</td>
-										<td>@item.patient!.FullName</td>
-										<td>@item.consultant!.Name</td>
-										<td>@item.cashier!.FullName</td>
-										<td>@item.issuedUser!.FullName</td>
-										<td>@item.CreateDate</td>
-										<td style="text-align: right;">@item.TotalAmount</td>
-										<td style="text-align: right;">@item.TotalPaidAmount</td>
-										<td style="text-align: right;">@item.deviation</td>
+									var i = 1;
+									decimal totalAmountOfTotalAmount = 0;
+									decimal totalAmountOfTotalPaidAmount = 0;
+									decimal totalDeviation = 0;
+									@foreach (var item in Model.OpdPaidDtos)
+									{
+										<tr>
+											<td>@i</td>
+											<td>@item.InvoiceId</td>
+											<td>@item.OpdId</td>
+											<td>@item.PatientName</td>
+											<td>@item.DoctorName</td>
+											<td>@item.CashierName</td>
+											<td>@item.OpdNurse</td>
+											<td>@item.IssuedDate</td>
+											<td style="text-align: right;">@item.TotalAmount</td>
+											<td style="text-align: right;">@item.TotalPaidAmount</td>
+											<td style="text-align: right;">@item.Deviation</td>
+										</tr>
+										totalAmountOfTotalAmount += item.TotalAmount;
+										totalAmountOfTotalPaidAmount += item.TotalPaidAmount;
+										totalDeviation += item.Deviation;
+
+										i++;
+									}
+
+									<tr class="table-success" style="font-weight: bold">
+										<td colspan="8">Total</td>
+										<td style="text-align: right;">@totalAmountOfTotalAmount</td>
+										<td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
+										<td style="text-align: right;">@totalDeviation</td>
 									</tr>
-
-									totalAmountOfTotalAmount += (item.TotalAmount ?? 0m);
-									totalAmountOfTotalPaidAmount += (item.TotalPaidAmount ?? 0m);
-									totalDeviation += (item.deviation ?? 0m);
-
-									i++;
 								}
-
-								<tr class="table-success" style="font-weight: bold">
-									<td colspan="8">Total</td>
-									<td style="text-align: right;">@totalAmountOfTotalAmount</td>
-									<td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
-									<td style="text-align: right;">@totalDeviation</td>
-								</tr>
-							}
 							</tbody>
 						</table>
 					</div>
@@ -202,118 +201,96 @@
 					<div class="table-responsive">
 						<table class="table">
 							<thead class="table-danger">
-							<tr>
-								<th>No</th>
-								<th>Invoice ID</th>
-								<th>OPD ID</th>
-								<th>Cashier</th>
-								<th>Issued By</th>
-								<th>Issued Date</th>
-								<th style="text-align: right;">Total Old Paid Amount</th>
-								<th style="text-align: right;">Total Paid Amount</th>
-								<th style="text-align: right;">Total Refund</th>
-								<th style="text-align: right;">To be refunded</th>
-							</tr>
+								<tr>
+									<th>No</th>
+									<th>Invoice ID</th>
+									<th>OPD ID</th>
+									<th>Cashier</th>
+									<th>Refunded Date</th>
+									<th>Description</th>
+									<th style="text-align: right;">Refunded Amount</th>
+								</tr>
 							</thead>
 							<tbody>
-							@if (Model.listNeedToPayOPD != null && Model.listNeedToPayOPD.Count > 0)
-							{
-								var i = 1;
-								decimal totalAmountOfTotalOldAmount = 0;
-								decimal totalAmountOfTotalPaidAmount = 0;
-								decimal totalAmountOfTotalRefund = 0;
-								decimal totalAmountOfTotalNeedToRefund = 0;
-
-								@foreach (var item in Model.listNeedToPayOPD)
+								@if (Model.OpdRefundDtos != null && Model.OpdRefundDtos.Count > 0)
 								{
-									<tr>
-										<td>@i</td>
-										<td>@item.invoiceID</td>
-										<td>@item.Id</td>
-										<td>@item.cashier.FullName</td>
-										<td>@item.issuedUser.FullName</td>
-										<td>@item.CreateDate</td>
-										<td style="text-align: right;">@item.TotalOldAmount</td>
-										<td style="text-align: right;">@item.TotalPaidAmount</td>
-										<td style="text-align: right;">@item.TotalRefund</td>
-										<td style="text-align: right;">@item.TotalNeedToRefund</td>
+									var i = 1;
+									decimal totalAmountOfTotalRefund = 0;
+
+									@foreach (var item in Model.OpdRefundDtos)
+									{
+										<tr>
+											<td>@i</td>
+											<td>@item.InvoiceId</td>
+											<td>@item.OpdId</td>
+											<td>@item.Cashier</td>
+											<td>@item.RefundedDate</td>
+											<td>@item.Description</td>
+											<td style="text-align: right;">@item.Amount</td>
+										</tr>
+
+										totalAmountOfTotalRefund += item.Amount;
+										i++;
+									}
+
+									<tr class="table-danger">
+										<td colspan="6" style="font-weight: bold">Total</td>
+										<td style="text-align: right;">@totalAmountOfTotalRefund</td>
 									</tr>
-
-									totalAmountOfTotalOldAmount += (item.TotalOldAmount ?? 0m);
-									totalAmountOfTotalPaidAmount += (item.TotalPaidAmount ?? 0m);
-									totalAmountOfTotalRefund += (item.TotalRefund ?? 0m);
-									totalAmountOfTotalNeedToRefund += (item.TotalNeedToRefund ?? 0m);
-									i++;
 								}
-
-								<tr class="table-danger">
-									<td colspan="6" style="font-weight: bold">Total</td>
-									<td style="text-align: right;">@totalAmountOfTotalOldAmount</td>
-									<td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
-									<td style="text-align: right;">@totalAmountOfTotalRefund</td>
-									<td style="text-align: right;">@totalAmountOfTotalNeedToRefund</td>
-								</tr>
-							}
-							else
-							{
-								<tr class="table-danger">
-									<td colspan="10" style="text-align: center; font-weight: bold">No Records Available</td>
-								</tr>
-							}
+								else
+								{
+									<tr class="table-danger">
+										<td colspan="10" style="text-align: center; font-weight: bold">No Records Available</td>
+									</tr>
+								}
 							</tbody>
 						</table>
 					</div>
 
 					<br>
 
-					@if (Model.listopdGrugs != null)
+					@if (Model.listopdGrugsDto != null)
 					{
 						var i = 1;
 						decimal totalAmountOfTotalAmount = 0;
 						decimal totalAmountOfUnitAmount = 0;
 						decimal totalAmountOfQuantity = 0;
 
-						<h4 class="card-title" style="font-weight: bold">OPD Drugs (@Model.listopdGrugs.Count)</h4>
+						<h4 class="card-title" style="font-weight: bold">OPD Drugs (@Model.listopdGrugsDto.Count)</h4>
 						<div class="table-responsive">
 							<table class="table">
 								<thead class="table-success">
-								<tr>
-									<th>Drug ID</th>
-									<th>Drug Name</th>
-									<th>Unit Amount</th>
-									<th>Quantity</th>
-									<th>Total Amount</th>
-									<th>Print</th>
-								</tr>
-								<tbody>
-								@foreach (var item in Model.listopdGrugs)
-								{
 									<tr>
-										<td>@item.DrugId</td>
-										<td>@item.Drug!.DrugName</td>
-										<td>@item.Drug!.Price</td>
-										<td>@item.Qty</td>
-										<td>@item.Amount</td>
-										<td>
-											<button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);>
-												<i class='fa fa-print'></i>
-											</button>
-										</td>
+										<th>Drug ID</th>
+										<th>Drug Name</th>
+										<th>Unit Amount</th>
+										<th>Quantity</th>
+										<th>Total Amount</th>
 									</tr>
+								<tbody>
+										@foreach (var item in Model.listopdGrugsDto)
+										{
+										<tr>
+											<td>@item.DrugId</td>
+											<td>@item.DrugName</td>
+											<td>@item.Price</td>
+											<td>@item.Quantity</td>
+											<td>@item.TotalAmount</td>
+										</tr>
 
-									totalAmountOfTotalAmount += item.Amount;
-									totalAmountOfUnitAmount += item.Drug!.Price;
-									totalAmountOfQuantity += item.Qty;
-									i++;
-								}
+											totalAmountOfTotalAmount += item.TotalAmount;
+											totalAmountOfUnitAmount += item.Price;
+											totalAmountOfQuantity += item.Quantity;
+											i++;
+										}
 
-								<tr class="table-success" style="font-weight: bold">
-									<td colspan="2">Total</td>
-									<td>@totalAmountOfUnitAmount</td>
-									<td>@totalAmountOfQuantity</td>
-									<td>@totalAmountOfTotalAmount</td>
-									<td></td>
-								</tr>
+									<tr class="table-success" style="font-weight: bold">
+										<td colspan="2">Total</td>
+										<td>@totalAmountOfUnitAmount</td>
+										<td>@totalAmountOfQuantity</td>
+										<td>@totalAmountOfTotalAmount</td>
+									</tr>
 								</tbody>
 							</table>
 						</div>
@@ -329,32 +306,32 @@
 				<div class="card-body">
 					<h3 class="card-title" style="text-align: center;">OPD Payment Summary</h3>
 					<div class="table-responsive">
-						@if (Model.StartTime != null && Model.EndTime != null && Model.OPDPaymentData != null)
+						@if (Model.StartTime != null && Model.EndTime != null && Model.OpdPaymentDataDto != null)
 						{
 							<table class="table">
 								<thead class="table-success">
-								<tr>
-									<th style="text-align: right; width:50%">From:</th>
-									<th style="text-align: left;">@Model.StartTime</th>
-								</tr>
-								<tr>
-									<th style="text-align: right; width:50%">To:</th>
-									<th style="text-align: left;">@Model.EndTime</th>
-								</tr>
-								<tr>
-									<th style="text-align: right;">Total Amount:</th>
-									<th style="text-align: left;">@Model.OPDPaymentData.TotalAmountOld LKR</th>
-								</tr>
-								<tr>
-									<th style="text-align: right;">Total Refunded Amount:</th>
-									<th style="text-align: left;">@Model.OPDPaymentData.TotalAmountRefunded LKR</th>
-								</tr>
+									<tr>
+										<th style="text-align: right; width:50%">From:</th>
+										<th style="text-align: left;">@Model.StartTime</th>
+									</tr>
+									<tr>
+										<th style="text-align: right; width:50%">To:</th>
+										<th style="text-align: left;">@Model.EndTime</th>
+									</tr>
+									<tr>
+										<th style="text-align: right;">Total Amount:</th>
+										<th style="text-align: left;">@Model.OpdPaymentDataDto.TotalAmount LKR</th>
+									</tr>
+									<tr>
+										<th style="text-align: right;">Total Refunded Amount:</th>
+										<th style="text-align: left;">@Model.OpdPaymentDataDto.TotalRefundAmount LKR</th>
+									</tr>
 								</thead>
 								<tbody class="table-primary">
-								<tr>
-									<th style="text-align: right;">Total Paid Amount:</th>
-									<th style="text-align: left;">@Model.OPDPaymentData.TotalPaidAmount LKR</th>
-								</tr>
+									<tr>
+										<th style="text-align: right;">Total Paid Amount:</th>
+										<th style="text-align: left;">@Model.OpdPaymentDataDto.TotalPaidAmount LKR</th>
+									</tr>
 								</tbody>
 							</table>
 						}

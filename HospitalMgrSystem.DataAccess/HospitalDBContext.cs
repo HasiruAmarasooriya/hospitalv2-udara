@@ -1,17 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using HospitalMgrSystem.Model;
 using HospitalMgrSystem.Model.DTO;
+using Microsoft.Extensions.Configuration;
 
 namespace HospitalMgrSystem.DataAccess
 {
-    public class HospitalDBContext : DbContext
+	public static class ConnectionStrings
+	{
+		public static string DEVELOPMENT_DATABASE { get; } = "Data Source=172.201.169.155;Initial Catalog=KUMUDU1;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
+		public static string PRODUCTION_DATABASE { get; } = "Data Source=172.201.169.155;Initial Catalog=KUMUDU;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
+	}
+
+
+	public class HospitalDBContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
+		public static IConfiguration Configuration { get; set; }
+
+		public DbSet<User> Users { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Specialist> Specialists { get; set; }
@@ -61,14 +66,18 @@ namespace HospitalMgrSystem.DataAccess
 
         public DbSet<SMSActivation> sMSActivations { get; set; }
 
-        public DbSet<AppointmentDTO> AppointmentsDTO { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
+		#region DTOs
+		public DbSet<AppointmentDTO> AppointmentsDTO { get; set; }
+		public DbSet<ReportOpdXrayOtherPaidDto> ReportOpdXrayOtherPaidDtos { get; set; }
+		public DbSet<ReportOpdXrayOtherRefundDTO> ReportOpdXrayOtherRefundDTOs { get; set; }
+		public DbSet<PaymentSummaryOpdXrayOtherDTO> PaymentSummaryOpdXrayOtherDtos { get; set; }
+		public DbSet<ReportOpdXrayOtherDrugs> ReportOpdXrayOtherDrugsDtos { get; set; }
+		#endregion
 
-            var connectionString = "Data Source=.;Initial Catalog=KUMUDU;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
-            //var connectionString = "server=cebdbserver.database.windows.net;Database=KUMUDU; User Id=cebuser; Password=Anubaba@1234";
-            //var connectionString = "Data Source=DESKTOP-SL43NS2\\SQLEXPRESS;Initial Catalog=KUMUDU;Integrated Security=True;Encrypt=False";
-            optionsBuilder.UseSqlServer(connectionString);
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+	        optionsBuilder.UseSqlServer(ConnectionStrings.PRODUCTION_DATABASE);
         }
-    }
+
+	}
 }

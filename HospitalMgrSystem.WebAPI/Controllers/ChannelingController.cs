@@ -1,7 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
-using HospitalMgrSystem.Model.Enums;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace HospitalMgrSystem.WebAPI.Controllers
 {

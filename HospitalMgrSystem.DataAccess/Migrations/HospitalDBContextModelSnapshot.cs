@@ -666,6 +666,45 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.ToTable("AppointmentsDTO");
                 });
 
+            modelBuilder.Entity("HospitalMgrSystem.Model.DTO.ReportOpdXrayOtherPaidDto", b =>
+                {
+                    b.Property<string>("CashierName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Deviation")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("DoctorName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("InvoiceId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("IssuedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OpdId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OpdNurse")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PatientName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalPaidAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.ToTable("ReportOpdXrayOtherPaidDtos");
+                });
+
             modelBuilder.Entity("HospitalMgrSystem.Model.Drug", b =>
                 {
                     b.Property<int>("Id")

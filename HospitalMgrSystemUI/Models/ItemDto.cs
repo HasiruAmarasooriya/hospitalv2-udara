@@ -1,5 +1,4 @@
 ﻿using HospitalMgrSystem.Model;
-using System.Collections.Generic;
 
 namespace HospitalMgrSystemUI.Models
 {

@@ -1,6 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace HospitalMgrSystem.WebAPI.Controllers
 {

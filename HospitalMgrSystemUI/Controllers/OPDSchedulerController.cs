@@ -1,8 +1,6 @@
 ﻿using HospitalMgrSystem.Model;
 using HospitalMgrSystem.Model.Enums;
 using HospitalMgrSystem.Service.Consultant;
-using HospitalMgrSystem.Service.Default;
-using HospitalMgrSystem.Service.OPD;
 using HospitalMgrSystem.Service.OPDSchedule;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;

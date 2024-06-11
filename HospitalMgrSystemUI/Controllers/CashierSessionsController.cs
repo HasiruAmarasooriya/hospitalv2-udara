@@ -4,7 +4,6 @@ using HospitalMgrSystem.Service.CashierSession;
 using HospitalMgrSystem.Service.User;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace HospitalMgrSystemUI.Controllers
 {

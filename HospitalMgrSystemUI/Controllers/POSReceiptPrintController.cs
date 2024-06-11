@@ -3,15 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Reporting.NETCore;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing.Imaging;
-using System.Drawing.Printing;
-using System.Drawing;
 using System.Text;
 using Microsoft.JSInterop;
-using iTextSharp.text.pdf;
-using iTextSharp.text;
-using Image = iTextSharp.text.Image;
-using Rectangle = iTextSharp.text.Rectangle;
 
 namespace HospitalMgrSystemUI.Controllers
 {

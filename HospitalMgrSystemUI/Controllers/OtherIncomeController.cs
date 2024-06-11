@@ -3,7 +3,6 @@ using HospitalMgrSystem.Model.Enums;
 using HospitalMgrSystem.Service.Cashier;
 using HospitalMgrSystem.Service.CashierSession;
 using HospitalMgrSystem.Service.Consultant;
-using HospitalMgrSystem.Service.OPD;
 using HospitalMgrSystem.Service.OtherTransactions;
 using HospitalMgrSystem.Service.User;
 using HospitalMgrSystemUI.Models;
