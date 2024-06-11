@@ -135,7 +135,7 @@
 		<div class="col-12">
 			<div class="card">
 				<div class="card-body">
-					<h4 class="card-title" style="font-weight: bold">Other Paid (@Model.listOTHER.Item2)</h4>
+					<h4 class="card-title" style="font-weight: bold">Other Paid (@Model.OtherPaidDtos.Count)</h4>
 
 					<div class="table-responsive">
 						<table class="table">
@@ -156,31 +156,31 @@
 							</thead>
 							<tbody>
 
-								@if (Model.listOTHER.Item1 != null)
+								@if (Model.OtherPaidDtos != null)
 								{
 									var i = 1;
 									decimal totalAmountOfTotalAmount = 0;
 									decimal totalAmountOfTotalPaidAmount = 0;
 									decimal totalDeviation = 0;
-									@foreach (var item in Model.listOTHER.Item1)
+									@foreach (var item in Model.OtherPaidDtos)
 									{
 										<tr>
 											<td>@i</td>
-											<td>@item.invoiceID</td>
-											<td>@item.Id</td>
-											<td>@item.patient!.FullName</td>
-											<td>@item.consultant!.Name</td>
-											<td>@item.cashier!.FullName</td>
-											<td>@item.issuedUser!.FullName</td>
-											<td>@item.CreateDate</td>
+											<td>@item.InvoiceId</td>
+											<td>@item.OpdId</td>
+											<td>@item.PatientName</td>
+											<td>@item.DoctorName</td>
+											<td>@item.CashierName</td>
+											<td>@item.OpdNurse</td>
+											<td>@item.IssuedDate</td>
 											<td style="text-align: right;">@item.TotalAmount</td>
 											<td style="text-align: right;">@item.TotalPaidAmount</td>
-											<td style="text-align: right;">@item.deviation</td>
+											<td style="text-align: right;">@item.Deviation</td>
 										</tr>
 
-										totalAmountOfTotalAmount += (item.TotalAmount ?? 0m);
-										totalAmountOfTotalPaidAmount += (item.TotalPaidAmount ?? 0m);
-										totalDeviation += (item.deviation ?? 0m);
+										totalAmountOfTotalAmount += item.TotalAmount;
+										totalAmountOfTotalPaidAmount += item.TotalPaidAmount;
+										totalDeviation += item.Deviation;
 
 										i++;
 									}
@@ -208,51 +208,36 @@
 									<th>Invoice ID</th>
 									<th>OPD ID</th>
 									<th>Cashier</th>
-									<th>Issued By</th>
-									<th>Issued Date</th>
-									<th style="text-align: right;">Total Old Paid Amount</th>
-									<th style="text-align: right;">Total Paid Amount</th>
-									<th style="text-align: right;">Total Refund</th>
-									<th style="text-align: right;">To be refunded</th>
+									<th>Refunded Date</th>
+									<th>Description</th>
+									<th style="text-align: right;">Refunded Amount</th>
 								</tr>
 							</thead>
 							<tbody>
-								@if (Model.listNeedToPayOTHER != null && Model.listNeedToPayOTHER.Count > 0)
+								@if (Model.OtherRefundDtos != null && Model.OtherRefundDtos.Count > 0)
 								{
 									var i = 1;
-									decimal totalAmountOfTotalOldAmount = 0;
-									decimal totalAmountOfTotalPaidAmount = 0;
 									decimal totalAmountOfTotalRefund = 0;
-									decimal totalAmountOfTotalNeedToRefund = 0;
 
-									@foreach (var item in Model.listNeedToPayOTHER)
+									@foreach (var item in Model.OtherRefundDtos)
 									{
 										<tr>
 											<td>@i</td>
-											<td>@item.invoiceID</td>
-											<td>@item.Id</td>
-											<td>@item.cashier!.FullName</td>
-											<td>@item.issuedUser!.FullName</td>
-											<td>@item.CreateDate</td>
-											<td style="text-align: right;">@item.TotalOldAmount</td>
-											<td style="text-align: right;">@item.TotalPaidAmount</td>
-											<td style="text-align: right;">@item.TotalRefund</td>
-											<td style="text-align: right;">@item.TotalNeedToRefund</td>
+											<td>@item.InvoiceId</td>
+											<td>@item.OpdId</td>
+											<td>@item.Cashier</td>
+											<td>@item.RefundedDate</td>
+											<td>@item.Description</td>
+											<td style="text-align: right;">@item.Amount</td>
 										</tr>
 
-										totalAmountOfTotalOldAmount += (item.TotalOldAmount ?? 0m);
-										totalAmountOfTotalPaidAmount += (item.TotalPaidAmount ?? 0m);
-										totalAmountOfTotalRefund += (item.TotalRefund ?? 0m);
-										totalAmountOfTotalNeedToRefund += (item.TotalNeedToRefund ?? 0m);
+										totalAmountOfTotalRefund += item.Amount;
 										i++;
 									}
 
 									<tr class="table-danger" style="font-weight: bold">
-										<td colspan="6">Total</td>
-										<td style="text-align: right;">@totalAmountOfTotalOldAmount</td>
-										<td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
+										<td colspan="6" style="font-weight: bold">Total</td>
 										<td style="text-align: right;">@totalAmountOfTotalRefund</td>
-										<td style="text-align: right;">@totalAmountOfTotalNeedToRefund</td>
 									</tr>
 								}
 								else
@@ -267,14 +252,14 @@
 
 					<br>
 
-					@if (Model.listOTHERGrugs != null)
+					@if (Model.listOTHERGrugsDto != null)
 					{
 						var i = 1;
 						decimal totalAmountOfTotalAmount = 0;
 						decimal totalUnitPrice = 0;
 						decimal totalQuantity = 0;
 
-						<h4 class="card-title" style="font-weight: bold">OTHER Drugs (@Model.listOTHERGrugs.Count)</h4>
+						<h4 class="card-title" style="font-weight: bold">OTHER Drugs (@Model.listOTHERGrugsDto.Count)</h4>
 						<div class="table-responsive">
 							<table class="table">
 								<thead class="table-success">
@@ -287,24 +272,19 @@
 										<th>Print</th>
 									</tr>
 								<tbody>
-										@foreach (var item in Model.listOTHERGrugs)
+										@foreach (var item in Model.listOTHERGrugsDto)
 										{
 										<tr>
 											<td>@item.DrugId</td>
-											<td>@item.Drug!.DrugName</td>
-											<td>@item.Drug!.Price</td>
-											<td>@item.Qty</td>
-											<td>@item.Amount</td>
-											<td>
-												<button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-primary' onclick=ShowQR(@item.Id);>
-													<i class='fa fa-print'></i>
-												</button>
-											</td>
+											<td>@item.DrugName</td>
+											<td>@item.Price</td>
+											<td>@item.Quantity</td>
+											<td>@item.TotalAmount</td>
 										</tr>
 
-											totalAmountOfTotalAmount += item.Amount;
-											totalUnitPrice += item.Drug!.Price;
-											totalQuantity += item.Qty;
+											totalAmountOfTotalAmount += item.TotalAmount;
+											totalUnitPrice += item.Price;
+											totalQuantity += item.Quantity;
 											i++;
 										}
 
@@ -313,7 +293,6 @@
 										<td>@totalUnitPrice</td>
 										<td>@totalQuantity</td>
 										<td>@totalAmountOfTotalAmount</td>
-										<td></td>
 									</tr>
 								</tbody>
 							</table>
@@ -330,7 +309,7 @@
 				<div class="card-body">
 					<h3 class="card-title" style="text-align: center;">Other Payment Summary</h3>
 					<div class="table-responsive">
-						@if (Model.StartTime != null && Model.EndTime != null && Model.OTHERPaymentData != null)
+						@if (Model.StartTime != null && Model.EndTime != null && Model.OTHERPaymentDataDto != null)
 						{
 							<table class="table">
 								<thead class="table-success">
@@ -344,17 +323,17 @@
 									</tr>
 									<tr>
 										<th style="text-align: right;">Total Amount:</th>
-										<th style="text-align: left;">@Model.OTHERPaymentData.TotalAmountOld LKR</th>
+										<th style="text-align: left;">@Model.OTHERPaymentDataDto.TotalAmount LKR</th>
 									</tr>
 									<tr>
 										<th style="text-align: right;">Total Refunded Amount:</th>
-										<th style="text-align: left;">@Model.OTHERPaymentData.TotalAmountRefunded LKR</th>
+										<th style="text-align: left;">@Model.OTHERPaymentDataDto.TotalRefundAmount LKR</th>
 									</tr>
 								</thead>
 								<tbody class="table-primary">
 									<tr>
 										<th style="text-align: right;">Total Paid Amount:</th>
-										<th style="text-align: left;">@Model.OTHERPaymentData.TotalPaidAmount LKR</th>
+										<th style="text-align: left;">@Model.OTHERPaymentDataDto.TotalPaidAmount LKR</th>
 									</tr>
 								</tbody>
 							</table>

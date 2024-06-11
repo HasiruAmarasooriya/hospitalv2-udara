@@ -135,7 +135,7 @@
 		<div class="col-12">
 			<div class="card">
 				<div class="card-body">
-					<h4 class="card-title" style="font-weight: bold">XRAY Paid (@Model.listXRAY.Item2)</h4>
+					<h4 class="card-title" style="font-weight: bold">XRAY Paid (@Model.XrayPaidDtos.Count)</h4>
 
 					<div class="table-responsive">
 						<table class="table">
@@ -156,31 +156,31 @@
 							</thead>
 							<tbody>
 
-								@if (Model.listXRAY.Item1 != null)
+								@if (Model.XrayPaidDtos != null)
 								{
 									var i = 1;
 									decimal totalAmountOfTotalAmount = 0;
 									decimal totalAmountOfTotalPaidAmount = 0;
 									decimal totalDeviation = 0;
-									@foreach (var item in Model.listXRAY.Item1)
+									@foreach (var item in Model.XrayPaidDtos)
 									{
 										<tr>
 											<td>@i</td>
-											<td>@item.invoiceID</td>
-											<td>@item.Id</td>
-											<td>@item.patient!.FullName</td>
-											<td>@item.consultant!.Name</td>
-											<td>@item.cashier!.FullName</td>
-											<td>@item.issuedUser!.FullName</td>
-											<td>@item.CreateDate</td>
+											<td>@item.InvoiceId</td>
+											<td>@item.OpdId</td>
+											<td>@item.PatientName</td>
+											<td>@item.DoctorName</td>
+											<td>@item.CashierName</td>
+											<td>@item.OpdNurse</td>
+											<td>@item.IssuedDate</td>
 											<td style="text-align: right;">@item.TotalAmount</td>
 											<td style="text-align: right;">@item.TotalPaidAmount</td>
-											<td style="text-align: right;">@item.deviation</td>
+											<td style="text-align: right;">@item.Deviation</td>
 										</tr>
 
-										totalAmountOfTotalAmount += (item.TotalAmount ?? 0m);
-										totalAmountOfTotalPaidAmount += (item.TotalPaidAmount ?? 0m);
-										totalDeviation += (item.deviation ?? 0m);
+										totalAmountOfTotalAmount += item.TotalAmount;
+										totalAmountOfTotalPaidAmount += item.TotalPaidAmount;
+										totalDeviation += item.Deviation;
 
 										i++;
 									}
@@ -208,51 +208,36 @@
 									<th>Invoice ID</th>
 									<th>OPD ID</th>
 									<th>Cashier</th>
-									<th>Issued By</th>
-									<th>Issued Date</th>
-									<th style="text-align: right;">Total Old Paid Amount</th>
-									<th style="text-align: right;">Total Paid Amount</th>
-									<th style="text-align: right;">Total Refund</th>
-									<th style="text-align: right;">To be refunded</th>
+									<th>Refunded Date</th>
+									<th>Description</th>
+									<th style="text-align: right;">Refunded Amount</th>
 								</tr>
 							</thead>
 							<tbody>
-								@if (Model.listNeedToPayXRAY != null && Model.listNeedToPayXRAY.Count > 0)
+								@if (Model.XrayRefundDtos != null && Model.XrayRefundDtos.Count > 0)
 								{
 									var i = 1;
-									decimal totalAmountOfTotalOldAmount = 0;
-									decimal totalAmountOfTotalPaidAmount = 0;
 									decimal totalAmountOfTotalRefund = 0;
-									decimal totalAmountOfTotalNeedToRefund = 0;
 
-									@foreach (var item in Model.listNeedToPayXRAY)
+									@foreach (var item in Model.XrayRefundDtos)
 									{
 										<tr>
 											<td>@i</td>
-											<td>@item.invoiceID</td>
-											<td>@item.Id</td>
-											<td>@item.cashier!.FullName</td>
-											<td>@item.issuedUser!.FullName</td>
-											<td>@item.CreateDate</td>
-											<td style="text-align: right;">@item.TotalOldAmount</td>
-											<td style="text-align: right;">@item.TotalPaidAmount</td>
-											<td style="text-align: right;">@item.TotalRefund</td>
-											<td style="text-align: right;">@item.TotalNeedToRefund</td>
+											<td>@item.InvoiceId</td>
+											<td>@item.OpdId</td>
+											<td>@item.Cashier</td>
+											<td>@item.RefundedDate</td>
+											<td>@item.Description</td>
+											<td style="text-align: right;">@item.Amount</td>
 										</tr>
 
-										totalAmountOfTotalOldAmount += (item.TotalOldAmount ?? 0m);
-										totalAmountOfTotalPaidAmount += (item.TotalPaidAmount ?? 0m);
-										totalAmountOfTotalRefund += (item.TotalRefund ?? 0m);
-										totalAmountOfTotalNeedToRefund += (item.TotalNeedToRefund ?? 0m);
+										totalAmountOfTotalRefund += item.Amount;
 										i++;
 									}
 
-									<tr class="table-danger">
-										<td colspan="6">Total</td>
-										<td style="text-align: right;">@totalAmountOfTotalOldAmount</td>
-										<td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
+									<tr class="table-danger" style="font-weight: bold">
+										<td colspan="6" style="font-weight: bold">Total</td>
 										<td style="text-align: right;">@totalAmountOfTotalRefund</td>
-										<td style="text-align: right;">@totalAmountOfTotalNeedToRefund</td>
 									</tr>
 								}
 								else
@@ -324,7 +309,7 @@
 				<div class="card-body">
 					<h3 class="card-title" style="text-align: center;">Other Payment Summary</h3>
 					<div class="table-responsive">
-						@if (Model.StartTime != null && Model.EndTime != null && Model.XRAYPaymentData != null)
+						@if (Model.StartTime != null && Model.EndTime != null && Model.XrayPaymentDataDto != null)
 						{
 							<table class="table">
 								<thead class="table-success">
@@ -338,17 +323,17 @@
 									</tr>
 									<tr>
 										<th style="text-align: right;">Total Amount:</th>
-										<th style="text-align: left;">@Model.XRAYPaymentData.TotalAmountOld LKR</th>
+										<th style="text-align: left;">@Model.XrayPaymentDataDto.TotalAmount LKR</th>
 									</tr>
 									<tr>
 										<th style="text-align: right;">Total Refunded Amount:</th>
-										<th style="text-align: left;">@Model.XRAYPaymentData.TotalAmountRefunded LKR</th>
+										<th style="text-align: left;">@Model.XrayPaymentDataDto.TotalRefundAmount LKR</th>
 									</tr>
 								</thead>
 								<tbody class="table-primary">
 									<tr>
 										<th style="text-align: right;">Total Paid Amount:</th>
-										<th style="text-align: left;">@Model.XRAYPaymentData.TotalPaidAmount LKR</th>
+										<th style="text-align: left;">@Model.XrayPaymentDataDto.TotalPaidAmount LKR</th>
 									</tr>
 								</tbody>
 							</table>
