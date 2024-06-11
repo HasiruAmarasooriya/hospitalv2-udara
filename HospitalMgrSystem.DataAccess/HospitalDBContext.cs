@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using HospitalMgrSystem.Model;
 using HospitalMgrSystem.Model.DTO;
 using Microsoft.Extensions.Configuration;
@@ -8,8 +7,8 @@ namespace HospitalMgrSystem.DataAccess
 {
 	public static class ConnectionStrings
 	{
-		public static string DEVELOPMENT_DATABASE { get; } = "Data Source=23.97.180.132;Initial Catalog=KUMUDU1;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
-		public static string PRODUCTION_DATABASE { get; } = "Data Source=23.97.180.132;Initial Catalog=KUMUDU;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
+		public static string DEVELOPMENT_DATABASE { get; } = "Data Source=172.201.169.155;Initial Catalog=KUMUDU1;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
+		public static string PRODUCTION_DATABASE { get; } = "Data Source=172.201.169.155;Initial Catalog=KUMUDU;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
 	}
 
 
@@ -67,10 +66,17 @@ namespace HospitalMgrSystem.DataAccess
 
         public DbSet<SMSActivation> sMSActivations { get; set; }
 
-        public DbSet<AppointmentDTO> AppointmentsDTO { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		#region DTOs
+		public DbSet<AppointmentDTO> AppointmentsDTO { get; set; }
+		public DbSet<ReportOpdXrayOtherPaidDto> ReportOpdXrayOtherPaidDtos { get; set; }
+		public DbSet<ReportOpdXrayOtherRefundDTO> ReportOpdXrayOtherRefundDTOs { get; set; }
+		public DbSet<PaymentSummaryOpdXrayOtherDTO> PaymentSummaryOpdXrayOtherDtos { get; set; }
+		public DbSet<ReportOpdXrayOtherDrugs> ReportOpdXrayOtherDrugsDtos { get; set; }
+		#endregion
+
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-	        optionsBuilder.UseSqlServer(ConnectionStrings.DEVELOPMENT_DATABASE);
+	        optionsBuilder.UseSqlServer(ConnectionStrings.PRODUCTION_DATABASE);
         }
 
 	}
