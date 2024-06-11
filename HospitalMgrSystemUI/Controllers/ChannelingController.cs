@@ -27,7 +27,7 @@ public class ChannelingController : Controller
 
     public IActionResult Index()
     {
-        var oPDDto = new OPDDto()
+        var oPDDto = new OPDDto
         {
             StartTime = DateTime.Now,
             EndTime = DateTime.Now.AddDays(1),
@@ -44,7 +44,7 @@ public class ChannelingController : Controller
 
     public IActionResult FilterForm()
     {
-        var channelingDto = new OPDDto()
+        var channelingDto = new OPDDto
         {
             StartTime = DateTime.Now,
             EndTime = DateTime.Now,
@@ -73,10 +73,8 @@ public class ChannelingController : Controller
                 channelingDto.listConsultants = new ConsultantService().GetAllConsultantThatHaveSchedulings();
                 return View("Index", channelingDto);
             }
-            else
-            {
-                return RedirectToAction("Index");
-            }
+
+            return RedirectToAction("Index");
         }
         catch (Exception ex)
         {
@@ -181,7 +179,7 @@ public class ChannelingController : Controller
         {
             try
             {
-                if (Id > 0)
+	            if (Id > 0)
                 {
 
                     var oPDChannelingDto = new OPDDto();
@@ -209,10 +207,8 @@ public class ChannelingController : Controller
                     oPDChannelingDto.channelingSchedule.HospitalFee = oPDChannelingDto.opd.HospitalFee;
                     return PartialView("_PartialAddOn", oPDChannelingDto);
                 }
-                else
-                {
-                    return RedirectToAction("Index");
-                }
+
+	            return RedirectToAction("Index");
 
             }
             catch (Exception ex)
@@ -377,7 +373,7 @@ public class ChannelingController : Controller
                 var result = opd;
 
                 foreach (var item in result)
-                    oPDTbDto.Add(new OPDTbDto()
+                    oPDTbDto.Add(new OPDTbDto
                     {
                         Id = item.Id,
                         roomName = item.room.Name,
@@ -407,13 +403,13 @@ public class ChannelingController : Controller
         return oPDTbDto;
     }
 
-    private List<HospitalMgrSystem.Model.DTO.AppointmentDTO> GetAllChannelingBySelectedSchedule(DateTime dateTime)
+    private List<AppointmentDTO> GetAllChannelingBySelectedSchedule(DateTime dateTime)
     {
         using (var httpClient = new HttpClient())
         {
             try
             {
-                List<HospitalMgrSystem.Model.DTO.AppointmentDTO> AppointmentDTOList = new ChannelingService().GetAllChannelingBySelectedScheduleSP(dateTime);
+                List<AppointmentDTO> AppointmentDTOList = new ChannelingService().GetAllChannelingBySelectedScheduleSP(dateTime);
                 return AppointmentDTOList;
             }
             catch (Exception ex)
