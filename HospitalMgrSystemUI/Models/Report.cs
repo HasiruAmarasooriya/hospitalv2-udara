@@ -1,4 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.DTO;
 
 namespace HospitalMgrSystemUI.Models
 {
@@ -17,12 +18,16 @@ namespace HospitalMgrSystemUI.Models
         public List<OPD>? listNightShiftOPD { get; set; }
         public List<OPD>? listNotPaidOPD { get; set; }
         public Payment? OPDPaymentData { get; set; }
+        public PaymentSummaryOpdXrayOtherDTO? OpdPaymentDataDto { get; set; }
         public List<OPDDrugus>? listopdGrugs { get; set; }
+        public List<ReportOpdXrayOtherDrugs> listopdGrugsDto { get; set; }
+        public List<ReportOpdXrayOtherPaidDto> OpdPaidDtos { get; set; }
+        public List<ReportOpdXrayOtherRefundDTO> OpdRefundDtos { get; set; }
 
-        #endregion
+		#endregion
 
-        #region CHANNELING DATA
-        public List<OPD>? listChanneling { get; set; }
+		#region CHANNELING DATA
+		public List<OPD>? listChanneling { get; set; }
         public List<OPD>? listPartialPaidChanneling { get; set; }
         public List<OPD>? listNeedToPayChanneling { get; set; }
         public List<OPD>? listNightShiftChanneling { get; set; }
@@ -38,22 +43,30 @@ namespace HospitalMgrSystemUI.Models
         public List<OPD>? listNightShiftXRAY { get; set; }
         public List<OPD>? listNotPaidXRAY { get; set; }
         public Payment? XRAYPaymentData { get; set; }
-        public List<OPDDrugus>? listXRAYGrugs { get; set; }
-        #endregion
+        public PaymentSummaryOpdXrayOtherDTO? XrayPaymentDataDto { get; set; }
+		public List<OPDDrugus>? listXRAYGrugs { get; set; }
+		public List<ReportOpdXrayOtherDrugs>? listXRAYGrugsDto { get; set; }
+        public List<ReportOpdXrayOtherPaidDto> XrayPaidDtos { get; set; }
+        public List<ReportOpdXrayOtherRefundDTO> XrayRefundDtos { get; set; }
+		#endregion
 
-        #region OTHER DATA
-        public (List<OPD>?, int?, decimal?) listOTHER { get; set; }
+		#region OTHER DATA
+		public (List<OPD>?, int?, decimal?) listOTHER { get; set; }
         public List<OPD>? listPartialPaidOTHER { get; set; }
         public List<OPD>? listNeedToPayOTHER { get; set; }
         public List<OPD>? listNightShiftOTHER { get; set; }
         public List<OPD>? listNotPaidOTHER { get; set; }
         public Payment? OTHERPaymentData { get; set; }
-        public List<OPDDrugus>? listOTHERGrugs { get; set; }
-        #endregion
+		public PaymentSummaryOpdXrayOtherDTO? OTHERPaymentDataDto { get; set; }
+		public List<OPDDrugus>? listOTHERGrugs { get; set; }
+		public List<ReportOpdXrayOtherDrugs>? listOTHERGrugsDto { get; set; }
+        public List<ReportOpdXrayOtherPaidDto> OtherPaidDtos { get; set; }
+        public List<ReportOpdXrayOtherRefundDTO> OtherRefundDtos { get; set; }
+		#endregion
 
-        #region CHANNELING SCHEDULE
+		#region CHANNELING SCHEDULE
 
-        public List<ChannelingSchedule> ChannelingSchedules { get; set; }
+		public List<ChannelingSchedule> ChannelingSchedules { get; set; }
 
         #endregion
 
