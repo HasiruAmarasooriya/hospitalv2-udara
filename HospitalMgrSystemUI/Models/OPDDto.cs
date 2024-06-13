@@ -1,4 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.DTO;
 using HospitalMgrSystem.Model.Enums;
 
 namespace HospitalMgrSystemUI.Models
@@ -41,8 +42,9 @@ namespace HospitalMgrSystemUI.Models
 
         public List<OPD>? listopd { get; set; }
 
-        public List<HospitalMgrSystem.Model.DTO.AppointmentDTO> CHAppoinmentDTO { get; set; }
+        public List<AppointmentDTO> CHAppoinmentDTO { get; set; }
         public List<OPDTbDto>? listOPDTbDto { get; set; }
+        public List<OpdOtherXrayDataTableDto>? listOPDTbDtoSp { get; set; }
         public List<Drug>? Drugs { get; set; }
         public List<Investigation>? Investigations { get; set; }
         public List<Item>? Items { get; set; }
