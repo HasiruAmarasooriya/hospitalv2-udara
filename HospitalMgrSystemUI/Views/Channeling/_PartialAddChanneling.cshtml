@@ -25,8 +25,8 @@
 
     function updatePatientDetails() {
         var opdID = $('#opdIndexNumber').val();
-        var fullName = $('#dropPatient option:selected').text();
-        var patientID = $('#dropPatient').val();
+        var fullName = $('#patientName').val();
+        var patientID = $('#patientId').val();
         var contactNo = $('#txtMobileNumber').val();
         var sex = $('#dropSex').val();
         var age = $('#txtAge').val();
@@ -81,8 +81,8 @@
 
 
     function submitChanneling() {
-        var fullName = $('#dropPatient option:selected').text();
-        var patientID = $('#dropPatient').val();
+        var fullName = $('#patientName').val();
+        var patientID = $('#patientId').val();
         var contactNo = $('#txtMobileNumber').val();
         var sex = $('#dropSex').val();
         var age = $('#txtAge').val();
@@ -154,8 +154,8 @@
     }
 
     function submitChannelingWithQR() {
-        var fullName = $('#dropPatient option:selected').text();
-        var patientID = $('#dropPatient').val();
+        var fullName = $('#patientName').val();
+        var patientID = $('#patientId').val();
         var contactNo = $('#txtMobileNumber').val();
         var sex = $('#dropSex').val();
         var age = $('#txtAge').val();
@@ -761,13 +761,15 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Patient</label>
-                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="opd.PatientID" id="dropPatient">
+                        @*<select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="opd.PatientID" id="dropPatient">
                             <option value="-2">Select one</option>
                             @foreach (var item in Model.PatientList)
                             {
                                 <option value="@item.Id">@item.FullName-@item.MobileNumber</option>
                             }
-                        </select>
+                        </select>*@
+                        <input class="form-control" type="text" id="patientId" asp-for="opd!.PatientID" hidden />
+                        <input class="form-control" type="text" id="patientName" placeholder="Patient Name" asp-for="opd!.patient!.FullName" />
                     </div>
                 </div>
 
