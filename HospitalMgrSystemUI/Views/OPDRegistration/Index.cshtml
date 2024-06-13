@@ -1,4 +1,5 @@
-﻿@using Microsoft.Extensions.Configuration
+﻿@using HospitalMgrSystem.Model.Enums
+@using Microsoft.Extensions.Configuration
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -158,8 +159,8 @@
                             <th>Pt's Name</th>
                             <th>Payment Status</th>
                             <th>Consultant</th>
-                            <th>Telephone No</th>
                             <th>Date & Time</th>
+                            <th>Total Amount</th>
                             <th>View</th>
                             <th>Delete</th>
                         </tr>
@@ -168,9 +169,9 @@
                         @{
                             decimal? totalAmount = 0;
                         }
-                        @if (Model.listOPDTbDto != null)
+                        @if (Model.listOPDTbDtoSp != null)
                         {
-                            @foreach (var item in Model.listOPDTbDto)
+                                @foreach (var item in Model.listOPDTbDtoSp)
                             {
                                 <tr>
                                     <td>@item.Id</td>
@@ -191,29 +192,12 @@
                                             </button>
                                         </td>
                                     <td>@item.FullName</td>
-                                    <td>@item.paymentStatus</td>
+                                    <td>@((PaymentStatus)item.paymentStatus)</td>
                                     <td>
-                                        @if (item.consaltantName != null)
-                                        {
-                                            @item.consaltantName
-                                        }
+                                         @item!.consultantName
                                     </td>
-                                    @* @{
-                                string sex = "";
-                                if (item.Sex == HospitalMgrSystem.Model.Enums.SexStatus.Male)
-                                {
-                                sex = "Male";
-                                }
-                                else if (item.Sex == HospitalMgrSystem.Model.Enums.SexStatus.Female)
-                                {
-                                sex = "Female";
-                                } else
-                                {
-                                sex = "Non";
-                                }
-                                } *@
-                                    <td>@item.MobileNumber</td>
                                     <td>@item.DateTime</td>
+                                    <td>@item.Total</td>
 
                                     <td>
                                         <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);>
@@ -222,42 +206,27 @@
                                     </td>
 
                                     <td>
-                                        @if (Model != null)
-                                        {
-                                                @if (item.paymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.NOT_PAID)
-                                                {
-                                                    @using (Html.BeginForm("DeleteOPD", "OPDRegistration", new { item.Id }, FormMethod.Post))
-                                                    {
-                                                        <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>
-                                                            <i class='fa fa-trash'></i>
-                                                        </button>
-                                                    }
-                                                }
-
-                                        }
+	                                    @if (Model != null)
+	                                    {
+		                                    @if ((PaymentStatus)item.paymentStatus == PaymentStatus.NOT_PAID)
+		                                    {
+			                                    @using (Html.BeginForm("DeleteOPD", "OPDRegistration", new { item.Id }, FormMethod.Post))
+			                                    {
+				                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>
+					                                    <i class='fa fa-trash'></i>
+				                                    </button>
+			                                    }
+		                                    }
+	                                    }
 
                                     </td>
-
-
                                 </tr>
-                                @if (item.TotalAmount != null)
+                                @if (item.Total != null)
                                 {
-                                    totalAmount = totalAmount + item.TotalAmount;
+                                    totalAmount += item.Total;
                                 }
                             }
                         }
-
-                        @*                            @if (totalAmount != null)
-                            {
-                            <tr>
-                            <td colspan="3"></td>
-                            <td colspan="2">Total Amount</td>
-                            <td colspan="2">@totalAmount</td>
-                            <td colspan="3"></td>
-                            </tr>
-                            }*@
-
-
                         </tbody>
                     </table>
 
