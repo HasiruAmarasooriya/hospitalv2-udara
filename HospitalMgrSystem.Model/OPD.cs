@@ -58,6 +58,7 @@ public class OPD
 	[NotMapped] public decimal? HospitalAmount { get; set; }
 	[NotMapped] public int? HospitalRefundCount { get; set; }
 	[NotMapped] public int? DoctorRefundCount { get; set; }
+	[NotMapped] public int? FullRefundCount { get; set; }
 	[NotMapped] public decimal? HospitalDiscountAmount { get; set; }
 	[NotMapped] public decimal? DoctorDiscountAmount { get; set; }
 
