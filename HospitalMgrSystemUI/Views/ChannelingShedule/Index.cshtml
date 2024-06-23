@@ -122,7 +122,7 @@
                         <thead>
                         <tr>
                             <th>Id</th>
-                                <th>Schedule Time</th>
+                            <th>Schedule Time</th>
                             <th>Consultant Name</th>
                             <th>Speciality</th>
                             <th>Room Number</th>
@@ -204,7 +204,7 @@
                 <h4 class="card-title">Upcoming  Channeling Shedule Details</h4>
                 <div class="row"></div>
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="basic-3">
                         <thead>
                             <tr>
                                 <th>Id</th>
@@ -305,7 +305,23 @@
                 allowClear: false,
             });
 
+            $("#basic-2").dataTable().fnDestroy();
+            $('#basic-2').dataTable({
+                "dom": '<"top"f>rt<"bottom"lp><"clear">',
+                "paging": false, // Keep pagination if needed
+                "info": false, // Hide table information
+                "lengthChange": false, // Disable the "show entries" dropdown
+                "ordering": false // Disable sorting in all columns
+            });
 
+            $("#basic-3").dataTable().fnDestroy();
+            $('#basic-3').dataTable({
+                "dom": '<"top"f>rt<"bottom"lp><"clear">',
+                "paging": false, // Keep pagination if needed
+                "info": false, // Hide table information
+                "lengthChange": false, // Disable the "show entries" dropdown
+                "ordering": false // Disable sorting in all columns
+            });
         });
 
         function handleClear() {

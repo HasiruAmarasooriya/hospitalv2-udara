@@ -195,6 +195,56 @@
 					</div>
 
 					<br>
+					
+					<h4 class="card-title" style="font-weight: bold">OPD Paid According to the Doctor (@Model.OpdPaymentDataOfDoctorsDto?.Count)</h4>
+
+					<div class="table-responsive">
+						<table class="table">
+							<thead class="table-success">
+							<tr>
+								<th>No</th>
+								<th>Doctor Name</th>
+								<th style="text-align: right;">Total Amount</th>
+								<th style="text-align: right;">Total Refund Amount</th>
+								<th style="text-align: right;">Total Paid Amount</th>
+							</tr>
+							</thead>
+							<tbody>
+
+								@if (Model.OpdPaymentDataOfDoctorsDto != null)
+							{
+								var i = 1;
+								decimal totalAmountOfTotalAmount = 0;
+								decimal totalRefundAmount = 0;
+								decimal totalPaidAmount = 0;
+								@foreach (var item in Model.OpdPaymentDataOfDoctorsDto)
+								{
+									<tr>
+										<td>@i</td>
+										<td>@item.ConsultantName</td>
+										<td style="text-align: right;">@item.TotalAmount</td>
+										<td style="text-align: right;">@item.TotalRefundAmount</td>
+										<td style="text-align: right;">@item.TotalPaidAmount</td>
+									</tr>
+									totalAmountOfTotalAmount += item.TotalAmount;
+									totalRefundAmount += item.TotalRefundAmount;
+									totalPaidAmount += item.TotalPaidAmount;
+
+									i++;
+								}
+
+								<tr class="table-success" style="font-weight: bold">
+									<td colspan="2">Total</td>
+									<td style="text-align: right;">@totalAmountOfTotalAmount</td>
+									<td style="text-align: right;">@totalRefundAmount</td>
+									<td style="text-align: right;">@totalPaidAmount</td>
+								</tr>
+							}
+							</tbody>
+						</table>
+					</div>
+
+					<br>
 
 					<h4 class="card-title" style="font-weight: bold">OPD Refund</h4>
 

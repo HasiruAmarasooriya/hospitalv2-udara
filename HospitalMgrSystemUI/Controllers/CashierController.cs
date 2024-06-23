@@ -21,6 +21,7 @@ using HospitalMgrSystem.Service.CashierSession;
 using HospitalMgrSystem.Service.User;
 using HospitalMgrSystem.Service.NightShiftSession;
 using HospitalMgrSystem.Service.ChannelingSchedule;
+using HospitalMgrSystem.Service.ClaimBill;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -119,7 +120,7 @@ namespace HospitalMgrSystemUI.Controllers
                     cashierDto.cashierRemoveBillingItemDtoList = GetCashierAllRemoveddetails(cashierDto.PreID);
                     cashierDto.ChannelingSchedule = channelingSchedule;
                     cashierDto.ItemName = opdData.Description;
-                    
+
 
                     return PartialView("_PartialViewInvoice", cashierDto);
                 }
@@ -133,17 +134,44 @@ namespace HospitalMgrSystemUI.Controllers
         public ActionResult PrintBill([FromBody] CashierDto cashierDtoPar)
         {
             CashierDto cashierDto = new CashierDto();
-            using (var httpClient = new HttpClient())
-            {
+			var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+			var userID = Convert.ToInt32(userIdCookie);
 
+			using (var httpClient = new HttpClient())
+            {
                 try
                 {
                     cashierDto.PreID = cashierDtoPar.PreID;
 
-                    cashierDto = GetCashierAlldetails(cashierDto.PreID);
+                    var number = GetNumber(cashierDto.PreID);
+                    var opdData = new OPDService().GetAllOPDByID(number);
+
+					cashierDto = GetCashierAlldetails(cashierDto.PreID);
                     cashierDto.cashierRemoveBillingItemDtoList = GetCashierAllRemoveddetails(cashierDto.PreID);
 
-                    return PartialView("_PartialReceipt", cashierDto);
+                    var invoice = new CashierService().GetInvoiceDataByServiceId(number);
+                    var sessionId = GetActiveCashierSession(userID)[0].Id;
+
+                    var claimBill = new ClaimBill
+                    {
+	                    PatientID = opdData.PatientID,
+	                    ConsultantId = opdData.ConsultantID,
+	                    InvoiceId = invoice?.Id,
+	                    RefNo = cashierDtoPar.PreID,
+	                    SubTotal = cashierDto.preSubtotal,
+	                    Discount = cashierDto.discount,
+	                    TotalAmount = cashierDto.preTotal,
+	                    CashAmount = cashierDto.totalPaymentPaidAmount,
+	                    Balance = cashierDto.total,
+                        CsId = sessionId,
+                        CreateDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now
+                    };
+
+                    new ClaimBillService().CreateClaimBill(claimBill);
+
+
+					return PartialView("_PartialReceipt", cashierDto);
                 }
                 catch (Exception ex)
                 {

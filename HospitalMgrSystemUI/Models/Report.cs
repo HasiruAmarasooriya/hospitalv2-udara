@@ -19,6 +19,7 @@ namespace HospitalMgrSystemUI.Models
         public List<OPD>? listNotPaidOPD { get; set; }
         public Payment? OPDPaymentData { get; set; }
         public PaymentSummaryOpdXrayOtherDTO? OpdPaymentDataDto { get; set; }
+        public List<PaymentSummaryOfDoctorsOPDDTO>? OpdPaymentDataOfDoctorsDto { get; set; }
         public List<OPDDrugus>? listopdGrugs { get; set; }
         public List<ReportOpdXrayOtherDrugs> listopdGrugsDto { get; set; }
         public List<ReportOpdXrayOtherPaidDto> OpdPaidDtos { get; set; }

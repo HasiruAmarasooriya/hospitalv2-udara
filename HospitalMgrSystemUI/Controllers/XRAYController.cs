@@ -11,6 +11,7 @@ using HospitalMgrSystem.Service.Patients;
 using HospitalMgrSystem.Service.User;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;
+using HospitalMgrSystem.Model.DTO;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -39,7 +40,7 @@ namespace HospitalMgrSystemUI.Controllers
             oPDDto.isPoP = isPop;
             oPDDto.patientsList = LoadPatients();
             oPDDto.consultantList = LoadConsultants();
-            oPDDto.listOPDTbDto = LoadOPD();
+            oPDDto.listOPDTbDtoSp = LoadOPD();
             oPDDto.isNightShift = new DefaultService().GetDefailtShiftStatus();
             return View(oPDDto);
         }
@@ -398,40 +399,19 @@ namespace HospitalMgrSystemUI.Controllers
             return patients;
         }
 
-        private List<OPDTbDto> LoadOPD()
+        private List<OpdOtherXrayDataTableDto> LoadOPD()
         {
-            List<OPD> opd = new List<OPD>();
-            List<OPDTbDto> oPDTbDto = new List<OPDTbDto>();
             using (var httpClient = new HttpClient())
             {
                 try
                 {
-                    opd = new OPDService().GetAllOPDByDescription("X-RAY");
-                    var result = opd;
-
-                    foreach (var item in result)
-                    {
-                        oPDTbDto.Add(new OPDTbDto()
-                        {
-                            Id = item.Id,
-                            roomName = item.room.Name,
-                            consaltantName = item.consultant.Name,
-                            FullName = item.patient.FullName,
-                            MobileNumber = item.patient.MobileNumber,
-                            DateTime = item.DateTime,
-                            Sex = (SexStatus)item.patient.Sex,
-                            Status = item.Status,
-                            paymentStatus = item.paymentStatus
-                        });
-                    }
+                    return new OPDService().GetAllOPDByStatusWithoutXraySP(0, DateTime.Today);
                 }
                 catch (Exception ex)
                 {
                     return null;
                 }
             }
-
-            return oPDTbDto;
         }
 
 

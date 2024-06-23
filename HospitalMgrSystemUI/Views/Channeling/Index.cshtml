@@ -165,7 +165,7 @@
                                 <th>Delete</th>
                             </tr>
                         </thead>
-                        <tbody id="">
+                        <tbody>
                             @if (Model != null)
                             {
                                 @foreach (var item in Model.CHAppoinmentDTO)
@@ -192,8 +192,8 @@
                                             <td>-</td>
                                             <td>@item.ConsultantName</td>
                                             <td>@item.SpecialistName</td>
-                                            <td>@item.DateTime</td>
-                                            <td>@item.CSDate</td>
+                                            <td>@item.DateTime.ToString("M/d/yyyy dddd h:mm:ss tt")</td>
+                                            <td>@item.CSDate.ToString("M/d/yyyy dddd h:mm:ss tt")</td>
                                             <td>@item.PaymentStatus</td>
                                             <td>@item.CSStatus</td>
                                             <td>
@@ -219,6 +219,57 @@
                                             </td>
                                         </tr>
                                     }
+
+                                    if (item.PaymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.NEED_TO_PAY)
+                                    {
+                                        <tr class="table-danger">
+
+                                            <td>CHE`@item.ID</td>
+                                            <td>
+                                                @if (Model != null)
+                                                {
+                                                    <a href="/Cashier?PreID=CHE+@item.ID"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
+                                                }
+
+                                            </td>
+                                            <td>
+                                                <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.ID);><i class='fa fa-print'></i></button>  &nbsp;
+                                            </td>
+                                            <td>@item.FullName</td>
+                                            <td>@item.MobileNumber</td>
+                                            <td>@item.AppoimentNo</td>
+                                            <td>@item.Description</td>
+                                            <td>-</td>
+                                            <td>@item.ConsultantName</td>
+                                            <td>@item.SpecialistName</td>
+                                            <td>@item.DateTime.ToString("M/d/yyyy dddd h:mm:ss tt")</td>
+                                            <td>@item.CSDate.ToString("M/d/yyyy dddd h:mm:ss tt")</td>
+                                            <td>@item.PaymentStatus</td>
+                                            <td>@item.CSStatus</td>
+                                            <td>
+                                                <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.ID,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
+                                            </td>
+                                            <td>
+                                                <button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.ID);><i class='fa fa-plus'></i></button>
+                                            </td>
+                                            <td>
+                                                @if (@item.CSStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_END && @item.CSStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_CANCEL)
+                                                {
+                                                    @using (Html.BeginForm("DeleteChanneling", "Channeling", new { Id = @item.ID }, FormMethod.Post))
+                                                    {
+                                                        <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger' disabled><i class='fa fa-trash'></i></button>
+
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+
                                     if (item.PaymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.PAID)
                                     {
                                         if (item.ItemIds != null)
@@ -243,8 +294,8 @@
                                                 <td>@item.ItemIds</td>
                                                 <td>@item.ConsultantName</td>
                                                 <td>@item.SpecialistName</td>
-                                                <td>@item.DateTime</td>
-                                                <td>@item.CSDate</td>
+                                                <td>@item.DateTime.ToString("M/d/yyyy dddd h:mm:ss tt")</td>
+                                                <td>@item.CSDate.ToString("M/d/yyyy dddd h:mm:ss tt")</td>
                                                 <td>REFUND</td>
                                                 <td>@item.CSStatus</td>
                                                 <td>
@@ -280,8 +331,8 @@
                                                 <td>-</td>
                                                 <td>@item.ConsultantName</td>
                                                 <td>@item.SpecialistName</td>
-                                                <td>@item.DateTime</td>
-                                                <td>@item.CSDate</td>
+                                                <td>@item.DateTime.ToString("M/d/yyyy dddd h:mm:ss tt")</td>
+                                                <td>@item.CSDate.ToString("M/d/yyyy dddd h:mm:ss tt")</td>
                                                 <td>@item.PaymentStatus</td>
                                                 <td>@item.CSStatus</td>
                                                 <td>
@@ -319,6 +370,15 @@
     <script>
 
         $(document).ready(function () {
+            $("#basic-2").dataTable().fnDestroy();
+            $('#basic-2').dataTable({
+                "dom": '<"top"f>rt<"bottom"lp><"clear">',
+                "paging": false, // Keep pagination if needed
+                "info": false, // Hide table information
+                "lengthChange": false, // Disable the "show entries" dropdown
+                "ordering": false // Disable sorting in all columns
+            });
+
             $('#dropDoctorFilterFrm').select2({
                 width: '100%',
                 height: "auto !important",
@@ -327,8 +387,6 @@
                 placeholder: 'Select one',
                 allowClear: false,
             });
-
-       
         });
 
         $('#paymentFilter').change(function () {

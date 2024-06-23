@@ -2,6 +2,8 @@
 using HospitalMgrSystem.Model.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing.Printing;
+using HospitalMgrSystem.DataAccess;
+using HospitalMgrSystem.Model.DTO;
 
 namespace HospitalMgrSystem.Service.OPD
 {
@@ -209,6 +211,18 @@ namespace HospitalMgrSystem.Service.OPD
 
             }
             return mtList;
+        }
+
+        public List<OpdOtherXrayDataTableDto> GetAllOPDByStatusWithoutXraySP(int onlyForOpdAndOther, DateTime date)
+        {
+            using var context = new HospitalDBContext();
+            var opdOtherDataTable = new List<OpdOtherXrayDataTableDto>();
+
+            opdOtherDataTable = context.Set<OpdOtherXrayDataTableDto>()
+                .FromSqlRaw("EXEC GetAllOpdOtherXrayDataTable @OnlyForOpdAndOther = {0}, @StartDate = {1}", onlyForOpdAndOther, date)
+                .ToList();
+
+            return opdOtherDataTable;
         }
 
         public List<Model.OPD> GetAllOPDByDescription(string desctiption)

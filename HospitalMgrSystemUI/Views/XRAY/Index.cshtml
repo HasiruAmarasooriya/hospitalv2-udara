@@ -1,7 +1,8 @@
-﻿@using Microsoft.Extensions.Configuration
+﻿﻿@using Microsoft.Extensions.Configuration
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+@using HospitalMgrSystem.Model.Enums
 @model OPDDto;
 @{
 }
@@ -149,9 +150,9 @@
                                 <th>QR</th>
                                 <th>Pt's Name</th>
                                 <th>Payment Status</th>
-                                <th>Consultant</th>
                                 <th>Telephone No</th>
                                 <th>Date & Time</th>
+                                <th>Total Amount</th>
 
                                 <th>View</th>
 
@@ -162,9 +163,9 @@
                             @{
                                 decimal? totalAmount = 0;
                             }
-                            @if (Model.listOPDTbDto != null)
+                            @if (Model.listOPDTbDtoSp != null)
                             {
-                                @foreach (var item in Model.listOPDTbDto)
+                                @foreach (var item in Model.listOPDTbDtoSp)
                                 {
                                     <tr>
                                         <td>@item.Id</td>
@@ -185,15 +186,10 @@
                                             </button>
                                         </td>
                                         <td>@item.FullName</td>
-                                        <td>@item.paymentStatus</td>
-                                        <td>
-                                            @if (item.consaltantName != null)
-                                            {
-                                                @item.consaltantName
-                                            }
-                                        </td>
-                                        <td>@item.MobileNumber</td>
+                                        <td>@((PaymentStatus)item.paymentStatus)</td>
+                                        <td>@(item.MobileNumber == "" ? "None" : item.MobileNumber)</td>
                                         <td>@item.DateTime</td>
+                                        <td>@item.Total</td>
 
                                         <td>
                                             <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);>
@@ -216,24 +212,12 @@
 
 
                                     </tr>
-                                    @if (item.TotalAmount != null)
+                                    @if (item.Total != null)
                                     {
-                                        totalAmount = totalAmount + item.TotalAmount;
+                                        totalAmount = totalAmount + item.Total;
                                     }
                                 }
                             }
-
-                            @*                            @if (totalAmount != null)
-                            {
-                            <tr>
-                            <td colspan="3"></td>
-                            <td colspan="2">Total Amount</td>
-                            <td colspan="2">@totalAmount</td>
-                            <td colspan="3"></td>
-                            </tr>
-                            }*@
-
-
                         </tbody>
                     </table>
 
@@ -261,6 +245,17 @@
         var consaltantList;
         var drugusList = [];
         var total = 0;
+
+        $(document).ready(function () {
+            $("#basic-2").dataTable().fnDestroy();
+            $('#basic-2').dataTable({
+                "dom": '<"top"f>rt<"bottom"lp><"clear">',
+                "paging": false, // Keep pagination if needed
+                "info": false, // Hide table information
+                "lengthChange": false, // Disable the "show entries" dropdown
+                "ordering": false // Disable sorting in all columns
+            });
+        });
 
         function changeShift() {
             var isNightShift = document.getElementById("shiftButton").value;

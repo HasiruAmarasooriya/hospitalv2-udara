@@ -94,11 +94,15 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 				}
 				else
 				{
-					Model.ChannelingSchedule result =
-						(from p in dbContext.ChannelingSchedule where p.Id == channelingSchedule.Id select p)
-						.SingleOrDefault();
+					var result = (from p in dbContext.ChannelingSchedule where p.Id == channelingSchedule.Id select p).SingleOrDefault();
 
-					if (channelingSchedule.NoOfAppointment >= result.NoOfAppointment)
+                    var patientCount = dbContext.OPD
+                        .Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.schedularId == channelingSchedule.Id)
+                        .GroupBy(o => o.schedularId)
+                        .Select(g => g.Count())
+                        .SingleOrDefault();
+
+                    if (channelingSchedule.NoOfAppointment >= patientCount)
 					{
 						result.DateTime = channelingSchedule.DateTime;
 						result.NoOfAppointment = channelingSchedule.NoOfAppointment;
@@ -1204,17 +1208,40 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 									.Select(g => new { InvoiceId = g.Key, Total = g.Sum(o => o.price * o.qty) })
 									.ToList();
 
+
 									decimal totalHospitalFeeAmount = 0;
 									if (mtInvoiceItemList != null && HospitalAmountInvoice.Count > 0)
 									{
 										if (mtInvoiceItemList.Count > 0)
 										{
 											scanDetails.HospitalFee = HospitalAmountInvoice[0].Total;
+
+											var opdIdOfInvoice = dbContext.Invoices
+												.Where(o => o.Id == HospitalAmountInvoice[0].InvoiceId)
+												.Select(o => o.ServiceID)
+												.FirstOrDefault();
+
+											var opdItem = dbContext.OPD
+												.Where(o => o.Id == opdIdOfInvoice)
+												.FirstOrDefault();
+
+											if (opdItem?.Description == "Exercise Book") scanDetails.HospitalFee = 100;
 										}
 										foreach (var invoice in HospitalAmountInvoice)
 										{
 											decimal invT = invoice.Total != null ? invoice.Total : 0;
 											totalHospitalFeeAmount = totalHospitalFeeAmount + invT;
+
+											var opdIdOfInvoice = dbContext.Invoices
+												.Where(o => o.Id == invoice.InvoiceId)
+												.Select(o => o.ServiceID)
+												.FirstOrDefault();
+
+											var opdItem = dbContext.OPD
+												.Where(o => o.Id == opdIdOfInvoice)
+												.FirstOrDefault();
+
+											if (opdItem?.Description == "Exercise Book") totalHospitalFeeAmount += 100;
 										}
 
 									}
@@ -1370,8 +1397,8 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 		{
 			using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
 			{
-				List<Model.OPD> mtOPDList = new List<Model.OPD>();
-				List<Model.Invoice> mtInvoiceList = new List<Model.Invoice>();
+				var mtOPDList = new List<Model.OPD>();
+				var mtInvoiceList = new List<Invoice>();
 
 				mtOPDList = dbContext.OPD
 					.Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.schedularId == id)
@@ -1387,7 +1414,7 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 				var invoiceIds = mtInvoiceList.Select(o => o.Id).ToList();
 
 
-				int count = dbContext.InvoiceItems
+				var count = dbContext.InvoiceItems
 					 .Where(o => o.Status == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.Remove && o.billingItemsType == BillingItemsType.Hospital && invoiceIds.Contains(o.InvoiceId))
 					 .Count();
 
@@ -1421,6 +1448,50 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 					 .Count();
 
 				return count;
+			}
+		}
+
+		public int GetTotalFullRefundCount(int id)
+		{
+			using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+			{
+				// Retrieve OPD list filtered by the provided id and other conditions
+				var mtOPDList = dbContext.OPD
+					.Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.schedularId == id)
+					.OrderByDescending(o => o.Id)
+					.ToList();
+
+				// Get the OPD IDs that have a paid status
+				var opdIds = mtOPDList.Where(o => o.paymentStatus == PaymentStatus.PAID).Select(o => o.Id).ToList();
+
+				// Retrieve invoices related to the filtered OPDs
+				var mtInvoiceList = dbContext.Invoices
+					.Where(o => o.Status == 0 && o.InvoiceType == InvoiceType.CHE && opdIds.Contains(o.ServiceID))
+					.OrderByDescending(o => o.Id)
+					.ToList();
+
+				// Get the invoice IDs from the filtered invoices
+				var invoiceIds = mtInvoiceList.Select(o => o.Id).ToList();
+
+				// Get invoice items related to hospital fee refunds
+				var hospitalFeeRefundInvoiceIds = dbContext.InvoiceItems
+					.Where(o => o.Status == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.Remove && o.billingItemsType == BillingItemsType.Hospital && invoiceIds.Contains(o.InvoiceId))
+					.Select(o => o.InvoiceId)
+					.Distinct()
+					.ToList();
+
+				// Get invoice items related to doctor fee refunds
+				var doctorFeeRefundInvoiceIds = dbContext.InvoiceItems
+					.Where(o => o.Status == 0 && o.itemInvoiceStatus == ItemInvoiceStatus.Remove && o.billingItemsType == BillingItemsType.Consultant && invoiceIds.Contains(o.InvoiceId))
+					.Select(o => o.InvoiceId)
+					.Distinct()
+					.ToList();
+
+				// Find the intersection of both lists to get invoices that have both types of refunds
+				var fullRefundInvoiceIds = hospitalFeeRefundInvoiceIds.Intersect(doctorFeeRefundInvoiceIds).ToList();
+
+				// Return the count of invoices with full refunds
+				return fullRefundInvoiceIds.Count();
 			}
 		}
 
@@ -1698,6 +1769,7 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 				result.totalPatientCount = actualPatientCount;
 				result.totalRefundHospitalFeeCount = GetTotalRefundHospitalFeeCount(id);
 				result.totalRefundDoctorFeeCount = GetTotalRefundDoctorFeeCount(id);
+				result.fullRefundCount = GetTotalFullRefundCount(id);
 				result.totalRefundDoctorFeeAmount = GetTotalRefundDoctorFeeAmount(id, result.HospitalFee);
 				result.totalRefundHospitalFeeAmount = GetTotalRefundHospitalFeeAmount(id, result.HospitalFee);
 				result.totalHospitalFeeAmount = GetTotalHospitalFeeAmount(id, result.HospitalFee);
