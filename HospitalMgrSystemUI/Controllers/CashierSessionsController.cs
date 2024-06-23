@@ -27,9 +27,11 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 cashierSessionDto.printDate = DateTime.Now;
                 cashierSessionDto.cashierSession = GetCashierSessionById(cashierSessionDtoData.sessionId);
-                cashierSessionDto.CashierPaymentData =
-                    cashierSessionService.GetCashierSessionPaymentData(cashierSessionDtoData.sessionId);
-                return PartialView("_PartialViewSummary", cashierSessionDto);
+                cashierSessionDto.CashierPaymentData = cashierSessionService.GetCashierSessionPaymentData(cashierSessionDtoData.sessionId);
+                cashierSessionDto.ForwardBookingData = cashierSessionService.GetForwardBookingDataByCashierSessionId(cashierSessionDtoData.sessionId);
+                cashierSessionDto.AmountOfForwardBookingDto = cashierSessionService.GetTotalAmountOfForwardBookingByCashierSessionId(cashierSessionDtoData.sessionId);
+
+				return PartialView("_PartialViewSummary", cashierSessionDto);
             }
             catch (Exception e)
             {
