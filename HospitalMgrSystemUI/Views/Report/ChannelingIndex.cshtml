@@ -150,6 +150,7 @@
 									<th>Bill Count</th>
 									<th>Doctor Refund Count</th>
 									<th>Hospital Refund Count</th>
+									<th>Full Refund Count</th>
 									<th>Hospital Discount Amount</th>
 									<th>Doctor Discount Amount</th>
 									<th>Doctor Fee</th>
@@ -168,6 +169,7 @@
 									decimal? totalAmountOfTotalAmount = 0;
 									int? totalDoctorRefundCount = 0;
 									int? totalHospitalRefundCount = 0;
+									int? totalFullRefundCount = 0;
 									decimal? totalHospitalDiscountAmount = 0;
 									decimal? totalDoctorDiscountAmount = 0;
 									
@@ -184,6 +186,7 @@
 											<td>@item.BillCount</td>
 											<td>@item.DoctorRefundCount</td>
 											<td>@item.HospitalRefundCount</td>
+											<td>@item.FullRefundCount</td>
 											<td>@item.HospitalDiscountAmount</td>
 											<td>@item.DoctorDiscountAmount</td>
 											<td>@item.DoctorAmount</td>
@@ -197,6 +200,7 @@
 										totalBillCount += item.BillCount;
 										totalDoctorRefundCount += item.DoctorRefundCount;
 										totalHospitalRefundCount += item.HospitalRefundCount;
+										totalFullRefundCount += item.FullRefundCount;
 										totalHospitalDiscountAmount += item.HospitalDiscountAmount;
 										totalDoctorDiscountAmount += item.DoctorDiscountAmount;
 
@@ -208,6 +212,7 @@
 										<td>@totalBillCount</td>
 										<td>@totalDoctorRefundCount</td>
 										<td>@totalHospitalRefundCount</td>
+										<td>@totalFullRefundCount</td>
 										<td>@totalHospitalDiscountAmount</td>
 										<td>@totalDoctorDiscountAmount</td>
 										<td>@totalAmountOfDoctorFee</td>
