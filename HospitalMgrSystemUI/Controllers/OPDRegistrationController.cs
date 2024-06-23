@@ -690,7 +690,7 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 try
                 {
-                    return new OPDService().GetAllOPDByStatusWithoutXraySP(1);
+                    return new OPDService().GetAllOPDByStatusWithoutXraySP(1, DateTime.Today);
                 }
                 catch (Exception ex)
                 {
