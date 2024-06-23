@@ -5,7 +5,16 @@ namespace HospitalMgrSystem.Service.Cashier
 {
     public class CashierService : ICashierService
     {
-        public Invoice AddInvoice(Invoice invoice)
+	    public Invoice? GetInvoiceDataByServiceId(int id)
+	    {
+		    using var dbContext = new DataAccess.HospitalDBContext();
+
+		    var result = (from p in dbContext.Invoices where p.ServiceID == id select p).SingleOrDefault();
+
+		    return result;
+	    }
+
+	    public Invoice AddInvoice(Invoice invoice)
         {
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
