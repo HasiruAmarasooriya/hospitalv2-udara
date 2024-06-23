@@ -11,11 +11,12 @@ namespace HospitalMgrSystemUI.Controllers
     {
         public IActionResult Index()
         {
-            ClaimBillDto claimBillDto = new ClaimBillDto
+            var claimBillDto = new ClaimBillDto
             {
                 patientsList = LoadPatients(),
-                consultantsList = LoadConsultants()
-            };
+                consultantsList = LoadConsultants(),
+                claimBillDtos = new ClaimBillService().GetAllClaimBillsSP()
+			};
 
             return View(claimBillDto);
         }
