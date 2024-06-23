@@ -120,6 +120,7 @@ namespace HospitalMgrSystemUI.Controllers
 						oPdDto.OpdRefundDtos = reportsService.GetAllOpdXrayOtherRefundDetailsSp(_OPDDto.StartTime, "OPD");
 						oPdDto.listopdGrugsDto = reportsService.GetAllOpdXrayOtherDrugsSP(_OPDDto.StartTime, "OPD");
 						oPdDto.OpdPaymentDataDto = reportsService.GetAllOPDPaymentsDataSP(_OPDDto.StartTime, "OPD");
+						oPdDto.OpdPaymentDataOfDoctorsDto = reportsService.GetAllOPDPaymentsDataOfOPDDoctorsSP(_OPDDto.StartTime, "OPD");
 
 						return View("OPDIndex", oPdDto);
 
