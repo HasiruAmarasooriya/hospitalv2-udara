@@ -1,13 +1,42 @@
 ﻿using HospitalMgrSystem.DataAccess;
+using HospitalMgrSystem.Model.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace HospitalMgrSystem.Service.ClaimBill
 {
     public class ClaimBillService : IClaimBill
     {
-        public Model.ClaimBill CreateClaimBill(Model.ClaimBill claimBill)
+
+	    public List<ClaimBillDto> GetAllClaimBillsSP()
+	    {
+		    var mtList = new List<ClaimBillDto>();
+		    using (var context = new HospitalDBContext())
+		    {
+			    mtList = context.Set<ClaimBillDto>()
+				    .FromSqlRaw("EXEC GetAllClaimBillHistory")
+				    .ToList();
+
+		    }
+		    return mtList;
+		}
+
+	    public ClaimBillDto? GetAllClaimBillsSP(int id)
+	    {
+		    ClaimBillDto? claimBill;
+
+		    using (var context = new HospitalDBContext())
+		    {
+			    claimBill = context.Set<ClaimBillDto>()
+				    .FromSqlRaw("EXEC GetAllClaimBillHistoryById @Id = {0}", id)
+				    .FirstOrDefault();
+
+		    }
+		    return claimBill;
+	    }
+
+		public Model.ClaimBill CreateClaimBill(Model.ClaimBill claimBill)
         {
-            HospitalDBContext dBContext = new HospitalDBContext();
+            var dBContext = new HospitalDBContext();
 
             try
             {
@@ -17,7 +46,7 @@ namespace HospitalMgrSystem.Service.ClaimBill
                     dBContext.SaveChanges();
                 } else
                 {
-                    Model.ClaimBill claimBillToUpdate = dBContext.ClaimBills.Where(x => x.Id == claimBill.Id).SingleOrDefault();
+                    var claimBillToUpdate = dBContext.ClaimBills.Where(x => x.Id == claimBill.Id).SingleOrDefault();
 
                     claimBillToUpdate.PatientID = claimBill.PatientID;
                     claimBillToUpdate.ConsultantId = claimBill.ConsultantId;
