@@ -73,6 +73,10 @@ namespace HospitalMgrSystem.DataAccess
 		public DbSet<PaymentSummaryOpdXrayOtherDTO> PaymentSummaryOpdXrayOtherDtos { get; set; }
 		public DbSet<ReportOpdXrayOtherDrugs> ReportOpdXrayOtherDrugsDtos { get; set; }
 		public DbSet<OpdOtherXrayDataTableDto> OpdOtherXrayDataTableDtos { get; set; }
+		public DbSet<ClaimBillDto> ClaimBillDtos { get; set; }
+		public DbSet<PaymentSummaryOfDoctorsOPDDTO> PaymentSummaryOfDoctorsOpddtos { get; set; }
+		public DbSet<ForwardBookingDataTableDTO> ForwardBookingDataTableDtos { get; set; }
+		public DbSet<TotalPaidAmountOfForwardBookingDTO> AmountOfForwardBookingDtos { get; set; }
 		#endregion
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
