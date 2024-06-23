@@ -213,13 +213,13 @@ namespace HospitalMgrSystem.Service.OPD
             return mtList;
         }
 
-        public List<OpdOtherXrayDataTableDto> GetAllOPDByStatusWithoutXraySP(int onlyForOpdAndOther)
+        public List<OpdOtherXrayDataTableDto> GetAllOPDByStatusWithoutXraySP(int onlyForOpdAndOther, DateTime date)
         {
             using var context = new HospitalDBContext();
             var opdOtherDataTable = new List<OpdOtherXrayDataTableDto>();
 
             opdOtherDataTable = context.Set<OpdOtherXrayDataTableDto>()
-                .FromSqlRaw("EXEC GetAllOpdOtherXrayDataTable @OnlyForOpdAndOther = {0}", onlyForOpdAndOther)
+                .FromSqlRaw("EXEC GetAllOpdOtherXrayDataTable @OnlyForOpdAndOther = {0}, @StartDate = {1}", onlyForOpdAndOther, date)
                 .ToList();
 
             return opdOtherDataTable;
