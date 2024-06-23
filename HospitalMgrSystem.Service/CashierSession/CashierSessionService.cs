@@ -1,4 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.DTO;
 using HospitalMgrSystem.Model.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +7,29 @@ namespace HospitalMgrSystem.Service.CashierSession
 {
     public class CashierSessionService
     {
-        public Model.CashierSession GetCashierSessionPaymentData(int sessionId)
+	    public List<ForwardBookingDataTableDTO>? GetForwardBookingDataByCashierSessionId(int sessionId)
+	    {
+		    using var context = new DataAccess.HospitalDBContext();
+
+		    var forwardBookingData = context.Set<ForwardBookingDataTableDTO>()
+			    .FromSqlRaw("EXEC GetAllForwardBookingDataByCashierSessionId @sessionId = {0}", sessionId)
+			    .ToList();
+
+		    return forwardBookingData.Count == 0 ? null : forwardBookingData;
+	    }
+
+	    public TotalPaidAmountOfForwardBookingDTO? GetTotalAmountOfForwardBookingByCashierSessionId(int sessionId)
+	    {
+		    using var context = new DataAccess.HospitalDBContext();
+
+		    List<TotalPaidAmountOfForwardBookingDTO?> forwardBookingPayment = context.Set<TotalPaidAmountOfForwardBookingDTO>()
+			    .FromSqlRaw("EXEC GetAllForwardBookingDataWhenDoctorSessionEndsBySessionId @sessionId = {0}", sessionId)
+			    .ToList()!;
+
+		    return forwardBookingPayment[0]!.TotalPaidAmount == 0 ? null : forwardBookingPayment[0];
+		}
+
+		public Model.CashierSession GetCashierSessionPaymentData(int sessionId)
         {
             // Handle not implemented exception
             Model.CashierSession cashierSessionAmounts = new Model.CashierSession();
