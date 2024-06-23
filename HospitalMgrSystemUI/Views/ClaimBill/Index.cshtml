@@ -137,6 +137,63 @@
 	</div>
 </div>
 
+<div class="row">
+	<div class="col-12">
+		<div class="card">
+			<div class="card-body">
+				<h4 class="card-title">Issued Claim Bills</h4>
+
+				<div class="table-responsive">
+					<table id="basic-2" class="display">
+						<thead>
+							<tr>
+
+								<th data-orderable="true">Id</th>
+								<th>Cashier Name</th>
+								<th>Patient Name</th>
+								<th>Mobile Number</th>
+								<th>Reference Number</th>
+								<th>Consultant Name</th>
+								<th>Appointment Number</th>
+								<th>Description</th>
+								<th>Sub Total</th>
+								<th>Discount</th>
+								<th>Total Amount</th>
+								<th>Cash Amount</th>
+								<th>Balance</th>
+								<th>Issued Date</th>
+							</tr>
+						</thead>
+						<tbody id="tblBodyPayments">
+							@foreach (var item in Model.claimBillDtos)
+							{
+								<tr>
+
+									<td>@item.Id</td>
+									<td>@item.IssuedCashier</td>
+									<td>@item.PatientName</td>
+									<td>@item.MobileNumber</td>
+									<td>@item.RefNo</td>
+									<td>@item.ConsuntantName (@item.Specialist)</td>
+									<td>@item.AppoimentNo</td>
+									<td>@item.Description</td>
+									<td>@item.SubTotal</td>
+									<td>@item.Discount</td>
+									<td>@item.TotalAmount</td>
+									<td>@item.CashAmount</td>
+									<td>@item.Balance</td>
+									<td>@item.IssuedDate.ToString("M/d/yyyy dddd h:mm:ss tt")</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
