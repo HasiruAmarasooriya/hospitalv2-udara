@@ -405,7 +405,7 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 try
                 {
-                    return new OPDService().GetAllOPDByStatusWithoutXraySP(0);
+                    return new OPDService().GetAllOPDByStatusWithoutXraySP(0, DateTime.Today);
                 }
                 catch (Exception ex)
                 {
