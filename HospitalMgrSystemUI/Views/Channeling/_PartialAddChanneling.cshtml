@@ -223,8 +223,8 @@
         });
     }
 
-    function select_onchange_patient(value) {
-        var settings = {
+    function select_onchange_patient() {
+        @*var settings = {
             url: "/OPDRegistration/LoadPatientsAjax/" + value,
             "method": "GET",
             "headers": {
@@ -243,7 +243,23 @@
                 $('#txtMonths').val(data.months);
                 $('#txtDays').val(data.days);
             }
-        });
+        });*@
+
+        var age = $('#txtAge').val();
+        var months = $('#txtMonths').val();
+        var days = $('#txtDays').val();
+
+        if (age == "") {
+            $('#txtAge').val("0");
+        }
+
+        if (months == "") {
+            $('#txtMonths').val("0");
+        }
+
+        if (days == "") {
+            $('#txtDays').val("0");
+        }
     }
 
     function handleCheckboxChange() {
@@ -700,6 +716,7 @@
 
                 // Format the date and time
                 const dateTime = new Date(item.dateTime).toLocaleString('en-US', {
+                    weekday: 'long',
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit',
@@ -769,7 +786,7 @@
                             }
                         </select>*@
                         <input class="form-control" type="text" id="patientId" asp-for="opd!.PatientID" hidden />
-                        <input class="form-control" type="text" id="patientName" placeholder="Patient Name" asp-for="opd!.patient!.FullName" />
+                        <input class="form-control" type="text" id="patientName" placeholder="Patient Name" asp-for="opd!.patient!.FullName" onchange="javascript:select_onchange_patient();" />
                     </div>
                 </div>
 
@@ -777,7 +794,7 @@
                     <div class="form-group">
                         <label for="companyName">Mobile Number </label>
 @*                         <input class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" type="tel" maxlength="10" minlength="10" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" required /> *@
-                        <input class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" type="tel" maxlength="10" minlength="10" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber"  onchange="validateMobileNumber()" />
+                        <input class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" type="tel" maxlength="10" minlength="10" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd!.patient!.MobileNumber"  onchange="validateMobileNumber()" />
                         <br />
                         <h6 id="mValidator"></h6>
                     </div>
@@ -786,7 +803,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Sex</label>
-                        <select class="form-control ddlSearchList" id="dropSex" asp-for="opd.patient.Sex">
+                        <select class="form-control ddlSearchList" id="dropSex" asp-for="opd!.patient!.Sex">
                             <option value="0">Select one</option>
                             <option value="1">Male</option>
                             <option value="2">Female</option>
@@ -795,24 +812,24 @@
                     </div>
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Age</label>
-                        <input class="form-control " type="text" id="txtAge" placeholder="Age" asp-for="opd.patient.Age" />
+                        <input class="form-control " type="text" id="txtAge" placeholder="Age" asp-for="opd!.patient!.Age" />
                     </div>
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-2" hidden>
                     <div class="form-group">
                         <label for="companyName">Months</label>
-                        <input class="form-control " type="text" id="txtMonths" placeholder="Months" asp-for="opd.patient.Months" />
+                        <input class="form-control " type="text" id="txtMonths" placeholder="Months" asp-for="opd!.patient!.Months" />
                     </div>
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-2" hidden>
                     <div class="form-group">
                         <label for="companyName">Days</label>
-                        <input class="form-control " type="text" id="txtDays" placeholder="Days" asp-for="opd.patient.Days" />
+                        <input class="form-control " type="text" id="txtDays" placeholder="Days" asp-for="opd!.patient!.Days" />
                     </div>
                 </div>
             </div>
@@ -841,7 +858,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="companyName">Channeling Shedule</label>
+                        <label for="companyName">Channeling Schedule</label>
                         @{
                             if (Model.opdId == 0)
                             {
@@ -849,7 +866,7 @@
                                     <option>Select one</option>
                                     @foreach (var item in Model.listChannelingSchedule)
                                     {
-                                        <option value="@item.Id">@item.DateTime</option>
+                                        <option value="@item.Id">@item.DateTime.ToString("M/d/yyyy dddd h:mm:ss tt")</option>
                                     }
                                 </select>
                             }
