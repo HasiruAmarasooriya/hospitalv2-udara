@@ -223,7 +223,7 @@ public class ChannelingController : Controller
     {
         var oPDChannelingDto = new OPDDto();
         oPDChannelingDto.listConsultants = LoadConsultant();
-        oPDChannelingDto.PatientList = LoadPatient();
+        //oPDChannelingDto.PatientList = LoadPatient();
         oPDChannelingDto.listChannelingSchedule = LoadChannelingShedule();
         oPDChannelingDto.Drugs = DrugsSearch();
 
