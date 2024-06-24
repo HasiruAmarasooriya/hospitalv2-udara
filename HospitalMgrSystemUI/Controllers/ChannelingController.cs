@@ -1048,7 +1048,7 @@ public class ChannelingController : Controller
                     _OPDDto.Description = oPDDto.opd.Description;
                     _OPDDto.appoinmentNo = oPDDto.opd.AppoimentNo;
                     _OPDDto.TotalAmount = OPDobj.HospitalFee + OPDobj.ConsultantFee;
-                    _OPDDto.RoomNumber = OPDobj.RoomID;
+                    _OPDDto.RoomName = new ChannelingScheduleService().SheduleGetById(oPDDto.opd.schedularId).Room?.Name;
                     _OPDDto.ConsultantName = new ConsultantService().GetAllConsultantByID(OPDobj.ConsultantID).Name;
                 }
 

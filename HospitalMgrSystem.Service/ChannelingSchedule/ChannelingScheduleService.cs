@@ -98,9 +98,9 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
 
                     var patientCount = dbContext.OPD
                         .Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && o.schedularId == channelingSchedule.Id)
-                        .GroupBy(o => o.schedularId)
-                        .Select(g => g.Count())
-                        .SingleOrDefault();
+                        .Select(o => o.AppoimentNo)
+                        .Distinct()
+                        .Count();
 
                     if (channelingSchedule.NoOfAppointment >= patientCount)
 					{
