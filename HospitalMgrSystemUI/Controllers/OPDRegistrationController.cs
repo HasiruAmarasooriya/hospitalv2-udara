@@ -303,16 +303,19 @@ namespace HospitalMgrSystemUI.Controllers
         public IActionResult Index(int isPop)
         {
             CreateFirstShift();
-            OPDDto oPDDto = new OPDDto();
-            oPDDto.StartTime = DateTime.Now;
-            oPDDto.EndTime = DateTime.Now;
-            oPDDto.sessionType = -1;
-            oPDDto.paidStatus = -1;
-            oPDDto.isPoP = isPop;
-            oPDDto.patientsList = LoadPatients();
-            oPDDto.consultantList = LoadConsultants();
-            oPDDto.listOPDTbDtoSp = LoadOPD();
-            oPDDto.isNightShift = new DefaultService().GetDefailtShiftStatus();
+            var oPDDto = new OPDDto
+            {
+                StartTime = DateTime.Now,
+                EndTime = DateTime.Now,
+                sessionType = -1,
+                paidStatus = -1,
+                isPoP = isPop,
+                // patientsList = LoadPatients(),
+                consultantList = LoadConsultants(),
+                listOPDTbDtoSp = LoadOPD(),
+                isNightShift = new DefaultService().GetDefailtShiftStatus()
+            };
+
             return View(oPDDto);
         }
 
@@ -386,31 +389,38 @@ namespace HospitalMgrSystemUI.Controllers
 
         public ActionResult CreateOPDReg(int Id)
         {
-            OPDDto oPDDto = new OPDDto();
-            oPDDto.consultantList = LoadActiveConsultants();
-            oPDDto.patientsList = LoadPatients();
-            oPDDto.Drugs = DrugsSearch();
-            decimal consaltantFee = new DefaultService().GetDefailtConsaltantPrice();
-            decimal hospitalFee = new DefaultService().GetDefailtHospitalPrice();
-            OPD opdObject = new OPD();
-            opdObject.ConsultantFee = consaltantFee;
-            opdObject.HospitalFee = hospitalFee;
+            var defaultService = new DefaultService();
+            
+            var oPDDto = new OPDDto
+            {
+                consultantList = LoadActiveConsultants(),
+                // patientsList = LoadPatients(),
+                Drugs = DrugsSearch()
+            };
+
+            var consaltantFee = defaultService.GetDefailtConsaltantPrice();
+            var hospitalFee = defaultService.GetDefailtHospitalPrice();
+
+            var opdObject = new OPD
+            {
+                ConsultantFee = consaltantFee,
+                HospitalFee = hospitalFee
+            };
 
             if (Id > 0)
             {
-                using (var httpClient = new HttpClient())
+                using var httpClient = new HttpClient();
+
+                try
                 {
-                    try
-                    {
-                        oPDDto.opd = new OPDService().GetAllOPDByID(Id);
-                        oPDDto.OPDDrugusList = GetOPDDrugus(Id);
-                        oPDDto.opdId = Id;
-                        return PartialView("_PartialAddOPDRegistration", oPDDto);
-                    }
-                    catch (Exception ex)
-                    {
-                        return RedirectToAction("Index");
-                    }
+                    oPDDto.opd = new OPDService().GetAllOPDByID(Id);
+                    oPDDto.OPDDrugusList = GetOPDDrugus(Id);
+                    oPDDto.opdId = Id;
+                    return PartialView("_PartialAddOPDRegistration", oPDDto);
+                }
+                catch (Exception ex)
+                {
+                    return RedirectToAction("Index");
                 }
             }
             else
