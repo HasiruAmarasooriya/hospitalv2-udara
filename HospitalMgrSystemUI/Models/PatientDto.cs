@@ -1,4 +1,5 @@
-﻿using HospitalMgrSystem.Model.Enums;
+﻿using HospitalMgrSystem.Model.DTO;
+using HospitalMgrSystem.Model.Enums;
 
 namespace HospitalMgrSystemUI.Models
 {
@@ -16,6 +17,8 @@ namespace HospitalMgrSystemUI.Models
         public int Nationality { get; set; }
         public string Address { get; set; }
         public PatientStatus Status { get; set; }
+        public List<PatientsDataTableDTO> PatientsDataTableDtos { get; set; }
+
       
     }
 }
