@@ -391,6 +391,38 @@
                     </div>
                     <div class=" p-2">
                         <button type="submit" class="btn waves-effect waves-light  btn-info">Scan</button>
+
+									@if (Model != null && Model.ChannelingSchedule != null)
+									{
+										if (Model.ChannelingSchedule.DateTime.Date > DateTime.Today)
+										{
+											<button class="btn btn-danger p-2 ml-2 " disabled>Forward Booking</button>
+										}
+
+										switch (Model.ChannelingSchedule.scheduleStatus)
+										{
+											case ChannellingScheduleStatus.SESSION_START:
+												<button class="btn btn-success p-2 ml-2" disabled>@Model.ChannelingSchedule.scheduleStatus</button>
+												break;
+
+											case ChannellingScheduleStatus.SESSION_END:
+												<button class="btn btn-danger p-2 ml-2 " disabled>@Model.ChannelingSchedule.scheduleStatus</button>
+												break;
+
+											case ChannellingScheduleStatus.SESSION_CANCEL:
+												<button class="btn btn-danger p-2 ml-2 " disabled>@Model.ChannelingSchedule.scheduleStatus</button>
+												break;
+
+											case ChannellingScheduleStatus.ACTIVE:
+												<button class="btn btn-primary p-2 ml-2 " disabled>SESSION @Model.ChannelingSchedule.scheduleStatus</button>
+												break;
+
+											default:
+												<button class="btn btn-warning p-2 ml-2 " disabled>SESSION @Model.ChannelingSchedule.scheduleStatus</button>
+												break;
+										}
+
+									}
                     </div>
                     <div class="ml-auto p-2">
                         <button type="button" class="btn btn-danger" onclick=ClearCashier();>CANCEL SALE</button>
