@@ -77,12 +77,14 @@ namespace HospitalMgrSystem.DataAccess
 		public DbSet<PaymentSummaryOfDoctorsOPDDTO> PaymentSummaryOfDoctorsOpddtos { get; set; }
 		public DbSet<ForwardBookingDataTableDTO> ForwardBookingDataTableDtos { get; set; }
 		public DbSet<TotalPaidAmountOfForwardBookingDTO> AmountOfForwardBookingDtos { get; set; }
+		public DbSet<OtherTransactionsDTO> OtherTransactionsDtos { get; set; }
+		public DbSet<PatientsDataTableDTO> PatientsDataTableDtos { get; set; }
 		#endregion
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 	        optionsBuilder.UseSqlServer(ConnectionStrings.PRODUCTION_DATABASE);
-        }
+        } 
 
 	}
 }
