@@ -184,9 +184,9 @@ namespace HospitalMgrSystemUI.Controllers
         {
             try
             {
-                CashierDto cashierDto = new CashierDto();
-                List<BillingItemDto> billingItemDtoList = new List<BillingItemDto>();
-                List<BillingItemDto> billedItemDtoList = new List<BillingItemDto>();
+                var cashierDto = new CashierDto();
+                var billingItemDtoList = new List<BillingItemDto>();
+                var billedItemDtoList = new List<BillingItemDto>();
 
                 decimal subtotal = 0;
                 decimal discount = 0;
@@ -317,7 +317,8 @@ namespace HospitalMgrSystemUI.Controllers
 
                 if (prefix == "CHE")
                 {
-                    OPD opd = new OPDService().GetAllOPDByID(number);
+                    var opd = new OPDService().GetAllOPDByID(number);
+                    cashierDto.ChannelingSchedule = new ChannelingScheduleService().OnlyScheduleGetById(opd.schedularId);
                     cashierDto.opd = opd;
                     cashierDto.consaltantName = opd.consultant != null && opd.consultant.Name != null ? opd.consultant.Name : string.Empty;
 
