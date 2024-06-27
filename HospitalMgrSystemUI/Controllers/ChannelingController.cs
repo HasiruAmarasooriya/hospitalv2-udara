@@ -221,44 +221,47 @@ public class ChannelingController : Controller
     }
     public ActionResult CreateChanneling(int Id)
     {
-        var oPDChannelingDto = new OPDDto();
-        oPDChannelingDto.listConsultants = LoadConsultant();
-        oPDChannelingDto.PatientList = LoadPatient();
-        oPDChannelingDto.listChannelingSchedule = LoadChannelingShedule();
-        oPDChannelingDto.Drugs = DrugsSearch();
-
-        oPDChannelingDto.vogScan = new DefaultService().GetScanChannelingFee(2);
-        oPDChannelingDto.echoScan = new DefaultService().GetScanChannelingFee(3);
-        oPDChannelingDto.exerciseBook = new DefaultService().GetExerciseBookFee();
-        oPDChannelingDto.listChannelingItems = LoadChannelingItems();
+        var oPDChannelingDto = new OPDDto
+        {
+            listConsultants = LoadConsultant(),
+            // oPDChannelingDto.PatientList = LoadPatient();
+            listChannelingSchedule = LoadChannelingShedule(),
+            Drugs = DrugsSearch(),
+            vogScan = new DefaultService().GetScanChannelingFee(2),
+            echoScan = new DefaultService().GetScanChannelingFee(3),
+            exerciseBook = new DefaultService().GetExerciseBookFee(),
+            listChannelingItems = LoadChannelingItems()
+        };
 
         var consaltantFee = new DefaultService().GetDefailtConsaltantPrice();
         var hospitalFee = new DefaultService().GetDefailtHospitalPrice();
 
-        var opdObject = new OPD();
-        opdObject.ConsultantFee = consaltantFee;
-        opdObject.HospitalFee = hospitalFee;
+        var opdObject = new OPD
+        {
+            ConsultantFee = consaltantFee,
+            HospitalFee = hospitalFee
+        };
 
 
         if (Id > 0)
-            using (var httpClient = new HttpClient())
+        {
+            using var httpClient = new HttpClient();
+            try
             {
-                try
-                {
-                    oPDChannelingDto.opd = LoadChannelingByID(Id);
-                    oPDChannelingDto.OPDDrugusList = GetChannelingDrugus(Id);
-                    oPDChannelingDto.opdId = Id;
-                    oPDChannelingDto.channelingSchedule =
-                        new ChannelingScheduleService().SheduleGetById(oPDChannelingDto.opd.schedularId);
-                    oPDChannelingDto.channelingSchedule.ConsultantFee = oPDChannelingDto.opd.ConsultantFee;
-                    oPDChannelingDto.channelingSchedule.HospitalFee = oPDChannelingDto.opd.HospitalFee;
-                    return PartialView("_PartialAddChanneling", oPDChannelingDto);
-                }
-                catch (Exception ex)
-                {
-                    return RedirectToAction("Index");
-                }
+                oPDChannelingDto.opd = LoadChannelingByID(Id);
+                oPDChannelingDto.OPDDrugusList = GetChannelingDrugus(Id);
+                oPDChannelingDto.opdId = Id;
+                oPDChannelingDto.channelingSchedule =
+                    new ChannelingScheduleService().SheduleGetById(oPDChannelingDto.opd.schedularId);
+                oPDChannelingDto.channelingSchedule.ConsultantFee = oPDChannelingDto.opd.ConsultantFee;
+                oPDChannelingDto.channelingSchedule.HospitalFee = oPDChannelingDto.opd.HospitalFee;
+                return PartialView("_PartialAddChanneling", oPDChannelingDto);
             }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index");
+            }
+        }
 
         oPDChannelingDto.opd = opdObject;
         return PartialView("_PartialAddChanneling", oPDChannelingDto);
@@ -729,11 +732,7 @@ public class ChannelingController : Controller
 
         try
         {
-           // await Semaphore.WaitAsync();
-
             //check appoint numer already taken or not
-
-
             var channelingSchedule = new ChannelingSchedule();
             var ScanObj = new Scan();
             var patient = new Patient();
@@ -744,11 +743,7 @@ public class ChannelingController : Controller
             if (channelingSchedule == null) return RedirectToAction("Index");
 
             if (CheckAppoinmentNumberTaken(oPDDto.opd.AppoimentNo, oPDDto.opd.schedularId))
-            {
-                //if apoinment already taken
-                return RedirectToAction("Index");
-            }
-
+                return BadRequest("The appointment number is already taken");
 
             if (oPDDto.scanId != 0) ScanObj = ScanGetByID(oPDDto.scanId);
 
@@ -967,8 +962,6 @@ public class ChannelingController : Controller
 
         try
         {
-            
-
             var channelingSchedule = new ChannelingSchedule();
             var ScanObj = new Scan();
             var patient = new Patient();
@@ -977,11 +970,7 @@ public class ChannelingController : Controller
 
             channelingSchedule = ChannelingScheduleGetByID(oPDDto.opd.schedularId);
             if (channelingSchedule == null) return RedirectToAction("Index");
-            if (CheckAppoinmentNumberTaken(oPDDto.opd.AppoimentNo, oPDDto.opd.schedularId))
-            {
-                //if apoinment already taken
-                return RedirectToAction("Index");
-            }
+            if (CheckAppoinmentNumberTaken(oPDDto.opd.AppoimentNo, oPDDto.opd.schedularId)) return BadRequest("The appointment number is already taken");
 
             if (oPDDto.scanId != 0) ScanObj = ScanGetByID(oPDDto.scanId);
 
