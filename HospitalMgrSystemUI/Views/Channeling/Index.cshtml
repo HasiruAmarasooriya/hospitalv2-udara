@@ -8,7 +8,8 @@
 }
 @inject IConfiguration Configuration
 @section Styles {
-    <style>
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+	<style>
         .select2-selection__rendered {
             line-height: 31px !important;
         }
@@ -127,7 +128,7 @@
             <div class="card-body">
                 
                 <div class="row">
-                    <div class="col-md-10"><h4 class="card-title">Channeling Details</h4></div>
+                    <div class="col-md-10"><h4 class="card-title">Channeling Details (@Model.CHAppoinmentDTO!.Count)</h4></div>
                     <div class="col-md-2 ">
                         <!-- Aligning to the right -->
                         <div class="form-group">
@@ -365,6 +366,7 @@
 
 
 @section scripts {
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script>
@@ -470,6 +472,7 @@
 
                     // Format the date and time
                     const dateTime = new Date(item.dateTime).toLocaleString('en-US', {
+                        weekday: 'long',
                         year: 'numeric',
                         month: '2-digit',
                         day: '2-digit',
