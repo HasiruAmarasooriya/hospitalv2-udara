@@ -27,7 +27,7 @@ namespace HospitalMgrSystemUI.Models
         public string? RoomName { get; set; }
         public string? CreatedUserName { get; set; }
 
-        public OPD? opd { get; set; }
+		public OPD? opd { get; set; }
         public Patient? patient { get; set; }
         public Drug? Drug { get; set; }
         public Investigation? investigation { get; set; }
