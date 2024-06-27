@@ -1,4 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.DTO;
 using HospitalMgrSystem.Service.Patients;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -20,34 +21,19 @@ namespace HospitalMgrSystemUI.Controllers
 
         public IActionResult Index()
         {
-            List<PatientDto> patients = new List<PatientDto>();
+            var patients = new PatientDto();
             using (var httpClient = new HttpClient())
             {
                 try
                 {
-                   var result = new PatientService().GetAllPatientByStatus();
-                    //string APIUrl = _configuration.GetValue<string>("MainAPI:APIURL");
-                    //httpClient.BaseAddress = new Uri(APIUrl + "Patient/");
-                    //var postObj = httpClient.GetFromJsonAsync<List<Patient>>("GetAllPatients");
-                    //postObj.Wait();
-                    //var result = postObj.Result;
+                    var result = new PatientService().GetAllPatientByStatusSP();
 
-                    foreach (var item in result)
-                    {
-                        patients.Add(new PatientDto()
-                        {
-                            Id = item.Id,
-                            Address = item.Address ?? "",
-                            FullName = item.FullName ?? "",
-                            Age = item.Age,
-                            TelephoneNumber = item.TelephoneNumber ?? "",
-                            MobileNumber = item.MobileNumber ?? "",
-                            NIC = item.NIC ?? "",
-                            Sex = (HospitalMgrSystem.Model.Enums.SexStatus)item.Sex
-                        });
-                    }
+                    patients.PatientsDataTableDtos = result;
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                    patients.PatientsDataTableDtos = null;
+                }
             }
             return View(patients);
         }
@@ -78,35 +64,29 @@ namespace HospitalMgrSystemUI.Controllers
                         return RedirectToAction("Index");
                     }
                 }
-            }else
+            }
+            else
                 return PartialView("_PartialAddPatient");
 
 
 
         }
 
-        public IActionResult CreateNewPatient() 
+        public IActionResult CreateNewPatient()
         {
-            using (var httpClient = new HttpClient())
+            using var httpClient = new HttpClient();
+            try
             {
+                myPatient.CreateDate = DateTime.Now;
+                myPatient.ModifiedDate = DateTime.Now;
 
-                try
-                {
-                    //string APIUrl = _configuration.GetValue<string>("MainAPI:APIURL");
-                    myPatient.CreateDate = DateTime.Now;
-                    myPatient.ModifiedDate = DateTime.Now;
-                    new PatientService().CreatePatient(myPatient);
-                    //httpClient.BaseAddress = new Uri(APIUrl + "Patient/");
-                    //var postObj = httpClient.PostAsJsonAsync<Patient>("CreatePatient", myPatient);
-                    //postObj.Wait();
-                    //var res = postObj.Result;
-                    //var result = res.Content.ReadFromJsonAsync<User>().Result;
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    return RedirectToAction("Index");
-                }
+                new PatientService().CreatePatient(myPatient);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index");
             }
         }
 
@@ -158,7 +138,9 @@ namespace HospitalMgrSystemUI.Controllers
                 }
                 catch (Exception ex) { }
             }
-            return View("Index",patients);
+
+            var patientTemp = new PatientDto();
+            return View("Index", patientTemp);
         }
     }
 }
