@@ -1,4 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.DTO;
 using HospitalMgrSystem.Model.Enums;
 using HospitalMgrSystem.Service.Cashier;
 using HospitalMgrSystem.Service.CashierSession;
@@ -575,19 +576,20 @@ namespace HospitalMgrSystemUI.Controllers
             return CashierSessionList;
         }
 
-        private List<OtherTransactions> GetAllOtherTransactions()
+        private List<OtherTransactionsDTO> GetAllOtherTransactions()
         {
-            List<OtherTransactions> otherTransactionsList = new List<OtherTransactions>();
+            using var httpClient = new HttpClient();
+            var otherTransactionsList = new List<OtherTransactionsDTO>();
 
-            using (var httpClient = new HttpClient())
+            try
             {
-                try
-                {
-                    otherTransactionsList = new OtherTransactionsService().GetAllOtherTransactions();
-
-                }
-                catch (Exception ex) { }
+                otherTransactionsList = new OtherTransactionsService().GetAllOtherTransactionsSP();
             }
+            catch (Exception ex)
+            {
+
+            }
+
             return otherTransactionsList;
         }
 
