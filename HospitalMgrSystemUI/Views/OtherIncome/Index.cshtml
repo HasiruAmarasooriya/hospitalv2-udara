@@ -68,6 +68,7 @@
 
 								<th data-orderable="true">SNo</th>
 								<th>Description</th>
+								<th>Beneficiary Name</th>
 								<th>In/Out</th>
 								<th>Amount</th>
 								<th>Date</th>
@@ -84,14 +85,15 @@
 
 									<td>@item.Id</td>
 									<td>@item.Description</td>
+									<td>@item.BeneficiaryName</td>
 									<td>@item.InvoiceType</td>
 									<td>@item.Amount</td>
 									<td>@item.CreateDate</td>
-									<td>@item.otherTransactionsStatus</td>
+									<td>@item.OtherTransactionsStatus</td>
 
-									@if (item.otherTransactionsStatus != HospitalMgrSystem.Model.Enums.OtherTransactionsStatus.Requested)
+									@if (item.OtherTransactionsStatus != HospitalMgrSystem.Model.Enums.OtherTransactionsStatus.Requested)
 									{
-										<td>@item.ApprovedBy.FullName</td>
+										<td>@item.ApprovedBy</td>
 
 									}
 									else
@@ -103,7 +105,7 @@
 									<td>
 										@if (Model != null)
 										{
-											@if (item.otherTransactionsStatus == HospitalMgrSystem.Model.Enums.OtherTransactionsStatus.Requested)
+											@if (item.OtherTransactionsStatus == HospitalMgrSystem.Model.Enums.OtherTransactionsStatus.Requested)
 											{
 
 												@using (Html.BeginForm("ApproveOtherIncome", "OtherIncome", new { Id = @item.Id }, FormMethod.Post))
@@ -114,7 +116,7 @@
 												}
 
 											}
-											@if (item.otherTransactionsStatus == HospitalMgrSystem.Model.Enums.OtherTransactionsStatus.Approved)
+											@if (item.OtherTransactionsStatus == HospitalMgrSystem.Model.Enums.OtherTransactionsStatus.Approved)
 											{
 
 
@@ -155,11 +157,22 @@
 	<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
 	<script>
 
+		$(document).ready(function () {
+			$("#basic-2").dataTable().fnDestroy();
+			$('#basic-2').dataTable({
+				"dom": '<"top"f>rt<"bottom"lp><"clear">',
+				"paging": false, // Keep pagination if needed
+				"info": false, // Hide table information
+				"lengthChange": false, // Disable the "show entries" dropdown
+				"ordering": false // Disable sorting in all columns
+			});
+		});
+
 		$('#transactionFilter').change(function () {
 			var selectedTransactionType = $(this).val();
 
 			$('#basic-2 tbody tr').each(function () {
-				var rowTransactionType = $(this).find('td:eq(2)').text(); // Index of the payment status column (zero-based)
+				var rowTransactionType = $(this).find('td:eq(3)').text(); // Index of the payment status column (zero-based)
 
 				if (selectedTransactionType === '' || rowTransactionType === selectedTransactionType) {
 					$(this).show();
