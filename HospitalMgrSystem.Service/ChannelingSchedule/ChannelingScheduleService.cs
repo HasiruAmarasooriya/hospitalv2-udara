@@ -1861,5 +1861,14 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                 return result;
             }
         }
+
+        public List<Scan> GetAllChannelingItems()
+        {
+            using var dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext();
+
+            var result = (from p in dbContext.ChannelingItems select p).ToList();
+
+            return result;
+        }
     }
 }
