@@ -48,7 +48,7 @@ public class OPD
 
 	[NotMapped] public int? invoiceID { get; set; }
 	[NotMapped] public int OpdType { get; set; }
-	[NotMapped] public ChannelingSchedule channelingScheduleData { get; set; }
+	[NotMapped] public ChannelingSchedule? channelingScheduleData { get; set; }
 	[NotMapped] public int? isRefund { get; set; }
 	[NotMapped] public string? refundedItem { get; set; }
 	[NotMapped] public OPDDrugus? OpdDrugus { get; set; }
