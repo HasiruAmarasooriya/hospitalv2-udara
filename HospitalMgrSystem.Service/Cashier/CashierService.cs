@@ -14,7 +14,30 @@ namespace HospitalMgrSystem.Service.Cashier
 		    return result;
 	    }
 
-	    public Invoice AddInvoice(Invoice invoice)
+	    public Invoice? GetInvoiceDataByServiceIdAndWithoutOtherIncome(int id)
+	    {
+		    using var dbContext = new DataAccess.HospitalDBContext();
+
+		    var result = (from p in dbContext.Invoices where p.ServiceID == id && (p.InvoiceType == InvoiceType.OPD || p.InvoiceType == InvoiceType.CHE) select p).SingleOrDefault();
+
+		    return result;
+	    }
+
+	    public int IncrementThePrintCountUsingServiceId(int serviceId)
+	    {
+		    using var dbContext = new DataAccess.HospitalDBContext();
+
+		    var result = (from p in dbContext.Invoices where p.ServiceID == serviceId && (p.InvoiceType == InvoiceType.OPD || p.InvoiceType == InvoiceType.CHE) select p).SingleOrDefault();
+
+		    if (result == null) return 999;
+
+		    result.PrintCount++;
+		    dbContext.SaveChanges();
+
+		    return (from p in dbContext.Invoices where p.ServiceID == serviceId && (p.InvoiceType == InvoiceType.OPD || p.InvoiceType == InvoiceType.CHE) select p).SingleOrDefault()!.PrintCount;
+	    }
+
+		public Invoice AddInvoice(Invoice invoice)
         {
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
