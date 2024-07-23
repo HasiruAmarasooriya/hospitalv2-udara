@@ -128,17 +128,14 @@ namespace HospitalMgrSystem.Service.OPDSchedule
             return opdSchedulers;
         }
 
-        public List<Model.OPDScheduler> GetActiveOPDSchedulers()
+        public List<OPDScheduler> GetActiveOPDSchedulers()
         {
-            List<Model.OPDScheduler> opdSchedulers = new List<Model.OPDScheduler>();
+	        using var dbContext = new DataAccess.HospitalDBContext();
 
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
-            {
-                opdSchedulers = dbContext.OPDScheduler
-                    .Include(o => o.Consultant)
-                    .Where(o =>  o.Status == Model.Enums.CommonStatus.Active && o.isActiveSession == 1)
-                    .ToList();
-            }
+            var opdSchedulers = dbContext.OPDScheduler
+	            .Include(o => o.Consultant)
+	            .Where(o =>  o.Status == CommonStatus.Active && o.isActiveSession == 1)
+	            .ToList();
 
             return opdSchedulers;
         }
