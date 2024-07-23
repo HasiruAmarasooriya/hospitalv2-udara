@@ -500,6 +500,17 @@ namespace HospitalMgrSystem.Service.CashierSession
             }
         }
 
+        public List<CashierSessionDTO> GetAllCashierSessionSP()
+        {
+            using DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext();
+
+            var cashierSessionDTOs = dbContext.Set<CashierSessionDTO>()
+                .FromSqlRaw("EXEC GetAllCashierSessionDetails")
+                .ToList();
+
+            return cashierSessionDTOs;
+        }
+
         public List<Model.CashierSession> GetAllCashierSession()
         {
             List<Model.CashierSession> mtList = new List<Model.CashierSession>();
