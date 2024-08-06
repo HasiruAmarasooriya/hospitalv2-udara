@@ -1764,8 +1764,6 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
             }
         }
 
-
-
         public Model.ChannelingSchedule SheduleGetById(int id)
         {
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
