@@ -67,7 +67,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="companyName">Specialist</label>
-                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_Specialist(this.value);" asp-for="ChannelingSchedule.Consultant.SpecialistId" id="specialist" disabled="@(Model.ChannelingSchedule != null)">
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_Specialist(this.value);" asp-for="ChannelingSchedule.Consultant.SpecialistId" id="specialist" disabled="@(Model.ChannelingSchedule.Id > 0)">
                             <option value="">Please Select</option>
                             @foreach (var item in Model.Specialists)
                             {
@@ -80,7 +80,7 @@
                 <div class="col-md-8">
                     <div class="form-group">
                         <label for="companyName">Consultant</label>
-                        <select class="form-control ddlSearchList" asp-for="ChannelingSchedule.ConsultantId" id="consultants" disabled="@(Model.ChannelingSchedule != null)">
+                        <select class="form-control ddlSearchList" asp-for="ChannelingSchedule.ConsultantId" id="consultants" disabled="@(Model.ChannelingSchedule.Id > 0)">
                             <option value="0">Select Consultant</option>
                             @foreach (var item in Model.Consultants)
                             {
@@ -93,28 +93,14 @@
                 <div class="col-md-4">
                     <div class="form-group">
 	                    <label for="companyName">Consultant Fee:</label>
-                        @if (Model.ChannelingSchedule == null)
-						{
-                            <input class="form-control " type="text" style="text-align:right;" asp-for="channelingItems[0].DoctorFee" id="DoctorFee" placeholder="Amount" disabled="@(Model.ChannelingSchedule != null)" />
-						}
-                        else
-                        {
-	                        <input class="form-control " type="text" style="text-align:right;" asp-for="ChannelingSchedule.ConsultantFee" id="DoctorFee" placeholder="Amount" disabled="@(Model.ChannelingSchedule != null)" />
-                        }
+                        <input class="form-control " type="text" style="text-align:right;" asp-for="ChannelingSchedule.ConsultantFee" id="DoctorFee" placeholder="Amount" disabled="@(Model.ChannelingSchedule.Id > 0)" />
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <div class="form-group">
 	                    <label for="companyName">Hospital Fee:</label>
-	                    @if (Model.ChannelingSchedule == null)
-	                    {
-                            <input class="form-control " type="text" style="text-align:right;" asp-for="channelingItems[0].HospitalFee" placeholder="Amount" disabled="@(Model.ChannelingSchedule != null)" />
-	                    }
-	                    else
-	                    {
-		                    <input class="form-control " type="text" style="text-align:right;" asp-for="ChannelingSchedule.HospitalFee" placeholder="Amount" disabled="@(Model.ChannelingSchedule != null)" />
-	                    }
+                        <input class="form-control " type="text" style="text-align:right;" asp-for="ChannelingSchedule.HospitalFee" placeholder="Amount" disabled="@(Model.ChannelingSchedule.Id > 0)" />
                     </div>
 
                 </div>
@@ -166,7 +152,7 @@
                 </div>
             </div>
 
-            @if (Model.ChannelingSchedule != null)
+            @if (Model.ChannelingSchedule.Id > 0)
             {
                 <hr/>
                 <div class="row">
