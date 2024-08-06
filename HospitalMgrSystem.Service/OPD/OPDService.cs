@@ -374,11 +374,18 @@ namespace HospitalMgrSystem.Service.OPD
             return mtList;
         }
 
-        public Model.OPD DeleteOPD(int Id)
+        public Model.OPD DeleteOPD(int Id, int userId)
         {
-            using DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext();
-            Model.OPD result = (from p in dbContext.OPD where p.Id == Id select p).SingleOrDefault();
+            using var dbContext = new HospitalDBContext();
+
+            var result = (from p in dbContext.OPD where p.Id == Id select p).SingleOrDefault();
+
+            if (result == null || result.paymentStatus == PaymentStatus.PAID) return null;
+
             result.Status = CommonStatus.Delete;
+            result.ModifiedUser = userId;
+            result.ModifiedDate = DateTime.Now;
+
             dbContext.SaveChanges();
             return result;
         }
