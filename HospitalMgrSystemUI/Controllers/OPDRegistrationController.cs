@@ -444,8 +444,10 @@ namespace HospitalMgrSystemUI.Controllers
                 patient = CreatePatient(oPDDto.patient);
                 if (patient != null)
                 {
-                    decimal hospitalFee = new DefaultService().GetDefailtHospitalPrice();
-                    OPD OPDobj = new OPD();
+                    var hospitalFee = new DefaultService().GetDefailtHospitalPrice();
+                    var OPDobj = new OPD();
+                    var activeOpdSession = new OPDSchedulerService().GetActiveOPDSchedulers();
+
                     oPDDto.opd.PatientID = patient.Id;
                     oPDDto.opd.DateTime = DateTime.Now;
                     oPDDto.opd.RoomID = 1;
@@ -459,6 +461,7 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
                     oPDDto.opd.invoiceType = InvoiceType.OPD;
                     oPDDto.opd.ConsultantFee = 0;
+                    oPDDto.opd.schedularId = activeOpdSession[0].Id;
 
                     if (oPDDto.opd.Id > 0)
                     {
@@ -524,7 +527,9 @@ namespace HospitalMgrSystemUI.Controllers
                 if (patient != null)
                 {
                     decimal hospitalFee = new DefaultService().GetDefailtHospitalPrice();
-                    oPDDto.opd.PatientID = patient.Id;
+                    var activeOpdSession = new OPDSchedulerService().GetActiveOPDSchedulers();
+
+					oPDDto.opd.PatientID = patient.Id;
                     oPDDto.opd.DateTime = DateTime.Now;
                     oPDDto.opd.RoomID = 1;
                     oPDDto.opd.ModifiedUser = Convert.ToInt32(userIdCookie);
@@ -537,9 +542,10 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
                     oPDDto.opd.invoiceType = InvoiceType.OPD;
                     oPDDto.opd.ConsultantFee = 0;
+                    oPDDto.opd.schedularId = activeOpdSession[0].Id;
 
 
-                    if (oPDDto.opd.Id > 0)
+					if (oPDDto.opd.Id > 0)
                     {
                         OPDobj = new OPDService().UpdateOPDStatus(oPDDto.opd, oPDDto.OPDDrugusList);
                     }
@@ -596,9 +602,12 @@ namespace HospitalMgrSystemUI.Controllers
         //Create user modify user details should be include
         public IActionResult DeleteOPD(int Id)
         {
-            try
+	        var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+            var userId = Convert.ToInt32(userIdCookie);
+
+			try
             {
-                new OPDService().DeleteOPD(Id);
+                new OPDService().DeleteOPD(Id, userId);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
