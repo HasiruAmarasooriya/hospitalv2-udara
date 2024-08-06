@@ -526,7 +526,7 @@
 																	@if (Model.invoice.paymentStatus != PaymentStatus.OPD && Model.invoice.CreateDate.Date == DateTime.Today)
 																		@using (Html.BeginForm("RemoveItem", "Cashier", new { Id = @item.BillingItemID, InvoiceType = Model.invoiceType, BillingItemsType = @item.billingItemsType, PreID = Model.PreID, InvoiceID = Model.invoiceID }, FormMethod.Post))
 																		{
-																			<button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>Refund</button>
+																			<button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger' onclick="return confirm('Are you sure you want to Refund this item?');">Refund</button>
 																		}
 																}
 
@@ -557,7 +557,7 @@
 											@if (Model.invoice.paymentStatus != PaymentStatus.OPD && Model.invoice.CreateDate.Date == DateTime.Today)
 												@using (Html.BeginForm("RemoveAllItems", "Cashier", new { Id = @itemIds, InvoiceType = Model.invoiceType, BillingItemsType = @billingItemsTypes, PreID = Model.PreID, InvoiceID = Model.invoiceID }, FormMethod.Post))
 												{
-													<button id='link_copy' class='btn waves-effect waves-light btn-danger'>Refund All</button>
+													<button id='link_copy' class='btn waves-effect waves-light btn-danger' onclick="return confirm('Are you sure you want to Refund All Items?');">Refund All</button>
 												}
 										}
 									}
@@ -875,10 +875,13 @@
 							{
 								@if (Model.invoiceID == 0 || Model.totalDueAmount > 0)
 								{
-									@if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.CASHIER)
+									@if (
+										Model.userRole == UserRole.CASHIER && ((Model.ChannelingSchedule != null && Model.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.SESSION_END) || (Model.opd != null && Model.opd.isOnOPD == 0 && Model.opd.CreateDate.Date == DateTime.Today))
+									)
 									{
 										<button type="submit" class="btn btn-success" onclick="disableButton(this)">END SALE</button>
 									}
+
 
 									@if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.OPDNURSE)
 									{
