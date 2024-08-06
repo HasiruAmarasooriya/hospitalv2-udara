@@ -743,9 +743,9 @@ public class ChannelingController : Controller
             if (channelingSchedule == null) return RedirectToAction("Index");
 
             if (CheckAppoinmentNumberTaken(oPDDto.opd.AppoimentNo, oPDDto.opd.schedularId))
-                return BadRequest("The appointment number is already taken");
+	            return BadRequest("The appointment number is already taken");
 
-            if (oPDDto.scanId != 0) ScanObj = ScanGetByID(oPDDto.scanId);
+			if (oPDDto.scanId != 0) ScanObj = ScanGetByID(oPDDto.scanId);
 
             oPDDto.patient.CreateUser = Convert.ToInt32(userIdCookie);
             oPDDto.patient.ModifiedUser = Convert.ToInt32(userIdCookie);
@@ -789,7 +789,9 @@ public class ChannelingController : Controller
                 if (oPDDto.opd.Id > 0)
                     OPDobj = new OPDService().UpdateOPDStatus(oPDDto.opd, oPDDto.OPDDrugusList);
                 else
-                    OPDobj = new OPDService().CreateOPD(oPDDto.opd);
+					if (CheckAppoinmentNumberTaken(oPDDto.opd.AppoimentNo, oPDDto.opd.schedularId))
+						return BadRequest("The appointment number is already taken");
+					OPDobj = new OPDService().CreateOPD(oPDDto.opd);
 
                 if (oPDDto.isVOGScan == 1)
                 {
@@ -970,9 +972,11 @@ public class ChannelingController : Controller
 
             channelingSchedule = ChannelingScheduleGetByID(oPDDto.opd.schedularId);
             if (channelingSchedule == null) return RedirectToAction("Index");
-            if (CheckAppoinmentNumberTaken(oPDDto.opd.AppoimentNo, oPDDto.opd.schedularId)) return BadRequest("The appointment number is already taken");
 
-            if (oPDDto.scanId != 0) ScanObj = ScanGetByID(oPDDto.scanId);
+            if (CheckAppoinmentNumberTaken(oPDDto.opd.AppoimentNo, oPDDto.opd.schedularId))
+	            return BadRequest("The appointment number is already taken");
+
+			if (oPDDto.scanId != 0) ScanObj = ScanGetByID(oPDDto.scanId);
 
             oPDDto.patient.CreateUser = Convert.ToInt32(userIdCookie);
             oPDDto.patient.ModifiedUser = Convert.ToInt32(userIdCookie);
@@ -1023,7 +1027,9 @@ public class ChannelingController : Controller
                 if (oPDDto.opd.Id > 0)
                     OPDobj = new OPDService().UpdateOPDStatus(oPDDto.opd, oPDDto.OPDDrugusList);
                 else
-                    OPDobj = new OPDService().CreateOPD(oPDDto.opd);
+	                if (CheckAppoinmentNumberTaken(oPDDto.opd.AppoimentNo, oPDDto.opd.schedularId))
+		                return BadRequest("The appointment number is already taken");
+					OPDobj = new OPDService().CreateOPD(oPDDto.opd);
 
                 if (OPDobj != null)
                 {
