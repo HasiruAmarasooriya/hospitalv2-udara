@@ -1,4 +1,6 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.Enums;
+using HospitalMgrSystem.Service.CashierSession;
 using HospitalMgrSystem.Service.ClaimBill;
 using HospitalMgrSystem.Service.Consultant;
 using HospitalMgrSystem.Service.Patients;
@@ -23,28 +25,47 @@ namespace HospitalMgrSystemUI.Controllers
 
         public ActionResult AddNewClaimBill([FromBody] ClaimBillDto claimBillDto)
         {
-            using (var httpClient = new HttpClient())
-            {
+	        var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+	        var userID = Convert.ToInt32(userIdCookie);
 
+			using (var httpClient = new HttpClient())
+            {
                 try
                 {
-                    claimBillDto.dateTime = DateTime.Now;
+	                var sessionId = GetActiveCashierSession(userID)[0].Id;
+
+					var patient = new Patient()
+	                {
+                        FullName = claimBillDto.PatientName,
+                        MobileNumber = claimBillDto.ContactNumber,
+                        CreateDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        NIC = "NONE",
+                        Status = PatientStatus.New
+	                };
+
+                    patient = new PatientService().CreatePatient(patient);
+	                
+	                claimBillDto.dateTime = DateTime.Now;
 
                     claimBillDto.claimBill = new ClaimBill
                     {
-                        PatientID = claimBillDto.claimBill.PatientID,
-                        ConsultantId = claimBillDto.claimBill.ConsultantId,
-                        RefNo = claimBillDto.claimBill.RefNo,
-                        SubTotal = claimBillDto.claimBill.SubTotal,
-                        Discount = claimBillDto.claimBill.Discount,
-                        TotalAmount = claimBillDto.claimBill.TotalAmount,
-                        CashAmount = claimBillDto.claimBill.CashAmount,
-                        Balance = claimBillDto.claimBill.Balance,
-                        CreateDate = claimBillDto.dateTime,
-                        ModifiedDate = claimBillDto.dateTime
+                        PatientID = patient.Id,
+                        ConsultantId = claimBillDto.ConsultantId,
+                        InvoiceId = null,
+                        RefNo = claimBillDto.RefNo,
+                        SubTotal = claimBillDto.SubTotal,
+                        Discount = claimBillDto.Discount,
+                        TotalAmount = claimBillDto.TotalAmount,
+                        CashAmount = claimBillDto.Cash,
+                        Balance = claimBillDto.Balance,
+                        Status = 0,
+                        CsId = sessionId,
+                        CreateDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now
                     };
 
-                    ClaimBillService claimBillService = new ClaimBillService();
+                    var claimBillService = new ClaimBillService();
                     claimBillDto.claimBill = claimBillService.CreateClaimBill(claimBillDto.claimBill);
 
                     return PartialView("_PartialReceipt", claimBillDto);
@@ -111,5 +132,21 @@ namespace HospitalMgrSystemUI.Controllers
             }
             return consultants;
         }
-    }
+
+        private List<CashierSession> GetActiveCashierSession(int id)
+        {
+	        List<CashierSession> CashierSessionList = new List<CashierSession>();
+
+	        using (var httpClient = new HttpClient())
+	        {
+		        try
+		        {
+			        CashierSessionList = new CashierSessionService().GetACtiveCashierSessions(id);
+
+		        }
+		        catch (Exception ex) { }
+	        }
+	        return CashierSessionList;
+        }
+	}
 }
