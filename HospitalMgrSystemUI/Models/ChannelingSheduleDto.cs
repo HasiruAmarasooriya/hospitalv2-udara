@@ -16,5 +16,6 @@ namespace HospitalMgrSystemUI.Models
         public DateTime PreviousDateTime { get; set; }
         public int SpecialistId { get; set; }
         public ChannellingScheduleStatus channellingScheduleStatus { get; set; }
+        public List<Scan> channelingItems { get; set; }
     }
 }
