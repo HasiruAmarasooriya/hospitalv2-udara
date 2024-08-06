@@ -311,9 +311,12 @@ namespace HospitalMgrSystemUI.Controllers
         //Create user modify user details should be include
         public IActionResult DeleteOPD(int Id)
         {
-            try
+	        var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+	        var userId = Convert.ToInt32(userIdCookie);
+
+			try
             {
-                new OPDService().DeleteOPD(Id);
+                new OPDService().DeleteOPD(Id, userId);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
