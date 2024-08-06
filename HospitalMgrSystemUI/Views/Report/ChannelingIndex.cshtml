@@ -67,7 +67,7 @@
 							</div>
 						</div>
 						<div class="col-md-6">
-							<br/>
+							<br />
 							<div class="form-group">
 								<div class="spark-chart form-material">
 									<ol class="list-unstyled d-flex">
@@ -84,46 +84,7 @@
 							</div>
 						</div>
 					</div>
-
 				</form>
-				@using (Html.BeginForm("customSearch", "Report", new { value = 1 }, FormMethod.Post))
-				{
-					<div class="modal-footer d-flex justify-content-between">
-
-						<div class="form-group">
-							<label for="companyName">Invoiced Type</label>
-							<select class="form-control ddlSearchList" id="dropSessionType" asp-for="InvoicedType">
-								<option value="0">OPD</option>
-								<option value="1">Channeling</option>
-								<option value="2">Other</option>
-							</select>
-						</div>
-						<div class="spark-chart form-material">
-							<ol class="list-unstyled d-flex">
-
-								<li class="mr-2">
-									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Today</button>
-								</li>
-
-								<li class="mr-2">
-									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Yesterday</button>
-								</li>
-
-								<li class="mr-2">
-									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Week</button>
-								</li>
-
-								<li class="mr-2">
-									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Month</button>
-								</li>
-
-							</ol>
-						</div>
-
-					</div>
-				}
-
-				<button class="btn waves-effect btn-warning" onclick="printReport()"><i class="fa-solid fa-moon"></i>Download All</button>
 			</div>
 		</div>
 	</div>
@@ -136,7 +97,7 @@
 		<div class="col-12">
 			<div class="card">
 				<div class="card-body">
-					<h4 class="card-title" style="font-weight: bold">Channeling Paid (@Model.listChanneling!.Count)</h4>
+					<h4 class="card-title" style="font-weight: bold">Channeling Paid (@Model.ChannelingPaidReports!.Count)</h4>
 
 					<div class="table-responsive">
 						<table class="table">
@@ -151,8 +112,11 @@
 									<th>Doctor Refund Count</th>
 									<th>Hospital Refund Count</th>
 									<th>Full Refund Count</th>
-									<th>Hospital Discount Amount</th>
-									<th>Doctor Discount Amount</th>
+									<th>Doctor Refund Amount</th>
+									<th>Hospital Refund Amount</th>
+									<th>Full Refund Amount</th>
+									@*<th>Hospital Discount Amount</th>
+								<th>Doctor Discount Amount</th>*@
 									<th>Doctor Fee</th>
 									<th>Hospital Fee</th>
 									<th style="text-align: right;">Total Amount</th>
@@ -160,7 +124,7 @@
 							</thead>
 							<tbody>
 
-								@if (Model.listChanneling != null)
+								@if (Model.ChannelingPaidReports != null)
 								{
 									var i = 1;
 									decimal? totalBillCount = 0;
@@ -172,37 +136,40 @@
 									int? totalFullRefundCount = 0;
 									decimal? totalHospitalDiscountAmount = 0;
 									decimal? totalDoctorDiscountAmount = 0;
-									
-									@foreach (var item in Model.listChanneling)
-									{
-										var totalAmount = item.DoctorAmount + item.HospitalAmount;
+									decimal? totalDoctorRefundAmount = 0;
+									decimal? totalHospitalRefundAmount = 0;
+									decimal? totalFullRefundAmount = 0;
 
+									@foreach (var item in Model.ChannelingPaidReports)
+									{
 										<tr>
 											<td>@i</td>
-											<td>@item.DateTime</td>
-											<td>@item.schedularId</td>
-											<td>@item.consultant!.Name</td>
-											<td>@item.consultant!.Specialist!.Name</td>
+											<td>@item.Date</td>
+											<td>@item.ScheduleId</td>
+											<td>@item.DocName</td>
+											<td>@item.SPName</td>
 											<td>@item.BillCount</td>
 											<td>@item.DoctorRefundCount</td>
 											<td>@item.HospitalRefundCount</td>
 											<td>@item.FullRefundCount</td>
-											<td>@item.HospitalDiscountAmount</td>
-											<td>@item.DoctorDiscountAmount</td>
-											<td>@item.DoctorAmount</td>
-											<td>@item.HospitalAmount</td>
-											<td style="text-align: right;">@totalAmount</td>
+											<td>@item.DoctorRefundAmount</td>
+											<td>@item.HospitalRefundAmount</td>
+											<td>@item.FullRefundAmount</td>
+											<td>@item.DoctorPaidAmount</td>
+											<td>@item.HospitalPaidAmount</td>
+											<td style="text-align: right;">@item.TotalPaidAmount</td>
 										</tr>
 
-										totalAmountOfDoctorFee += item.DoctorAmount;
-										totalAmountOfHospitalFee += item.HospitalAmount;
-										totalAmountOfTotalAmount += totalAmount;
 										totalBillCount += item.BillCount;
 										totalDoctorRefundCount += item.DoctorRefundCount;
 										totalHospitalRefundCount += item.HospitalRefundCount;
 										totalFullRefundCount += item.FullRefundCount;
-										totalHospitalDiscountAmount += item.HospitalDiscountAmount;
-										totalDoctorDiscountAmount += item.DoctorDiscountAmount;
+										totalDoctorRefundAmount += item.DoctorRefundAmount;
+										totalHospitalRefundAmount += item.HospitalRefundAmount;
+										totalFullRefundAmount += item.FullRefundAmount;
+										totalAmountOfDoctorFee += item.DoctorPaidAmount;
+										totalAmountOfHospitalFee += item.HospitalPaidAmount;
+										totalAmountOfTotalAmount += item.TotalPaidAmount;
 
 										i++;
 									}
@@ -213,8 +180,9 @@
 										<td>@totalDoctorRefundCount</td>
 										<td>@totalHospitalRefundCount</td>
 										<td>@totalFullRefundCount</td>
-										<td>@totalHospitalDiscountAmount</td>
-										<td>@totalDoctorDiscountAmount</td>
+										<td>@totalDoctorRefundAmount</td>
+										<td>@totalHospitalRefundAmount</td>
+										<td>@totalFullRefundAmount</td>
 										<td>@totalAmountOfDoctorFee</td>
 										<td>@totalAmountOfHospitalFee</td>
 										<td style="text-align: right;">@totalAmountOfTotalAmount</td>
@@ -235,7 +203,7 @@
 								{
 									<table class="table">
 										<thead class="table-success">
-											<tr>	
+											<tr>
 												<th>@item.consultant!.Name</th>
 												<th>Bill Count</th>
 												<th>Doctor Fee Count</th>
@@ -243,7 +211,7 @@
 												<th>Doctor Fee </th>
 												<th>Doctor Fee Amount</th>
 												<th>Doctor Refund Amount</th>
-											
+
 												<th>Hospital Fee  Count</th>
 												<th>Hospital Refund Count</th>
 												<th>Hospital Fee</th>
@@ -256,43 +224,43 @@
 
 											@if (Model.listChanneling != null)
 											{
-											var i = 1;
-											decimal? totalBillCount = 0;
+												var i = 1;
+												decimal? totalBillCount = 0;
 
-											decimal? totalAmountOfDoctorFee = 0;
-											decimal? totalAmountOfHospitalFee = 0;
-											decimal? totalRefundAmountOfDoctorFee = 0;
-											decimal? totalRefundAmountOfHospitalFee = 0;
+												decimal? totalAmountOfDoctorFee = 0;
+												decimal? totalAmountOfHospitalFee = 0;
+												decimal? totalRefundAmountOfDoctorFee = 0;
+												decimal? totalRefundAmountOfHospitalFee = 0;
 
-											decimal? totalAmountOfTotalAmount = 0;
+												decimal? totalAmountOfTotalAmount = 0;
 
-											int? totalDoctorRefundCount = 0;
-											int? totalHospitalRefundCount = 0;
-										    int? totalDoctorFeeCount = 0;
-										    int? totalHospitalFeeCount = 0;
+												int? totalDoctorRefundCount = 0;
+												int? totalHospitalRefundCount = 0;
+												int? totalDoctorFeeCount = 0;
+												int? totalHospitalFeeCount = 0;
 
 
-											@foreach (var title in item.scanDoctorSessionDetails)
-											{
-												@if (title.ItemName != null && title.ItemName != "")
+												@foreach (var title in item.scanDoctorSessionDetails)
 												{
+													@if (title.ItemName != null && title.ItemName != "")
+													{
 														var totalAmount = title.totalDoctorFeeAmount + title.totalHospitalFeeAmount;
-													<tr>
-														<td>@title.ItemName</td>
-														<td>@title.TotalChannelingWithoutRefund</td>
-														<td>@title.totalDoctorFeeCount</td>
-														<td>@title.totalDoctorFeeRefundCount</td>
-														<td>@title.DoctorFee</td>
-														<td>@title.totalDoctorFeeAmount</td>
-														<td>@title.totalRefundDoctorFeeAmount</td>
+														<tr>
+															<td>@title.ItemName</td>
+															<td>@title.TotalChannelingWithoutRefund</td>
+															<td>@title.totalDoctorFeeCount</td>
+															<td>@title.totalDoctorFeeRefundCount</td>
+															<td>@title.DoctorFee</td>
+															<td>@title.totalDoctorFeeAmount</td>
+															<td>@title.totalRefundDoctorFeeAmount</td>
 
-														<td>@title.totalHospitalFeeCount</td>
-														<td>@title.totalHospitalFeeRefundCount</td>
-														<td>@title.HospitalFee</td>
-														<td>@title.totalHospitalFeeAmount</td>
-														<td>@title.totalRefundHospitalFeeAmount</td>
-													    <td style="text-align: right;">@totalAmount</td>
-													</tr>
+															<td>@title.totalHospitalFeeCount</td>
+															<td>@title.totalHospitalFeeRefundCount</td>
+															<td>@title.HospitalFee</td>
+															<td>@title.totalHospitalFeeAmount</td>
+															<td>@title.totalRefundHospitalFeeAmount</td>
+															<td style="text-align: right;">@totalAmount</td>
+														</tr>
 
 														totalAmountOfTotalAmount += totalAmount;
 
@@ -309,13 +277,13 @@
 														totalBillCount += title.TotalChannelingWithoutRefund;
 
 
-			
+
 
 														i++;
 
-												}
+													}
 
-											}
+												}
 
 												<tr class="table-success" style="font-weight: bold">
 													<td>Total</td>
@@ -335,16 +303,16 @@
 
 													<td style="text-align: right;">@totalAmountOfTotalAmount</td>
 												</tr>
-											
-										}
+
+											}
 										</tbody>
 									</table>
-									
+
 								}
 							}
 
 
-					}
+						}
 
 					</div>
 
@@ -357,57 +325,156 @@
 									<th>No</th>
 									<th>Invoice ID</th>
 									<th>OPD ID</th>
-									<th>Issued By</th>
+									<th>Schedule Id</th>
+									<th>Doctor Name</th>
 									<th>Cashier</th>
 									<th>Issued Date</th>
-									<th style="text-align: right;">Total Old Paid Amount</th>
-									<th style="text-align: right;">Total Paid Amount</th>
-									<th style="text-align: right;">Total Refund</th>
-									<th style="text-align: right;">To be refunded</th>
+									<th style="text-align: right;">Refund Amount</th>
 								</tr>
 							</thead>
 							<tbody>
-								@if (Model.listNeedToPayChanneling != null && Model.listNeedToPayChanneling.Count > 0)
+								@if (Model.ChannelingRefundReportDtos != null && Model.ChannelingRefundReportDtos.Count > 0)
 								{
 									var i = 1;
-									decimal totalAmountOfTotalOldAmount = 0;
-									decimal totalAmountOfTotalPaidAmount = 0;
 									decimal totalAmountOfTotalRefund = 0;
-									decimal totalAmountOfTotalNeedToRefund = 0;
 
-									@foreach (var item in Model.listNeedToPayChanneling)
+									@foreach (var item in Model.ChannelingRefundReportDtos)
 									{
 										<tr>
 											<td>@i</td>
-											<td>@item.invoiceID</td>
+											<td>@item.InvoiceId</td>
 											<td>@item.Id</td>
-											<td>@item.cashier.FullName</td>
-											<td>@item.issuedUser.FullName</td>
-											<td>@item.CreateDate</td>
-											<td style="text-align: right;">@item.TotalOldAmount</td>
-											<td style="text-align: right;">@item.TotalPaidAmount</td>
-											<td style="text-align: right;">@item.TotalRefund</td>
-											<td style="text-align: right;">@item.TotalNeedToRefund</td>
+											<td>@item.SchedularId</td>
+											<td>@item.DocName</td>
+											<td>@item.RefundedBy</td>
+											<td>@item.RefundedDate</td>
+											<td style="text-align: right;">@item.Total</td>
 										</tr>
 
-										totalAmountOfTotalOldAmount += (item.TotalOldAmount ?? 0m);
-										totalAmountOfTotalPaidAmount += (item.TotalPaidAmount ?? 0m);
-										totalAmountOfTotalRefund += (item.TotalRefund ?? 0m);
-										totalAmountOfTotalNeedToRefund += (item.TotalNeedToRefund ?? 0m);
+										totalAmountOfTotalRefund += (item.Total);
 										i++;
 									}
 
 									<tr class="table-danger" style="font-weight: bold">
-										<td colspan="6">Total</td>
-										<td style="text-align: right;">@totalAmountOfTotalOldAmount</td>
-										<td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
+										<td colspan="7">Total</td>
 										<td style="text-align: right;">@totalAmountOfTotalRefund</td>
-										<td style="text-align: right;">@totalAmountOfTotalNeedToRefund</td>
 									</tr>
 								}
 								else
 								{
 									<tr class="table-danger">
+										<td colspan="10" style="text-align: center; font-weight: bold">No Records Available</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+
+					<br />
+					<h4 class="card-title" style="font-weight: bold">Forward Booking</h4>
+
+					<div class="table-responsive">
+						<table class="table">
+							<thead class="table-success">
+								<tr>
+									<th>Id</th>
+									<th>Scheduler Id</th>
+									<th>Doctor Name</th>
+									<th>Schedule Date</th>
+									<th style="text-align: right;">Paid Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								@if (Model.ForwardBookingDataTableDtos != null && Model.ForwardBookingDataTableDtos.Count > 0)
+								{
+									var i = 1;
+									decimal totalAmountOfPaid = 0;
+
+									@foreach (var item in Model.ForwardBookingDataTableDtos)
+									{
+										<tr>
+											<td>@i</td>
+											<td>@item.ScheduleId</td>
+											<td>@item.DoctorName</td>
+											<td>@item.ScheduleDate</td>
+											<td style="text-align: right;">@item.PaidAmount</td>
+										</tr>
+
+										totalAmountOfPaid += item.PaidAmount;
+										i++;
+									}
+
+									<tr class="table-success" style="font-weight: bold">
+										<td colspan="4">Total</td>
+										<td style="text-align: right;">@totalAmountOfPaid</td>
+									</tr>
+								}
+								else
+								{
+									<tr class="table-success">
+										<td colspan="10" style="text-align: center; font-weight: bold">No Records Available</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+
+
+					<br />
+					<h4 class="card-title" style="font-weight: bold">Previous Forward Booking</h4>
+					@{
+						decimal totalAmountOfPaidForwardBooking = 0;
+					}
+
+					<div class="table-responsive">
+						<table class="table">
+							<thead class="table-success">
+								<tr>
+									<th>No.</th>
+									<th>Id</th>
+									<th>Opd Id</th>
+									<th>Invoice Id</th>
+									<th>FullName</th>
+									<th>Appointment No</th>
+									<th>Doctor Name</th>
+									<th>Doctor Paid By</th>
+									<th>Registered Date</th>
+									<th style="text-align: right;">Total Paid Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								@if (Model.PreviousForwardBookingDataDtos != null && Model.PreviousForwardBookingDataDtos.Count > 0)
+								{
+									var i = 1;
+
+
+									@foreach (var item in Model.PreviousForwardBookingDataDtos)
+									{
+										<tr>
+											<td>@i</td>
+											<td>@item.Id</td>
+											<td>@item.OpdId</td>
+											<td>@item.InvoiceId</td>
+											<td>@item.FullName</td>
+											<td>@item.AppoimentNo</td>
+											<td>@item.DocName</td>
+											<td>@item.DoctorPaidBy</td>
+											<td>@item.RegisteredDate</td>
+											<td style="text-align: right;">@item.TotalPaidAmount</td>
+										</tr>
+
+										totalAmountOfPaidForwardBooking += item.TotalPaidAmount;
+										i++;
+									}
+
+									<tr class="table-success" style="font-weight: bold">
+										<td colspan="9">Total</td>
+										<td style="text-align: right;">@totalAmountOfPaidForwardBooking</td>
+									</tr>
+								}
+								else
+								{
+									<tr class="table-success">
 										<td colspan="10" style="text-align: center; font-weight: bold">No Records Available</td>
 									</tr>
 								}
@@ -425,7 +492,7 @@
 				<div class="card-body">
 					<h3 class="card-title" style="text-align: center;">Channeling Payment Summary</h3>
 					<div class="table-responsive">
-						@if (Model.StartTime != null && Model.EndTime != null && Model.channelingPaymentData != null)
+						@if (Model.StartTime != null && Model.EndTime != null && Model.ChannelingPaymentSummaryReportDtos[0] != null)
 						{
 							<table class="table">
 								<thead class="table-success">
@@ -439,17 +506,25 @@
 									</tr>
 									<tr>
 										<th style="text-align: right;">Total Amount:</th>
-										<th style="text-align: left;">@Model.channelingPaymentData.TotalAmountOld LKR</th>
+										<th style="text-align: left;">@(Model.ChannelingPaymentSummaryReportDtos[0].TotalPaid + Model.ChannelingPaymentSummaryReportDtos[0].TotalRefund) LKR</th>
 									</tr>
 									<tr>
 										<th style="text-align: right;">Total Refunded Amount:</th>
-										<th style="text-align: left;">@Model.channelingPaymentData.TotalAmountRefunded LKR</th>
+										<th style="text-align: left;">@Model.ChannelingPaymentSummaryReportDtos[0].TotalRefund LKR</th>
 									</tr>
 								</thead>
 								<tbody class="table-primary">
 									<tr>
 										<th style="text-align: right;">Total Paid Amount:</th>
-										<th style="text-align: left;">@Model.channelingPaymentData.TotalPaidAmount LKR</th>
+										<th style="text-align: left;">@Model.ChannelingPaymentSummaryReportDtos[0].TotalPaid LKR</th>
+									</tr>
+									<tr>
+										<th style="text-align: right;">Total Forward Booking Amount:</th>
+										<th style="text-align: left;">@totalAmountOfPaidForwardBooking LKR</th>
+									</tr>
+									<tr>
+										<th style="text-align: right;">Total Paid Amount With Forward Booking:</th>
+										<th style="text-align: left;">@(Model.ChannelingPaymentSummaryReportDtos[0].TotalPaid - totalAmountOfPaidForwardBooking) LKR</th>
 									</tr>
 								</tbody>
 							</table>

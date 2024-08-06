@@ -84,46 +84,7 @@
 							</div>
 						</div>
 					</div>
-
 				</form>
-				@using (Html.BeginForm("customSearch", "Report", new { value = 1 }, FormMethod.Post))
-				{
-					<div class="modal-footer d-flex justify-content-between">
-
-						<div class="form-group">
-							<label for="companyName">Invoiced Type</label>
-							<select class="form-control ddlSearchList" id="dropSessionType" asp-for="InvoicedType">
-								<option value="0">OPD</option>
-								<option value="1">Channeling</option>
-								<option value="2">Other</option>
-							</select>
-						</div>
-						<div class="spark-chart form-material">
-							<ol class="list-unstyled d-flex">
-
-								<li class="mr-2">
-									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Today</button>
-								</li>
-
-								<li class="mr-2">
-									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Yesterday</button>
-								</li>
-
-								<li class="mr-2">
-									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Week</button>
-								</li>
-
-								<li class="mr-2">
-									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Month</button>
-								</li>
-
-							</ol>
-						</div>
-
-					</div>
-				}
-
-				<button class="btn waves-effect btn-warning" onclick="printReport()"><i class="fa-solid fa-moon"></i>Download All</button>
 			</div>
 		</div>
 	</div>
@@ -204,6 +165,7 @@
 							<tr>
 								<th>No</th>
 								<th>Doctor Name</th>
+								<th>Bill Count</th>
 								<th style="text-align: right;">Total Amount</th>
 								<th style="text-align: right;">Total Refund Amount</th>
 								<th style="text-align: right;">Total Paid Amount</th>
@@ -214,6 +176,7 @@
 								@if (Model.OpdPaymentDataOfDoctorsDto != null)
 							{
 								var i = 1;
+								int totalBillCount = 0;
 								decimal totalAmountOfTotalAmount = 0;
 								decimal totalRefundAmount = 0;
 								decimal totalPaidAmount = 0;
@@ -222,10 +185,12 @@
 									<tr>
 										<td>@i</td>
 										<td>@item.ConsultantName</td>
+										<td>@item.BillCount</td>
 										<td style="text-align: right;">@item.TotalAmount</td>
 										<td style="text-align: right;">@item.TotalRefundAmount</td>
 										<td style="text-align: right;">@item.TotalPaidAmount</td>
 									</tr>
+									totalBillCount += item.BillCount;
 									totalAmountOfTotalAmount += item.TotalAmount;
 									totalRefundAmount += item.TotalRefundAmount;
 									totalPaidAmount += item.TotalPaidAmount;
@@ -235,6 +200,7 @@
 
 								<tr class="table-success" style="font-weight: bold">
 									<td colspan="2">Total</td>
+									<td>@totalBillCount</td>
 									<td style="text-align: right;">@totalAmountOfTotalAmount</td>
 									<td style="text-align: right;">@totalRefundAmount</td>
 									<td style="text-align: right;">@totalPaidAmount</td>
