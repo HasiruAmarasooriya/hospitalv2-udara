@@ -126,9 +126,12 @@ namespace HospitalMgrSystemUI.Controllers
 
 					// If the user selects the Channeling option
 					case 1:
-						oPdDto.listChanneling = reportsService.GetAllChannelingConsultantsGroups2(_OPDDto.StartTime, _OPDDto.EndTime);
-						oPdDto.listNeedToPayChanneling = reportsService.GetAllChannelingByDateRangeAndNeedToPayStatus2(_OPDDto.StartTime, _OPDDto.EndTime);
-						oPdDto.channelingPaymentData = reportsService.GetAllChannelingPaymentsData(_OPDDto.StartTime, _OPDDto.EndTime);
+						oPdDto.listChanneling = reportsService.GetAllChannelingItemsData(_OPDDto.StartTime, _OPDDto.EndTime);
+						oPdDto.ChannelingPaidReports = reportsService.GetAllChannelingPaidReports(_OPDDto.StartTime);
+                        oPdDto.ChannelingRefundReportDtos = reportsService.GetAllChannelingRefundReportByDate(_OPDDto.StartTime);
+						oPdDto.ChannelingPaymentSummaryReportDtos = reportsService.GetAllChannelingPaymentsSummaryReportByDate(_OPDDto.StartTime);
+						oPdDto.ForwardBookingDataTableDtos = reportsService.GetAllForwardBookingDataForReportByDate(_OPDDto.StartTime);
+						oPdDto.PreviousForwardBookingDataDtos = reportsService.GetPreviousForwardBookingData(_OPDDto.StartTime);
 
 						return View("ChannelingIndex", oPdDto);
 
