@@ -84,6 +84,10 @@ namespace HospitalMgrSystem.DataAccess
         public DbSet<OtherTransactionsDTO> OtherTransactionsDtos { get; set; }
         public DbSet<PatientsDataTableDTO> PatientsDataTableDtos { get; set; }
         public DbSet<CashierSessionDTO> CashierSessionDtos { get; set; }
+        public DbSet<ChannelingPaidReport> ChannelingPaidReports { get; set; }
+        public DbSet<PreviousForwardBookingDataDto> PreviousForwardBookingDataDtos { get; set; }
+        public DbSet<ChannelingRefundReportDto> ChannelingRefundReportDtos { get; set; }
+        public DbSet<ChannelingPaymentSummaryReportDto> ChannelingPaymentSummaryReportDtos { get; set; }
 
         #endregion
 
