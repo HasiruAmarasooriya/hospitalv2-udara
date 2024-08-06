@@ -114,11 +114,11 @@ namespace HospitalMgrSystemUI.Controllers
 
         public ActionResult CreateChannelShedule(int Id)
         {
-            ChannelingSheduleDto channelingSheduleDto = new ChannelingSheduleDto();
+            var channelingSheduleDto = new ChannelingSheduleDto();
             channelingSheduleDto.Specialists = LoadSpecialists();
             channelingSheduleDto.Consultants = LoadConsultants();
             channelingSheduleDto.Rooms = LoadRooms();
-            channelingSheduleDto.channelingItems = new ChannelingScheduleService().GetAllChannelingItems();
+            var channelingItems = new ChannelingScheduleService().GetAllChannelingItems();
 
             if (Id > 0)
             {
@@ -136,6 +136,13 @@ namespace HospitalMgrSystemUI.Controllers
                     }
                 }
             }
+
+            channelingSheduleDto.ChannelingSchedule = new ChannelingSchedule
+            {
+                ConsultantFee = channelingItems[0].DoctorFee,
+                HospitalFee = channelingItems[0].HospitalFee,
+                DateTime = DateTime.Now
+            };
 
             return PartialView("_PartialAddChannelingShedule", channelingSheduleDto);
         }
