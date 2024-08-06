@@ -208,14 +208,13 @@
                                                 {
                                                     @using (Html.BeginForm("DeleteChanneling", "Channeling", new { Id = @item.ID }, FormMethod.Post))
                                                     {
-                                                        <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+                                                        <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger' onclick="return confirm('Are you sure you want to delete this item?');"><i class='fa fa-trash'></i></button>
 
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger' disabled><i class='fa fa-trash'></i></button>
-
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger' onclick="return confirm('Are you sure you want to delete this item?');" disabled><i class='fa fa-trash'></i></button>
                                                 }
                                             </td>
                                         </tr>
@@ -258,14 +257,12 @@
                                                 {
                                                     @using (Html.BeginForm("DeleteChanneling", "Channeling", new { Id = @item.ID }, FormMethod.Post))
                                                     {
-                                                        <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
-
+                                                        <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger' onclick="return confirm('Are you sure you want to delete this item?');"><i class='fa fa-trash'></i></button>
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger' disabled><i class='fa fa-trash'></i></button>
-
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger' onclick="return confirm('Are you sure you want to delete this item?');" disabled><i class='fa fa-trash'></i></button>
                                                 }
                                             </td>
                                         </tr>
