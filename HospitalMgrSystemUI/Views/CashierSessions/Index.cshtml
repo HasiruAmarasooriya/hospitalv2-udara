@@ -92,7 +92,7 @@
                                     <td>
                                         @using (Html.BeginForm("UpdateCashierSessionStatus", "CashierSessions", new { Id = @item.Id }, FormMethod.Post))
                                         {
-                                            if (item.cashierSessionStatus == HospitalMgrSystem.Model.Enums.CashierSessionStatus.END && item.userRole == HospitalMgrSystem.Model.Enums.UserRole.CASHIER)
+                                            if (item.cashierSessionStatus == HospitalMgrSystem.Model.Enums.CashierSessionStatus.END && item.userRole == HospitalMgrSystem.Model.Enums.UserRole.CASHIER && item.StartingTime.Date == DateTime.Today)
                                             {
                                                 <button id='link_copy' class='btn waves-effect waves-light btn-sm btn-danger' onclick="return confirm('Are you sure you want to Restart this Session?');">
                                                     <i class='fa fa-edit'></i>
