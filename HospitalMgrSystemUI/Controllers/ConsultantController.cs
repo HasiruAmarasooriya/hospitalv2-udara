@@ -47,26 +47,27 @@ namespace HospitalMgrSystemUI.Controllers
 
         public IActionResult AddNewConsultant()
         {
-            using (var httpClient = new HttpClient())
+            using var httpClient = new HttpClient();
+            try
             {
+                var APIUrl = _configuration.GetValue<string>("MainAPI:APIURL");
 
-                try
-                {
-                    string APIUrl = _configuration.GetValue<string>("MainAPI:APIURL");
-                    viewConsultant.Consultant.CreateDate = DateTime.Now;
-                    viewConsultant.Consultant.ModifiedDate = DateTime.Now;
-                    viewConsultant.Consultant.Status = 0;
-                    httpClient.BaseAddress = new Uri(APIUrl + "Consultant/");
-                    var postObj = httpClient.PostAsJsonAsync<Consultant>("CreateConsultant", viewConsultant.Consultant);
-                    postObj.Wait();
-                    var res = postObj.Result;
-                    var result = res.Content.ReadFromJsonAsync<User>().Result;
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    return RedirectToAction("Index");
-                }
+                viewConsultant.Consultant.CreateDate = DateTime.Now;
+                viewConsultant.Consultant.ModifiedDate = DateTime.Now;
+                viewConsultant.Consultant.Status = 0;
+
+                httpClient.BaseAddress = new Uri(APIUrl + "Consultant/");
+                var postObj = httpClient.PostAsJsonAsync("CreateConsultant", viewConsultant.Consultant);
+                postObj.Wait();
+
+                var res = postObj.Result;
+                var result = res.Content.ReadFromJsonAsync<User>().Result;
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index");
             }
         }
 
