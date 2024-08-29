@@ -4,258 +4,260 @@
 *@
 @model OPDDto;
 @{
-
 }
 @inject IConfiguration Configuration
 <script type="text/javascript">
-    var selectedID = 0;
+	var selectedID = 0;
+
+	function submitChannelingAddOn(mode) {
+
+		var opdID = $('#opdIndexNumber').val();
+
+		var slValue = parseInt($('#drpAddOn').val());
+
+		var opdObject = {
+			Id: opdID
+		};
+
+		var opdDtoObject = {
+			opd: opdObject,
+			scanId: slValue
+		};
+
+		var jsonOb = JSON.stringify(opdDtoObject);
+		console.log(opdDtoObject);
+		if (slValue != 0) {
+			if (mode == 1) {
+				$.ajax({
+					url: '/Channeling/AddOnWithQR',
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify(opdDtoObject),
+					success: function (data) {
+						$("#AddEditContainerModel").html(data);
+					},
+					error: function (error) {
+						console.error('Error submitting drugus items:', error);
+					}
+				});
+
+			}
+			else {
+				$.ajax({
+					url: '/Channeling/AddOn',
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify(opdDtoObject),
+					success: function (data) {
+						window.location.href = '/Channeling/Index';
+					},
+					error: function (error) {
+						console.error('Error submitting drugus items:', error);
+					}
+				});
+			}
+		}
 
 
+	}
 
-    function submitChannelingAddOn(mode) {
+	function select_onchange_addon(value) {
+		const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+		var hpFeeToatal = 0;
+		var drFeeToatal = 0;
+		var subTotalAddon = 0;
 
-        var opdID = $('#opdIndexNumber').val();
+		if (value != null && value != 0) {
 
-        var slValue = parseInt($('#drpAddOn').val());
+			if (value == 564) {
 
-        var opdObject = {
-            Id: opdID
-        };
+				selectedID == 564;
+				hpFeeToatal = parseFloat($('#exersiceBookFee').val());
+				drFeeToatal = 0;
+				subTotalAddon = hpFeeToatal;
+				$('#doctorFeeAddOn').val(drFeeToatal);
+				$('#hospitalFeeAddon').val(hpFeeToatal);
+				$('#subTotalAddOn').val(subTotalAddon);
 
-        var opdDtoObject = {
-            opd: opdObject,
-            scanId: slValue
-        };
+			} else if (value == 948) {
 
-        var jsonOb = JSON.stringify(opdDtoObject);
-        console.log(opdDtoObject);
-        if (slValue != 0) {
-            if (mode == 1) {
-                $.ajax({
-                    url: '/Channeling/AddOnWithQR',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(opdDtoObject),
-                    success: function (data) {
-                        $("#AddEditContainerModel").html(data);
-                    },
-                    error: function (error) {
-                        console.error('Error submitting drugus items:', error);
-                    }
-                });
+				selectedID == 948;
+				hpFeeToatal = parseFloat($('#clinicBookFee').val());
+				drFeeToatal = 0;
+				subTotalAddon = hpFeeToatal;
+				$('#doctorFeeAddOn').val(drFeeToatal);
+				$('#hospitalFeeAddon').val(hpFeeToatal);
+				$('#subTotalAddOn').val(subTotalAddon);
 
-            }
-            else {
-                $.ajax({
-                    url: '/Channeling/AddOn',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(opdDtoObject),
-                    success: function (data) {                   
-                        window.location.href = '/Channeling/Index';
-                    },
-                    error: function (error) {
-                        console.error('Error submitting drugus items:', error);
-                    }
-                });
-            }
-        }
-       
+			} else if (value == 100) {
+				var csId = $('#consultantId').val();
 
-    }
+				var settings = {
+					"url": commonUrl + "ChannelingShedule/GetAllSheduleGetByConsultantId?Id=" + csId,
+					"method": "GET",
+					"headers": {
+						"Accept": "application/json",
+						"Content-Type": "application/json"
+					},
+				};
 
+				$.ajax(settings).done(function (response) {
+					console.log(response);
 
+					selectedID = value;
+					hpFeeToatal = parseFloat(response[0].hospitalFee);
+					drFeeToatal = parseFloat(response[0].consultantFee);
+					subTotalAddon = hpFeeToatal + drFeeToatal;
+					$('#doctorFeeAddOn').val(drFeeToatal);
+					$('#hospitalFeeAddon').val(hpFeeToatal);
+					$('#subTotalAddOn').val(subTotalAddon);
+				});
+			} else {
 
-    function select_onchange_addon(value) {
-        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
-        var hpFeeToatal = 0;
-        var drFeeToatal = 0;
-        var subTotalAddon = 0;
+				var settings = {
+					url: commonUrl + "Default/ChannelingScanGetByID?Id=" + value,
+					"method": "GET",
+					"headers": {
+						"Accept": "application/json",
+						"Content-Type": "application/json"
+					},
+				};
+				$.ajax(settings).done(function (response) {
+					console.log(response);
+					var data = response;
+					if (data != null) {
+						selectedID = data.id;
+						hpFeeToatal = parseFloat(data.hospitalFee);
+						drFeeToatal = parseFloat(data.doctorFee);
+						subTotalAddon = hpFeeToatal + drFeeToatal;
+						$('#doctorFeeAddOn').val(drFeeToatal);
+						$('#hospitalFeeAddon').val(hpFeeToatal);
+						$('#subTotalAddOn').val(subTotalAddon);
 
-        if (value != null && value != 0) {
+					}
+				});
+			}
 
-            if (value == 564) {
-              
-                selectedID == 564;
-                hpFeeToatal = parseFloat($('#exersiceBookFee').val());
-                drFeeToatal = 0;
-                subTotalAddon = hpFeeToatal;
-                $('#doctorFeeAddOn').val(drFeeToatal);
-                $('#hospitalFeeAddon').val(hpFeeToatal);
-                $('#subTotalAddOn').val(subTotalAddon);
-                
-            } 
-            else 
-            {
+		}
 
-                var settings = {
-                    url: commonUrl + "Default/ChannelingScanGetByID?Id=" + value,
-                    "method": "GET",
-                    "headers": {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json"
-                    },
-                };
-                $.ajax(settings).done(function (response) {
-                    console.log(response);
-                    var data = response;
-                    if (data != null) {
-                        selectedID = data.id;
-                        hpFeeToatal = parseFloat(data.hospitalFee);
-                        drFeeToatal = parseFloat(data.doctorFee);
-                        subTotalAddon = hpFeeToatal + drFeeToatal;
-                        $('#doctorFeeAddOn').val(drFeeToatal);
-                        $('#hospitalFeeAddon').val(hpFeeToatal);
-                        $('#subTotalAddOn').val(subTotalAddon);
-
-                    }
-                });
-            }
-
-        }
-
-    }
+	}
 
 </script>
 
 
 <div class="modal-content">
-    <div class="modal-header">
-        <h4 class="modal-title" id="myLargeModalLabel">Add/EditChanneling</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    </div>
-    <form>
-        <input type="hidden" id="opdIndexNumber" asp-for="opdId">
-        <input type="hidden" id="exersiceBookFee" asp-for="exerciseBook.Price">
-        <div class="modal-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="companyName">Patient Name</label>
-                            @{
-                                if (Model.opdId > 0)
-                                {
-                                       <input class="form-control" type="text" id="txtAddOnPatient" value="@Model.opd.patient.FullName" placeholder="Consultant Name" name="@Model.opd.consultant.Id" disabled />
-                                }
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="companyName">Mobile Number</label>
-                        @{
-                            if (Model.opdId > 0)
-                            {
-                                   <input class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" type="tel" maxlength="10" minlength="10" id="txtMobileNumberAddOn" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" disabled />
-                            }
-                        }
-                       
-                    </div>
-                </div>
+	<div class="modal-header">
+		<h4 class="modal-title" id="myLargeModalLabel">Add/EditChanneling</h4>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	</div>
+	<form>
+		<input type="hidden" id="opdIndexNumber" asp-for="opdId">
+		<input type="hidden" id="consultantId" asp-for="opd!.ConsultantID">
+		<input type="hidden" id="exersiceBookFee" asp-for="exerciseBook!.Price">
+		<input type="hidden" id="clinicBookFee" asp-for="clinicBook!.Price">
+		@if (Model.opdId > 0)
+		{
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="companyName">Patient Name</label>
+							<input class="form-control" type="text" id="txtAddOnPatient" value="@Model.opd?.patient?.FullName" placeholder="Consultant Name" name="@Model.opd?.consultant?.Id" disabled />
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="companyName">Mobile Number</label>
+							<input class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" type="tel" maxlength="10" minlength="10" id="txtMobileNumberAddOn" placeholder="Mobile Number" asp-for="opd!.patient!.MobileNumber" disabled />
+						</div>
+					</div>
 
-            </div>
+				</div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="companyName">Doctor Name</label>
-                        @{
-                            if (Model.opdId > 0)
-                            {
-                                                                    <input class="form-control" type="text" id="txtAddOnDoctor" value="@Model.opd.consultant.Name" placeholder="Consultant Name" name="@Model.opd.consultant.Id" disabled />
-                            }
-                        }
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="companyName">Channeling Shedule</label>
-                        @{
-                            if (Model.opdId > 0)
-                            {
-                                                                     <input class="form-control" type="text" id="txtAddOnShedule" value="@Model.channelingSchedule.DateTime" style="text-align:right;" placeholder="Schedule Time" disabled />
-                            }
-
-                        }
-                    </div>
-                </div>
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="companyName">Doctor Name</label>
+							<input class="form-control" type="text" id="txtAddOnDoctor" value="@Model.opd?.consultant?.Name" placeholder="Consultant Name" name="@Model.opd?.consultant?.Id" disabled />
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="companyName">Channeling Shedule</label>
+							<input class="form-control" type="text" id="txtAddOnShedule" value="@Model.channelingSchedule.DateTime" style="text-align:right;" placeholder="Schedule Time" disabled />
+						</div>
+					</div>
 
 
+				</div>
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="companyName">Appoinment Number</label>
+							<input class="form-control" type="text" id="txtAddOnNoOfAppoinment" value="@Model.opd?.AppoimentNo" style="text-align:right;" placeholder="Appoinment Number" disabled />
+						</div>
+					</div>
+					<div class="col-md-8">
+						<div class="form-group">
+							<label for="companyName">Add On</label>
 
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="companyName">Appoinment Number</label>
-                        @{
-                            if (Model.opdId > 0)
-                            {
-                                                                   <input class="form-control" type="text" id="txtAddOnNoOfAppoinment" value="@Model.opd.AppoimentNo" style="text-align:right;" placeholder="Appoinment Number" disabled />
-                            }
-                        }
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="form-group">
-                        @{
-                            if (Model.opdId > 0)
-                            {
-                                <label for="companyName">Add On</label>
+							<select class="form-control" id="drpAddOn" onchange="javascript:select_onchange_addon(this.value);">
+								<option value="0">Select one</option>
+								@if (Model != null)
+								{
+									@if (Model.scanList != null)
+									{
+										@foreach (var item in Model.scanList)
+										{
+											<option value="@item.Id">@item.ItemName</option>
+										}
+									}
 
-                                    <select class="form-control" id="drpAddOn" onchange="javascript:select_onchange_addon(this.value);">
-                                    <option value="0">Select one</option>
-                                    @if (Model != null)
-                                    {
-                                        @if (Model.scanList != null)
-                                        {
-                                            @foreach (var item in Model.scanList)
-                                            {
-                                                <option value="@item.Id">@item.ItemName</option>
-                                            }
-                                        }
-                                        @if (Model.exerciseBook != null)
-                                        {
-                                           <option value="@Model.exerciseBook.Id">@Model.exerciseBook.DrugName</option>
-                                        }                                      
-                                    }                                                         
-                                </select>
-                            }
-                        }
+									@if (Model.exerciseBook != null)
+									{
+										<option value="@Model.exerciseBook.Id">@Model.exerciseBook.DrugName</option>
+									}
 
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="companyName">Doctor Fee: </label>
-                        <input id="doctorFeeAddOn" class="form-control"  type="text" placeholder="0" readonly>
-                    </div>
-                </div>
+									@if (Model.clinicBook != null)
+									{
+										<option value="@Model.clinicBook.Id">@Model.clinicBook.DrugName</option>
+									}
+								}
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="companyName">Doctor Fee: </label>
+							<input id="doctorFeeAddOn" class="form-control" type="text" placeholder="0" readonly>
+						</div>
+					</div>
 
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="companyName">Hospital Fee: </label>
-                        <input id="hospitalFeeAddon" class="form-control" type="text" placeholder="0" readonly>
-                    </div>
-                </div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="companyName">Hospital Fee: </label>
+							<input id="hospitalFeeAddon" class="form-control" type="text" placeholder="0" readonly>
+						</div>
+					</div>
 
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="companyName">Sub Total: </label>
-                        <input id="subTotalAddOn" class="form-control"  type="text" placeholder="0" readonly>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="companyName">Sub Total: </label>
+							<input id="subTotalAddOn" class="form-control" type="text" placeholder="0" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+		<div class="modal-footer">
+			<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
 
-            <button type="button" class="btn  waves-effect btn-primary" onclick="submitChannelingAddOn(0)"><i class="fa fa-save"></i>&nbsp;Save</button>
-            <button type="button" class="btn waves-effect btn-primary ms-2" onclick="submitChannelingAddOn(1)">
-                <i class='fa fa-print'></i>&nbsp;Print & Save
-            </button>
-        </div>
-    </form>
+			<button type="button" class="btn  waves-effect btn-primary" onclick="submitChannelingAddOn(0)"><i class="fa fa-save"></i>&nbsp;Save</button>
+			@*<button type="button" class="btn waves-effect btn-primary ms-2" onclick="submitChannelingAddOn(1)">
+			<i class='fa fa-print'></i>&nbsp;Print & Save
+			</button>*@
+		</div>
+	</form>
 </div>
