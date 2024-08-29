@@ -4,33 +4,35 @@ namespace HospitalMgrSystem.Service.Consultant
 {
     public class ConsultantService : IConsultantService
     {
-        public HospitalMgrSystem.Model.Consultant CreateConsultant(HospitalMgrSystem.Model.Consultant consultant)
+        public Model.Consultant CreateConsultant(Model.Consultant consultant)
         {
-
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            using var dbContext = new DataAccess.HospitalDBContext();
+            if (consultant.Id == 0)
             {
-                if (consultant.Id == 0)
-                {
-                    dbContext.Consultants.Add(consultant);
-                    dbContext.SaveChanges();
-                }
-                else
-                {
-                    HospitalMgrSystem.Model.Consultant result = (from p in dbContext.Consultants where p.Id == consultant.Id select p).SingleOrDefault();
-                    result.Age = consultant.Age;
-                    result.ContectNumber = consultant.ContectNumber;
-                    result.Email = consultant.Email;
-                    result.Gender = consultant.Gender;
-                    result.ModifiedDate = DateTime.Now;
-                    result.Name = consultant.Name;
-                    result.Specialist = consultant.Specialist;
-                    result.SpecialistId = consultant.SpecialistId;
-                    result.Status = consultant.Status;
-                    result.Address = consultant.Address;
-                    dbContext.SaveChanges();
-                }
-                return dbContext.Consultants.Find(consultant.Id);
+                dbContext.Consultants.Add(consultant);
+                dbContext.SaveChanges();
             }
+            else
+            {
+                var result = (from p in dbContext.Consultants where p.Id == consultant.Id select p).SingleOrDefault();
+
+                result.Age = consultant.Age;
+                result.ContectNumber = consultant.ContectNumber;
+                result.Email = consultant.Email;
+                result.Gender = consultant.Gender;
+                result.ModifiedDate = DateTime.Now;
+                result.Name = consultant.Name;
+                result.Specialist = consultant.Specialist;
+                result.SpecialistId = consultant.SpecialistId;
+                result.Status = consultant.Status;
+                result.Address = consultant.Address;
+                result.DoctorFee = consultant.DoctorFee;
+                result.HospitalFee = consultant.HospitalFee;
+
+                dbContext.SaveChanges();
+            }
+
+            return dbContext.Consultants.Find(consultant.Id);
         }
 
         public List<Model.Consultant> GetAllConsultantThatHaveSchedulings()
@@ -79,12 +81,16 @@ namespace HospitalMgrSystem.Service.Consultant
 
         public List<Model.Consultant> GetAllConsultantByStatus()
         {
-            List<Model.Consultant> mtList = new List<Model.Consultant>();
-            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
-            {
-                mtList = dbContext.Consultants.Include(c => c.Specialist).Where(o => o.Status == 0).ToList();
+            var mtList = new List<Model.Consultant>();
 
-            }
+            using var dbContext = new DataAccess.HospitalDBContext();
+
+            mtList = dbContext.Consultants
+	            .Include(c => c.Specialist)
+	            .Where(o => o.Status == 0)
+	            .OrderByDescending(o => o.Id)
+	            .ToList();
+
             return mtList;
         }
 
