@@ -85,5 +85,13 @@ namespace HospitalMgrSystem.Service.Default
         }
 
 
-	}
+        public List<Scan> getProceduresByConsultantId(int channelingScheduleConsultantId)
+        {
+			var scanFeeList = new List<Scan>();
+
+			using var dbContext = new HospitalDBContext();
+			scanFeeList = dbContext.ChannelingItems.Where(o => o.Tag2 == channelingScheduleConsultantId).ToList();
+			return scanFeeList;
+		}
+    }
 }
