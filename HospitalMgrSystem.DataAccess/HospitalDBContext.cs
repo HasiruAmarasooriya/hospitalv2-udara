@@ -109,6 +109,10 @@ namespace HospitalMgrSystem.DataAccess
             modelBuilder.Ignore<OtherTransactionsDTO>();
             modelBuilder.Ignore<PatientsDataTableDTO>();
             modelBuilder.Ignore<CashierSessionDTO>();
+            modelBuilder.Ignore<ChannelingPaidReport>();
+            modelBuilder.Ignore<PreviousForwardBookingDataDto>();
+            modelBuilder.Ignore<ChannelingRefundReportDto>();
+            modelBuilder.Ignore<ChannelingPaymentSummaryReportDto>();
 
             #endregion
         }*/
