@@ -174,7 +174,8 @@ namespace HospitalMgrSystem.Service.OPD
                 Model.OPD opdData = dbContext.OPD
                                     .Include(o => o.patient) // Load the Patient related to OPD
                                     .Include(o => o.consultant) // Load the Consultant related to OPD
-                                    .Include(o => o.nightShiftSession) // Load the nightShiftSession
+                                    .Include(o => o.consultant!.Specialist)
+									.Include(o => o.nightShiftSession) // Load the nightShiftSession
                                     .SingleOrDefault(o => o.Id == id);
 
                 decimal opdDrugsTotal = dbContext.OPDDrugus
