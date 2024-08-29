@@ -124,6 +124,7 @@ namespace HospitalMgrSystemUI.Controllers
 				cashierDto.ChannelingSchedule = channelingSchedule;
 				cashierDto.ItemName = opdData.Description;
 				cashierDto.PrintCount = printCount;
+				cashierDto.OpdData = opdData;
 
 
 				return PartialView("_PartialViewInvoice", cashierDto);
@@ -1058,6 +1059,10 @@ namespace HospitalMgrSystemUI.Controllers
 					var invoiceData = new CashierService().GetInvoiceDataByServiceIdAndWithoutOtherIncome(_CashierDto.sufID);
 
 					if (invoiceData != null) return RedirectToAction("Index", new { PreID = _CashierDto.PreID });
+
+					var tempOpdData = new OPDService().GetAllOPDByID(_CashierDto.sufID);
+
+					if (tempOpdData.Status == CommonStatus.Delete) return RedirectToAction("Index", new { PreID = _CashierDto.PreID });
 
 					if (_CashierDto.totalDueAmount <= 0)
 					{
