@@ -19,7 +19,10 @@ namespace HospitalMgrSystem.Model
         public int? ModifiedUser { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
-        [NotMapped]
+        public decimal? DoctorFee { get; set; }
+        public decimal? HospitalFee { get; set; }
+
+		[NotMapped]
         public int ptCount { get; set; }
         [NotMapped]
         public decimal hospitalIncome { get; set; }
