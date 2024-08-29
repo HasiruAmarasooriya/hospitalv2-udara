@@ -73,6 +73,17 @@ namespace HospitalMgrSystem.Service.Default
             return exbFee;
         }
 
+        public Drug GetClinicBookFee()
+        {
+	        var exbFee = new Drug();
+	        using (var dbContext = new HospitalDBContext())
+	        {
+		        exbFee = dbContext.Drugs.First(o => o.Id == 948);
 
-    }
+	        }
+	        return exbFee;
+        }
+
+
+	}
 }
