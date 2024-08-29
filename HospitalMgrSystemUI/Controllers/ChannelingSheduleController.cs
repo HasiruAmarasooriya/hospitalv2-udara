@@ -139,8 +139,9 @@ namespace HospitalMgrSystemUI.Controllers
 
             channelingSheduleDto.ChannelingSchedule = new ChannelingSchedule
             {
-                ConsultantFee = channelingItems[0].DoctorFee,
-                HospitalFee = channelingItems[0].HospitalFee,
+                Id = 0,
+                // ConsultantFee = channelingItems[0].DoctorFee,
+                // HospitalFee = channelingItems[0].HospitalFee,
                 DateTime = DateTime.Now
             };
 
