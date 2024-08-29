@@ -189,16 +189,18 @@ public class ChannelingController : Controller
 
 			oPDChannelingDto.scanList = oPDChannelingDto.channelingSchedule.Consultant?.Specialist?.Id switch
 			{
-				12 => new DefaultService().GetAllScanChannelingFee(4),
-				13 => new DefaultService().GetAllScanChannelingFee(3),
-				44 => new DefaultService().GetAllScanChannelingFee(2),
-				_ => oPDChannelingDto.scanList
+				12 => new DefaultService().GetAllScanChannelingFee(4), // Radio
+				13 => new DefaultService().GetAllScanChannelingFee(3), // Cardio
+				// 44 => new DefaultService().GetAllScanChannelingFee(2), // VOG
+				_ => new DefaultService().getProceduresByConsultantId(oPDChannelingDto.channelingSchedule.ConsultantId)
 			};
+
+			
 
 			oPDChannelingDto.scanList?.Add(new Scan
 			{
 				Id = 100,
-				ItemName = "Doctor Default Channeling",
+				ItemName = "Channeling",
 			});
 
 			var defaultService = new DefaultService();
@@ -523,7 +525,7 @@ public class ChannelingController : Controller
 					ScanObj.Id = 100;
 					ScanObj.HospitalFee = channelingSchedule.HospitalFee;
 					ScanObj.DoctorFee = channelingSchedule.ConsultantFee;
-					ScanObj.ItemName = "Doctor Default Channeling";
+					ScanObj.ItemName = "Channeling";
 				}
 				else
 				{
