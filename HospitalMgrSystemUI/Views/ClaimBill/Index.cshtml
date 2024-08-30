@@ -57,13 +57,7 @@
 				<div class="col">
 					<div data-mdb-input-init class="form-outline">
 						<label class="form-label" for="patientName">Patient Name</label>
-						<select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="claimBill.Patient.Id" id="dropPatient">
-							<option value="-2">Select one</option>
-							@foreach (var item in Model.patientsList)
-							{
-								<option value="@item.Id">@item.FullName (@item.MobileNumber)</option>
-							}
-						</select>
+						<input class="form-control" type="text" id="patientName" placeholder="Patient Name" asp-for="patient.FullName" />
 					</div>
 				</div>
 				<div class="col">
@@ -81,15 +75,17 @@
 					<select class="form-control ddlSearchList" id="dropDoctor">
 						<option value="1">Please Select</option>
 
-						@foreach (var item in Model.consultantsList)
+						@if (Model.consultantsList != null)
 						{
-							<option value="@item.Id">@item.Name</option>
+							foreach (var item in Model.consultantsList)
+							{
+								<option value="@item.Id">@item.Name</option>
+							}
 						}
 						<option value="82">Investigation</option>
 						<option value="83">X-RAY</option>
 					</select>
 				}
-				@* <input type="text" id="doctorName" class="form-control" /> *@
 			</div>
 
 			<div class="row mb-4">
@@ -298,7 +294,7 @@
 
 		function openPrintWindow() {
 			var refNo = document.getElementById("refNo").value;
-			var dropPatient = document.getElementById("dropPatient").value;
+			var dropPatient = document.getElementById("patientName").value;
 			var contactNumber = document.getElementById("contactNumber").value;
 			var dropDoctor = document.getElementById("dropDoctor").value;
 			var subTotal = document.getElementById("subTotal").value;
@@ -308,18 +304,21 @@
 			var balance = document.getElementById("balance").value;
 
 			var claimBill = {
+				PatientName: dropPatient,
 				RefNo: refNo,
-				PatientID: dropPatient,
+				ContactNumber: contactNumber,
 				ConsultantId: dropDoctor,
 				SubTotal: subTotal,
-				Discount: discount,
 				TotalAmount: totalAmount,
-				CashAmount: cashPayment,
+				Cash: cashPayment,
 				Balance: balance
 			}
 
 			var claimBillDto = {
-				claimBill: claimBill
+				claimBill: claimBill,
+				patient: {
+					FullName: dropPatient
+				}
 			};
 
 			console.log(claimBillDto);
@@ -328,7 +327,7 @@
 			$.ajax({
 				type: "POST",
 				url: "/ClaimBill/AddNewClaimBill",
-				data: JSON.stringify({ claimBill }),
+				data: JSON.stringify(claimBill),
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function (response) {

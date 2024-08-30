@@ -1,4 +1,5 @@
-﻿@using Microsoft.Extensions.Configuration
+﻿@using HospitalMgrSystem.Model.Enums
+@using Microsoft.Extensions.Configuration
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -21,14 +22,15 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Patient</label>
-                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="opd.PatientID" id="dropPatient">
+                        @*<select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="opd.PatientID" id="dropPatient">
                             <option value="-2">Select one</option>
                             @foreach (var item in Model.patientsList)
                             {
                                 <option value="@item.Id">@item.FullName</option>
                             }
-                        </select>
-
+                        </select>*@
+                        <input class="form-control" type="text" id="patientId" asp-for="opd!.PatientID" hidden />
+                        <input class="form-control" type="text" id="patientName" placeholder="Patient Name" asp-for="opd!.patient!.FullName" onchange="javascript:select_onchange_patient();" />
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -108,11 +110,11 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Scan Name</label>
-                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_drug(this.value);" id="drugus" asp-for="opdDrugus.DrugId">
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_drug(this.value);" id="drugus" asp-for="opdDrugus!.DrugId" disabled="@(Model.opd!.paymentStatus == PaymentStatus.PAID && Model.opdId > 0)">
                             <option value="0">Select X-Ray</option>
                             @foreach (var item in Model.Drugs)
                             {
-                                <option value="@item.Id">@item.DrugName - @item.DrugsCategory.Category</option>
+                                <option value="@item.Id">@item.DrugName - @item.DrugsCategory!.Category</option>
 
                             }
                         </select>
@@ -144,7 +146,7 @@
                 <div class="col-md-12">
                     <div class="form-group text-center">
                         <br>
-                        <button type="button" class="btn btn-success waves-effect" style="width:100%" onclick="addDrugusItem()">Add</button>
+                        <button type="button" class="btn btn-success waves-effect" style="width:100%" onclick="addDrugusItem()" disabled="@(Model.opd!.paymentStatus == PaymentStatus.PAID && Model.opdId > 0)">Add</button>
                     </div>
                 </div>
             </div>
@@ -157,7 +159,7 @@
                             <thead>
                                 <tr>
 
-                                    <th data-orderable="true">Drugus Name</th>
+                                    <th data-orderable="true">Drugs Name</th>
                                     <th>Qty</th>
                                     <th>Price</th>
                                     <th>Amount</th>
@@ -229,7 +231,7 @@
                                     <td>@item.Amount</td>
 
                                     <td>
-                                        @if (Model != null)
+                                    @if (Model != null && Model.opd!.paymentStatus != PaymentStatus.PAID)
                                         {
 
                                             @using (Html.BeginForm("DeleteOPDDrug", "XRAY", new { Id = @item.Id }, FormMethod.Post))

@@ -1,4 +1,5 @@
-﻿using HospitalMgrSystem.Model.Enums;
+﻿using HospitalMgrSystem.Model.DTO;
+using HospitalMgrSystem.Model.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace HospitalMgrSystem.Service.OtherTransactions
@@ -81,14 +82,16 @@ namespace HospitalMgrSystem.Service.OtherTransactions
             }
         }
 
-        public List<Model.OtherTransactions> GetAllOtherTransactions()
+        public List<OtherTransactionsDTO> GetAllOtherTransactionsSP()
         {
-            List<Model.OtherTransactions> mtList = new List<Model.OtherTransactions>();
-            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
-            {
-                mtList = dbContext.OtherTransactions.Include(c => c.Convener).Include(c => c.ApprovedBy).Include(c => c.cashierSession).Where(o => o.Status == 0).OrderByDescending(o => o.Id).ToList<Model.OtherTransactions>();
+            using var dbContext = new DataAccess.HospitalDBContext();
 
-            }
+            var mtList = new List<OtherTransactionsDTO>();
+            
+            mtList = dbContext.Set<OtherTransactionsDTO>()
+                .FromSqlRaw("EXEC GetAllOtherTransactions")
+                .ToList();
+
             return mtList;
         }
 

@@ -1,10 +1,8 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model  IEnumerable<PatientDto>
-@{
-    ViewBag.Title = "Standings";
-}
+@model  PatientDto
+
 @section Styles{
     <style>
         .select2-selection__rendered {
@@ -83,34 +81,41 @@
                                     <th data-orderable="true">SNo</th>
                                     <th>Full Name</th>
                                     <th>Age</th>
+                                    <th>NIC</th>
                                     <th>Sex</th>
                                     <th>Mobile Number</th>
+                                    <th>Created Date</th>
                                     <th>View</th>
                                     <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody id="tblBodyPayments">
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
+                            @if (Model.PatientsDataTableDtos != null && Model.PatientsDataTableDtos.Count > 0)
+                            {
+	                            @foreach (var item in Model.PatientsDataTableDtos)
+	                            {
+		                            <tr>
 
-                                        <td>@item.Id</td>
-                                        <td>@item.FullName</td>
-                                        <td>@item.Age</td>
-                                        <td>@item.Sex</td>
-                                        <td>@item.MobileNumber</td>
-                                        <td>
-                                            <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
-                                        </td>
-                                        <td>
-                                            @using (Html.BeginForm("DeletePatient", "Patient", new { Id = @item.Id }, FormMethod.Post))
-                                            {
-                                                @* <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-clipboard'></i></button> *@
+			                            <td>@item.Id</td>
+			                            <td>@item.FullName</td>
+			                            <td>@item.Age</td>
+			                            <td>@item.NIC</td>
+			                            <td>@item.Sex</td>
+			                            <td>@item.MobileNumber</td>
+                                        <td>@item.CreateDate.ToString("M/d/yyyy dddd h:mm:ss tt")</td>
+			                            <td>
+				                            <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button> &nbsp;
+			                            </td>
+			                            <td>
+				                            @using (Html.BeginForm("DeletePatient", "Patient", new { Id = @item.Id }, FormMethod.Post))
+				                            {
+					                            @* <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-clipboard'></i></button> *@
 
-                                            }
-                                        </td>
-                                    </tr>
-                                }
+				                            }
+			                            </td>
+		                            </tr>
+	                            }
+                            }
                             </tbody>
                         </table>
 

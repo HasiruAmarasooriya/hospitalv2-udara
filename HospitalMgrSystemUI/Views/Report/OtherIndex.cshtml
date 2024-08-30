@@ -84,46 +84,7 @@
 							</div>
 						</div>
 					</div>
-
 				</form>
-				@using (Html.BeginForm("customSearch", "Report", new { value = 1 }, FormMethod.Post))
-				{
-					<div class="modal-footer d-flex justify-content-between">
-
-						<div class="form-group">
-							<label for="companyName">Invoiced Type</label>
-							<select class="form-control ddlSearchList" id="dropSessionType" asp-for="InvoicedType">
-								<option value="0">OPD</option>
-								<option value="1">Channeling</option>
-								<option value="2">Other</option>
-							</select>
-						</div>
-						<div class="spark-chart form-material">
-							<ol class="list-unstyled d-flex">
-
-								<li class="mr-2">
-									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Today</button>
-								</li>
-
-								<li class="mr-2">
-									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Yesterday</button>
-								</li>
-
-								<li class="mr-2">
-									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Week</button>
-								</li>
-
-								<li class="mr-2">
-									<button class="btn waves-effect btn-info"><i class="fa-solid fa-moon"></i>&nbsp; Last Month</button>
-								</li>
-
-							</ol>
-						</div>
-
-					</div>
-				}
-
-				<button class="btn waves-effect btn-warning" onclick="printReport()"><i class="fa-solid fa-moon"></i>Download All</button>
 			</div>
 		</div>
 	</div>

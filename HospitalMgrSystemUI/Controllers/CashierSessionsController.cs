@@ -1,4 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.DTO;
 using HospitalMgrSystem.Model.Enums;
 using HospitalMgrSystem.Service.CashierSession;
 using HospitalMgrSystem.Service.User;
@@ -14,7 +15,7 @@ namespace HospitalMgrSystemUI.Controllers
         public IActionResult Index()
         {
             CashierSessionDto cashierSessionDto = new CashierSessionDto();
-            cashierSessionDto.CashierSessions = GetAllCashierSession();
+            cashierSessionDto.CashierSessionDtos = GetAllCashierSession();
             return View(cashierSessionDto);
         }
 
@@ -116,15 +117,15 @@ namespace HospitalMgrSystemUI.Controllers
             }
         }
 
-        private List<CashierSession> GetAllCashierSession()
+        private List<CashierSessionDTO> GetAllCashierSession()
         {
-            List<CashierSession> CashierSessionList = new List<CashierSession>();
+            var CashierSessionList = new List<CashierSessionDTO>();
 
             using (var httpClient = new HttpClient())
             {
                 try
                 {
-                    CashierSessionList = new CashierSessionService().GetAllCashierSession();
+                    CashierSessionList = new CashierSessionService().GetAllCashierSessionSP();
                 }
                 catch (Exception ex)
                 {

@@ -302,6 +302,104 @@ namespace HospitalMgrSystem.Service.Report
 			return reportDataOpdPaidDtos;
 		}
 
+		public List<ChannelingPaidReport> GetAllChannelingPaidReports(DateTime dateTime)
+		{
+			using var context = new HospitalDBContext();
+			var reportData = new List<ChannelingPaidReport>();
+
+			reportData = context.Set<ChannelingPaidReport>()
+				.FromSqlRaw("EXEC GetAllChannelingPaidReportByDate @Date = {0}", dateTime)
+				.ToList();
+
+			return reportData;
+		}
+
+		public List<PreviousForwardBookingDataDto> GetPreviousForwardBookingData(DateTime dateTime)
+		{
+			using var context = new HospitalDBContext();
+			var reportData = new List<PreviousForwardBookingDataDto>();
+
+			reportData = context.Set<PreviousForwardBookingDataDto>()
+				.FromSqlRaw("EXEC GetAllForwardBookingPaidPreviousDays @Date = {0}", dateTime)
+				.ToList();
+
+			return reportData;
+		}
+
+		public List<Model.OPD> GetAllChannelingItemsData(DateTime startDate, DateTime endDate)
+		{
+			using var dbContext = new HospitalDBContext();
+
+			var opds = new List<Model.OPD>();
+
+			var scheduleIds = dbContext.ChannelingSchedule
+				.Include(o => o.Consultant)
+				.Include(o => o.Consultant!.Specialist)
+				.Where(o => o.Status == 0 && o.DateTime >= startDate && o.DateTime <= endDate)
+				.Select(o => o.Id)
+				.ToList();
+
+			var opdIdList = dbContext.OPD
+								.Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && scheduleIds.Contains(o.schedularId))
+								.Select(o => o.Id)
+								.ToList();
+
+			var invoiceList = dbContext.Invoices.Where(o => opdIdList.Contains(o.ServiceID) && o.InvoiceType == InvoiceType.CHE && o.Status == 0)
+								.ToList();
+
+			var invoiceIdList = invoiceList.Select(o => o.Id).ToList();
+
+			var invoiceItemListConsaltant = dbContext.InvoiceItems.Where(o => invoiceIdList.Contains(o.InvoiceId) && o.Status == 0 && o.billingItemsType == BillingItemsType.Consultant && o.itemInvoiceStatus == ItemInvoiceStatus.BILLED)
+												.Select(o => o.InvoiceId)
+												.ToList();
+
+			var billedConsultantInvoiceserviceIDList = invoiceList.Where(o => invoiceItemListConsaltant.Contains(o.Id)).Select(o => o.ServiceID).ToList();
+
+
+			var opdChannelingData = dbContext.OPD
+				.Include(o => o.consultant)
+				.Include(o => o.consultant!.Specialist)
+				.Where(o => o.Status == 0 && o.invoiceType == InvoiceType.CHE && billedConsultantInvoiceserviceIDList.Contains(o.Id))
+				.GroupBy(o => new { o.schedularId })
+				.Select(g => new { SchedularId = g.Key, BillCount = g.Count(), Consultant = g.First().consultant })
+				.ToList();
+
+			var channelingService = new ChannelingScheduleService();
+
+			int[] scanSpList = { 44, 13, 12 };
+
+			foreach (var channel in opdChannelingData)
+			{
+				var schedularId = channel.SchedularId.schedularId;
+
+				var result = dbContext.ChannelingSchedule
+					.Include(c => c.Consultant)
+					.Include(c => c.Consultant!.Specialist)
+					.Include(c => c.Room)
+					.SingleOrDefault(o => o.Id == schedularId);
+
+				if (scanSpList.Contains(result!.Consultant!.Specialist!.Id))
+				{
+					result.scanList = channelingService.GetScanListByScheduleID(schedularId);
+				}
+				else
+				{
+					result.scanList = null;
+				}
+
+				var opd = new Model.OPD
+				{
+					consultant = channel.Consultant,
+					scanDoctorSessionDetails = result.scanList
+				};
+
+				opds.Add(opd);
+			}
+
+			return opds;
+		}
+
+
 
 		public List<Model.OPD> GetAllChannelingConsultantsGroups2(DateTime startDate, DateTime endDate)
 		{
@@ -355,7 +453,7 @@ namespace HospitalMgrSystem.Service.Report
 				var opd = new Model.OPD
 				{
 					schedularId = schedularId,
-					BillCount = (channelingSchedule.actualPatientCount),
+					BillCount = (channelingSchedule.actualPatientCount - channelingSchedule.totalRefundDoctorFeeCount - channelingSchedule.fullRefundCount),
 					consultant = channel.Consultant,
 					DoctorAmount = channelingSchedule.totalDoctorFeeAmount,
 					HospitalAmount = channelingSchedule.totalHospitalFeeAmount,
@@ -661,7 +759,32 @@ namespace HospitalMgrSystem.Service.Report
 			return newmtList;
 		}
 
+		public List<ForwardBookingDataTableDTO> GetAllForwardBookingDataForReportByDate(DateTime dateTime)
+		{
+			using var dbContext = new HospitalDBContext();
 
+			return dbContext.Set<ForwardBookingDataTableDTO>()
+				.FromSqlRaw("EXEC GetAllForwardBookingOfCurrentDay @Date = {0}", dateTime)
+				.ToList();
+		}
+
+		public List<ChannelingRefundReportDto> GetAllChannelingRefundReportByDate(DateTime dateTime)
+		{
+			using var dbContext = new HospitalDBContext();
+
+			return dbContext.Set<ChannelingRefundReportDto>()
+				.FromSqlRaw("EXEC GetAllChannelingRefundReportByDate @Date = {0}", dateTime)
+				.ToList();
+		}
+
+		public List<ChannelingPaymentSummaryReportDto> GetAllChannelingPaymentsSummaryReportByDate(DateTime dateTime)
+		{
+			using var dbContext = new HospitalDBContext();
+
+			return dbContext.Set<ChannelingPaymentSummaryReportDto>()
+				.FromSqlRaw("EXEC GetAllChannelingPaymentsSummaryReportByDate @Date = {0}", dateTime)
+				.ToList();
+		}
 
 		public List<Model.OPD> GetAllChannelingByDateRangeAndNeedToPayStatus2(DateTime startDate, DateTime endDate)
 		{
@@ -678,7 +801,7 @@ namespace HospitalMgrSystem.Service.Report
 								.Where(o => o.Status == 0 && o.DateTime >= startDate && o.DateTime <= endDate)
 								.ToList();
 
-			List<int> scheduleIds = schedularList.Select(o => o.Id).ToList();
+			var scheduleIds = schedularList.Select(o => o.Id).ToList();
 
 			mtList = dbContext.OPD
 					.Include(c => c.patient)
@@ -742,6 +865,8 @@ namespace HospitalMgrSystem.Service.Report
 
 				opdObj.TotalNeedToRefund = opdObj.TotalRefund + tRefund;
 				opdObj.TotalOldAmount = opdObj.TotalPaidAmount - tRefund;
+				opdObj.channelingScheduleData = schedularList.FirstOrDefault(o => o.Id == opdObj.schedularId) ?? null;
+
 				newmtList.Add(opdObj);
 			}
 

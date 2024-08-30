@@ -7,6 +7,7 @@ namespace HospitalMgrSystemUI.Models
     {
 
         public List<CashierSession> CashierSessions { get; set; }
+        public List<CashierSessionDTO> CashierSessionDtos { get; set; }
         public int cashierSessionID { get; set; }
         public CashierSession cashierSession { get; set; }
         public CashierSession CashierPaymentData { get; set; }

@@ -27,7 +27,7 @@ namespace HospitalMgrSystemUI.Models
         public string? RoomName { get; set; }
         public string? CreatedUserName { get; set; }
 
-        public OPD? opd { get; set; }
+		public OPD? opd { get; set; }
         public Patient? patient { get; set; }
         public Drug? Drug { get; set; }
         public Investigation? investigation { get; set; }
@@ -78,12 +78,14 @@ namespace HospitalMgrSystemUI.Models
         public int isVOGScan { get; set; }
         public int isCardioScan { get; set; }
         public int isExerciseBook { get; set; }
+        public int isClinicBook { get; set; }
 
         public int scanId { get; set; }
 
         public Scan? vogScan { get; set; }
         public Scan? echoScan { get; set; }
         public Drug? exerciseBook { get; set; }
+        public Drug? clinicBook { get; set; }
 
         public List<Scan>? scanList { get; set; }
         public int appoinmentNo { get; set; }

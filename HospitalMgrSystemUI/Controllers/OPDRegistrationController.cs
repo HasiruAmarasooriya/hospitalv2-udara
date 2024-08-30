@@ -303,16 +303,19 @@ namespace HospitalMgrSystemUI.Controllers
         public IActionResult Index(int isPop)
         {
             CreateFirstShift();
-            OPDDto oPDDto = new OPDDto();
-            oPDDto.StartTime = DateTime.Now;
-            oPDDto.EndTime = DateTime.Now;
-            oPDDto.sessionType = -1;
-            oPDDto.paidStatus = -1;
-            oPDDto.isPoP = isPop;
-            oPDDto.patientsList = LoadPatients();
-            oPDDto.consultantList = LoadConsultants();
-            oPDDto.listOPDTbDtoSp = LoadOPD();
-            oPDDto.isNightShift = new DefaultService().GetDefailtShiftStatus();
+            var oPDDto = new OPDDto
+            {
+                StartTime = DateTime.Now,
+                EndTime = DateTime.Now,
+                sessionType = -1,
+                paidStatus = -1,
+                isPoP = isPop,
+                // patientsList = LoadPatients(),
+                consultantList = LoadConsultants(),
+                listOPDTbDtoSp = LoadOPD(),
+                isNightShift = new DefaultService().GetDefailtShiftStatus()
+            };
+
             return View(oPDDto);
         }
 
@@ -386,31 +389,38 @@ namespace HospitalMgrSystemUI.Controllers
 
         public ActionResult CreateOPDReg(int Id)
         {
-            OPDDto oPDDto = new OPDDto();
-            oPDDto.consultantList = LoadActiveConsultants();
-            oPDDto.patientsList = LoadPatients();
-            oPDDto.Drugs = DrugsSearch();
-            decimal consaltantFee = new DefaultService().GetDefailtConsaltantPrice();
-            decimal hospitalFee = new DefaultService().GetDefailtHospitalPrice();
-            OPD opdObject = new OPD();
-            opdObject.ConsultantFee = consaltantFee;
-            opdObject.HospitalFee = hospitalFee;
+            var defaultService = new DefaultService();
+            
+            var oPDDto = new OPDDto
+            {
+                consultantList = LoadActiveConsultants(),
+                // patientsList = LoadPatients(),
+                Drugs = DrugsSearch()
+            };
+
+            var consaltantFee = defaultService.GetDefailtConsaltantPrice();
+            var hospitalFee = defaultService.GetDefailtHospitalPrice();
+
+            var opdObject = new OPD
+            {
+                ConsultantFee = consaltantFee,
+                HospitalFee = hospitalFee
+            };
 
             if (Id > 0)
             {
-                using (var httpClient = new HttpClient())
+                using var httpClient = new HttpClient();
+
+                try
                 {
-                    try
-                    {
-                        oPDDto.opd = new OPDService().GetAllOPDByID(Id);
-                        oPDDto.OPDDrugusList = GetOPDDrugus(Id);
-                        oPDDto.opdId = Id;
-                        return PartialView("_PartialAddOPDRegistration", oPDDto);
-                    }
-                    catch (Exception ex)
-                    {
-                        return RedirectToAction("Index");
-                    }
+                    oPDDto.opd = new OPDService().GetAllOPDByID(Id);
+                    oPDDto.OPDDrugusList = GetOPDDrugus(Id);
+                    oPDDto.opdId = Id;
+                    return PartialView("_PartialAddOPDRegistration", oPDDto);
+                }
+                catch (Exception ex)
+                {
+                    return RedirectToAction("Index");
                 }
             }
             else
@@ -434,8 +444,10 @@ namespace HospitalMgrSystemUI.Controllers
                 patient = CreatePatient(oPDDto.patient);
                 if (patient != null)
                 {
-                    decimal hospitalFee = new DefaultService().GetDefailtHospitalPrice();
-                    OPD OPDobj = new OPD();
+                    var hospitalFee = new DefaultService().GetDefailtHospitalPrice();
+                    var OPDobj = new OPD();
+                    var activeOpdSession = new OPDSchedulerService().GetActiveOPDSchedulers();
+
                     oPDDto.opd.PatientID = patient.Id;
                     oPDDto.opd.DateTime = DateTime.Now;
                     oPDDto.opd.RoomID = 1;
@@ -449,6 +461,7 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
                     oPDDto.opd.invoiceType = InvoiceType.OPD;
                     oPDDto.opd.ConsultantFee = 0;
+                    oPDDto.opd.schedularId = activeOpdSession[0].Id;
 
                     if (oPDDto.opd.Id > 0)
                     {
@@ -514,7 +527,9 @@ namespace HospitalMgrSystemUI.Controllers
                 if (patient != null)
                 {
                     decimal hospitalFee = new DefaultService().GetDefailtHospitalPrice();
-                    oPDDto.opd.PatientID = patient.Id;
+                    var activeOpdSession = new OPDSchedulerService().GetActiveOPDSchedulers();
+
+					oPDDto.opd.PatientID = patient.Id;
                     oPDDto.opd.DateTime = DateTime.Now;
                     oPDDto.opd.RoomID = 1;
                     oPDDto.opd.ModifiedUser = Convert.ToInt32(userIdCookie);
@@ -527,9 +542,10 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
                     oPDDto.opd.invoiceType = InvoiceType.OPD;
                     oPDDto.opd.ConsultantFee = 0;
+                    oPDDto.opd.schedularId = activeOpdSession[0].Id;
 
 
-                    if (oPDDto.opd.Id > 0)
+					if (oPDDto.opd.Id > 0)
                     {
                         OPDobj = new OPDService().UpdateOPDStatus(oPDDto.opd, oPDDto.OPDDrugusList);
                     }
@@ -586,9 +602,12 @@ namespace HospitalMgrSystemUI.Controllers
         //Create user modify user details should be include
         public IActionResult DeleteOPD(int Id)
         {
-            try
+	        var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+            var userId = Convert.ToInt32(userIdCookie);
+
+			try
             {
-                new OPDService().DeleteOPD(Id);
+                new OPDService().DeleteOPD(Id, userId);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

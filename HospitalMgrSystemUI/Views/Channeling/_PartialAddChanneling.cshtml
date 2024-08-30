@@ -142,13 +142,28 @@
             success: function (data) {
                 drugusList = [];
                 document.getElementById("tblBodyPayments2").innerHTML = "";
+                console.log(data);
+
                 // Handle success, e.g., redirect to another page
                 window.location.href = '/Channeling/Index';
 
             },
             error: function (error) {
                 // Handle error
-                console.error('Error submitting drugus items:', error);
+                return Toastify({
+                    text: error.responseText,
+                    duration: 3000,
+                    destination: "",
+                    newWindow: true,
+                    close: true,
+                    gravity: "bottom", // `top` or `bottom`
+                    position: "right", // `left`, `center` or `right`
+                    stopOnFocus: true, // Prevents dismissing of toast on hover
+                    style: {
+                        background: "linear-gradient(to right, #ff0000, #ff0000)", // Red background color
+                    },
+                    onClick: function () { } // Callback after click
+                }).showToast();
             }
         });
     }
@@ -218,7 +233,20 @@
             },
             error: function (error) {
                 // Handle error
-                console.error('Error submitting drugus items:', error);
+                return Toastify({
+                    text: error.responseText,
+                    duration: 3000,
+                    destination: "",
+                    newWindow: true,
+                    close: true,
+                    gravity: "bottom", // `top` or `bottom`
+                    position: "right", // `left`, `center` or `right`
+                    stopOnFocus: true, // Prevents dismissing of toast on hover
+                    style: {
+                        background: "linear-gradient(to right, #ff0000, #ff0000)", // Red background color
+                    },
+                    onClick: function () { } // Callback after click
+                }).showToast();
             }
         });
     }

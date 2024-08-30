@@ -1,11 +1,12 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.DTO;
 
 namespace HospitalMgrSystemUI.Models
 {
     public class OtherTransactionsDto
     {
 
-        public List<OtherTransactions> otherTransactionsList { get; set; }
+        public List<OtherTransactionsDTO> otherTransactionsList { get; set; }
         public int otherTransactionsID { get; set; }
         public OtherTransactions otherTransactions { get; set; }
         public User user { get; set; }

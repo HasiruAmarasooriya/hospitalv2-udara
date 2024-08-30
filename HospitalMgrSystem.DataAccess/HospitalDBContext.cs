@@ -5,18 +5,21 @@ using Microsoft.Extensions.Configuration;
 
 namespace HospitalMgrSystem.DataAccess
 {
-	public static class ConnectionStrings
-	{
-		public static string DEVELOPMENT_DATABASE { get; } = "Data Source=172.201.169.155;Initial Catalog=KUMUDU1;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
-		public static string PRODUCTION_DATABASE { get; } = "Data Source=172.201.169.155;Initial Catalog=KUMUDU;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
-	}
-
-
-	public class HospitalDBContext : DbContext
+    public static class ConnectionStrings
     {
-		public static IConfiguration Configuration { get; set; }
+        public static string DEVELOPMENT_DATABASE { get; } =
+            "Data Source=172.201.169.155;Initial Catalog=KUMUDU1;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
 
-		public DbSet<User> Users { get; set; }
+        public static string PRODUCTION_DATABASE { get; } =
+            "Data Source=172.201.169.155;Initial Catalog=KUMUDU;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
+    }
+
+
+    public class HospitalDBContext : DbContext
+    {
+        public static IConfiguration Configuration { get; set; }
+
+        public DbSet<User> Users { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Specialist> Specialists { get; set; }
@@ -66,23 +69,52 @@ namespace HospitalMgrSystem.DataAccess
 
         public DbSet<SMSActivation> sMSActivations { get; set; }
 
-		#region DTOs
-		public DbSet<AppointmentDTO> AppointmentsDTO { get; set; }
-		public DbSet<ReportOpdXrayOtherPaidDto> ReportOpdXrayOtherPaidDtos { get; set; }
-		public DbSet<ReportOpdXrayOtherRefundDTO> ReportOpdXrayOtherRefundDTOs { get; set; }
-		public DbSet<PaymentSummaryOpdXrayOtherDTO> PaymentSummaryOpdXrayOtherDtos { get; set; }
-		public DbSet<ReportOpdXrayOtherDrugs> ReportOpdXrayOtherDrugsDtos { get; set; }
-		public DbSet<OpdOtherXrayDataTableDto> OpdOtherXrayDataTableDtos { get; set; }
-		public DbSet<ClaimBillDto> ClaimBillDtos { get; set; }
-		public DbSet<PaymentSummaryOfDoctorsOPDDTO> PaymentSummaryOfDoctorsOpddtos { get; set; }
-		public DbSet<ForwardBookingDataTableDTO> ForwardBookingDataTableDtos { get; set; }
-		public DbSet<TotalPaidAmountOfForwardBookingDTO> AmountOfForwardBookingDtos { get; set; }
-		#endregion
+        #region DTOs
 
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public DbSet<AppointmentDTO> AppointmentsDTO { get; set; }
+        public DbSet<ReportOpdXrayOtherPaidDto> ReportOpdXrayOtherPaidDtos { get; set; }
+        public DbSet<ReportOpdXrayOtherRefundDTO> ReportOpdXrayOtherRefundDTOs { get; set; }
+        public DbSet<PaymentSummaryOpdXrayOtherDTO> PaymentSummaryOpdXrayOtherDtos { get; set; }
+        public DbSet<ReportOpdXrayOtherDrugs> ReportOpdXrayOtherDrugsDtos { get; set; }
+        public DbSet<OpdOtherXrayDataTableDto> OpdOtherXrayDataTableDtos { get; set; }
+        public DbSet<ClaimBillDto> ClaimBillDtos { get; set; }
+        public DbSet<PaymentSummaryOfDoctorsOPDDTO> PaymentSummaryOfDoctorsOpddtos { get; set; }
+        public DbSet<ForwardBookingDataTableDTO> ForwardBookingDataTableDtos { get; set; }
+        public DbSet<TotalPaidAmountOfForwardBookingDTO> AmountOfForwardBookingDtos { get; set; }
+        public DbSet<OtherTransactionsDTO> OtherTransactionsDtos { get; set; }
+        public DbSet<PatientsDataTableDTO> PatientsDataTableDtos { get; set; }
+        public DbSet<CashierSessionDTO> CashierSessionDtos { get; set; }
+        public DbSet<ChannelingPaidReport> ChannelingPaidReports { get; set; }
+        public DbSet<PreviousForwardBookingDataDto> PreviousForwardBookingDataDtos { get; set; }
+        public DbSet<ChannelingRefundReportDto> ChannelingRefundReportDtos { get; set; }
+        public DbSet<ChannelingPaymentSummaryReportDto> ChannelingPaymentSummaryReportDtos { get; set; }
+
+        #endregion
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-	        optionsBuilder.UseSqlServer(ConnectionStrings.PRODUCTION_DATABASE);
+            optionsBuilder.UseSqlServer(ConnectionStrings.PRODUCTION_DATABASE);
         }
 
-	}
+        /*protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            #region Ignoring DTOs
+
+            modelBuilder.Ignore<ClaimBillDto>();
+            modelBuilder.Ignore<PaymentSummaryOfDoctorsOPDDTO>();
+            modelBuilder.Ignore<ForwardBookingDataTableDTO>();
+            modelBuilder.Ignore<TotalPaidAmountOfForwardBookingDTO>();
+            modelBuilder.Ignore<OtherTransactionsDTO>();
+            modelBuilder.Ignore<PatientsDataTableDTO>();
+            modelBuilder.Ignore<CashierSessionDTO>();
+            modelBuilder.Ignore<ChannelingPaidReport>();
+            modelBuilder.Ignore<PreviousForwardBookingDataDto>();
+            modelBuilder.Ignore<ChannelingRefundReportDto>();
+            modelBuilder.Ignore<ChannelingPaymentSummaryReportDto>();
+
+            #endregion
+        }*/
+    }
 }

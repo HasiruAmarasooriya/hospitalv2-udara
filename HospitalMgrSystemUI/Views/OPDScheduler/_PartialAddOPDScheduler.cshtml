@@ -7,8 +7,16 @@
 }
 @inject IConfiguration Configuration
 @section Styles{
-    <style>
-
+	<style>
+        .modal-content {
+            width: 100%;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .table {
+            width: 100%;
+        }
     </style>
 }
 
@@ -34,7 +42,7 @@
             </div>
 
             <div class="table-responsive">
-                <table id="myTable2" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+	            <table id="myTable2" class="table table-striped table-bordered dataTable fonts-12">
                     <thead>
                         <tr>
                             <th>Session</th>
@@ -43,7 +51,6 @@
                             <th>Start Time</th>
                             <th>End Time</th>
                             <th>Active Session</th>
-                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="tblBodyPayments2">
@@ -79,9 +86,6 @@
                                     <label class="form-check-label" for="customRadio1"></label>
                                 </div>
                             </td>
-                            <td>
-                                <button type="button" class="btn btn-danger" onclick="endSession('morningSession')">End</button>
-                            </td>
                         </tr>
 
                         <tr>
@@ -116,9 +120,6 @@
                                     }
                                         <label class="form-check-label" for="customRadio2"></label>
                                     </div>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-danger" onclick="endSession('daySession')">End</button>
                             </td>
                         </tr>
 
@@ -157,9 +158,6 @@
                                         <label class="form-check-label" for="customRadio3"></label>
                                     </div>
                                 
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-danger" onclick="endSession('nightSession')">End</button>
                             </td>
                         </tr>
                     </tbody>

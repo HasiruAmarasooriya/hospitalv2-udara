@@ -1,4 +1,5 @@
-﻿@using Microsoft.Extensions.Configuration
+﻿@using HospitalMgrSystem.Model.Enums
+@using Microsoft.Extensions.Configuration
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -21,26 +22,27 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Patient</label>
-                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="opd.PatientID" id="dropPatient">
+                        @*<select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="opd.PatientID" id="dropPatient">
                             <option value="-2">Select one</option>
                             @foreach (var item in Model.patientsList)
                             {
                                 <option value="@item.Id">@item.FullName (@item.MobileNumber)</option>
                             }
-                        </select>
-
+                        </select>*@
+                        <input class="form-control" type="text" id="patientId" asp-for="opd!.PatientID" hidden />
+                        <input class="form-control" type="text" id="patientName" placeholder="Patient Name" asp-for="opd!.patient!.FullName" onchange="javascript:select_onchange_patient();" />
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Mobile Number </label>
-                        <input class="form-control " type="text" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" />
+                        <input class="form-control " type="text" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd!.patient!.MobileNumber" />
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Sex</label>
-                        <select class="form-control ddlSearchList" id="dropSex" asp-for="opd.patient.Sex">
+                        <select class="form-control ddlSearchList" id="dropSex" asp-for="opd!.patient!.Sex">
                             <option value="0">Select one</option>
                             <option value="1">Male</option>
                             <option value="2">Female</option>
@@ -71,28 +73,6 @@
 
 
             <div class="row">
-                @* <div class="col-md-12 font-bold">
-                <div>Please Select the OPD type</div>
-                </div>
-
-                <div class="col-md-6">
-                <div class="form-check">
-                <input class="form-check-input" type="radio" name="OPDType" id="Doctor" value="1" onclick="handleOPDTypeChange()" checked>
-                <label class="form-check-label" for="Doctor">
-                OPD
-                </label>
-                </div>
-                </div>
-
-                <div class="col-md-6">
-                <div class="form-check">
-                <input class="form-check-input" type="radio" name="OPDType" id="Investigation" value="0" onclick="handleOPDTypeChange()">
-                <label class="form-check-label" for="Investigation">
-                Investigation Only
-                </label>
-                </div>
-                </div> *@
-
                 <div class="col-md-6" id="doctorFields">
                     <div class="form-group">
                         <label for="companyName">OPD Doctor</label>
@@ -128,7 +108,7 @@
                 <div class="col-md-6" id="investigationFields">
                     <div class="form-group">
                         <label for="companyName">Hospital Fee:</label>
-                        <input class="form-control " type="number" id="hospitalFeeInput" style="text-align:right;" placeholder="Amount" asp-for="opd.HospitalFee" disabled />
+                        <input class="form-control " type="number" id="hospitalFeeInput" style="text-align:right;" placeholder="Amount" asp-for="opd!.HospitalFee" disabled />
                     </div>
 
                 </div>
@@ -139,7 +119,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="companyName">Name</label>
-                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_drug(this.value);" id="drugus" asp-for="opdDrugus.DrugId">
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_drug(this.value);" id="drugus" asp-for="opdDrugus!.DrugId" disabled="@(Model.opd.paymentStatus == PaymentStatus.PAID && Model.opdId > 0)">
                             <option value="0">Select Drug</option>
                             @foreach (var item in Model.Drugs)
                             {
@@ -175,7 +155,7 @@
                 <div class="col-md-12">
                     <div class="form-group text-center">
                         <br>
-                        <button type="button" class="btn btn-success waves-effect" style="width:100%" onclick="addDrugusItem()">Add</button>
+                        <button type="button" class="btn btn-success waves-effect" style="width:100%" onclick="addDrugusItem()" disabled="@(Model.opd.paymentStatus == PaymentStatus.PAID && Model.opdId > 0)">Add</button>
                     </div>
                 </div>
             </div>
@@ -187,7 +167,7 @@
                             <thead>
                                 <tr>
 
-                                    <th data-orderable="true">Drugus Name</th>
+                                    <th data-orderable="true">Drugs Name</th>
                                     <th>Qty</th>
                                     <th>Price</th>
                                     <th>Amount</th>
@@ -257,7 +237,7 @@
                                     <td>@item.Amount</td>
 
                                     <td>
-                                        @if (Model != null)
+                                        @if (Model != null && Model.opd!.paymentStatus != PaymentStatus.PAID)
                                         {
 
                                             @using (Html.BeginForm("DeleteOPDDrug", "OPDRegistration", new { Id = @item.Id }, FormMethod.Post))

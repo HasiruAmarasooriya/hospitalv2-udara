@@ -138,7 +138,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">X-Ray Details</h4>
+                <h4 class="card-title">X-Ray Details (@Model.listOPDTbDtoSp.Count)</h4>
                 <input type="hidden" id="isPOP" asp-for="isPoP">
                 <input type="hidden" id="isId" asp-for="opdId">
                 <div class="table-responsive">
@@ -198,11 +198,11 @@
                                         </td>
 
                                         <td>
-                                            @if (Model != null)
+                                            @if (Model != null && (PaymentStatus)item.paymentStatus == PaymentStatus.NOT_PAID)
                                             {
                                                 @using (Html.BeginForm("DeleteOPD", "XRAY", new { item.Id }, FormMethod.Post))
                                                 {
-                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'>
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger' onclick="return confirm('Are you sure you want to delete this item?');">
                                                         <i class='fa fa-trash'></i>
                                                     </button>
                                                 }
@@ -434,7 +434,7 @@
 
         function select_onchange_patient(value) {
 
-            var settings = {
+            @*var settings = {
                 url: "/XRAY/LoadPatientsAjax/" + value,
                 "method": "GET",
                 "headers": {
@@ -456,7 +456,23 @@
                     $('#txtMonths').val(data.months);
                     $('#txtDays').val(data.days);
                 }
-            });
+            });*@
+
+            var age = $('#txtAge').val();
+            var months = $('#txtMonths').val();
+            var days = $('#txtDays').val();
+
+            if (age == "") {
+                $('#txtAge').val("0");
+            }
+
+            if (months == "") {
+                $('#txtMonths').val("0");
+            }
+
+            if (days == "") {
+                $('#txtDays').val("0");
+            }
         }
 
 
@@ -568,8 +584,8 @@
 
         function submitDrugusItems() {
 
-            var fullName = $('#dropPatient option:selected').text();
-            var patientID = $('#dropPatient').val();
+            var fullName = $('#patientName').val();
+            var patientID = $('#patientId').val();
             var contactNo = $('#txtMobileNumber').val();
             var sex = $('#dropSex').val();
             var age = $('#txtAge').val();
@@ -632,8 +648,8 @@
 
         function submitDrugusItemsWithQR() {
 
-            var fullName = $('#dropPatient option:selected').text();
-            var patientID = $('#dropPatient').val();
+            var fullName = $('#patientName').val();
+            var patientID = $('#patientId').val();
             var contactNo = $('#txtMobileNumber').val();
             var sex = $('#dropSex').val();
             var age = $('#txtAge').val();

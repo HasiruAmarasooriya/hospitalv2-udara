@@ -6,7 +6,7 @@
         public HospitalMgrSystem.Model.OPD CreateOPD(HospitalMgrSystem.Model.OPD opd);
         public List<Model.OPD> GetAllOPDByStatus();
         public Model.OPD GetAllOPDByID(int? id);
-        public Model.OPD DeleteOPD(int opdId);
+        public Model.OPD DeleteOPD(int opdId, int userId);
         public List<Model.OPD> SearchOPD(string value);
         #endregion
 

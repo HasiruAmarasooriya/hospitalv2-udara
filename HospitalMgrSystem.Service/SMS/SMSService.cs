@@ -125,16 +125,30 @@ namespace HospitalMgrSystem.Service.SMS
         }
 
 
-        public string generateMessageBodyForChannelingScheduleForTimeChange(ChannelingSMS channelingSMS)
+        public string generateMessageBodyForChannelingScheduleForTimeChange(ChannelingSMS channelingSMS, string desc)
         {
+            var message = desc switch
+            {
+                "TIME_ONLY" => "KUMUDU HOSPITAL(PVT)LTD\n" + "\n" + channelingSMS.channelingSchedule.Consultant?.Name +
+                               "\nSorry... The Session time has been changed to at" +
+                               channelingSMS.channelingSchedule.DateTime.ToString("f") +
+                               "\nකණගාටුයි... රෝගීන් පරීක්ෂා කරන වේලාව වෙනස් කොට ඇත" +
+                               "\nTEL: 066 22 22 244 || 066 22 30 027",
 
-            string message = "";
-            message = "KUMUDU HOSPITAL(PVT)LTD\n"
-                    + "\n" + channelingSMS.channelingSchedule.Consultant.Name
-                    + "\nSorry... The Session time has been changed to at"
-                     + channelingSMS.channelingSchedule.DateTime.ToString("f")
-                    + "\nකණගාටුයි... රෝගීන් පරීක්ෂා කරන වෙලාව වෙනස් කොට ඇත"
-                    + "\nTEL: 066 22 22 244 || 066 22 30 027";
+                "DATE_ONLY" => "KUMUDU HOSPITAL(PVT)LTD\n" + "\n" + channelingSMS.channelingSchedule.Consultant?.Name +
+                               "\nSorry... The Session date has been changed to at" +
+                               channelingSMS.channelingSchedule.DateTime.ToString("f") +
+                               "\nකණගාටුයි... රෝගීන් පරීක්ෂා කරන දිනය වෙනස් කොට ඇත" +
+                               "\nTEL: 066 22 22 244 || 066 22 30 027",
+
+                "BOTH" => "KUMUDU HOSPITAL(PVT)LTD\n" + "\n" + channelingSMS.channelingSchedule.Consultant?.Name +
+                          "\nSorry... The Session date and time has been changed to at" +
+                          channelingSMS.channelingSchedule.DateTime.ToString("f") +
+                          "\nකණගාටුයි... රෝගීන් පරීක්ෂා කරන දිනය සහ වේලාව වෙනස් කොට ඇත" +
+                          "\nTEL: 066 22 22 244 || 066 22 30 027",
+
+                _ => ""
+            };
 
             return message;
 
@@ -148,7 +162,7 @@ namespace HospitalMgrSystem.Service.SMS
             if (channelingSMS.ChannellingScheduleStatus == Model.Enums.ChannellingScheduleStatus.SESSION_START)
             {
                 message = "KUMUDU HOSPITAL(PVT)LTD\n"
-                    +"\n" + channelingSMS.channelingSchedule.Consultant.Name
+                    + "\n" + channelingSMS.channelingSchedule.Consultant.Name
                     + "\nThe Session was Started at "
                      + channelingSMS.channelingSchedule.DateTime.ToString("f")
                     + "\nරෝගීන් පරික්ෂා කරන කාලය ආරම්භ විය."
@@ -169,7 +183,7 @@ namespace HospitalMgrSystem.Service.SMS
             {
                 message = "KUMUDU HOSPITAL(PVT)LTD\n"
                     + "\n" + channelingSMS.channelingSchedule.Consultant.Name
-                    + "\n( " + channelingSMS.channelingSchedule.DateTime.ToString("f") + ")" 
+                    + "\n( " + channelingSMS.channelingSchedule.DateTime.ToString("f") + ")"
                     + "\nSorry... The Session has been temporarily cancelled"
                     + "\nකණගාටුයි... රෝගීන් පරික්ෂා කිරීම තාවකාලිකව අවලංගු කොට ඇත "
                     + "\nTEL: 066 22 22 244 || 066 22 30 027";
@@ -294,7 +308,7 @@ namespace HospitalMgrSystem.Service.SMS
         }
 
 
-        public async Task<string> SendSMSTokenTimeChange(ChannelingSMS channelingSMS)
+        public async Task<string> SendSMSTokenTimeChange(ChannelingSMS channelingSMS, string desc)
         {
             SMSAPILogin _smsApiLogin = new SMSAPILogin();
             SMSCampaign _SMSCampaign = new SMSCampaign();
@@ -322,7 +336,9 @@ namespace HospitalMgrSystem.Service.SMS
                         mobileNumbers.Add(new MobileNumber { mobile = item.patient.MobileNumber });
                     }
 
-                    var messageBody = generateMessageBodyForChannelingScheduleForTimeChange(channelingSMS);
+                    var messageBody = "";
+
+                    messageBody = generateMessageBodyForChannelingScheduleForTimeChange(channelingSMS, desc);
 
                     var request = new SMSTokenRequest
                     {
@@ -405,7 +421,7 @@ namespace HospitalMgrSystem.Service.SMS
                     var mobileNumbers = new List<MobileNumber>();
                     foreach (var item in channelingSMS.channeling)
                     {
-                      mobileNumbers.Add(new MobileNumber { mobile = item.patient.MobileNumber });
+                        mobileNumbers.Add(new MobileNumber { mobile = item.patient.MobileNumber });
                     }
 
                     var messageBody = generateMessageBodyForChannelingSchedule(channelingSMS);

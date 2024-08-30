@@ -57,5 +57,7 @@ namespace HospitalMgrSystemUI.Models
         public Channeling channel{ get; set; }
         public ChannelingSchedule ChannelingSchedule { get; set; }
         public string? ItemName { get; set; }
-    }
+        public int PrintCount { get; set; }
+        public OPD? OpdData { get; set; }
+	}
 }

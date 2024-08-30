@@ -114,10 +114,11 @@ namespace HospitalMgrSystemUI.Controllers
 
         public ActionResult CreateChannelShedule(int Id)
         {
-            ChannelingSheduleDto channelingSheduleDto = new ChannelingSheduleDto();
+            var channelingSheduleDto = new ChannelingSheduleDto();
             channelingSheduleDto.Specialists = LoadSpecialists();
             channelingSheduleDto.Consultants = LoadConsultants();
             channelingSheduleDto.Rooms = LoadRooms();
+            var channelingItems = new ChannelingScheduleService().GetAllChannelingItems();
 
             if (Id > 0)
             {
@@ -135,6 +136,14 @@ namespace HospitalMgrSystemUI.Controllers
                     }
                 }
             }
+
+            channelingSheduleDto.ChannelingSchedule = new ChannelingSchedule
+            {
+                Id = 0,
+                // ConsultantFee = channelingItems[0].DoctorFee,
+                // HospitalFee = channelingItems[0].HospitalFee,
+                DateTime = DateTime.Now
+            };
 
             return PartialView("_PartialAddChannelingShedule", channelingSheduleDto);
         }
@@ -227,23 +236,23 @@ namespace HospitalMgrSystemUI.Controllers
 
         private decimal GetDoctorPaidAppoinment(int id)
         {
-            
+
 
             using (var httpClient = new HttpClient())
             {
 
                 try
                 {
-                 decimal   channelingSchedule = new ChannelingScheduleService().GetDoctorPaidAppoinment(id);
-                 return channelingSchedule;
+                    decimal channelingSchedule = new ChannelingScheduleService().GetDoctorPaidAppoinment(id);
+                    return channelingSchedule;
                 }
                 catch (Exception ex)
                 {
-                 return 0;
+                    return 0;
                 }
             }
 
-            
+
         }
 
         public async Task<IActionResult> AddNewChannelingSheduleAsync()
@@ -256,35 +265,54 @@ namespace HospitalMgrSystemUI.Controllers
                 {
                     if (viewChannelingSchedule.ChannelingSchedule.Id != 0 && viewChannelingSchedule.PreviousDateTime != viewChannelingSchedule.ChannelingSchedule.DateTime)
                     {
-                        ChannelingSMS channelingSMS = new ChannelingSMS();
+                        var isTimeChanged = viewChannelingSchedule.PreviousDateTime.TimeOfDay != viewChannelingSchedule.ChannelingSchedule.DateTime.TimeOfDay;
+                        var isDateChanged = viewChannelingSchedule.PreviousDateTime.Date != viewChannelingSchedule.ChannelingSchedule.DateTime.Date;
 
-                        channelingSMS.channeling =
-                            new OPDService().GetAllOPDBySchedularID(viewChannelingSchedule.ChannelingSchedule.Id);
-                        channelingSMS.channelingSchedule =
-                            LoadChannelingSheduleByID(viewChannelingSchedule.ChannelingSchedule.Id);
-                        channelingSMS.ChannellingScheduleStatus =
-                            viewChannelingSchedule.ChannelingSchedule.scheduleStatus;
+                        var channelingSMS = new ChannelingSMS
+                        {
+                            channeling = new OPDService().GetAllOPDBySchedularID(viewChannelingSchedule.ChannelingSchedule.Id),
+                            channelingSchedule = LoadChannelingSheduleByID(viewChannelingSchedule.ChannelingSchedule.Id)
+                        };
+
                         channelingSMS.channelingSchedule.DateTime = viewChannelingSchedule.ChannelingSchedule.DateTime;
                         channelingSMS.ChannellingScheduleStatus =
                             viewChannelingSchedule.ChannelingSchedule.scheduleStatus;
 
-                        SMSService sMSService = new SMSService();
-                        SMSActivation sMSActivation = new SMSActivation();
+                        var sMSService = new SMSService();
+                        var sMSActivation = new SMSActivation();
                         sMSActivation = sMSService.GetSMSServiceStatus();
-                        if (sMSActivation.isActivate == SMSStatus.Active) {
+                        if (sMSActivation.isActivate == SMSStatus.Active)
+                        {
                             try
                             {
-                                //update session status SESSIOM_TIME_CHANGE_SMS_SENT
-                                await sMSService.SendSMSTokenTimeChange(channelingSMS);
+                                switch (isTimeChanged)
+                                {
+                                    case true when !isDateChanged:
+                                        // Only the time has changed
+                                        // update session status SESSIOM_TIME_CHANGE_SMS_SENT
+                                        await sMSService.SendSMSTokenTimeChange(channelingSMS, "TIME_ONLY");
+                                        break;
+                                    case false when isDateChanged:
+                                        // Only the date has changed
+                                        // update session status SESSIOM_TIME_CHANGE_SMS_SENT
+                                        await sMSService.SendSMSTokenTimeChange(channelingSMS, "DATE_ONLY");
+                                        break;
+                                    case true when isDateChanged:
+                                        // Both date and time have changed
+                                        // update session status SESSIOM_TIME_CHANGE_SMS_SENT
+                                        await sMSService.SendSMSTokenTimeChange(channelingSMS, "BOTH");
+                                        break;
+                                }
+
                                 new ChannelingScheduleService().UpdateChannelingSheduleSMSStatus(viewChannelingSchedule.ChannelingSchedule.Id, ChannelingScheduleSMSStatus.SESSIOM_TIME_CHANGE_SMS_SENT);
                             }
                             catch (Exception ex)
                             {
                                 Console.WriteLine($"Error sending SMS token time change: {ex.Message}");
                             }
-                            
+
                         }
-                        
+
                     }
                     else if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.NOT_ACTIVE && viewChannelingSchedule.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.ACTIVE)
                     {
@@ -305,11 +333,11 @@ namespace HospitalMgrSystemUI.Controllers
                             try
                             {
 
-                                if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus == ChannellingScheduleStatus.SESSION_END && channelingSMS.channelingSchedule.SMSStatus!=ChannelingScheduleSMSStatus.SESSION_END_SMS_SENT)
+                                if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus == ChannellingScheduleStatus.SESSION_END && channelingSMS.channelingSchedule.SMSStatus != ChannelingScheduleSMSStatus.SESSION_END_SMS_SENT)
                                 {
                                     //check SMS already != to session end
                                     await sMSService.SendSMSToken(channelingSMS);
-                                    new ChannelingScheduleService().UpdateChannelingSheduleSMSStatus(viewChannelingSchedule.ChannelingSchedule.Id,ChannelingScheduleSMSStatus.SESSION_END_SMS_SENT);
+                                    new ChannelingScheduleService().UpdateChannelingSheduleSMSStatus(viewChannelingSchedule.ChannelingSchedule.Id, ChannelingScheduleSMSStatus.SESSION_END_SMS_SENT);
                                 }
                                 if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus == ChannellingScheduleStatus.SESSION_START && channelingSMS.channelingSchedule.SMSStatus != ChannelingScheduleSMSStatus.SESSION_END_SMS_SENT && channelingSMS.channelingSchedule.SMSStatus != ChannelingScheduleSMSStatus.SESSION_START_SMS_SENT)
                                 {
@@ -319,7 +347,7 @@ namespace HospitalMgrSystemUI.Controllers
                                 }
                                 if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus == ChannellingScheduleStatus.SESSION_CANCEL)
                                 {
- 
+
                                     await sMSService.SendSMSToken(channelingSMS);
                                     new ChannelingScheduleService().UpdateChannelingSheduleSMSStatus(viewChannelingSchedule.ChannelingSchedule.Id, ChannelingScheduleSMSStatus.SESSION_CANCEL_SMS_SENT);
                                 }
@@ -337,7 +365,7 @@ namespace HospitalMgrSystemUI.Controllers
                             }
 
                         }
-                       
+
                     }
 
                     if (viewChannelingSchedule.ChannelingSchedule.scheduleStatus == ChannellingScheduleStatus.SESSION_END)
@@ -355,7 +383,7 @@ namespace HospitalMgrSystemUI.Controllers
                             otherTransactions.SessionID = mtList[0].Id;
                             otherTransactions.ConvenerID = Convert.ToInt32(userIdCookie);
                             otherTransactions.InvoiceType = InvoiceType.DOCTOR_PAYMENT;
-                            otherTransactions.Amount = channelingScheduleData.totalDoctorFeeAmount+channelingScheduleData.doctorPaidAppoinment;
+                            otherTransactions.Amount = channelingScheduleData.totalDoctorFeeAmount + channelingScheduleData.doctorPaidAppoinment;
                             otherTransactions.Description = "DOCTOR_PAYMENT";
                             otherTransactions.ApprovedByID = Convert.ToInt32(userIdCookie);
                             otherTransactions.Status = CommonStatus.Active;

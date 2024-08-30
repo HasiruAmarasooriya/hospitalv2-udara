@@ -1,4 +1,7 @@
-﻿using HospitalMgrSystem.Model;
+﻿using HospitalMgrSystem.DataAccess;
+using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.DTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace HospitalMgrSystem.Service.Patients
 {
@@ -45,6 +48,15 @@ namespace HospitalMgrSystem.Service.Patients
 
             }
             return mtList;
+        }
+
+        public List<PatientsDataTableDTO> GetAllPatientByStatusSP()
+        {
+            using var context = new HospitalDBContext();
+
+            return context.Set<PatientsDataTableDTO>()
+                .FromSqlRaw("EXEC GetAllApprovedPatients")
+                .ToList();
         }
 
         public List<Model.Patient> SearchPatient(string value)

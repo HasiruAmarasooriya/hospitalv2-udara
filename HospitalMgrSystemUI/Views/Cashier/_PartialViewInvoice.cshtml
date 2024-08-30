@@ -80,18 +80,21 @@
 				{
 					@if (Model.opd != null && Model.opd.Description == "X-RAY")
 					{
-						<h4 style="margin: 0; padding: 0;">X-RAY Bill</h4>
+						<h4 style="margin: 0; padding: 0;">X-RAY Bill </h4>
+						<h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
 						<h5 style="margin: 0; padding: 0;">@Model.ItemName</h5>
 					}
 					else
 					{
-						<h5 style="margin: 0; padding: 0;">OPD Bill</h5>
+						<h5 style="margin: 0; padding: 0;">OPD Bill </h5>
+						<h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
 					}
 				}
 
 				@if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
 				{
-					<h4 style="margin: 0; padding: 0;">Channeling Bill</h4>
+					<h4 style="margin: 0; padding: 0;">Channeling Bill </h4>
+					<h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
 					<h5>@Model.ItemName</h5>
 				}
 
@@ -154,7 +157,7 @@
 			{
 				<tr>
 					<td style="text-align: left;">Specialist:</td>
-					<td style="text-align: left;">@Model.ChannelingSchedule!.Consultant!.Specialist!.Name</td>
+					<td style="text-align: left;">@Model.opd!.consultant!.Specialist!.Name</td>
 				</tr>
 			}
 
@@ -166,7 +169,7 @@
 				</tr>
 				<tr>
 					<td style="text-align: left;">Room No:</td>
-					<td style="text-align: left;">@Model.ChannelingSchedule.Room!.Name</td>
+					<td style="text-align: left;">@Model.ChannelingSchedule!.Room!.Name</td>
 				</tr>
 				<tr>
 					<td style="text-align: left;">Date:</td>
