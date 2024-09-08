@@ -365,8 +365,24 @@ namespace HospitalMgrSystem.Service.Report
 				.ToList();
 
 			var channelingService = new ChannelingScheduleService();
+			
+			var procedureDoctorsIds = dbContext.ChannelingItems.Where(x => x.Tag1 == 5).Select(x => x.Tag2).ToList();
+			var doctorSpecialist = dbContext.Consultants
+												.Where(x => procedureDoctorsIds.Contains(x.Id))
+												.Select(x => x.SpecialistId)
+												.ToList();
 
-			int[] scanSpList = { 44, 13, 12 };
+			var scanSpList = new List<int?>
+			{
+				44,
+				13,
+				12
+			};
+
+			if (doctorSpecialist != null && doctorSpecialist.Count > 0)
+			{
+				scanSpList.AddRange(doctorSpecialist);
+			}
 
 			foreach (var channel in opdChannelingData)
 			{
