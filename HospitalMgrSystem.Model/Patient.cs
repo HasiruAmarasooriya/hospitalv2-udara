@@ -6,7 +6,7 @@ namespace HospitalMgrSystem.Model
     {
         public int Id { get; set; }
         public string? FullName { get; set; }
-        public string? NIC { get; set; }
+		public string? NIC { get; set; }
         public string? MobileNumber { get; set; }
         public string? TelephoneNumber { get; set; }
         public int Age { get; set; }
