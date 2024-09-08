@@ -199,7 +199,7 @@
 						{
 							@foreach (var item in Model.listChanneling)
 							{
-								@if (item.scanDoctorSessionDetails != null)
+								@if (item.scanDoctorSessionDetails != null && item.scanDoctorSessionDetails.Count > 1)
 								{
 									<table class="table">
 										<thead class="table-success">
