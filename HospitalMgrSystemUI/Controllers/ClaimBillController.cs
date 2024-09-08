@@ -3,6 +3,8 @@ using HospitalMgrSystem.Model.Enums;
 using HospitalMgrSystem.Service.CashierSession;
 using HospitalMgrSystem.Service.ClaimBill;
 using HospitalMgrSystem.Service.Consultant;
+using HospitalMgrSystem.Service.Default;
+using HospitalMgrSystem.Service.Drugs;
 using HospitalMgrSystem.Service.Patients;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +13,22 @@ namespace HospitalMgrSystemUI.Controllers
 {
     public class ClaimBillController : Controller
     {
-        public IActionResult Index()
+	    private IConfiguration _configuration;
+
+	    public ClaimBillController(IConfiguration configuration)
+	    {
+		    _configuration = configuration;
+	    }
+
+		public IActionResult Index()
         {
             var claimBillDto = new ClaimBillDto
             {
                 patientsList = LoadPatients(),
                 consultantsList = LoadConsultants(),
-                claimBillDtos = new ClaimBillService().GetAllClaimBillsSP()
+                claimBillDtos = new ClaimBillService().GetAllClaimBillsSP(),
+                Scans = new DefaultService().getAllScanItems(),
+                Drugs = new DrugsService().GetAllDrugsByStatus()
 			};
 
             return View(claimBillDto);
@@ -40,7 +51,7 @@ namespace HospitalMgrSystemUI.Controllers
                         MobileNumber = claimBillDto.ContactNumber,
                         CreateDate = DateTime.Now,
                         ModifiedDate = DateTime.Now,
-                        NIC = "NONE",
+                        NIC = claimBillDto.NIC,
                         Status = PatientStatus.New
 	                };
 
@@ -68,7 +79,26 @@ namespace HospitalMgrSystemUI.Controllers
                     var claimBillService = new ClaimBillService();
                     claimBillDto.claimBill = claimBillService.CreateClaimBill(claimBillDto.claimBill);
 
-                    return PartialView("_PartialReceipt", claimBillDto);
+                    if (claimBillDto.ClaimBillItemsList == null) return PartialView("_PartialReceipt", claimBillDto);
+
+					foreach (var item in claimBillDto.ClaimBillItemsList!)
+                    {
+	                    item.ClaimBillId = claimBillDto.claimBill.Id;  // Set ClaimBillId
+	                    item.RefId = claimBillDto.claimBill.RefNo; // Set RefId manually or dynamically as needed
+
+	                    // You can also set CreateDate, CreateUser, ModifiedDate, ModifiedUser here
+	                    item.CreateDate = DateTime.Now;
+	                    item.CreateUser = userID; // Assuming userID is the ID of the user creating the claim
+	                    item.ModifiedDate = DateTime.Now;
+	                    item.ModifiedUser = userID; // Assuming userID is the ID of the user modifying the claim
+                    }
+
+                    var scanItems = claimBillService.CreateClaimBillItemsList(claimBillDto.ClaimBillItemsList);
+
+                    
+                    claimBillDto.ClaimBillItemsList = claimBillService.GetChannelingItemsNames(scanItems);
+
+					return PartialView("_PartialReceipt", claimBillDto);
                 }
                 catch (Exception ex)
                 {
