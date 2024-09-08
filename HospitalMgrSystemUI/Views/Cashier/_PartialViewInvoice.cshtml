@@ -59,6 +59,7 @@
             text-align: center;
         }
     </style>
+	<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
 <div id="receipt">
@@ -67,7 +68,7 @@
 	</div>
 	<div id="address">
 		No 48, Kandy Road, Mathale,<br>
-		Tel: 066 22 22 2444 | 066 22 30 027<br>
+		Tel: 066 22 22 244 | 066 22 30 027<br>
 		@if (Model != null)
 		{
 			<input type="hidden" id="opid" asp-for="PreID" value="@Model.PreID">
@@ -280,27 +281,13 @@
 
 		<hr>
 	}
+	
+	<div id="barcode">
+		<svg id="barcodeSvg"></svg>
+	</div>
 
 	<p>Payment Successfully Completed !</p>
 </div>
 
-<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
-<script type="text/javascript">
-        // Call the generateQRCode function when the page loads
-        document.addEventListener("DOMContentLoaded", function () {
-            generateQRCode(50);
-        });
-
-        function generateQRCode(size) {
-            var preID = document.getElementById("preID").value;
-            console.log("pre ID is" + preID);
-            var data = preID;
-            const qrcode = new QRCode(document.getElementById("qrcode"), {
-                text: data,
-                width: size,
-                height: size,
-            });
-        }
-    </script>
 </body>
 </html>
