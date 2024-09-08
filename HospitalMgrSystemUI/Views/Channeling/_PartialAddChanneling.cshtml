@@ -14,7 +14,13 @@
     var isCheckedEXE = 0;
     var channelingItemID = 0;
 
-    function handleSubmit() {
+    function handleSubmit(button) {
+        // Disable the button to prevent double submission
+        button.disabled = true;
+
+        // Optionally, you can change the button text to indicate that it's processing
+        button.innerText = 'Saving...';
+
         var opdID = $('#opdIndexNumber').val();
         if (opdID == 0) {
             submitChanneling();
@@ -1156,7 +1162,7 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
 
-            <button type="button" class="btn  waves-effect btn-primary" onclick="handleSubmit()"><i class="fa fa-save"></i>&nbsp;Save</button>
+            <button type="button" class="btn  waves-effect btn-primary" onclick="handleSubmit(this)"><i class="fa fa-save"></i>&nbsp;Save</button>
             <button type="button" class="btn waves-effect btn-primary ms-2" onclick="submitChannelingWithQR()">
                 <i class='fa fa-print'></i>&nbsp;Print & Save
             </button>
