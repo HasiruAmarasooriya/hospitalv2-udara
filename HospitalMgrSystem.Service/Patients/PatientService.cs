@@ -7,10 +7,10 @@ namespace HospitalMgrSystem.Service.Patients
 {
     public class PatientService : IPatientService
     {
-        public HospitalMgrSystem.Model.Patient CreatePatient(HospitalMgrSystem.Model.Patient patient)
+        public Patient CreatePatient(Patient patient)
         {
 
-            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            using (var dbContext = new HospitalDBContext())
             {
                 if (patient.Id == 0)
                 {
@@ -19,7 +19,8 @@ namespace HospitalMgrSystem.Service.Patients
                 }
                 else
                 {
-                    Patient result = (from p in dbContext.Patients where p.Id == patient.Id select p).SingleOrDefault();
+                    var result = (from p in dbContext.Patients where p.Id == patient.Id select p).SingleOrDefault();
+
                     result.FullName = patient.FullName;
                     result.Address = patient.Address;
                     result.Age = patient.Age;
@@ -33,6 +34,7 @@ namespace HospitalMgrSystem.Service.Patients
                     result.Religion = patient.Religion;
                     result.Sex = patient.Sex;
                     result.TelephoneNumber = patient.TelephoneNumber;
+
                     dbContext.SaveChanges();
                 }
                 return dbContext.Patients.Find(patient.Id);
