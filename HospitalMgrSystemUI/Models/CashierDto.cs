@@ -14,6 +14,7 @@ namespace HospitalMgrSystemUI.Models
         public int patientAge { get; set; }
         public SexStatus patientSex { get; set; }
         public string patientContactNo { get; set; }
+        public string? patientNIC { get; set; }
         public InvoiceType invoiceType { get; set; }
 
         public UserRole userRole { get; set; }
@@ -59,5 +60,7 @@ namespace HospitalMgrSystemUI.Models
         public string? ItemName { get; set; }
         public int PrintCount { get; set; }
         public OPD? OpdData { get; set; }
+        public List<Scan>? ScanList { get; set; }
+        public Scan? ScanItem { get; set; }
 	}
 }
