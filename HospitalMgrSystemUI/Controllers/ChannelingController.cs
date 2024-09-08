@@ -65,13 +65,17 @@ public class ChannelingController : Controller
 			if (_OPDDto.channeling.ChannelingScheduleID != 0)
 			{
 				resultSet = new ChannelingService().ChannelingGetBySheduleIdSP(_OPDDto.channeling.ChannelingScheduleID);
+				
 			}
 
 			if (resultSet != null)
 			{
 				channelingDto.CHAppoinmentDTO = resultSet;
 				channelingDto.listConsultants = new ConsultantService().GetAllConsultantThatHaveSchedulings();
-				return View("Index", channelingDto);
+                channelingDto.channelingSchedule = new ChannelingScheduleService().SheduleGetById(_OPDDto.channeling.ChannelingScheduleID); ;
+
+
+                return View("Index", channelingDto);
 			}
 
 			return RedirectToAction("Index");
