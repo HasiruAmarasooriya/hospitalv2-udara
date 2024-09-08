@@ -126,7 +126,6 @@ namespace HospitalMgrSystemUI.Controllers
 				cashierDto.PrintCount = printCount;
 				cashierDto.OpdData = opdData;
 
-
 				return PartialView("_PartialViewInvoice", cashierDto);
 			}
 			catch (Exception ex)
@@ -137,50 +136,55 @@ namespace HospitalMgrSystemUI.Controllers
 
 		public ActionResult PrintBill([FromBody] CashierDto cashierDtoPar)
 		{
-			CashierDto cashierDto = new CashierDto();
+			var cashierDto = new CashierDto();
 			var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
 			var userID = Convert.ToInt32(userIdCookie);
 
-			using (var httpClient = new HttpClient())
+			using var httpClient = new HttpClient();
+			try
 			{
-				try
+				cashierDto.PreID = cashierDtoPar.PreID;
+
+				var number = GetNumber(cashierDto.PreID);
+				var opdData = new OPDService().GetAllOPDByID(number);
+
+				cashierDto = GetCashierAlldetails(cashierDto.PreID);
+				cashierDto.cashierRemoveBillingItemDtoList = GetCashierAllRemoveddetails(cashierDto.PreID);
+
+				var invoice = new CashierService().GetInvoiceDataByServiceId(number);
+				var sessionId = GetActiveCashierSession(userID)[0].Id;
+
+				var claimBill = new ClaimBill
 				{
-					cashierDto.PreID = cashierDtoPar.PreID;
-
-					var number = GetNumber(cashierDto.PreID);
-					var opdData = new OPDService().GetAllOPDByID(number);
-
-					cashierDto = GetCashierAlldetails(cashierDto.PreID);
-					cashierDto.cashierRemoveBillingItemDtoList = GetCashierAllRemoveddetails(cashierDto.PreID);
-
-					var invoice = new CashierService().GetInvoiceDataByServiceId(number);
-					var sessionId = GetActiveCashierSession(userID)[0].Id;
-
-					var claimBill = new ClaimBill
-					{
-						PatientID = opdData.PatientID,
-						ConsultantId = opdData.ConsultantID,
-						InvoiceId = invoice?.Id,
-						RefNo = cashierDtoPar.PreID,
-						SubTotal = cashierDto.preSubtotal,
-						Discount = cashierDto.discount,
-						TotalAmount = cashierDto.preTotal,
-						CashAmount = cashierDto.totalPaymentPaidAmount,
-						Balance = cashierDto.total,
-						CsId = sessionId,
-						CreateDate = DateTime.Now,
-						ModifiedDate = DateTime.Now
-					};
-
-					new ClaimBillService().CreateClaimBill(claimBill);
-
-
-					return PartialView("_PartialReceipt", cashierDto);
-				}
-				catch (Exception ex)
+					PatientID = opdData.PatientID,
+					ConsultantId = opdData.ConsultantID,
+					InvoiceId = invoice?.Id,
+					RefNo = cashierDtoPar.PreID,
+					SubTotal = cashierDto.preSubtotal,
+					Discount = cashierDto.discount,
+					TotalAmount = cashierDto.preTotal,
+					CashAmount = cashierDto.totalPaymentPaidAmount,
+					Balance = cashierDto.total,
+					CsId = sessionId,
+					CreateDate = DateTime.Now,
+					ModifiedDate = DateTime.Now
+				};
+					
+				cashierDto.ScanItem = new Scan
 				{
-					return RedirectToAction("Index");
-				}
+					ItemName = opdData.Description!,
+					HospitalFee = opdData.HospitalFee,
+					DoctorFee = opdData.ConsultantFee,
+					TotalAmount = opdData.TotalAmount,
+				};
+
+				new ClaimBillService().CreateClaimBill(claimBill);
+
+				return PartialView("_PartialReceipt", cashierDto);
+			}
+			catch (Exception ex)
+			{
+				return RedirectToAction("Index");
 			}
 		}
 
@@ -213,6 +217,7 @@ namespace HospitalMgrSystemUI.Controllers
 
 							cashierDto.customerName = opd.patient != null ? opd.patient.FullName : string.Empty;
 							cashierDto.patientContactNo = opd.patient != null ? opd.patient.MobileNumber : string.Empty;
+							cashierDto.patientNIC = opd.patient != null ? opd.patient.NIC != null ? opd.patient.NIC : "N/A" : "N/A";
 							cashierDto.patientAge = opd.patient != null ? opd.patient.Age : 0;
 							cashierDto.patientSex = opd.patient != null ? (SexStatus)opd.patient.Sex : SexStatus.Non;
 
@@ -335,6 +340,7 @@ namespace HospitalMgrSystemUI.Controllers
 
 							cashierDto.customerName = opd.patient != null ? opd.patient.FullName : string.Empty;
 							cashierDto.patientContactNo = opd.patient != null ? opd.patient.MobileNumber : string.Empty;
+							cashierDto.patientNIC = opd.patient != null ? opd.patient.NIC != null ? opd.patient.NIC : "N/A" : "N/A";
 							cashierDto.patientAge = opd.patient != null ? opd.patient.Age : 0;
 							cashierDto.patientSex = opd.patient != null ? (SexStatus)opd.patient.Sex : SexStatus.Non;
 
