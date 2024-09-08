@@ -4,219 +4,316 @@
 *@
 @model ClaimBillDto;
 @{
-    Layout = null;
+	Layout = null;
 }
 @inject IConfiguration Configuration
 
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kumudu Hospital - Invoice</title>
-    @* <link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" /> *@
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Kumudu Hospital - Invoice</title>
+	@* <link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" /> *@
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+		}
 
-        .container {
-            height: 297mm;
-            width: 210mm;
-            padding: 12px;
-            padding-left: 32px;
-        }
+		.container {
+			height: 297mm;
+			width: 210mm;
+			padding: 12px;
+			padding-left: 32px;
+		}
 
-        .flex {
-            display: flex;
-        }
+		.flex {
+			display: flex;
+		}
 
-        .justify-between {
-            justify-content: space-between;
-        }
+		.justify-between {
+			justify-content: space-between;
+		}
 
-        img {
-            max-width: 100%;
-        }
+		img {
+			max-width: 100%;
+		}
 
-        .text-4xl {
-            font-size: 1.5rem;
-        }
+		.text-4xl {
+			font-size: 1.5rem;
+		}
 
-        .text-sm {
-            font-size: 0.875rem;
-        }
+		.text-sm {
+			font-size: 0.875rem;
+		}
 
-        .text-gray-400 {
-            color: #718096;
-        }
+		.text-gray-400 {
+			color: #718096;
+		}
 
-        .pt-16 {
-            padding-top: 4rem;
-        }
+		.pt-16 {
+			padding-top: 4rem;
+		}
 
-        .table-auto {
-            width: 100%;
-        }
+		.table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 20px;
+		}
 
-        .border-b-2 {
-            border-bottom-width: 2px;
-        }
+		.table th, .table td {
+				border: 1px solid #ddd;
+				padding: 8px;
+				text-align: left;
+			}
 
-        .h-10 {
-            height: 2.5rem;
-        }
+			.table th {
+				background-color: #f2f2f2;
+				color: #333;
+				font-weight: bold;
+			}
 
-        .text-left {
-            text-align: left;
-        }
+		.table-auto {
+			width: 100%;
+		}
 
-        .text-right {
-            text-align: right;
-        }
+		.border-b-2 {
+			border-bottom-width: 2px;
+		}
 
-        .mt-5 {
-            margin-top: 1.25rem;
-        }
+		.h-10 {
+			height: 2.5rem;
+		}
 
-        .justify-end {
-            justify-content: flex-end;
-        }
+		.text-left {
+			text-align: left;
+		}
 
-        .pt-4 {
-            padding-top: 1rem;
-        }
+		.text-right {
+			text-align: right;
+		}
 
-        .text-xl {
-            font-size: 1.25rem;
-        }
+		.mt-5 {
+			margin-top: 1.25rem;
+		}
 
-        .font-bold {
-            font-weight: bold;
-        }
+		.justify-end {
+			justify-content: flex-end;
+		}
 
-        .text-center {
-            text-align: center;
-        }
+		.pt-4 {
+			padding-top: 1rem;
+		}
 
-        .flex-row {
-            flex-direction: row;
-        }
+		.text-xl {
+			font-size: 1.25rem;
+		}
 
-        .font-normal {
-            font-weight: normal;
-        }
-    </style>
+		.font-bold {
+			font-weight: bold;
+		}
+
+		.text-center {
+			text-align: center;
+		}
+
+		.flex-row {
+			flex-direction: row;
+		}
+
+		.font-normal {
+			font-weight: normal;
+		}
+
+		.table tbody tr:nth-child(even) {
+			background-color: #f9f9f9;
+		}
+
+		.table tbody tr:nth-child(odd) {
+			background-color: #fff;
+		}
+
+		.table thead {
+			border-bottom: 2px solid #ddd;
+		}
+
+		.table .text-right {
+			text-align: right;
+		}
+
+		.table .text-center {
+			text-align: center;
+		}
+
+		/* Additional spacing */
+		.mt-10 {
+			margin-top: 2.5rem;
+		}
+	</style>
 </head>
 <body>
-    <div class="container h-[297mm] w-[210mm] p-12 pl-32">
-        <div class="flex justify-between" style="margin: auto">
-            <div style="display: flex; align-items: center">
-                <img src="https://kumuduhospital.com/assets/images/kumudu_logo2.jpg" />
-                <div style="padding-left: 20px; text-align: center; margin-left: 100px;">
-                    <p class="pb-2 text-4xl" style="margin: auto; font-weight: bold">
-                        KUMUDU HOSPITAL
-                    </p>
-                    <p class="text-sm text-gray-400"
-                       style="margin-top: 10px; margin-bottom: auto">
-                        No 48, Kandy Road, Mathale,
-                    </p>
-                    <p class="text-sm text-gray-400"
-                       style="margin-top: 10px; margin-bottom: auto">
-                        Tel: 066 22 22 2444 | 066 22 30 027
-                    </p>
+<div class="container h-[297mm] w-[210mm] p-12 pl-32">
+	<div class="flex justify-between" style="margin: auto">
+		<div style="display: flex; align-items: center">
+			<img src="https://kumuduhospital.com/assets/images/kumudu_logo2.jpg"/>
+			<div style="padding-left: 20px; text-align: center; margin-left: 100px;">
+				<p class="pb-2 text-4xl" style="margin: auto; font-weight: bold">
+					KUMUDU HOSPITAL
+				</p>
+				<p class="text-sm text-gray-400"
+				   style="margin-top: 10px; margin-bottom: auto">
+					No 48, Kandy Road, Mathale,
+				</p>
+				<p class="text-sm text-gray-400"
+				   style="margin-top: 10px; margin-bottom: auto">
+					Tel: 066 22 22 244
+				</p>
 
-                    @if (Model != null)
-                    {
-                        <input type="hidden" id="opid" asp-for="claimBill.Id" value="@Model.claimBill.Id">
-                        <p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">Invoice</p>
+				@if (Model != null)
+				{
+					<input type="hidden" id="opid" asp-for="claimBill.Id" value="@Model.claimBill.Id">
+					<p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">Invoice</p>
 
-                        <p style="margin: auto; margin-top: 5px">@Model.dateTime</p>
-                    }
-                </div>
-            </div>
-        </div>
-        <div class="flex justify-between pt-16">
-            @if (Model != null)
-            {
-                <div>
-                    <p class="font-bold" style="margin: auto; margin-top: 10px">
-                        Name: <span style="font-weight: normal;">@Model.claimBill.Patient.FullName</span>
-                    </p>
-                    @* <p class="text-sm" style="margin: auto; margin-top: 10px">
-                Patient Age: <span style="font-weight: normal;">@Model.patientAge</span>
-                </p>
-                <p class="text-sm" style="margin: auto; margin-top: 10px">
-                Patient Sex: <span style="font-weight: normal;">@Model.patientSex</span>
-                </p> *@
-                    <p class="font-bold text-sm" style="margin: auto; margin-top: 10px">
-                        Contact Number: <span style="font-weight: normal;">@Model.claimBill.Patient.MobileNumber</span>
-                    </p>
-                    <p class="font-bold text-sm" style="margin: auto; margin-top: 10px">
-                        Doctor Name: <span style="font-weight: normal;">@Model.claimBill.Consultant.Name</span>
-                    </p>
-                    <p class="text-sm font-bold" style="margin: auto; margin-top: 10px">
-                        Ref No. <span class="pl-1 font-normal">@Model.claimBill.RefNo</span>
-                    </p>
-                </div>
-            }
-        </div>
+					<p style="margin: auto; margin-top: 5px">@Model.dateTime</p>
+				}
+			</div>
+		</div>
+	</div>
 
-        @if (Model != null)
-        {
-            <div class="pt-16">
-                <table class="w-full table-auto text-sm">
-                    <thead class="border-b-2">
-                        <tr class="h-10 text-left">
-                            <th>Subtotal RS.</th>
-                            <th>Discount RS.</th>
-                            <th>Total Amount RS.</th>
-                            <th>Cash Payment RS.</th>
-                            <th class="text-right">Balance RS.</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="h-10">
-                            <td>@Model.claimBill.SubTotal.ToString("0.00")</td>
-                            <td>@Model.claimBill.Discount.ToString("0.00")</td>
-                            <td>@Model.claimBill.TotalAmount.ToString("0.00")</td>
-                            <td>@Model.claimBill.CashAmount.ToString("0.00")</td>
-                            <td class="text-right font-bold">@Model.claimBill.Balance.ToString("0.00")</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+		@if (Model != null)
+		{
+			<div class="flex justify-between pt-10">
+				<div>
+					<p class="font-bold" style="margin: auto; margin-top: 10px">
+						Name: <span style="font-weight: normal;">@Model.claimBill!.Patient?.FullName</span>
+					</p>
+					<p class="font-bold text-sm" style="margin: auto; margin-top: 10px">
+						Contact Number: <span style="font-weight: normal;">@Model.claimBill.Patient?.MobileNumber</span>
+					</p>
+					<p class="font-bold text-sm" style="margin: auto; margin-top: 10px">
+						NIC: <span style="font-weight: normal;">@Model.claimBill.Patient?.NIC</span>
+					</p>
+					<p class="font-bold text-sm" style="margin: auto; margin-top: 10px">
+						Doctor Name: <span style="font-weight: normal;">@Model.claimBill.Consultant?.Name</span>
+					</p>
+					<p class="text-sm font-bold" style="margin: auto; margin-top: 10px">
+						Ref No. <span class="pl-1 font-normal">@Model.claimBill.Id</span>
+					</p>
+				</div>
+			</div>
+		}
 
-            <div class="flex-row justify-end text-right pt-4">
-                <div class="text-xl" style="margin-top: 200px;">____________________</div>
-                <div style="margin-top: 20px; margin-right: 65px;">Signature</div>
-            </div>
-        }
+	<div class="text-sm font-bold" style="margin: auto; margin-top: 10px">
+		Channeling / Service Fee: <span class="pl-1 font-normal">Rs. @((Model!.HospitalFee + Model.ConsultantFee).ToString("0.00"))</span>
+	</div>
 
-        <p class="text-center font-bold text-xl">Thank you for your cooperation!</p>
-    </div>
 
-    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
-    <script type="text/javascript">
-        // Call the generateQRCode function when the page loads
-        document.addEventListener("DOMContentLoaded", function () {
-            generateQRCode(50);
-        });
+		@if (Model != null && Model.ClaimBillItemsList != null && Model.ClaimBillItemsList.Any())
+		{
+			<div class="pt-5">
+				<!-- Scan Items Table -->
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Items</th>
+							<th class="text-center">Qty</th>
+							<th class="text-right">Price</th>
+							<th class="text-right">Amount</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var item in Model.ClaimBillItemsList)
+						{
+							<tr>
+								<td>@item.ItemName</td>
+								<td class="text-center">@item.Qty</td>
+								<td class="text-right">@item.Price?.ToString("0.00")</td>
+								<td class="text-right">@item.Amount?.ToString("0.00")</td>
+							</tr>
+						}
+					</tbody>
+				</table>
 
-        function generateQRCode(size) {
-            var preID = document.getElementById("preID").value;
-            console.log("pre ID is" + preID);
-            var data = preID;
-            const qrcode = new QRCode(document.getElementById("qrcode"), {
-                text: data,
-                width: size,
-                height: size,
-            });
-        }
+				<!-- OPD Drugs Table -->
+				@*<table class="table mt-5">
+					<thead>
+						<tr>
+							<th>OPD Drug</th>
+							<th class="text-center">Qty</th>
+							<th class="text-right">Price</th>
+							<th class="text-right">Amount</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var item in Model.ClaimBillItemsList.Where(i => i.ItemType != "CHE"))
+						{
+							<tr>
+								<td>@item.ItemName</td>
+								<td class="text-center">@item.Qty</td>
+								<td class="text-right">@item.Price?.ToString("0.00")</td>
+								<td class="text-right">@item.Amount?.ToString("0.00")</td>
+							</tr>
+						}
+					</tbody>
+				</table>*@
+			</div>
+		}
 
-        // Rest of your script...
-    </script>
+	@if (Model != null)
+	{
+		<div class="pt-10">
+			<table class="w-full table-auto text-sm">
+				<thead class="border-b-2">
+				<tr class="h-10 text-left">
+					<th>Subtotal RS.</th>
+					<th>Discount RS.</th>
+					<th>Total Amount RS.</th>
+					<th>Cash Payment RS.</th>
+					<th class="text-right">Balance RS.</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr class="h-10">
+					<td>@Model.claimBill.SubTotal.ToString("0.00")</td>
+					<td>@Model.claimBill.Discount.ToString("0.00")</td>
+					<td>@Model.claimBill.TotalAmount.ToString("0.00")</td>
+					<td>@Model.claimBill.CashAmount.ToString("0.00")</td>
+					<td class="text-right font-bold">@Model.claimBill.Balance.ToString("0.00")</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="flex-row justify-end text-right pt-4">
+			<div class="text-xl" style="margin-top: 200px;">____________________</div>
+			<div style="margin-top: 20px; margin-right: 65px;">Signature</div>
+		</div>
+	}
+
+	<p class="text-center font-bold text-xl">Thank you for your cooperation!</p>
+</div>
+
+<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+<script type="text/javascript">
+		// Call the generateQRCode function when the page loads
+		document.addEventListener("DOMContentLoaded", function () {
+			generateQRCode(50);
+		});
+
+		function generateQRCode(size) {
+			var preID = document.getElementById("preID").value;
+			console.log("pre ID is" + preID);
+			var data = preID;
+			const qrcode = new QRCode(document.getElementById("qrcode"), {
+				text: data,
+				width: size,
+				height: size,
+			});
+		}
+
+		// Rest of your script...
+	</script>
 </body>
 </html>
