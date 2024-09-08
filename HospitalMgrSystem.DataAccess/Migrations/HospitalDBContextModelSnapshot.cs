@@ -529,6 +529,58 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.ToTable("ClaimBills");
                 });
 
+            modelBuilder.Entity("HospitalMgrSystem.Model.ClaimBillItems", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("ClaimBillId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreateUser")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ItemType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedUser")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("Qty")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RefId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ScanItemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClaimBillId");
+
+                    b.HasIndex("CreateUser");
+
+                    b.HasIndex("ModifiedUser");
+
+                    b.ToTable("ClaimBillItemsData");
+                });
+
             modelBuilder.Entity("HospitalMgrSystem.Model.Consultant", b =>
                 {
                     b.Property<int>("Id")
@@ -2320,6 +2372,27 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.Navigation("Invoice");
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HospitalMgrSystem.Model.ClaimBillItems", b =>
+                {
+                    b.HasOne("HospitalMgrSystem.Model.ClaimBill", "ClaimBill")
+                        .WithMany()
+                        .HasForeignKey("ClaimBillId");
+
+                    b.HasOne("HospitalMgrSystem.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("CreateUser");
+
+                    b.HasOne("HospitalMgrSystem.Model.User", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedUser");
+
+                    b.Navigation("ClaimBill");
+
+                    b.Navigation("ModifiedBy");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HospitalMgrSystem.Model.Consultant", b =>
