@@ -15,7 +15,12 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+			font-size: 15px;
         }
+
+		h1, h2, h3, h4, h5, h6, p, td, th {
+			font-size: inherit; /* Ensure all elements use the font size set in body */
+		}
 
         #logo {
             text-align: center;
@@ -32,7 +37,7 @@
         #patient-details {
             text-align: left;
             margin: 10px 0;
-            font-size: 9px;
+			font-size: 15px;
         }
 
         table {
@@ -43,12 +48,12 @@
 
         table, th, td {
             border: none;
-            font-size: 12px;
+			font-size: 15px;
         }
 
-            table th {
-                background-color: #f0f0f0;
-            }
+			table th {
+				background-color: #f0f0f0;
+			}
 
         #total-section {
             text-align: right;
@@ -63,9 +68,9 @@
 </head>
 <body>
 <div id="receipt">
-	<div id="logo">
+	@*<div id="logo">
 		<img src="https://kumuduhospital.com/assets/images/kumudu_logo2.jpg" alt="Logo" width="100">
-	</div>
+	</div>*@
 	<div id="address">
 		No 48, Kandy Road, Mathale,<br>
 		Tel: 066 22 22 244 | 066 22 30 027<br>
@@ -214,12 +219,12 @@
 					}
 
 					<tr>
-						<td style="margin: 2px; padding: 2px; font-size: 10px; text-align: left;">Other Items</td>
-						<td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">Rs. @itemAmmount</td>
+						<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: left;">Other Items</td>
+						<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: right;">Rs. @itemAmmount</td>
 					</tr>
 					<tr style="margin-left: auto;">
-						<td style="margin: 2px; padding: 2px; font-size: 10px; text-align: left;">Hospital Fee</td>
-						<td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">Rs. @hospitalFee</td>
+						<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: left;">Hospital Fee</td>
+						<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: right;">Rs. @hospitalFee</td>
 					</tr>
 				}
 				@if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
@@ -227,12 +232,12 @@
 					@if (Model.opd != null)
 					{
 						<tr>
-							<td style="margin: 2px; padding: 2px; font-size: 10px; text-align: left;">Hospital Fee</td>
-							<td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">Rs. @(Model.opd.HospitalFee)</td>
+							<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: left;">Hospital Fee</td>
+								<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: right;">Rs. @(Model.opd.HospitalFee)</td>
 						</tr>
 						<tr style="margin-left: auto;">
-							<td style="margin: 2px; padding: 2px; font-size: 10px; text-align: left;">Doctor Fee</td>
-							<td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">Rs. @(Model.opd.ConsultantFee)</td>
+							<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: left;">Doctor Fee</td>
+							<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: right;">Rs. @(Model.opd.ConsultantFee)</td>
 						</tr>
 						@*<tr style="margin-left: auto;">
 	                            <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: left;">Scan Item (@Model.ItemName)</td>
@@ -282,11 +287,11 @@
 		<hr>
 	}
 	
-	<div id="barcode">
+	<div id="barcode" style="margin-top: 0px !important">
 		<svg id="barcodeSvg"></svg>
 	</div>
 
-	<p>Payment Successfully Completed !</p>
+		<p style="margin-top: 0px !important">Payment Successfully Completed !</p>
 </div>
 
 </body>

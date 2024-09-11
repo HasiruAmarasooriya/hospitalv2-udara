@@ -228,25 +228,30 @@
 
 
 		logoImage.src = "https://kumuduhospital.com/assets/images/kumudu_logo2.jpg"; // Replace with your actual logo URL
-		barcodeImage.src = "https://png.pngtree.com/png-clipart/20220424/original/pngtree-black-and-white-icons-of-barcode-numbers-png-image_7554658.png"; // Replace with your actual barcode URL
+		// barcodeImage.src = "https://png.pngtree.com/png-clipart/20220424/original/pngtree-black-and-white-icons-of-barcode-numbers-png-image_7554658.png"; // Replace with your actual barcode URL
 
 		// Callback function to check if all images are loaded
 		function checkImagesLoaded() {
 			imagesLoaded++;
 
-			if (imagesLoaded === 2) { // You may need to adjust this count if you have more images
+			if (imagesLoaded === 1) { // You may need to adjust this count if you have more images
 				openPrintWindow();
 			}
 		}
 
 		// Set the load event listeners for the images
 		logoImage.onload = checkImagesLoaded;
-		barcodeImage.onload = checkImagesLoaded;
+		// barcodeImage.onload = checkImagesLoaded;
 
 		function openPrintWindow() {
 			var preID = document.getElementById("preID").value;
 			var numericPreID = preID.replace(/\D/g, '')
-			JsBarcode("#barcodeSvg", numericPreID, { format: "CODE128" });
+			JsBarcode("#barcodeSvg", numericPreID, {
+				format: "CODE128",
+				// width: 2, // Width of the bars (change to make the barcode narrower)
+				// height: 40, // Height of the barcode (adjust as needed)
+				displayValue: true // Whether to display the barcode's value below it
+			});
 
 			$.ajax({
 				type: "POST",
@@ -280,7 +285,7 @@
 		}
 
 		// If the images are already cached, the load event may not fire, so check immediately
-		if (logoImage.complete && barcodeImage.complete) {
+		if (logoImage.complete) {
 			openPrintWindow();
 		}
 	}
