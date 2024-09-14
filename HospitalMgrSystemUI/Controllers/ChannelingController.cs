@@ -792,37 +792,42 @@ public class ChannelingController : Controller
 
 			if (patient != null)
 			{
+				if (CheckAppoinmentNumberTaken(oPDDto.opd.AppoimentNo, oPDDto.opd.schedularId))
+					return BadRequest("The appointment number is already taken");
+				
 				var hospitalFee = channelingSchedule.HospitalFee;
 				var consultantFee = channelingSchedule.ConsultantFee;
 				var OPDobj = new OPD();
-				oPDDto.opd.PatientID = patient.Id;
-				oPDDto.opd.DateTime = DateTime.Now;
-				oPDDto.opd.RoomID = 1;
-				oPDDto.opd.Description = "Channelling";
-				oPDDto.opd.ModifiedUser = Convert.ToInt32(userIdCookie);
-				oPDDto.opd.CreatedUser = Convert.ToInt32(userIdCookie);
-				oPDDto.opd.AppoimentNo = oPDDto.opd.AppoimentNo;
-				oPDDto.opd.CreateDate = DateTime.Now;
-				oPDDto.opd.ModifiedDate = DateTime.Now;
-				oPDDto.opd.HospitalFee = oPDDto.OpdType == 1 ? hospitalFee : 0;
-				oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
-				oPDDto.opd.invoiceType = InvoiceType.CHE;
-				oPDDto.opd.ConsultantFee = consultantFee;
-				oPDDto.opd.shiftID = NightShiftSessionList[0].Id;
 
-				if (ScanObj != null && ScanObj.Id != 0)
+				if (oPDDto.isChanneling == 1)
 				{
-					oPDDto.opd.Description = ScanObj.ItemName;
-					oPDDto.opd.HospitalFee = ScanObj.HospitalFee;
-					oPDDto.opd.ConsultantFee = ScanObj.DoctorFee;
-				}
+					oPDDto.opd.PatientID = patient.Id;
+					oPDDto.opd.DateTime = DateTime.Now;
+					oPDDto.opd.RoomID = 1;
+					oPDDto.opd.Description = "Channelling";
+					oPDDto.opd.ModifiedUser = Convert.ToInt32(userIdCookie);
+					oPDDto.opd.CreatedUser = Convert.ToInt32(userIdCookie);
+					oPDDto.opd.AppoimentNo = oPDDto.opd.AppoimentNo;
+					oPDDto.opd.CreateDate = DateTime.Now;
+					oPDDto.opd.ModifiedDate = DateTime.Now;
+					oPDDto.opd.HospitalFee = oPDDto.OpdType == 1 ? hospitalFee : 0;
+					oPDDto.opd.paymentStatus = PaymentStatus.NOT_PAID;
+					oPDDto.opd.invoiceType = InvoiceType.CHE;
+					oPDDto.opd.ConsultantFee = consultantFee;
+					oPDDto.opd.shiftID = NightShiftSessionList[0].Id;
 
-				if (oPDDto.opd.Id > 0)
-					OPDobj = new OPDService().UpdateOPDStatus(oPDDto.opd, oPDDto.OPDDrugusList);
-				else
-					if (CheckAppoinmentNumberTaken(oPDDto.opd.AppoimentNo, oPDDto.opd.schedularId))
-					return BadRequest("The appointment number is already taken");
-				OPDobj = new OPDService().CreateOPD(oPDDto.opd);
+					if (ScanObj != null && ScanObj.Id != 0)
+					{
+						oPDDto.opd.Description = ScanObj.ItemName;
+						oPDDto.opd.HospitalFee = ScanObj.HospitalFee;
+						oPDDto.opd.ConsultantFee = ScanObj.DoctorFee;
+					}
+
+					if (oPDDto.opd.Id > 0)
+						OPDobj = new OPDService().UpdateOPDStatus(oPDDto.opd, oPDDto.OPDDrugusList);
+					else
+						OPDobj = new OPDService().CreateOPD(oPDDto.opd);
+				}
 
 				if (oPDDto.isVOGScan == 1)
 				{
@@ -846,7 +851,7 @@ public class ChannelingController : Controller
 					OPDobjScans.ConsultantID = oPDDto.opd.ConsultantID;
 					OPDobjScans.shiftID = NightShiftSessionList[0].Id;
 					OPDobjScans.schedularId = oPDDto.opd.schedularId;
-					responseOPD = new OPDService().CreateOPD(OPDobjScans);
+					OPDobj = new OPDService().CreateOPD(OPDobjScans);
 				}
 
 				if (oPDDto.isCardioScan == 1)
@@ -871,7 +876,7 @@ public class ChannelingController : Controller
 					OPDobjScans.ConsultantID = oPDDto.opd.ConsultantID;
 					OPDobjScans.shiftID = NightShiftSessionList[0].Id;
 					OPDobjScans.schedularId = oPDDto.opd.schedularId;
-					responseOPD = new OPDService().CreateOPD(OPDobjScans);
+					OPDobj = new OPDService().CreateOPD(OPDobjScans);
 				}
 
 				if (oPDDto.isExerciseBook == 1)
