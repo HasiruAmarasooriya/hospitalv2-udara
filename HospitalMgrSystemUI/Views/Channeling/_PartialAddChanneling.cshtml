@@ -13,6 +13,7 @@
     var isCheckedECO = 0;
     var isCheckedEXE = 0;
     var channelingItemID = 0;
+    var isCheckedChanneling = 0;
 
     function handleSubmit(button) {
         // Disable the button to prevent double submission
@@ -133,6 +134,7 @@
             isVOGScan: isCheckedVOG,
             isCardioScan: isCheckedECO,
             isExerciseBook: isCheckedEXE,
+            isChanneling: isCheckedChanneling,
             scanId: channelingItemID
         };
 
@@ -217,6 +219,7 @@
             isVOGScan: isCheckedVOG,
             isCardioScan: isCheckedECO,
             isExerciseBook: isCheckedEXE,
+            isChanneling: isCheckedChanneling,
             scanId: channelingItemID
         };
 
@@ -305,6 +308,7 @@
         isCheckedVOG = 0;
         isCheckedECO = 0;
         isCheckedEXE = 0;
+        isCheckedChanneling = 0;
 
         channelingItemID = 0;
 
@@ -328,7 +332,7 @@
         var exerciseFee = parseInt($('#exersiceBookFee').val(), 10);
         const selectedCheckboxes = [];
 
-        var tableBody = document.getElementById("tblBodyPayments2");
+        @*var tableBody = document.getElementById("tblBodyPayments2");
         var newRow = tableBody.insertRow();
         var cell1 = newRow.insertCell(0);
         var cell2 = newRow.insertCell(1);
@@ -344,7 +348,30 @@
         var chTotal = doctorFee + hospitalFee;
         DoctorTotal = DoctorTotal + doctorFee;
         HospitalTotal = HospitalTotal + hospitalFee;
-        total = total + chTotal;
+        total = total + chTotal;*@
+        
+        if (document.getElementById('inlineCheckbox4').checked) {
+            selectedCheckboxes.push(document.getElementById('inlineCheckbox4').value);
+            var tableBody = document.getElementById("tblBodyPayments2");
+            var newRow = tableBody.insertRow();
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+
+            var cheText = "Channelling";
+            cell1.innerHTML = cheText;
+            cell2.innerHTML = doctorFee;
+            cell3.innerHTML = hospitalFee;
+            cell4.innerHTML = doctorFee + hospitalFee;
+
+            var chTotal = doctorFee + hospitalFee;
+            DoctorTotal = DoctorTotal + doctorFee;
+            HospitalTotal = HospitalTotal + hospitalFee;
+            total = total + chTotal;
+            
+            isCheckedChanneling = 1;
+        }
 
         if (document.getElementById('inlineCheckbox1').checked) {
             selectedCheckboxes.push(document.getElementById('inlineCheckbox1').value);
@@ -573,6 +600,7 @@
             isCheckedVOG = 0;
             isCheckedECO = 0;
             isCheckedEXE = 0;
+            isCheckedChanneling = 1;
 
             var chTotal = doctorFee + hospitalFee;
             DoctorTotal = DoctorTotal + doctorFee;
@@ -624,6 +652,13 @@
                 document.getElementById('inlineCheckbox1').checked = false;
                 document.getElementById('inlineCheckbox2').checked = false;
                 document.getElementById('inlineCheckbox3').checked = false;
+                document.getElementById('inlineCheckbox4').checked = true;
+
+                isCheckedVOG = 0;
+                isCheckedECO = 0;
+                isCheckedEXE = 0;
+                isCheckedChanneling = 1;
+                channelingItemID = 0;
 
                 var tableBody = document.getElementById("tblBodyPayments2");
 
@@ -664,14 +699,14 @@
                 //dateInput.value = response.dateTime;
 
                 // var dateInput = document.getElementById('date-format');
-                var options = {
+                @*var options = {
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit',
                     hour: 'numeric',
                     minute: 'numeric',
                     second: 'numeric'
-                };
+                };*@
                 // dateInput.value = response.dateTime.toLocaleString(undefined, options);
 
                 const select = document.querySelector('#dropNoOfAppoinment');
@@ -852,7 +887,7 @@
                         <input class="form-control " type="text" id="txtAge" placeholder="Age" asp-for="opd!.patient!.Age" />
                     </div>
                 </div>
-
+                
                 <div class="col-md-2" hidden>
                     <div class="form-group">
                         <label for="companyName">Months</label>
@@ -991,6 +1026,10 @@
                                 <label for="companyName">Add On</label>
 
                                 <br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="inlineCheckbox4" value="Channeling" onchange="handleCheckboxChange()">
+                                    <label class="form-check-label" for="inlineCheckbox4">Channeling</label>
+                                </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="VOG Scan" onchange="handleCheckboxChange()">
                                     <label class="form-check-label" for="inlineCheckbox1">VOG Scan</label>
