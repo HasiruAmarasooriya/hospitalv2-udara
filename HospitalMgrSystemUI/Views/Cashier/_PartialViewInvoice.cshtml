@@ -1,4 +1,4 @@
-﻿@using Microsoft.Extensions.Configuration
+@using Microsoft.Extensions.Configuration
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -44,6 +44,7 @@
             max-width: 350px;
             border-collapse: collapse;
             table-layout: fixed;
+			margin-bottom: 0;
         }
 
         table, th, td {
@@ -62,7 +63,9 @@
 
         #barcode {
             text-align: center;
+			margin-top: 0;
         }
+		
     </style>
 	<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
@@ -72,8 +75,17 @@
 		<img src="https://kumuduhospital.com/assets/images/kumudu_logo2.jpg" alt="Logo" width="100">
 	</div>*@
 	<div id="address">
-		No 48, Kandy Road, Mathale,<br>
-		Tel: 066 22 22 244 | 066 22 30 027<br>
+	<p class="pb-2 text-4xl" style="margin: auto; font-weight: bold">
+                    KUMUDU HOSPITAL
+                </p>
+                <p class="text-sm text-gray-400"
+                   style="margin-top: 10px; margin-bottom: auto">
+                    No 48, Kandy Road, Mathale,
+                </p>
+                <p class="text-sm text-gray-400"
+                   style="margin-top: 10px; margin-bottom: auto">
+                    Tel: 066 22 22 244 | 066 22 30 027
+                </p>
 		@if (Model != null)
 		{
 			<input type="hidden" id="opid" asp-for="PreID" value="@Model.PreID">
@@ -287,11 +299,11 @@
 		<hr>
 	}
 	
-	<div id="barcode" style="margin-top: 0px !important">
-		<svg id="barcodeSvg"></svg>
+	<div id="barcode" style="margin-top: -15px !important; padding: 0; line-height: 0;">
+		<svg id="barcodeSvg" style="width: 100%; height: 40px; margin: 0; padding: 0;"></svg>
 	</div>
 
-		<p style="margin-top: 0px !important">Payment Successfully Completed !</p>
+		<p style="margin-top: 0px !important; padding: 0;">Payment Successfully Completed !</p>
 </div>
 
 </body>
