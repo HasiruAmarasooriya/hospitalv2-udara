@@ -133,13 +133,13 @@
 
 				<div class="col">
 					<div data-mdb-input-init class="form-group">
-						<label for="drugItems">Drug Items</label>
+						<label for="drugItems">Drug / X-RAY Items</label>
 						<div class="input-group">
 							<select class="form-control ddlSearchList col-8" id="drugItems">
 								<option value="0">Select Drug</option>
 								@foreach (var item in Model.Drugs!)
 								{
-									<option value="@item.Id">@item.DrugName</option>
+									<option value="@item.Id">@item.DrugName - @item.DrugsCategory!.Category</option>
 								}
 							</select>
 							<input type="text" class="form-control col-3 ml-2" id="drugQty" placeholder="Qty" value="1" />
@@ -305,6 +305,22 @@
 
 		$('#dropDoctor').select2({
 			width: '100%',
+			height: "auto !important",
+			dropdownCssClass: "bigdrop",
+			dropdownParent: $('#filterFrm'),
+			placeholder: 'Select one',
+			allowClear: false,
+		});
+
+		$('#drugItems').select2({
+			height: "auto !important",
+			dropdownCssClass: "bigdrop",
+			dropdownParent: $('#filterFrm'),
+			placeholder: 'Select one',
+			allowClear: false,
+		});
+
+		$('#scanItems').select2({
 			height: "auto !important",
 			dropdownCssClass: "bigdrop",
 			dropdownParent: $('#filterFrm'),
