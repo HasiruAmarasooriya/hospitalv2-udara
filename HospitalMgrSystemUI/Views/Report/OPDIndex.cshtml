@@ -110,6 +110,8 @@
 									<th>Issued By</th>
 									<th>Issued Date</th>
 									<th style="text-align: right;">Total Amount</th>
+									<th style="text-align: right;">Total Discount</th>
+									<th style="text-align: right;">Total Amount After Discount</th>
 									<th style="text-align: right;">Total Paid Amount</th>
 									<th style="text-align: right;">Deviation</th>
 								</tr>
@@ -121,7 +123,10 @@
 									var i = 1;
 									decimal totalAmountOfTotalAmount = 0;
 									decimal totalAmountOfTotalPaidAmount = 0;
+									decimal totalAmountOfTotalDiscount = 0;
+									decimal totalAmountOfAmountAfterDiscount = 0;
 									decimal totalDeviation = 0;
+
 									@foreach (var item in Model.OpdPaidDtos)
 									{
 										<tr>
@@ -134,12 +139,16 @@
 											<td>@item.OpdNurse</td>
 											<td>@item.IssuedDate</td>
 											<td style="text-align: right;">@item.TotalAmount</td>
+											<td style="text-align: right;">@item.TotalDiscount</td>
+											<td style="text-align: right;">@item.AmountAfterDiscount</td>
 											<td style="text-align: right;">@item.TotalPaidAmount</td>
 											<td style="text-align: right;">@item.Deviation</td>
 										</tr>
 										totalAmountOfTotalAmount += item.TotalAmount;
 										totalAmountOfTotalPaidAmount += item.TotalPaidAmount;
 										totalDeviation += item.Deviation;
+										totalAmountOfTotalDiscount += item.TotalDiscount;
+										totalAmountOfAmountAfterDiscount += item.AmountAfterDiscount;
 
 										i++;
 									}
@@ -147,6 +156,8 @@
 									<tr class="table-success" style="font-weight: bold">
 										<td colspan="8">Total</td>
 										<td style="text-align: right;">@totalAmountOfTotalAmount</td>
+										<td style="text-align: right;">@totalAmountOfTotalDiscount</td>
+										<td style="text-align: right;">@totalAmountOfAmountAfterDiscount</td>
 										<td style="text-align: right;">@totalAmountOfTotalPaidAmount</td>
 										<td style="text-align: right;">@totalDeviation</td>
 									</tr>
