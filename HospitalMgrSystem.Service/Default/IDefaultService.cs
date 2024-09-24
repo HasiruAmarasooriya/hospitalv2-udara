@@ -1,7 +1,11 @@
-﻿namespace HospitalMgrSystem.Service.Default
+﻿using HospitalMgrSystem.Model;
+
+namespace HospitalMgrSystem.Service.Default
 {
     public interface IDefaultService
     {
-        public Model.Scan GetScanChannelingFee(int ID);
+        public Scan GetScanChannelingFee(int ID);
+
+        public Discount getDiscount();
     }
 }
