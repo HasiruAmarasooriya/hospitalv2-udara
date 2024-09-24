@@ -119,6 +119,7 @@
 								<th>Doctor Discount Amount</th>*@
 									<th>Doctor Fee</th>
 									<th>Hospital Fee</th>
+									<th>Total Discount</th>
 									<th style="text-align: right;">Total Amount</th>
 								</tr>
 							</thead>
@@ -134,8 +135,7 @@
 									int? totalDoctorRefundCount = 0;
 									int? totalHospitalRefundCount = 0;
 									int? totalFullRefundCount = 0;
-									decimal? totalHospitalDiscountAmount = 0;
-									decimal? totalDoctorDiscountAmount = 0;
+									decimal? totalDiscountAmount = 0;
 									decimal? totalDoctorRefundAmount = 0;
 									decimal? totalHospitalRefundAmount = 0;
 									decimal? totalFullRefundAmount = 0;
@@ -157,6 +157,7 @@
 											<td>@item.FullRefundAmount</td>
 											<td>@item.DoctorPaidAmount</td>
 											<td>@item.HospitalPaidAmount</td>
+											<td>@item.TotalDiscount</td>
 											<td style="text-align: right;">@item.TotalPaidAmount</td>
 										</tr>
 
@@ -170,6 +171,7 @@
 										totalAmountOfDoctorFee += item.DoctorPaidAmount;
 										totalAmountOfHospitalFee += item.HospitalPaidAmount;
 										totalAmountOfTotalAmount += item.TotalPaidAmount;
+										totalDiscountAmount += item.TotalDiscount;
 
 										i++;
 									}
@@ -185,6 +187,7 @@
 										<td>@totalFullRefundAmount</td>
 										<td>@totalAmountOfDoctorFee</td>
 										<td>@totalAmountOfHospitalFee</td>
+										<td>@totalDiscountAmount</td>
 										<td style="text-align: right;">@totalAmountOfTotalAmount</td>
 									</tr>
 								}
