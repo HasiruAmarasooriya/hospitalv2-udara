@@ -9,7 +9,7 @@ namespace HospitalMgrSystem.WebAPI.Controllers
     {
         private readonly HospitalMgrSystem.Service.Default.IDefaultService _defaultService;
 
-        public DefaultController( Service.Default.IDefaultService defaultService)
+        public DefaultController(Service.Default.IDefaultService defaultService)
         {
             _defaultService = defaultService;
         }
@@ -28,5 +28,14 @@ namespace HospitalMgrSystem.WebAPI.Controllers
             }
         }
 
+        [HttpGet("GetDiscount")]
+        public ActionResult<Scan> GetDiscount()
+        {
+            var discount = _defaultService.getDiscount();
+            
+            if (discount == null) return NoContent();
+            
+            return Ok(discount);
+        }
     }
 }
