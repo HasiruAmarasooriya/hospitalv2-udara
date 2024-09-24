@@ -27,5 +27,6 @@ namespace HospitalMgrSystem.Model
         public int ModifiedUser { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
+        public bool IsDiscountAvailable { get; set; }
     }
 }

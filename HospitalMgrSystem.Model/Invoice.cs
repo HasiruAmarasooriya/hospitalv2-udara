@@ -17,5 +17,6 @@ namespace HospitalMgrSystem.Model
         public DateTime CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
         public int PrintCount { get; set; }
+        public int IsDiscountAdded { get; set; }
     }
 }

@@ -12,6 +12,7 @@ namespace HospitalMgrSystem.Model
 
         public decimal HospitalFee { get; set; }
         public decimal DoctorFee { get; set; }
+        public bool IsDiscountAvailable { get; set; }
 
 		[NotMapped]
 		public decimal TotalChannelingWithoutRefund { get; set; }
