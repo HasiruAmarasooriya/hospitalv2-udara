@@ -1,5 +1,6 @@
 ﻿using HospitalMgrSystem.Model;
 using HospitalMgrSystem.Model.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace HospitalMgrSystem.Service.Cashier
 {
@@ -116,7 +117,7 @@ namespace HospitalMgrSystem.Service.Cashier
         {
             using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
             {
-                Invoice invoice = new Invoice();
+                var invoice = new Invoice();
                 try
                 {
 
@@ -128,7 +129,8 @@ namespace HospitalMgrSystem.Service.Cashier
                         item.ModifiedDate = DateTime.Now;
                         item.CreateUser = userID;
                         item.ModifiedUser = userID;
-                        HospitalMgrSystem.Model.InvoiceItem result = (from p in dbContext.InvoiceItems where p.InvoiceId == invoice.Id && p.billingItemsType == item.billingItemsType && p.ItemID == item.ItemID select p).SingleOrDefault();
+
+                        var result = (from p in dbContext.InvoiceItems where p.InvoiceId == invoice.Id && p.billingItemsType == item.billingItemsType && p.ItemID == item.ItemID select p).SingleOrDefault();
                         if (result != null)
                         {
                             result.price = item.price; // Update only the "Price" column
@@ -138,6 +140,11 @@ namespace HospitalMgrSystem.Service.Cashier
                             result.Discount = item.Discount; // Optional, set the ModifiedDate if needed
                             result.Total = item.Total; // Optional, set the ModifiedDate if needed
                             result.itemInvoiceStatus = item.itemInvoiceStatus; // Optional, set the ModifiedDate if needed
+
+                            // This will affect when the discount is applied
+                            result.DiscountPercentage = item.DiscountPercentage;
+                            result.PrevPrice = item.PrevPrice;
+
                             dbContext.SaveChanges();
                         }
                         else
@@ -154,9 +161,6 @@ namespace HospitalMgrSystem.Service.Cashier
                 {
                     return null;
                 }
-
-
-
             }
         }
 
@@ -328,5 +332,26 @@ namespace HospitalMgrSystem.Service.Cashier
 
             }
         }
-    }
+
+        public decimal getDiscountedPrice(int itemId)
+        {
+            using var dbContext = new DataAccess.HospitalDBContext();
+            var result = (from p in dbContext.InvoiceItems where p.ItemID == itemId select p).SingleOrDefault();
+            
+            return result != null ? result.Discount : 0;
+        }
+
+		public bool CheckIsDiscountAvailableForThatItem(int itemId)
+		{
+			using var dbContext = new DataAccess.HospitalDBContext();
+
+			// Assume OPDDrugus has a related entity you want to include, e.g., "Category"
+			var result = dbContext.OPDDrugus
+				.Include(p => p.Drug)  // Replace 'Category' with the actual navigation property
+				.SingleOrDefault(p => p.Id == itemId);
+
+			return result != null && result.Drug!.IsDiscountAvailable;
+		}
+
+	}
 }
