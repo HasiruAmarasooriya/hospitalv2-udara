@@ -22,6 +22,7 @@ namespace HospitalMgrSystemUI.Models
         public decimal subtotal { get; set; }
         public decimal preSubtotal { get; set; }
         public decimal discount { get; set; }
+        public bool discountEnabled { get; set; }
         public decimal total { get; set; }
         public decimal preTotal { get; set; }
         public decimal totalPaidAmount { get; set; }
@@ -39,6 +40,8 @@ namespace HospitalMgrSystemUI.Models
         public decimal consaltantFee { get; set; }
 
         public decimal refunfAmount { get; set; }
+        public string BillingType { get; set; }
+        public decimal AvailableDiscount { get; set; }
 
         public decimal defaultAmountOPD { get; set; }
         public OPD opd { get; set; }
