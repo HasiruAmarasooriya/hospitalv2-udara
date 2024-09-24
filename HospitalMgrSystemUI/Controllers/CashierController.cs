@@ -22,6 +22,7 @@ using HospitalMgrSystem.Service.User;
 using HospitalMgrSystem.Service.NightShiftSession;
 using HospitalMgrSystem.Service.ChannelingSchedule;
 using HospitalMgrSystem.Service.ClaimBill;
+using HospitalMgrSystem.Service.Default;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -212,6 +213,7 @@ namespace HospitalMgrSystemUI.Controllers
 
 							if (opd.invoiceType != InvoiceType.OPD) return null;
 
+							cashierDto.BillingType = "OPD";
 							cashierDto.opd = opd;
 							cashierDto.consaltantName = opd.consultant != null && opd.consultant.Name != null ? opd.consultant.Name : string.Empty;
 
@@ -228,27 +230,37 @@ namespace HospitalMgrSystemUI.Controllers
 							cashierDto.customerID = opd.PatientID;
 							cashierDto.OPDDrugusList = GetOPDDrugus(number, ItemInvoiceStatus.Add);
 							cashierDto.OPDDrugusListInvoiced = GetOPDDrugus(number, ItemInvoiceStatus.BILLED);
-							cashierDto.OPDInvestigationList = GetOPDInvestigation(number, ItemInvoiceStatus.Add);
-							cashierDto.OPDItemList = GetOPDItems(number, ItemInvoiceStatus.Add);
+							cashierDto.OPDInvestigationList = GetOPDInvestigation(number, ItemInvoiceStatus.Add);   // Not in use	
+							cashierDto.OPDItemList = GetOPDItems(number, ItemInvoiceStatus.Add);					// Not in use
 							cashierDto.invoice = new CashierService().GetInvoiceByServiceIDAndInvoiceType(number, InvoiceType.OPD);
+							
+							if (opd.paymentStatus != PaymentStatus.PAID) cashierDto.AvailableDiscount = getAvailableDiscountAmount(number);
+							
 							if (cashierDto.invoice != null)
 							{
+								/*if (cashierDto.invoice.IsDiscountAdded == 1)
+								{
+									cashierDto.hospitalFee -= calculateDiscount(cashierDto.hospitalFee);
+								}*/
+								if (cashierDto.invoice.IsDiscountAdded == 1) cashierDto.discountEnabled = true;
+
 								if (checkHospitalFeeRemoved(cashierDto.invoice.Id))
 								{
 									cashierDto.hospitalFee = 0;
-
 								}
 								if (checkConsultantFeeRemoved(cashierDto.invoice.Id))
 								{
 									cashierDto.consaltantFee = 0;
 								}
 							}
+							
+							// OPD Drugs that are not paid
 							if (cashierDto.OPDDrugusList.Count > 0)
 							{
 								foreach (var item in cashierDto.OPDDrugusList)
 								{
-									decimal itemAmount = item.Qty * item.Price;
-									subtotal = subtotal + itemAmount;
+									var itemAmount = item.Qty * item.Price;
+									subtotal += itemAmount;
 									billingItemDtoList.Add(new BillingItemDto()
 									{
 										BillingItemID = item.Id,
@@ -264,12 +276,14 @@ namespace HospitalMgrSystemUI.Controllers
 							}
 
 
+							// OPD Drugs that are paid
 							if (cashierDto.OPDDrugusListInvoiced.Count > 0)
 							{
 								foreach (var item in cashierDto.OPDDrugusListInvoiced)
 								{
-									decimal itemAmount = item.Qty * item.Price;
-									subtotal = subtotal + itemAmount;
+									var itemAmount = item.Qty * item.Price;
+									subtotal += itemAmount;
+									discount += getDiscountedPrice(item.Id);
 									billedItemDtoList.Add(new BillingItemDto()
 									{
 										BillingItemID = item.Id,
@@ -278,12 +292,14 @@ namespace HospitalMgrSystemUI.Controllers
 										billingItemName = item.Drug.DrugName,
 										qty = item.Qty,
 										price = item.Price,
-										discount = 0,
-										amount = item.Amount
+										discount = getDiscountedPrice(item.Id),
+										amount = item.Qty * item.Price - getDiscountedPrice(item.Id)
 									});
 								}
 							}
+							
 							#region Not Applicable
+							// OPD Investigations that are not paid (Not in use)
 							if (cashierDto.OPDInvestigationList.Count > 0)
 							{
 								foreach (var item in cashierDto.OPDInvestigationList)
@@ -304,6 +320,7 @@ namespace HospitalMgrSystemUI.Controllers
 								}
 							}
 
+							// OPD Items that are not paid (Not in use)
 							if (cashierDto.OPDItemList.Count > 0)
 							{
 								foreach (var item in cashierDto.OPDItemList)
@@ -333,7 +350,7 @@ namespace HospitalMgrSystemUI.Controllers
 							var opd = new OPDService().GetAllOPDByID(number);
 
 							if (opd.invoiceType != InvoiceType.CHE) return null;
-
+							
 							cashierDto.ChannelingSchedule = new ChannelingScheduleService().OnlyScheduleGetById(opd.schedularId);
 							cashierDto.opd = opd;
 							cashierDto.consaltantName = opd.consultant != null && opd.consultant.Name != null ? opd.consultant.Name : string.Empty;
@@ -352,12 +369,20 @@ namespace HospitalMgrSystemUI.Controllers
 							cashierDto.OPDDrugusList = GetOPDDrugus(number, ItemInvoiceStatus.Add);
 							cashierDto.OPDDrugusListInvoiced = GetOPDDrugus(number, ItemInvoiceStatus.BILLED);
 							cashierDto.invoice = new CashierService().GetInvoiceByServiceIDAndInvoiceType(number, InvoiceType.CHE);
+
+							if (opd.paymentStatus != PaymentStatus.PAID) cashierDto.AvailableDiscount = getAvailableDiscountAmount(number);
+
 							if (cashierDto.invoice != null)
 							{
+								/*if (cashierDto.invoice.IsDiscountAdded == 1)
+								{
+									cashierDto.hospitalFee -= calculateDiscount(cashierDto.hospitalFee);
+								}*/
+								if (cashierDto.invoice.IsDiscountAdded == 1) cashierDto.discountEnabled = true;
+
 								if (checkHospitalFeeRemoved(cashierDto.invoice.Id))
 								{
 									cashierDto.hospitalFee = 0;
-
 								}
 								if (checkConsultantFeeRemoved(cashierDto.invoice.Id))
 								{
@@ -388,8 +413,9 @@ namespace HospitalMgrSystemUI.Controllers
 							{
 								foreach (var item in cashierDto.OPDDrugusListInvoiced)
 								{
-									decimal itemAmount = item.Qty * item.Price;
-									subtotal = subtotal + itemAmount;
+									var itemAmount = item.Qty * item.Price;
+									discount += getDiscountedPrice(item.Id);
+									subtotal += itemAmount;
 									billedItemDtoList.Add(new BillingItemDto()
 									{
 										BillingItemID = item.Id,
@@ -398,8 +424,8 @@ namespace HospitalMgrSystemUI.Controllers
 										billingItemName = item.Drug.DrugName,
 										qty = item.Qty,
 										price = item.Price,
-										discount = 0,
-										amount = item.Amount
+										discount = getDiscountedPrice(item.Id),
+										amount = (item.Qty * item.Price) - getDiscountedPrice(item.Id)
 									});
 								}
 							}
@@ -408,27 +434,6 @@ namespace HospitalMgrSystemUI.Controllers
 							break;
 						}
 				}
-
-				#region Not Applicable
-				//if (prefix == "CHE")
-				//{
-				//    cashierDto.channel = GetChannelByID(number);
-				//    cashierDto.consaltantName = cashierDto.channel != null && cashierDto.channel.ChannelingSchedule != null && cashierDto.channel.ChannelingSchedule.Consultant != null && cashierDto.channel.ChannelingSchedule.Consultant.Name != null ? cashierDto.channel.ChannelingSchedule.Consultant.Name : string.Empty;
-				//    cashierDto.patientContactNo = cashierDto.channel != null && cashierDto.channel.Patient != null && cashierDto.channel.Patient.FullName != null ? cashierDto.channel.Patient.TelephoneNumber : string.Empty;
-				//    cashierDto.customerName = cashierDto.channel != null && cashierDto.channel.Patient != null && cashierDto.channel.Patient.FullName != null ? cashierDto.channel.Patient.FullName : string.Empty;
-				//    cashierDto.patientAge = cashierDto.channel != null && cashierDto.channel.Patient != null && cashierDto.channel.Patient.FullName != null ? cashierDto.channel.Patient.Age : 0;
-				//    cashierDto.patientSex = cashierDto.channel != null && cashierDto.channel.Patient != null && cashierDto.channel.Patient.FullName != null ? (SexStatus)cashierDto.channel.Patient.Sex : SexStatus.Non;
-				//    cashierDto.hospitalFee = cashierDto.channel.ChannelingSchedule.HospitalFee;
-				//    cashierDto.consaltantFee = cashierDto.channel.ChannelingSchedule.ConsultantFee;
-				//    subtotal = cashierDto.channel.ChannelingSchedule.HospitalFee + cashierDto.channel.ChannelingSchedule.ConsultantFee;
-				//    cashierDto.invoiceType = InvoiceType.CHE;
-				//    cashierDto.customerID = cashierDto.channel.Patient.Id;
-				//    cashierDto.discount = discount;
-				//    cashierDto.invoice = new CashierService().GetInvoiceByServiceIDAndInvoiceType(number, InvoiceType.CHE);
-
-				//}
-
-				#endregion
 
 				if (cashierDto.invoice != null)
 				{
@@ -451,7 +456,9 @@ namespace HospitalMgrSystemUI.Controllers
 							hospitalFeeBilled = true;
 							if (!checkHospitalFeeRemoved(cashierDto.invoice.Id))
 							{
-
+								var tempDiscount = cashierDto.invoice.IsDiscountAdded == 1 ? item.Discount : 0;
+								discount += tempDiscount;
+								
 								billedItemDtoList.Add(new BillingItemDto()
 								{
 									BillingItemID = 2,
@@ -459,9 +466,9 @@ namespace HospitalMgrSystemUI.Controllers
 									billingItemsTypeName = "",
 									billingItemName = "Hospital Fee",
 									qty = 1,
-									price = cashierDto.hospitalFee,
-									discount = 0,
-									amount = cashierDto.hospitalFee
+									price =  cashierDto.hospitalFee,
+									discount = tempDiscount,
+									amount = (cashierDto.hospitalFee * 1) - tempDiscount
 								});
 
 							}
@@ -553,7 +560,7 @@ namespace HospitalMgrSystemUI.Controllers
 				cashierDto.PreID = input;
 				cashierDto.sufID = number;
 				cashierDto.preSubtotal = subtotal;
-				cashierDto.subtotal = subtotal - cashierDto.totalPaymentPaidAmount;
+				cashierDto.subtotal = subtotal - cashierDto.totalPaymentPaidAmount - discount;
 				cashierDto.discount = discount;
 				cashierDto.preTotal = cashierDto.preSubtotal - discount;
 				cashierDto.total = cashierDto.subtotal - discount;
@@ -566,6 +573,44 @@ namespace HospitalMgrSystemUI.Controllers
 				return null;
 			}
 		}
+
+		private decimal getAvailableDiscountAmount(int number)
+		{
+			var discount = 0m;
+			var discountPercentage = new DefaultService().getDiscount();
+			var data = new OPDService().GetAllOPDByID(number);
+
+			if (data.invoiceType == InvoiceType.CHE) return (data.HospitalFee * discountPercentage.Percentage / 100);
+			
+			var opdDrugsData = GetOPDDrugus(number, ItemInvoiceStatus.Add);
+
+			foreach (var opdDrug in opdDrugsData)
+			{
+				if (opdDrug.Drug!.IsDiscountAvailable) discount += opdDrug.Amount * discountPercentage.Percentage / 100;
+			}
+			
+			discount += data.HospitalFee * discountPercentage.Percentage / 100;
+
+			return discount;
+		}
+
+		private decimal calculateDiscount(decimal amount)
+		{
+			var discountPercentage = new DefaultService().getDiscount();
+			
+			return amount * discountPercentage.Percentage / 100;
+		}
+
+		private decimal getDiscountedPrice(int itemId)
+		{
+			return new CashierService().getDiscountedPrice(itemId);
+		}
+
+		private bool checkIsDiscountAvailableForThatItem(int itemId)
+		{
+			return new CashierService().CheckIsDiscountAvailableForThatItem(itemId);
+		}
+		
 		private List<BillingItemDto> GetCashierAllRemoveddetails(string preID)
 		{
 			try
@@ -1053,7 +1098,7 @@ namespace HospitalMgrSystemUI.Controllers
 				var invoiceItems = new List<InvoiceItem>();
 				var payments = new Payment();
 
-				decimal totalOfPaymentType = _CashierDto.cash + _CashierDto.cheque + _CashierDto.giftCard + _CashierDto.credit + _CashierDto.debit;
+				var totalOfPaymentType = _CashierDto.cash + _CashierDto.cheque + _CashierDto.giftCard + _CashierDto.credit + _CashierDto.debit;
 
 				if (totalOfPaymentType < _CashierDto.total)
 				{
@@ -1072,16 +1117,15 @@ namespace HospitalMgrSystemUI.Controllers
 
 					if (_CashierDto.totalDueAmount <= 0)
 					{
-						bool isNightShift = false;
-						User user = new User();
-						user = GetUserById(Convert.ToInt32(userIdCookie));
+						var isNightShift = false;
+						var user = GetUserById(Convert.ToInt32(userIdCookie));
 						if (user != null)
 						{
 							if (user.userRole == UserRole.OPDNURSE)
 							{
-								if ((HospitalMgrSystem.Model.Enums.InvoiceType)_CashierDto.invoiceType == InvoiceType.OPD)
+								if (_CashierDto.invoiceType == InvoiceType.OPD)
 								{
-									OPD opdForSession = new OPD();
+									var opdForSession = new OPD();
 									opdForSession = new OPDService().GetAllOPDByID(_CashierDto.sufID);
 									if (opdForSession != null)
 									{
@@ -1097,7 +1141,7 @@ namespace HospitalMgrSystemUI.Controllers
 						invoice.Id = _CashierDto.invoiceID;
 						invoice.CustomerID = _CashierDto.customerID;
 						invoice.CustomerName = _CashierDto.customerName;
-						invoice.InvoiceType = (HospitalMgrSystem.Model.Enums.InvoiceType)_CashierDto.invoiceType;
+						invoice.InvoiceType = _CashierDto.invoiceType;
 						invoice.paymentStatus = PaymentStatus.NOT_PAID;
 						invoice.Status = InvoiceStatus.New;
 						invoice.CreateUser = Convert.ToInt32(userIdCookie);
@@ -1105,23 +1149,21 @@ namespace HospitalMgrSystemUI.Controllers
 						invoice.CreateDate = DateTime.Now;
 						invoice.ModifiedDate = DateTime.Now;
 						invoice.ServiceID = _CashierDto.sufID;
-						Invoice resInvoice = new CashierService().AddInvoice(invoice);
+						invoice.IsDiscountAdded = _CashierDto.discountEnabled ? 1 : 0;
+						
+						var resInvoice = new CashierService().AddInvoice(invoice);
+						
 						if (resInvoice != null && resInvoice.paymentStatus != PaymentStatus.PAID)
 						{
-							if (resInvoice.InvoiceType == InvoiceType.OPD)
+							_CashierDto.PreID = resInvoice.InvoiceType switch
 							{
-								_CashierDto.PreID = "OPD" + resInvoice.ServiceID;
-							}
-							if (resInvoice.InvoiceType == InvoiceType.ADM)
-							{
-								_CashierDto.PreID = "ADM" + resInvoice.ServiceID;
-							}
-							if (resInvoice.InvoiceType == InvoiceType.CHE)
-							{
-								_CashierDto.PreID = "CHE" + resInvoice.ServiceID;
-							}
-							List<CashierSession> CashierSessionList = new List<CashierSession>();
-							CashierSessionList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
+								InvoiceType.OPD => "OPD" + resInvoice.ServiceID,
+								InvoiceType.ADM => "ADM" + resInvoice.ServiceID,
+								InvoiceType.CHE => "CHE" + resInvoice.ServiceID,
+								_ => _CashierDto.PreID
+							};
+
+							var CashierSessionList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
 							// _CashierDto.invoice = new CashierService().AddInvoiceItems(invoiceItems);
 							payments.InvoiceID = resInvoice.Id;
 							payments.CashAmount = _CashierDto.cash;
@@ -1157,6 +1199,31 @@ namespace HospitalMgrSystemUI.Controllers
 									paymentsOut.sessionID = CashierSessionList[0].Id;
 									Payment resPaymentOut = new CashierService().AddPayments(paymentsOut);
 								}
+
+								if (_CashierDto.discountEnabled)
+								{
+									// Create a new Payment object
+									var discount = new Payment();
+
+									// Set properties individually
+									discount.InvoiceID = resInvoice.Id;
+									discount.CashAmount = 0 - _CashierDto.AvailableDiscount;
+									discount.CreditAmount = 0;
+									discount.DdebitAmount = 0;
+									discount.ChequeAmount = 0;
+									discount.GiftCardAmount = 0;
+									discount.CreateUser = Convert.ToInt32(userIdCookie);
+									discount.ModifiedUser = Convert.ToInt32(userIdCookie);
+									discount.CreateDate = DateTime.Now;
+									discount.ModifiedDate = DateTime.Now;
+									discount.CashierStatus = CashierStatus.CashierOut;
+									discount.BillingType = BillingType.DISCOUNT;
+									discount.sessionID = CashierSessionList[0].Id;
+
+									// Add the payment using the CashierService
+									var resDiscount = new CashierService().AddPayments(discount);
+								}
+
 								//update payment status on OPD
 								if (resInvoice.InvoiceType == InvoiceType.OPD)
 								{
@@ -1203,20 +1270,33 @@ namespace HospitalMgrSystemUI.Controllers
 
 							}
 						}
-						invoiceItems = GetInvoiceItemsAlldetails(resInvoice.Id, (HospitalMgrSystem.Model.Enums.InvoiceType)resInvoice.InvoiceType, _CashierDto.sufID);
-						// string partialViewHtml = await this.RenderViewAsync("_PartialViewInvoice", _CashierDto, true);
+						invoiceItems = GetInvoiceItemsAlldetails(resInvoice!.Id, resInvoice.InvoiceType, _CashierDto.sufID);
+
+						foreach (var invoiceItem in invoiceItems)
+						{
+							if (_CashierDto.discountEnabled && checkIsDiscountAvailableForThatItem(invoiceItem.ItemID) && invoiceItem.billingItemsType == BillingItemsType.Drugs)
+							{
+								invoiceItem.Discount = calculateDiscount(invoiceItem.price * invoiceItem.qty);
+								invoiceItem.Total = (invoiceItem.price * invoiceItem.qty) - invoiceItem.Discount;
+								invoiceItem.PrevPrice = invoiceItem.price * invoiceItem.qty;
+								invoiceItem.DiscountPercentage = new DefaultService().getDiscount().Percentage;
+							}
+						}
+
 						_CashierDto = GetCashierAlldetails(_CashierDto.PreID);
 						_CashierDto.InvoiceItemList = invoiceItems;
 
-						InvoiceItem hospitalItem = new InvoiceItem();
+						var hospitalItem = new InvoiceItem();
 						hospitalItem.itemInvoiceStatus = ItemInvoiceStatus.BILLED;
 						hospitalItem.billingItemsType = BillingItemsType.Hospital;
 						hospitalItem.ItemID = 2;
-						hospitalItem.Discount = 0;
+						hospitalItem.Discount = _CashierDto.discountEnabled ? calculateDiscount(_CashierDto.hospitalFee) : 0m;
 						hospitalItem.price = _CashierDto.hospitalFee;
 						hospitalItem.qty = 1;
-						hospitalItem.Total = _CashierDto.hospitalFee;
+						hospitalItem.Total = (hospitalItem.price * hospitalItem.qty) - hospitalItem.Discount;
 						hospitalItem.InvoiceId = _CashierDto.invoiceID;
+						hospitalItem.PrevPrice = _CashierDto.hospitalFee;
+						hospitalItem.DiscountPercentage = _CashierDto.discountEnabled ? new DefaultService().getDiscount().Percentage : 0;
 						_CashierDto.InvoiceItemList.Add(hospitalItem);
 
 
@@ -1246,15 +1326,6 @@ namespace HospitalMgrSystemUI.Controllers
 						{
 							new OPDService().UpdateOPDDrugInvoiceStatus(invoiceItems);
 						}
-
-
-						//PrintRecept();
-						//var pdfContent = new ViewAsPdf("_PartialViewInvoice", _CashierDto)
-						//{
-						//    // Set PDF options
-						//    PageSize = Rotativa.AspNetCore.Options.Size.A4,
-						//    FileName = "Invoice.pdf" 
-						//};
 
 						CashierDto cashierDtoToPrint = new CashierDto();
 						cashierDtoToPrint.PreID = _CashierDto.PreID;
