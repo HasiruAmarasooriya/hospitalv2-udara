@@ -13,6 +13,8 @@ namespace HospitalMgrSystem.Model.DTO
 		public string OpdNurse { get; set; }
 		public DateTime IssuedDate { get; set; }
 		public decimal TotalAmount { get; set; }
+		public decimal TotalDiscount { get; set; }
+		public decimal AmountAfterDiscount { get; set; }
 		public decimal TotalPaidAmount { get; set; }
 		public decimal Deviation { get; set; }
 	}

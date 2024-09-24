@@ -18,6 +18,7 @@ namespace HospitalMgrSystem.Model.DTO
         public decimal DoctorPaidAmount { get; set; }
         public decimal HospitalPaidAmount { get; set; }
         public decimal TotalPaidAmount { get; set; }
+        public decimal TotalDiscount { get; set; }
         public int BillCount { get; set; }
     }
 }
