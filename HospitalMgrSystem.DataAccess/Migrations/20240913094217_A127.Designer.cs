@@ -4,6 +4,7 @@ using HospitalMgrSystem.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HospitalMgrSystem.DataAccess.Migrations
 {
     [DbContext(typeof(HospitalDBContext))]
-    partial class HospitalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240913094217_A127")]
+    partial class A127
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -904,7 +907,7 @@ namespace HospitalMgrSystem.DataAccess.Migrations
                     b.Property<int?>("ModifiedUser")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Percentage")
+                    b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Status")
@@ -944,9 +947,6 @@ namespace HospitalMgrSystem.DataAccess.Migrations
 
                     b.Property<int>("DrugsSubCategoryId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsDiscountAvailable")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
@@ -2121,9 +2121,6 @@ namespace HospitalMgrSystem.DataAccess.Migrations
 
                     b.Property<decimal>("HospitalFee")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("IsDiscountAvailable")
-                        .HasColumnType("bit");
 
                     b.Property<string>("ItemName")
                         .IsRequired()
