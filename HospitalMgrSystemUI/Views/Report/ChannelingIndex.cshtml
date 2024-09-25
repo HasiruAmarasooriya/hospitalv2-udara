@@ -109,14 +109,13 @@
 									<th>Consultant Name</th>
 									<th>Specialist</th>
 									<th>Bill Count</th>
+									<th>Discount Count</th>
 									<th>Doctor Refund Count</th>
 									<th>Hospital Refund Count</th>
 									<th>Full Refund Count</th>
 									<th>Doctor Refund Amount</th>
 									<th>Hospital Refund Amount</th>
 									<th>Full Refund Amount</th>
-									@*<th>Hospital Discount Amount</th>
-								<th>Doctor Discount Amount</th>*@
 									<th>Doctor Fee</th>
 									<th>Hospital Fee</th>
 									<th>Total Discount</th>
@@ -129,6 +128,7 @@
 								{
 									var i = 1;
 									decimal? totalBillCount = 0;
+									decimal? totalDiscountCount = 0;
 									decimal? totalAmountOfDoctorFee = 0;
 									decimal? totalAmountOfHospitalFee = 0;
 									decimal? totalAmountOfTotalAmount = 0;
@@ -149,6 +149,7 @@
 											<td>@item.DocName</td>
 											<td>@item.SPName</td>
 											<td>@item.BillCount</td>
+											<td>@item.DiscountCount</td>
 											<td>@item.DoctorRefundCount</td>
 											<td>@item.HospitalRefundCount</td>
 											<td>@item.FullRefundCount</td>
@@ -162,6 +163,7 @@
 										</tr>
 
 										totalBillCount += item.BillCount;
+										totalDiscountCount += item.DiscountCount;
 										totalDoctorRefundCount += item.DoctorRefundCount;
 										totalHospitalRefundCount += item.HospitalRefundCount;
 										totalFullRefundCount += item.FullRefundCount;
@@ -179,6 +181,7 @@
 									<tr class="table-success" style="font-weight: bold">
 										<td colspan="5">Total</td>
 										<td>@totalBillCount</td>
+										<td>@totalDiscountCount</td>
 										<td>@totalDoctorRefundCount</td>
 										<td>@totalHospitalRefundCount</td>
 										<td>@totalFullRefundCount</td>
