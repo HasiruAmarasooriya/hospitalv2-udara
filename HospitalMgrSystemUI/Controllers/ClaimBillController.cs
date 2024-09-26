@@ -58,8 +58,10 @@ namespace HospitalMgrSystemUI.Controllers
                     patient = new PatientService().CreatePatient(patient);
 	                
 	                claimBillDto.dateTime = DateTime.Now;
+	                claimBillDto.ClaimBillCategoryString = claimBillDto.ClaimBillCategory.ToString();
 
-                    claimBillDto.claimBill = new ClaimBill
+
+					claimBillDto.claimBill = new ClaimBill
                     {
                         PatientID = patient.Id,
                         ConsultantId = claimBillDto.ConsultantId,
