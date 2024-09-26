@@ -262,8 +262,16 @@
 
 			<table id="total-section" style="margin-left: auto;">
 				<tr>
-					<td style="text-align: left;">Net total:</td>
+					<td style="text-align: left;">Sub total:</td>
 					<td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
+				</tr>
+				<tr>
+					<td style="text-align: left;">Discount:</td>
+					<td style="text-align: right;">Rs. @Model.discount.ToString("0.00")</td>
+				</tr>
+				<tr>
+					<td style="text-align: left;">Net Total:</td>
+					<td style="text-align: right;">Rs. @Model.preTotal.ToString("0.00")</td>
 				</tr>
 
 
@@ -271,15 +279,18 @@
 				{
 					decimal totalCash = 0;
 					decimal totalBlence = 0;
+					decimal totalDiscount = 0;
 
 					@if (Model.paymentList != null)
 					{
 						@foreach (var item in Model.paymentList)
 						{
 							@if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.BALENCE)
-								totalBlence = totalBlence + item.CashAmount;
+								totalBlence += item.CashAmount;
 							@if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.CASHIER)
 								totalCash = totalCash + item.CashAmount + item.CreditAmount + item.DdebitAmount + item.ChequeAmount + item.GiftCardAmount;
+							@if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.DISCOUNT)
+								totalDiscount = totalDiscount + item.CashAmount + item.CreditAmount + item.DdebitAmount + item.ChequeAmount + item.GiftCardAmount;
 						}
 					}
 
