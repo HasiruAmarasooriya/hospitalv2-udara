@@ -174,7 +174,7 @@
 				@if (Model != null)
 				{
 					<input type="hidden" id="opid" asp-for="claimBill.Id" value="@Model.claimBill.Id">
-					<p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">Invoice</p>
+					<p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">@Model.ClaimBillCategoryString Invoice</p>
 
 					<p style="margin: auto; margin-top: 5px">@Model.dateTime</p>
 				}
