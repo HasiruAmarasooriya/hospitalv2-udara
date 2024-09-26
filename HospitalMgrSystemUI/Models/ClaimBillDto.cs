@@ -1,4 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.Enums;
 
 namespace HospitalMgrSystemUI.Models
 {
@@ -17,6 +18,8 @@ namespace HospitalMgrSystemUI.Models
         public string RefNo { get; set; }
         public string ContactNumber { get; set; }
         public string NIC { get; set; }
+        public ClaimBillCategoryType ClaimBillCategory { get; set; }
+        public string ClaimBillCategoryString { get; set; }
 		public int ConsultantId { get; set; }
         public decimal SubTotal { get; set; }
         public decimal Discount { get; set; }
