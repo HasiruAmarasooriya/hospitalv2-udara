@@ -35,6 +35,16 @@
 		h1, h2 {
 			color: #333;
 		}
+		@@media print{
+			.no-page-breake{
+				page-break-before:always;
+				page-break-inside:avoid;
+			}
+			table{
+				width:100% !important;
+				page-break-inside:auto;
+			}
+		}
 	</style>
 	<title>Cashier Summary</title>
 </head>
@@ -193,7 +203,7 @@
 
 	</table>
 	<br />
-	<h4>Daily Settlement Summary</h4>
+	<h4 class="no-page-breake">Daily Settlement Summary</h4>
 	<table class="table" style="">
 		<tr>
 			<th colspan="2">Opening Balence Report</th>
