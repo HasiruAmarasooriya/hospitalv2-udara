@@ -78,6 +78,7 @@
     <div id="Customer">
         @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
         {
+            
             <div id="address">
                 <p class="pb-2 text-4xl" style="margin: auto; font-weight: bold">
                     KUMUDU HOSPITAL
@@ -88,11 +89,17 @@
                 <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
                     Tel: 066 22 22 244 | 066 22 30 027
                 </p>
+                <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
+                    @(Model.invoice.ModifiedDate)
+                </p>
             </div>
             <hr>
-            <h4 style="margin: 0; padding: 0;">Customer Copy</h4>
-            <h5 style="margin: 0; padding: 0;">Ref No: CHE-@Model.opd.Id</h5>
-            <h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+
+            <h4 style="margin: 0; padding: 0; text-align: center;">Channeling Bill </h4>
+            <h4 style="margin: 0; padding: 0; text-align: center;">True Copy</h4>
+            <h4 style="text-align:center"> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+            <hr>
+            <h5 style="margin: 0; padding: 0; text-align: center;">Ref No: CHE-@Model.opd.Id</h5>
             <hr>
             <table id="patient-details" style="margin-right: auto;">
                 <tr>
@@ -102,6 +109,10 @@
                 <tr>
                     <td style="text-align: left;">Phone No:</td>
                     <td style="text-align: left;">@(Model.patientContactNo == "" ? "None" : Model.patientContactNo)</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Doctor Name:</td>
+                    <td style="text-align: left;">@Model.consaltantName</td>
                 </tr>
                 <tr>
                     <td style="text-align: left;">Specialist:</td>
@@ -162,11 +173,16 @@
                 <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
                     Tel: 066 22 22 244 | 066 22 30 027
                 </p>
+                <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
+                    @(Model.invoice.ModifiedDate)
+                </p>
             </div>
             <hr>
-            <h4 style="margin: 0; padding: 0;">True Copy</h4>
-            <h5 style="margin: 0; padding: 0;">Ref No: CHE-@Model.opd.Id</h5>
-            <h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+            <h4 style="margin: 0; padding: 0; text-align: center;">Channeling Bill </h4>
+            <h4 style="margin: 0; padding: 0; text-align: center;">True Copy</h4>
+            <h4 style="text-align:center"> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+            <hr>
+            <h5 style="margin: 0; padding: 0; text-align: center;">Ref No: CHE-@Model.opd.Id</h5>
             <hr>
             <table id="patient-details" style="margin-right: auto;">
                 <tr>
@@ -176,6 +192,10 @@
                 <tr>
                     <td style="text-align: left;">Phone No:</td>
                     <td style="text-align: left;">@(Model.patientContactNo == "" ? "None" : Model.patientContactNo)</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Doctor Name:</td>
+                    <td style="text-align: left;">@Model.consaltantName</td>
                 </tr>
                 <tr>
                     <td style="text-align: left;">Specialist:</td>
@@ -223,10 +243,6 @@
 
         @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
            {
-			
-                @Model.invoice.ModifiedDate
-
-                <br>
             @if (Model != null)
               {
                 @if (Model.cashierBillingItemDtoList != null)
@@ -244,6 +260,10 @@
                         <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
                             Tel: 066 22 22 244 | 066 22 30 027
                         </p>
+                        <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
+                            @(Model.invoice.ModifiedDate)
+                        </p>
+                        <hr>
                         @if (Model.opd != null && Model.opd.Description == "X-RAY")
                         {
                             <h4 style="margin: 0; padding: 0;">X-RAY Bill </h4>
@@ -274,11 +294,11 @@
             {
                 @if (Model.opd != null && Model.opd.Description == "X-RAY")
                 {
-                    <h5 style="margin: 0; padding: 0;">Ref No:XRAY-@Model.opd.Id</h5>
+                    <h5 style="margin: 0; padding: 0; text-align:center;">Ref No:XRAY-@Model.opd.Id</h5>
                 }
                 else
                 {
-                    <h5 style="margin: 0; padding: 0;">Ref No:OPD-@Model.opd.Id</h5>
+                    <h5 style="margin: 0; padding: 0; text-align:center;">Ref No:OPD-@Model.opd.Id</h5>
                 }
             }
 
@@ -286,7 +306,7 @@
 
             @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
             {
-                <h5 style="margin: 0; padding: 0;">Ref No:ADM-@Model.opd.Id</h5>
+                <h5 style="margin: 0; padding: 0; text-align:center;">Ref No:ADM-@Model.opd.Id</h5>
             }
         }
 
