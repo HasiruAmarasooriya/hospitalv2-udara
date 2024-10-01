@@ -11,16 +11,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<style>
+    <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-			font-size: 15px;
+            font-size: 15px;
         }
 
-		h1, h2, h3, h4, h5, h6, p, td, th {
-			font-size: inherit; /* Ensure all elements use the font size set in body */
-		}
+        h1, h2, h3, h4, h5, h6, p, td, th {
+            font-size: inherit;
+        }
 
         #logo {
             text-align: center;
@@ -37,24 +36,24 @@
         #patient-details {
             text-align: left;
             margin: 10px 0;
-			font-size: 15px;
+            font-size: 15px;
         }
 
         table {
             max-width: 350px;
             border-collapse: collapse;
             table-layout: fixed;
-			margin-bottom: 0;
+            margin-bottom: 0;
         }
 
         table, th, td {
             border: none;
-			font-size: 15px;
+            font-size: 15px;
         }
 
-			table th {
-				background-color: #f0f0f0;
-			}
+        table th {
+            background-color: #f0f0f0;
+        }
 
         #total-section {
             text-align: right;
@@ -63,259 +62,349 @@
 
         #barcode {
             text-align: center;
-			margin-top: 0;
+            margin-top: 0;
         }
-		
+
+        @@media print {
+            .page-break {
+                page-break-before: always;
+            }
+        }
     </style>
-	<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
-<div id="receipt">
-	@*<div id="logo">
-		<img src="https://kumuduhospital.com/assets/images/kumudu_logo2.jpg" alt="Logo" width="100">
-	</div>*@
-	<div id="address">
-	<p class="pb-2 text-4xl" style="margin: auto; font-weight: bold">
+    <!-- Customer Copy -->
+    <div id="Customer">
+        @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
+        {
+            <div id="address">
+                <p class="pb-2 text-4xl" style="margin: auto; font-weight: bold">
                     KUMUDU HOSPITAL
                 </p>
-                <p class="text-sm text-gray-400"
-                   style="margin-top: 10px; margin-bottom: auto">
+                <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
                     No 48, Kandy Road, Mathale,
                 </p>
-                <p class="text-sm text-gray-400"
-                   style="margin-top: 10px; margin-bottom: auto">
+                <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
                     Tel: 066 22 22 244 | 066 22 30 027
                 </p>
-		@if (Model != null)
-		{
-			<input type="hidden" id="opid" asp-for="PreID" value="@Model.PreID">
-			@Model.invoice.ModifiedDate
+            </div>
+            <hr>
+            <h4 style="margin: 0; padding: 0;">Customer Copy</h4>
+            <h5 style="margin: 0; padding: 0;">Ref No: CHE-@Model.opd.Id</h5>
+            <h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+            <hr>
+            <table id="patient-details" style="margin-right: auto;">
+                <tr>
+                    <td style="text-align: left;">Patient Name:</td>
+                    <td style="text-align: left;">@Model.customerName</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Phone No:</td>
+                    <td style="text-align: left;">@(Model.patientContactNo == "" ? "None" : Model.patientContactNo)</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Specialist:</td>
+                    <td style="text-align: left;">@Model.opd!.consultant!.Specialist!.Name</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Appointment No:</td>
+                    <td style="text-align: left;">@Model.opd!.AppoimentNo</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Room No:</td>
+                    <td style="text-align: left;">@Model.ChannelingSchedule!.Room!.Name</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Date:</td>
+                    <td style="text-align: left;">@DateTime.Now</td>
+                </tr>
+            </table>
+            <hr>
+            <table id="total-section">
+                <tr>
+                    <td style="text-align: left;">Sub total:</td>
+                    <td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Discount:</td>
+                    <td style="text-align: right;">Rs. @Model.discount.ToString("0.00")</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Net Total:</td>
+                    <td style="text-align: right;">Rs. @Model.preTotal.ToString("0.00")</td>
+                </tr>
+            </table>
+            <hr>
+            <div id="barcodeCustomer" style="margin-top: -15px !important; padding: 0; line-height: 0;">
+                <svg id="barcodeSvgCustomer" style="width: 100%; height: 40px; margin: 0; padding: 0;"></svg>
+            </div>
+            <hr>
+            <p style="margin-top: 0px !important; padding: 0;">Payment Successfully Completed !</p>
+        }
+    </div>
 
-			<br>
-			@if (Model.cashierBillingItemDtoList != null)
-			{
-				@if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
-				{
-					@if (Model.opd != null && Model.opd.Description == "X-RAY")
-					{
-						<h4 style="margin: 0; padding: 0;">X-RAY Bill </h4>
-						<h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
-						<h5 style="margin: 0; padding: 0;">@Model.ItemName</h5>
-					}
-					else
-					{
-						<h5 style="margin: 0; padding: 0;">OPD Bill </h5>
-						<h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
-					}
-				}
+    <!-- Page Break for True Copy -->
+    <div class="page-break"></div>
 
-				@if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
-				{
-					<h4 style="margin: 0; padding: 0;">Channeling Bill </h4>
-					<h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
-					<h5>@Model.ItemName</h5>
-				}
+    <!-- True Copy -->
+    <div id="TrueCopy">
+        @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
+        {
+            <div id="address">
+                <p class="pb-2 text-4xl" style="margin: auto; font-weight: bold">
+                    KUMUDU HOSPITAL
+                </p>
+                <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
+                    No 48, Kandy Road, Mathale,
+                </p>
+                <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
+                    Tel: 066 22 22 244 | 066 22 30 027
+                </p>
+            </div>
+            <hr>
+            <h4 style="margin: 0; padding: 0;">True Copy</h4>
+            <h5 style="margin: 0; padding: 0;">Ref No: CHE-@Model.opd.Id</h5>
+            <h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+            <hr>
+            <table id="patient-details" style="margin-right: auto;">
+                <tr>
+                    <td style="text-align: left;">Patient Name:</td>
+                    <td style="text-align: left;">@Model.customerName</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Phone No:</td>
+                    <td style="text-align: left;">@(Model.patientContactNo == "" ? "None" : Model.patientContactNo)</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Specialist:</td>
+                    <td style="text-align: left;">@Model.opd!.consultant!.Specialist!.Name</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Appointment No:</td>
+                    <td style="text-align: left;">@Model.opd!.AppoimentNo</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Room No:</td>
+                    <td style="text-align: left;">@Model.ChannelingSchedule!.Room!.Name</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Date:</td>
+                    <td style="text-align: left;">@DateTime.Now</td>
+                </tr>
+            </table>
+            <hr>
+            <table id="total-section">
+                <tr>
+                    <td style="text-align: left;">Sub total:</td>
+                    <td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Discount:</td>
+                    <td style="text-align: right;">Rs. @Model.discount.ToString("0.00")</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Net Total:</td>
+                    <td style="text-align: right;">Rs. @Model.preTotal.ToString("0.00")</td>
+                </tr>
+            </table>
+            <hr>
+            <div id="barcodeTrueCopy" style="margin-top: -15px !important; padding: 0; line-height: 0;">
+                <svg id="barcodeSvgTrueCopy" style="width: 100%; height: 40px; margin: 0; padding: 0;"></svg>
+            </div>
+            <hr>
+            <p style="margin-top: 0px !important; padding: 0;">Payment Successfully Completed !</p>
+        }
+    </div>
 
-				@if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
-				{
-					<h5 style="margin: 0; padding: 0;"></h5>
-				}
-			}
-		}
-	</div>
-	<hr>
+    <div id="receipt">
 
-	@if (Model.cashierBillingItemDtoList != null)
-	{
-		@if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
-		{
-			@if (Model.opd != null && Model.opd.Description == "X-RAY")
-			{
-				<h5 style="margin: 0; padding: 0;">Ref No:XRAY-@Model.opd.Id</h5>
-			}
-			else
-			{
-				<h5 style="margin: 0; padding: 0;">Ref No:OPD-@Model.opd.Id</h5>
-			}
-		}
+        @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
+           {
+			
+                @Model.invoice.ModifiedDate
 
-		@if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
-		{
-			<h5 style="margin: 0; padding: 0;">Ref No:CHE-@Model.opd.Id</h5>
-		}
+                <br>
+            @if (Model != null)
+              {
+                @if (Model.cashierBillingItemDtoList != null)
+                  {
+                    <div id="logo">
+                        <img src="https://kumuduhospital.com/assets/images/kumudu_logo2.jpg" alt="Logo" width="100">
+                    </div>
+                    <div id="address">
+                        No 48, Kandy Road, Mathale,<br>
+                        Tel: 066 22 22 2444 | 066 22 30 027<br>
+                        @if (Model.opd != null && Model.opd.Description == "X-RAY")
+                        {
+                            <h4 style="margin: 0; padding: 0;">X-RAY Bill </h4>
+                            <h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+                            <h5 style="margin: 0; padding: 0;">@Model.ItemName</h5>
+                        }
+                        else
+                        {
+                            <h5 style="margin: 0; padding: 0;">OPD Bill </h5>
+                            <h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+                        }
+                    
 
-		@if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
-		{
-			<h5 style="margin: 0; padding: 0;">Ref No:ADM-@Model.opd.Id</h5>
-		}
-	}
+                   
 
-	<hr>
-	@if (Model != null)
-	{
-		var currentTime = DateTime.Now;
+                    @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
+                    {
+                        <h5 style="margin: 0; padding: 0;"></h5>
+                    }
+                
+            
+                     </div>
+        <hr>
 
-		<table id="patient-details" style="margin-right: auto;">
-			<tr>
-				<td style="text-align: left;">Patient Name:</td>
-				<td style="text-align: left;">@Model.customerName</td>
-			</tr>
-			<tr>
-				<td style="text-align: left;">Phone No:</td>
-				<td style="text-align: left;">@(Model.patientContactNo == "" ? "None" : Model.patientContactNo)</td>
-			</tr>
-			@if (Model.opd != null && Model.opd.Description != "X-RAY")
-			{
-				<tr>
-					<td style="text-align: left;">Doctor Name:</td>
-					<td style="text-align: left;">@Model.consaltantName</td>
-				</tr>
-			}
-			@if (Model.ChannelingSchedule != null)
-			{
-				<tr>
-					<td style="text-align: left;">Specialist:</td>
-					<td style="text-align: left;">@Model.opd!.consultant!.Specialist!.Name</td>
-				</tr>
-			}
+        @if (Model.cashierBillingItemDtoList != null)
+        {
+            @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
+            {
+                @if (Model.opd != null && Model.opd.Description == "X-RAY")
+                {
+                    <h5 style="margin: 0; padding: 0;">Ref No:XRAY-@Model.opd.Id</h5>
+                }
+                else
+                {
+                    <h5 style="margin: 0; padding: 0;">Ref No:OPD-@Model.opd.Id</h5>
+                }
+            }
 
-			@if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
-			{
-				<tr>
-					<td style="text-align: left;">Appointment No:</td>
-					<td style="text-align: left;">@Model.opd!.AppoimentNo</td>
-				</tr>
-				<tr>
-					<td style="text-align: left;">Room No:</td>
-					<td style="text-align: left;">@Model.ChannelingSchedule!.Room!.Name</td>
-				</tr>
-				<tr>
-					<td style="text-align: left;">Date:</td>
-					<td style="text-align: left;">@currentTime</td>
-				</tr>
-			}
-		</table>
+            
 
-		<hr>
-		@if (Model.cashierBillingItemDtoList != null)
-		{
-			<table>
-				<tr>
-					@if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
-					{
-					}
-					@if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
-					{
-					}
-				</tr>
-				@if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
-				{
-					var rowNumber = 1;
-					decimal itemAmmount = 0;
-					decimal hospitalFee = 0;
-					@foreach (var item in Model.cashierBilledItemDtoList)
-					{
-						@if (item.amount > 0)
-						{
-							if (item.billingItemsType == HospitalMgrSystem.Model.Enums.BillingItemsType.Hospital)
-							{
-								hospitalFee = item.amount;
-							}
-							else
-							{
-								itemAmmount = itemAmmount + item.amount;
-							}
+            @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
+            {
+                <h5 style="margin: 0; padding: 0;">Ref No:ADM-@Model.opd.Id</h5>
+            }
+        }
 
-							rowNumber++;
-						}
-					}
+        <hr>
+        @if (Model != null)
+        {
+            var currentTime = DateTime.Now;
 
-					<tr>
-						<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: left;">Other Items</td>
-						<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: right;">Rs. @itemAmmount</td>
-					</tr>
-					<tr style="margin-left: auto;">
-						<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: left;">Hospital Fee</td>
-						<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: right;">Rs. @hospitalFee</td>
-					</tr>
-				}
-				@if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
-				{
-					@if (Model.opd != null)
-					{
-						<tr>
-							<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: left;">Hospital Fee</td>
-								<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: right;">Rs. @(Model.opd.HospitalFee)</td>
-						</tr>
-						<tr style="margin-left: auto;">
-							<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: left;">Doctor Fee</td>
-							<td style="margin: 2px; padding: 2px; font-size: 15px; text-align: right;">Rs. @(Model.opd.ConsultantFee)</td>
-						</tr>
-						@*<tr style="margin-left: auto;">
-	                            <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: left;">Scan Item (@Model.ItemName)</td>
-                                <td style="margin: 2px; padding: 2px; font-size: 10px; text-align: right;">Rs. @(Model.opd.ConsultantFee + Model.opd.HospitalFee)</td>
-                            </tr>*@
-					}
-				}
-			</table>
-			<hr>
+            <table id="patient-details" style="margin-right: auto;">
+                <tr>
+                    <td style="text-align: left;">Patient Name:</td>
+                    <td style="text-align: left;">@Model.customerName</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Phone No:</td>
+                    <td style="text-align: left;">@(Model.patientContactNo == "" ? "None" : Model.patientContactNo)</td>
+                </tr>
+                @if (Model.opd != null && Model.opd.Description != "X-RAY")
+                {
+                    <tr>
+                        <td style="text-align: left;">Doctor Name:</td>
+                        <td style="text-align: left;">@Model.consaltantName</td>
+                    </tr>
+                }
+                @if (Model.ChannelingSchedule != null)
+                {
+                    <tr>
+                        <td style="text-align: left;">Specialist:</td>
+                        <td style="text-align: left;">@Model.opd!.consultant!.Specialist!.Name</td>
+                    </tr>
+                }
 
-			<table id="total-section" style="margin-left: auto;">
-				<tr>
-					<td style="text-align: left;">Sub total:</td>
-					<td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
-				</tr>
-				<tr>
-					<td style="text-align: left;">Discount:</td>
-					<td style="text-align: right;">Rs. @Model.discount.ToString("0.00")</td>
-				</tr>
-				<tr>
-					<td style="text-align: left;">Net Total:</td>
-					<td style="text-align: right;">Rs. @Model.preTotal.ToString("0.00")</td>
-				</tr>
+               
+            </table>
+
+            <hr>
+            @if (Model.cashierBillingItemDtoList != null)
+            {
+                <table>
+                    <tr>
+                        
+                        @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
+                        {
+                        }
+                    </tr>
+                    @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
+                    {
+                        var rowNumber = 1;
+                        decimal itemAmmount = 0;
+                        decimal hospitalFee = 0;
+                        @foreach (var item in Model.cashierBilledItemDtoList)
+                        {
+                            @if (item.amount > 0)
+                            {
+                                if (item.billingItemsType == HospitalMgrSystem.Model.Enums.BillingItemsType.Hospital)
+                                {
+                                    hospitalFee = item.amount;
+                                }
+                                else
+                                {
+                                    itemAmmount = itemAmmount + item.amount;
+                                }
+
+                                rowNumber++;
+                            }
+                        }
+
+                        <tr>
+                            <td style="margin: 2px; padding: 2px; text-align: left;">Other Items</td>
+                            <td style="margin: 2px; padding: 2px; text-align: right;">Rs. @itemAmmount</td>
+                        </tr>
+                        <tr style="margin-left: auto;">
+                            <td style="margin: 2px; padding: 2px; text-align: left;">Hospital Fee</td>
+                            <td style="margin: 2px; padding: 2px; text-align: right;">Rs. @hospitalFee</td>
+                        </tr>
+                    }
+                   
+                </table>
+                <hr>
+
+                <table id="total-section" style="margin-left: auto;">
+                    <tr>
+                        <td style="text-align: left;">Net total:</td>
+                        <td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
+                    </tr>
 
 
-				@if (Model != null)
-				{
-					decimal totalCash = 0;
-					decimal totalBlence = 0;
-					decimal totalDiscount = 0;
+                    @if (Model != null)
+                    {
+                        decimal totalCash = 0;
+                        decimal totalBlence = 0;
 
-					@if (Model.paymentList != null)
-					{
-						@foreach (var item in Model.paymentList)
-						{
-							@if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.BALENCE)
-								totalBlence += item.CashAmount;
-							@if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.CASHIER)
-								totalCash = totalCash + item.CashAmount + item.CreditAmount + item.DdebitAmount + item.ChequeAmount + item.GiftCardAmount;
-							@if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.DISCOUNT)
-								totalDiscount = totalDiscount + item.CashAmount + item.CreditAmount + item.DdebitAmount + item.ChequeAmount + item.GiftCardAmount;
-						}
-					}
+                        @if (Model.paymentList != null)
+                        {
+                            @foreach (var item in Model.paymentList)
+                            {
+                                @if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.BALENCE)
+                                    totalBlence = totalBlence + item.CashAmount;
+                                @if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.CASHIER)
+                                    totalCash = totalCash + item.CashAmount + item.CreditAmount + item.DdebitAmount + item.ChequeAmount + item.GiftCardAmount;
+                            }
+                        }
 
-					<tr>
-						<td style="text-align: left;">Cash Payment:</td>
-						<td style="text-align: right;">Rs. @totalCash.ToString("0.00")</td>
-					</tr>
-					<tr>
-						<td style="text-align: left;">Balance:</td>
-						<td style="text-align: right;">Rs. @(Math.Abs(totalBlence).ToString("0.00"))</td>
-					</tr>
-				}
+                        <tr>
+                            <td style="text-align: left;">Cash Payment:</td>
+                            <td style="text-align: right;">Rs. @totalCash.ToString("0.00")</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;">Balance:</td>
+                            <td style="text-align: right;">Rs. @(Math.Abs(totalBlence).ToString("0.00"))</td>
+                        </tr>
+                    }
 
-			</table>
-		}
+                </table>
+            }
 
-		<hr>
-	}
-	
-	<div id="barcode" style="margin-top: -15px !important; padding: 0; line-height: 0;">
-		<svg id="barcodeSvg" style="width: 100%; height: 40px; margin: 0; padding: 0;"></svg>
-	</div>
+            <hr>
+        }
+       }
+      }
+            <p>Payment Successfully Completed !</p>
+        }
 
-		<p style="margin-top: 0px !important; padding: 0;">Payment Successfully Completed !</p>
-</div>
+        
+    </div>
 
+  
+   
 </body>
 </html>
