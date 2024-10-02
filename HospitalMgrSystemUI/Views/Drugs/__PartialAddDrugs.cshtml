@@ -8,34 +8,42 @@
 }
 @inject IConfiguration Configuration
 
-    <script type="text/javascript">
+<script type="text/javascript">
         function select_onchange(value) {
-        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
-        var settings = {
-            "url": commonUrl + "Drugs/GetAllDrugsSubCategoryById?CategoryID=" + value,
-            "method": "GET",
-            "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-        };
+            const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+            var settings = {
+                "url": commonUrl + "Drugs/GetAllDrugsSubCategoryById?CategoryID=" + value,
+                "method": "GET",
+                "headers": {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+            };
 
-        $.ajax(settings).done(function (response) {
-            console.log(response);
-            const select = document.querySelector('#dropSubCategory');
-            
-            while (select.options.length > 1) {
-                select.remove(1);
-            }
+            $.ajax(settings).done(function (response) {
+                console.log(response);
+                const select = document.querySelector('#dropSubCategory');
+                
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
 
-            for (let item of response) {
-                const option = document.createElement('option');
-                option.value = item.drugsSubCategoryId;
-                option.text = item.drugsSubCategoryName;
-                select.add(option);
-            }
-        });
-     }
+                for (let item of response) {
+                    const option = document.createElement('option');
+                    option.value = item.drugsSubCategoryId;
+                    option.text = item.drugsSubCategoryName;
+                    select.add(option);
+                }
+            });
+        }
+
+        function onChangeDiscount() {
+            var checkbox = document.getElementById("discount");
+            var discountApplied = !!checkbox.checked;
+
+            // Update the hidden input field or property bound to asp-for="discountEnabled"
+            document.getElementById("discountEnabled").value = discountApplied;
+        }
 
     </script>
 
@@ -84,10 +92,21 @@
             </div>
 
 
-            <div class="col-md-8">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label for="companyName">Name</label>
                         <input class="form-control " type="text" id="txtTelephoneNumber" asp-for="Drug.DrugName" placeholder="Eg:Injection Eregometrine" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    
+	                <input class="form-check-input" type="checkbox" asp-for="Drug.IsDiscountAvailable" id="discount" name="discount" onchange="onChangeDiscount()"/>
+
+                    <label class="form-check-label" for="discount">Apply Discount</label>
+
+                    <!-- Hidden input for discountEnabled -->
+                    <input type="hidden" asp-for="Drug.IsDiscountAvailable" id="discountEnabled"/>
                 </div>
             </div>
             <div class="col-md-4">
