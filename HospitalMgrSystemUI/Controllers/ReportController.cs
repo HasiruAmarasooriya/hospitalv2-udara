@@ -132,6 +132,7 @@ namespace HospitalMgrSystemUI.Controllers
 						oPdDto.ChannelingPaymentSummaryReportDtos = reportsService.GetAllChannelingPaymentsSummaryReportByDate(_OPDDto.StartTime);
 						oPdDto.ForwardBookingDataTableDtos = reportsService.GetAllForwardBookingDataForReportByDate(_OPDDto.StartTime);
 						oPdDto.PreviousForwardBookingDataDtos = reportsService.GetPreviousForwardBookingData(_OPDDto.StartTime);
+						oPdDto.DiscountTableReportsDto = reportsService.GetAllChannelingDiscountByDateForReport(_OPDDto.StartTime);
 
 						return View("ChannelingIndex", oPdDto);
 

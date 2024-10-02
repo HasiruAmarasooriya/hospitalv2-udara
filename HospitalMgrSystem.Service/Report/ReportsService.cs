@@ -1437,5 +1437,14 @@ namespace HospitalMgrSystem.Service.Report
 
 			return user;
 		}
+
+		public List<DiscountTableReport> GetAllChannelingDiscountByDateForReport(DateTime dateTime)
+		{
+			using var dbContext = new HospitalDBContext();
+
+			return dbContext.Set<DiscountTableReport>()
+				.FromSqlRaw("EXEC GetAllChannelingDiscountByDateForReport @Date = {0}", dateTime)
+				.ToList();
+		}
 	}
 }
