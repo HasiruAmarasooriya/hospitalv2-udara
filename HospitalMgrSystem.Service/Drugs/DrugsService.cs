@@ -56,6 +56,7 @@ namespace HospitalMgrSystem.Service.Drugs
                     result.billingItemsType =(BillingItemsType) drug.DrugsCategoryId;
                     result.DrugsCategoryId = drug.DrugsCategoryId;
                     result.DrugsSubCategoryId = drug.DrugsSubCategoryId;
+                    result.IsDiscountAvailable = drug.IsDiscountAvailable;
                     result.Status = drug.Status;
                     result.ModifiedDate = DateTime.Now;
                     result.ModifiedUser = drug.ModifiedUser;
