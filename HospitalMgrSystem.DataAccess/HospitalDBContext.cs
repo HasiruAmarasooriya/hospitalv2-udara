@@ -90,6 +90,7 @@ namespace HospitalMgrSystem.DataAccess
 		public DbSet<PreviousForwardBookingDataDto> PreviousForwardBookingDataDtos { get; set; }
 		public DbSet<ChannelingRefundReportDto> ChannelingRefundReportDtos { get; set; }
 		public DbSet<ChannelingPaymentSummaryReportDto> ChannelingPaymentSummaryReportDtos { get; set; }
+		public DbSet<DiscountTableReport> DiscountTableReports { get; set; }
 
 		#endregion
 

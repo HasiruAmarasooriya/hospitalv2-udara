@@ -39,6 +39,7 @@ namespace HospitalMgrSystemUI.Models
 		public Payment? channelingPaymentData { get; set; }
 		public List<ForwardBookingDataTableDTO> ForwardBookingDataTableDtos { get; set; }
 		public List<PreviousForwardBookingDataDto> PreviousForwardBookingDataDtos { get; set; }
+		public List<DiscountTableReport> DiscountTableReportsDto { get; set; }
 		public List<OPDDrugus>? listChannelingGrugs { get; set; }
 		#endregion
 
