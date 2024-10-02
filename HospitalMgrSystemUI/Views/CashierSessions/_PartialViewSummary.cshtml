@@ -105,6 +105,12 @@
 			<td style="border-bottom: 1px solid white; text-align: left;">Total Refund</td>
 			<td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.OPDTotalRefund</td>
 		</tr>
+		<tr>
+			<td style="border-bottom: 1px solid white; text-align: left;">Total Discount</td>
+			<td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.ChannelingDiscountAmount</td>
+			<td style="border-bottom: 1px solid white; text-align: left;">Total Refund</td>
+			<td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.OPDTotalDiscount</td>
+		</tr>
 		@*         <tr>
 		<td style="border-bottom: 1px solid white; text-align: left;">Cash Balance</td>
 		<td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.ChannelingCashBalence</td>
@@ -156,6 +162,12 @@
 			<td style="border-bottom: 1px solid white; text-align: left;">Total Refund</td>
 			<td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.OtherTotalRefund</td>
 		</tr>
+		<tr>
+			<td style="border-bottom: 1px solid white; text-align: left;">Total Discount</td>
+			<td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.XrayTotalDiscountAmount</td>
+			<td style="border-bottom: 1px solid white; text-align: left;">Total Refund</td>
+			<td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.OtherTotalDiscountAmount</td>
+		</tr>
 		@*         <tr>
 		<td style="border-bottom: 1px solid white; text-align: left;">Cash Balance</td>
 		<td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.XRAYCashBalence</td>
@@ -191,6 +203,10 @@
 		<tr>
 			<td style="border-bottom: 1px solid white; text-align: left;">Total Refund</td>
 			<td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AllServiceTotalRefund</td>
+		</tr>
+		<tr>
+			<td style="border-bottom: 1px solid white; text-align: left;">Total Discount</td>
+			<td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AllServiceDiscountAmount</td>
 		</tr>
 		<tr>
 			<td style="border-bottom: 1px solid #ddd; text-align: left;">Total Amount</td>

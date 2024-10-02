@@ -51,24 +51,28 @@ namespace HospitalMgrSystem.Service.CashierSession
 				cashierSessionAmounts.OPDTotalAmount = OPDPayementData.OPDTotalAmount;
 				cashierSessionAmounts.OPDTotalPaidAmount = OPDPayementData.OPDTotalPaidAmount;
 				cashierSessionAmounts.OPDTotalRefund = OPDPayementData.OPDTotalRefund;
+				cashierSessionAmounts.OPDTotalDiscount = OPDPayementData.OPDTotalDiscount;
 				cashierSessionAmounts.OPDCashBalence = OPDPayementData.OPDCashBalence;
 				cashierSessionAmounts.OPDTotalPaidCardAmount = OPDPayementData.OPDTotalPaidCardAmount;
 
 				cashierSessionAmounts.XRAYTotalAmount = XRAYPayementData.XRAYTotalAmount;
 				cashierSessionAmounts.XRAYTotalPaidAmount = XRAYPayementData.XRAYTotalPaidAmount;
 				cashierSessionAmounts.XRAYTotalRefund = XRAYPayementData.XRAYTotalRefund;
+				cashierSessionAmounts.XrayTotalDiscountAmount = XRAYPayementData.XrayTotalDiscountAmount;
 				cashierSessionAmounts.XRAYCashBalence = XRAYPayementData.XRAYCashBalence;
 				cashierSessionAmounts.XRAYTotalPaidCardAmount = XRAYPayementData.XRAYTotalPaidCardAmount;
 
 				cashierSessionAmounts.OtherTotalAmount = OTHERPayementData.OtherTotalAmount;
 				cashierSessionAmounts.OtherTotalPaidAmount = OTHERPayementData.OtherTotalPaidAmount;
 				cashierSessionAmounts.OtherTotalRefund = OTHERPayementData.OtherTotalRefund;
+				cashierSessionAmounts.OtherTotalDiscountAmount = OTHERPayementData.OtherTotalDiscountAmount;
 				cashierSessionAmounts.OtherCashBalence = OTHERPayementData.OtherCashBalence;
 				cashierSessionAmounts.OtherTotalPaidCardAmount = OTHERPayementData.OtherTotalPaidCardAmount;
 
 				cashierSessionAmounts.ChannelingTotalAmount = ChannelingPayementData.ChannelingTotalAmount;
 				cashierSessionAmounts.ChannelingTotalPaidAmount = ChannelingPayementData.ChannelingTotalPaidAmount;
 				cashierSessionAmounts.ChannelingTotalRefund = ChannelingPayementData.ChannelingTotalRefund;
+				cashierSessionAmounts.ChannelingDiscountAmount = ChannelingPayementData.ChannelingDiscountAmount;
 				cashierSessionAmounts.ChannelingTotalDoctorPayment = ChannelingPayementData.ChannelingTotalDoctorPayment;
 				cashierSessionAmounts.ChannelingTotalPaidCardAmount = ChannelingPayementData.ChannelingTotalPaidCardAmount;
 				cashierSessionAmounts.ChannelingCashBalence = ChannelingPayementData.ChannelingCashBalence;
@@ -76,6 +80,7 @@ namespace HospitalMgrSystem.Service.CashierSession
 				cashierSessionAmounts.AllServiceTotalPaidAmount = cashierSessionAmounts.OPDTotalPaidAmount + cashierSessionAmounts.XRAYTotalPaidAmount + cashierSessionAmounts.OtherTotalPaidAmount + cashierSessionAmounts.ChannelingTotalPaidAmount;
 				cashierSessionAmounts.AllServiceTotalPaidCardAmount = cashierSessionAmounts.OPDTotalPaidCardAmount + cashierSessionAmounts.XRAYTotalPaidCardAmount + cashierSessionAmounts.OtherTotalPaidCardAmount + cashierSessionAmounts.ChannelingTotalPaidCardAmount;
 				cashierSessionAmounts.AllServiceTotalRefund = cashierSessionAmounts.OPDTotalRefund + cashierSessionAmounts.XRAYTotalRefund + cashierSessionAmounts.OtherTotalRefund + cashierSessionAmounts.ChannelingTotalRefund;
+				cashierSessionAmounts.AllServiceDiscountAmount = cashierSessionAmounts.OPDTotalDiscount + cashierSessionAmounts.XrayTotalDiscountAmount + cashierSessionAmounts.OtherTotalDiscountAmount + cashierSessionAmounts.ChannelingDiscountAmount;
 				cashierSessionAmounts.AllServiceTotalAmount = cashierSessionAmounts.OPDTotalAmount + cashierSessionAmounts.XRAYTotalAmount + cashierSessionAmounts.OtherTotalAmount + cashierSessionAmounts.ChannelingTotalAmount + cashierTransferInAndOut.totalCashierTransferIn + cashierTransferInAndOut.totalCashierTransferOut + otherHospitalIncome.totalHospitaOtherIncome;
 				cashierSessionAmounts.AllServiceCashBalence = cashierSession.EndBalence - cashierSession.StartBalence;
 
@@ -330,11 +335,13 @@ namespace HospitalMgrSystem.Service.CashierSession
 
 				decimal refundAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.REFUND && o.sessionID == sessionId && CHEinvoiceList.Contains(o.InvoiceID))
 										.Sum(o => o.CashAmount);
+				decimal discountAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.DISCOUNT && o.sessionID == sessionId && CHEinvoiceList.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
 
-
-				cashierSessionAmounts.ChannelingTotalPaidCardAmount = totalCashierCardAmount;
+                cashierSessionAmounts.ChannelingTotalPaidCardAmount = totalCashierCardAmount;
 				cashierSessionAmounts.ChannelingCashBalence = balanceAmount;
 				cashierSessionAmounts.ChannelingTotalRefund = refundAmount;
+				cashierSessionAmounts.ChannelingDiscountAmount = discountAmount;
 				cashierSessionAmounts.ChannelingTotalDoctorPayment = totalDoctorPaymentAmount;
 				cashierSessionAmounts.ChannelingTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
 				cashierSessionAmounts.ChannelingTotalAmount = cashierSessionAmounts.ChannelingTotalPaidAmount + totalCashierCardAmount + totalDoctorPaymentAmount;
@@ -371,12 +378,15 @@ namespace HospitalMgrSystem.Service.CashierSession
 
 				decimal refundAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.REFUND && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
 										.Sum(o => o.CashAmount);
+			    decimal discountAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.DISCOUNT && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
 
 
-				cashierSessionAmounts.OPDTotalPaidCardAmount = totalCashierCardAmount;
+                cashierSessionAmounts.OPDTotalPaidCardAmount = totalCashierCardAmount;
 				cashierSessionAmounts.OPDCashBalence = balanceAmount;
 				cashierSessionAmounts.OPDTotalRefund = refundAmount;
-				cashierSessionAmounts.OPDTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
+                cashierSessionAmounts.OPDTotalDiscount = discountAmount;
+                cashierSessionAmounts.OPDTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
 				cashierSessionAmounts.OPDTotalAmount = cashierSessionAmounts.OPDTotalPaidAmount + totalCashierCardAmount;
 
 
@@ -412,10 +422,14 @@ namespace HospitalMgrSystem.Service.CashierSession
 				decimal refundAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.REFUND && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
 										.Sum(o => o.CashAmount);
 
+                decimal discountAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.DISCOUNT && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
 
-				cashierSessionAmounts.XRAYTotalPaidCardAmount = totalCashierCardAmount;
+
+                cashierSessionAmounts.XRAYTotalPaidCardAmount = totalCashierCardAmount;
 				cashierSessionAmounts.XRAYCashBalence = balanceAmount;
 				cashierSessionAmounts.XRAYTotalRefund = refundAmount;
+				cashierSessionAmounts.XrayTotalDiscountAmount = discountAmount;
 				cashierSessionAmounts.XRAYTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
 				cashierSessionAmounts.XRAYTotalAmount = cashierSessionAmounts.XRAYTotalPaidAmount + totalCashierCardAmount;
 
@@ -451,12 +465,15 @@ namespace HospitalMgrSystem.Service.CashierSession
 
 				decimal refundAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.REFUND && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
 										.Sum(o => o.CashAmount);
+                decimal discountAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.REFUND && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
 
 
-				cashierSessionAmounts.OtherTotalPaidCardAmount = totalCashierCardAmount;
+                cashierSessionAmounts.OtherTotalPaidCardAmount = totalCashierCardAmount;
 				cashierSessionAmounts.OtherCashBalence = balanceAmount;
 				cashierSessionAmounts.OtherTotalRefund = refundAmount;
-				cashierSessionAmounts.OtherTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
+				cashierSessionAmounts.OtherTotalDiscountAmount = discountAmount;
+                cashierSessionAmounts.OtherTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
 				cashierSessionAmounts.OtherTotalAmount = cashierSessionAmounts.OtherTotalPaidAmount + totalCashierCardAmount;
 
 

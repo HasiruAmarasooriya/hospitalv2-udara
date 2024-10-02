@@ -66,6 +66,8 @@ namespace HospitalMgrSystem.Model
 
         [NotMapped]
         public decimal TotalAmount { get; set; }
+		[NotMapped]
+		public decimal DiscountAmount { get; set; }
 
         #region OPD Payment Data
 
@@ -79,6 +81,8 @@ namespace HospitalMgrSystem.Model
         public decimal OPDTotalRefund { get; set; }
         [NotMapped]
         public decimal OPDCashBalence { get; set; }
+		[NotMapped]
+		public decimal OPDTotalDiscount { get; set; }
 
         [NotMapped]
         public decimal ChannelingTotalAmount { get; set; }
@@ -92,6 +96,8 @@ namespace HospitalMgrSystem.Model
         public decimal ChannelingTotalRefund { get; set; }
         [NotMapped]
         public decimal ChannelingCashBalence { get; set; }
+		[NotMapped]
+		public decimal ChannelingDiscountAmount { get; set; }
 
         [NotMapped]
         public decimal XRAYTotalAmount { get; set; }
@@ -103,7 +109,9 @@ namespace HospitalMgrSystem.Model
         public decimal XRAYTotalRefund { get; set; }
         [NotMapped]
         public decimal XRAYCashBalence { get; set; }
-        [NotMapped]
+		[NotMapped]
+		public decimal XrayTotalDiscountAmount { get; set; }
+		[NotMapped]
         public decimal OtherTotalAmount { get; set; }
         [NotMapped]
         public decimal OtherTotalPaidAmount { get; set; }
@@ -113,6 +121,8 @@ namespace HospitalMgrSystem.Model
         public decimal OtherTotalPaidCardAmount { get; set; }
         [NotMapped]
         public decimal OtherCashBalence { get; set; }
+		[NotMapped]
+		public decimal OtherTotalDiscountAmount { get; set; }
 
         [NotMapped]
         public decimal AllServiceTotalPaidAmount { get; set; }
@@ -124,6 +134,8 @@ namespace HospitalMgrSystem.Model
         public decimal AllServiceCashBalence { get; set; }
         [NotMapped]
         public decimal AllServiceTotalAmount { get; set; }
+		[NotMapped]
+		public decimal AllServiceDiscountAmount { get; set; }
 
         [NotMapped]
         public List<Consultant> notInSyestemConsultantList { get; set; }
