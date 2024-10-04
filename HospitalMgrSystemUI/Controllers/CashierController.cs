@@ -557,7 +557,16 @@ namespace HospitalMgrSystemUI.Controllers
 				}
 
 
-				cashierDto.PreID = input;
+
+                if (cashierDto.invoice != null && cashierDto.invoice.IsDiscountAdded == 1)
+                {
+                    if (cashierDto.invoice.paymentStatus == PaymentStatus.NEED_TO_PAY)
+                    {
+                        cashierDto.totalPaymentPaidAmount += cashierDto.AvailableDiscount;
+                    }
+                }
+
+                cashierDto.PreID = input;
 				cashierDto.sufID = number;
 				cashierDto.preSubtotal = subtotal;
 				cashierDto.subtotal = subtotal - cashierDto.totalPaymentPaidAmount - discount;
@@ -566,6 +575,7 @@ namespace HospitalMgrSystemUI.Controllers
 				cashierDto.total = cashierDto.subtotal - discount;
 				cashierDto.cashierBillingItemDtoList = billingItemDtoList;
 				cashierDto.cashierBilledItemDtoList = billedItemDtoList;
+
 				return cashierDto;
 			}
 			catch (Exception ex)
