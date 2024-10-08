@@ -195,8 +195,9 @@ public class ChannelingController : Controller
 			{
 				12 => new DefaultService().GetAllScanChannelingFee(4), // Radio
 				13 => new DefaultService().GetAllScanChannelingFee(3), // Cardio
-				// 44 => new DefaultService().GetAllScanChannelingFee(2), // VOG
-				_ => new DefaultService().getProceduresByConsultantId(oPDChannelingDto.channelingSchedule.ConsultantId)
+                35 => new DefaultService().GetAllScanChannelingFee(3), // Ex-EEG
+                                                                       // 44 => new DefaultService().GetAllScanChannelingFee(2), // VOG
+                _ => new DefaultService().getProceduresByConsultantId(oPDChannelingDto.channelingSchedule.ConsultantId)
 			};
 
 			
