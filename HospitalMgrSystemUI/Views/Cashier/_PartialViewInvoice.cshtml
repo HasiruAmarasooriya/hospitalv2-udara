@@ -133,8 +133,28 @@
             </table>
             <hr>
             <table>
+                @{
+                    string itemName = Model.ItemName;
+                    string displayItemName;
+             
+                            switch (itemName)
+                            {
+                                case "VOG Scan":
+                                    displayItemName = itemName + " Fee:";
+                                    break;
+                                case "Echo Test":
+                                    displayItemName = itemName + " Fee:";
+                                    break;
+                                case "Channelling":
+                                    displayItemName = "Consultant Fee:";
+                                    break;
+                                default:
+                                    displayItemName = itemName.Length > 16 ? itemName.Substring(0, 16) + ".." + " Fee:" : itemName + " Fee:";
+                                    break;
+                            }
+                        }
                 <tr>
-                    <td style="text-align: left;">Counsultant Fee:</td>
+                    <td style="text-align: left;">@displayItemName</td>
                     <td style="text-align: right;">Rs. @Model.consaltantFee.ToString("0.00")</td>
                 </tr>
                 <tr>
@@ -148,10 +168,14 @@
                     <td style="text-align: left;">Sub total:</td>
                     <td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
                 </tr>
-                <tr>
-                    <td style="text-align: left;">Discount:</td>
-                    <td style="text-align: right;">Rs. @Model.discount.ToString("0.00")</td>
-                </tr>
+                @if (Model.discount != 0)
+                {
+                    <tr>
+                        <td style="text-align: left;">Discount:</td>
+                        <td style="text-align: right;">Rs. @Model.discount.ToString("0.00")</td>
+                    </tr>
+                }
+                
                 <tr>
                     <td style="text-align: left;">Net Total:</td>
                     <td style="text-align: right;">Rs. @Model.preTotal.ToString("0.00")</td>
@@ -227,8 +251,28 @@
             </table>
             <hr>
             <table>
+                @{
+                    string itemName = Model.ItemName;
+                    string displayItemName;
+
+                    switch (itemName)
+                    {
+                        case "VOG Scan":
+                            displayItemName = itemName + " Fee:";
+                            break;
+                        case "Echo Test":
+                            displayItemName = itemName + " Fee:";
+                            break;
+                        case "Channelling":
+                            displayItemName = "Consultant Fee:";
+                            break;
+                        default:
+                            displayItemName = itemName.Length > 16 ? itemName.Substring(0, 16) + ".." + " Fee:" : itemName + " Fee:";
+                            break;
+                    }
+                }
                 <tr>
-                    <td style="text-align: left;">Counsultant Fee:</td>
+                    <td style="text-align: left;">@displayItemName</td>
                     <td style="text-align: right;">Rs. @Model.consaltantFee.ToString("0.00")</td>
                 </tr>
                 <tr>
@@ -242,10 +286,13 @@
                     <td style="text-align: left;">Sub total:</td>
                     <td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
                 </tr>
-                <tr>
-                    <td style="text-align: left;">Discount:</td>
-                    <td style="text-align: right;">Rs. @Model.discount.ToString("0.00")</td>
-                </tr>
+                @if (Model.discount != 0)
+                {
+                    <tr>
+                        <td style="text-align: left;">Discount:</td>
+                        <td style="text-align: right;">Rs. @Model.discount.ToString("0.00")</td>
+                    </tr>
+                }
                 <tr>
                     <td style="text-align: left;">Net Total:</td>
                     <td style="text-align: right;">Rs. @Model.preTotal.ToString("0.00")</td>
