@@ -132,36 +132,58 @@
                 </tr>
             </table>
             <hr>
-            <table>
+               <table>
                 @{
                     string itemName = Model.ItemName;
                     string displayItemName;
-             
-                            switch (itemName)
-                            {
-                                case "VOG Scan":
-                                    displayItemName = itemName + " Fee:";
-                                    break;
-                                case "Echo Test":
-                                    displayItemName = itemName + " Fee:";
-                                    break;
-                                case "Channelling":
-                                    displayItemName = "Consultant Fee:";
-                                    break;
-                                default:
-                                    displayItemName = itemName.Length > 16 ? itemName.Substring(0, 16) + ".." + " Fee:" : itemName + " Fee:";
-                                    break;
-                            }
+
+                    switch (itemName)
+                    {
+                        case "VOG Scan":
+                            displayItemName = itemName + " Counsultant Fee:";
+                            break;
+                        case "Echo Test":
+                            displayItemName = displayItemName = itemName + " Technical Counsultant Fee:";
+                            break;
+                        case "Channelling":
+                            displayItemName = "Consultant Fee:";
+                            break;
+                        default:
+                            displayItemName = " Counsultant Fee:";
+                            break;
+                    }
+                }
+                    <tr>
+
+                        <td style="text-align: left;">@displayItemName</td>
+                        <td style="text-align: right;">Rs. @Model.consaltantFee.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                    @{
+
+                        string Scan;
+
+                        switch (itemName)
+                        {
+                            case "VOG Scan":
+                                Scan = "VOG Scan Fee:";
+                                break;
+                            case "Echo Test":
+                                Scan = "Echo Scan Fee:";
+                                break;
+                            case "Channelling":
+                                Scan = "Hospital Fee:";
+                                break;
+                            default:
+                                Scan = " Scan Fee:";
+                                break;
                         }
-                <tr>
-                    <td style="text-align: left;">@displayItemName</td>
-                    <td style="text-align: right;">Rs. @Model.consaltantFee.ToString("0.00")</td>
-                </tr>
-                <tr>
-                    <td style="text-align: left;">Hospital Fee:</td>
-                    <td style="text-align: right;">Rs. @Model.hospitalFee.ToString("0.00")</td>
-                </tr>
-            </table>
+
+                    }
+                                <td style="text-align: left;">@Scan</td>
+                        <td style="text-align: right;">Rs. @Model.hospitalFee.ToString("0.00")</td>
+                    </tr>
+                </table>
             <hr>
             <table id="total-section">
                 <tr>
@@ -258,25 +280,47 @@
                     switch (itemName)
                     {
                         case "VOG Scan":
-                            displayItemName = itemName + " Fee:";
+                            displayItemName = itemName + " Counsultant Fee:";
                             break;
                         case "Echo Test":
-                            displayItemName = itemName + " Fee:";
+                            displayItemName = displayItemName = itemName + " Technical Counsultant Fee:";
                             break;
                         case "Channelling":
                             displayItemName = "Consultant Fee:";
                             break;
                         default:
-                            displayItemName = itemName.Length > 16 ? itemName.Substring(0, 16) + ".." + " Fee:" : itemName + " Fee:";
+                            displayItemName = " Counsultant Fee:";
                             break;
                     }
                 }
                 <tr>
+                 
                     <td style="text-align: left;">@displayItemName</td>
                     <td style="text-align: right;">Rs. @Model.consaltantFee.ToString("0.00")</td>
                 </tr>
                 <tr>
-                    <td style="text-align: left;">Hospital Fee:</td>
+                    @{
+                    
+                    string Scan;
+
+                    switch (itemName)
+                    {
+                        case "VOG Scan":
+                            Scan = "VOG Scan Fee:";
+                            break;
+                        case "Echo Test":
+                            Scan = "Echo Scan Fee:";
+                            break;
+                        case "Channelling":
+                            Scan = "Hospital Fee:";
+                            break;
+                        default:
+                            Scan = " Scan Fee:";
+                            break;
+                    }
+
+                    }
+                            <td style="text-align: left;">@Scan</td>
                     <td style="text-align: right;">Rs. @Model.hospitalFee.ToString("0.00")</td>
                 </tr>
             </table>
