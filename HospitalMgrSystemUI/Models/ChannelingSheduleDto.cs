@@ -17,5 +17,7 @@ namespace HospitalMgrSystemUI.Models
         public int SpecialistId { get; set; }
         public ChannellingScheduleStatus channellingScheduleStatus { get; set; }
         public List<Scan> channelingItems { get; set; }
+        public string VideoId { get; set; }
+        public string VideoUrl { get; set; }
     }
 }

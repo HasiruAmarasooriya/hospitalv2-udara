@@ -1,0 +1,307 @@
+﻿@model ChannelingSheduleDto
+@{
+}
+@section Styles {
+    <style>
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+            .video-background iframe {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 100vw;
+                height: 100vh;
+                transform: translate(-50%, -50%);
+                pointer-events: none;
+            }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .left-sidebar, .topbar, .right-sidebar, .sidebar-footer, .footer {
+            display: none !important;
+        }
+
+        #main-wrapper {
+            padding: 0;
+            margin: 0;
+            background-color: rgba(255, 225, 255, 0.8); /* Adjusted opacity */
+        }
+
+        .page-wrapper {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(251, 234, 235, 0.8); /* Adjusted opacity */
+        }
+
+        .select2-selection__rendered {
+            line-height: 31px !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 35px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 34px !important;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            height: 70%;
+            margin: 20px auto;
+            background-color: rgba(196, 215, 255, 0.7); /* Adjusted opacity */
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .card-title {
+            background-color: rgba(0,77,230, 0.9); /* Adjusted opacity */
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .title {
+            font-weight: bold;
+            font-size: 40px;
+            text-align: center;
+            position: relative;
+            color: black;
+        }
+
+        .logo-date {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: right;
+        }
+
+        .date {
+            font-size: 20px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .scrollable-table {
+            max-height: 670px;
+            overflow-y: hidden;
+            background-color: rgba(67, 56, 120, 0.8); /* Adjusted opacity */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-wrapper table {
+            width: 100%;
+            font-size: 14px;
+            text-align: left;
+            background-color: transparent; /* Adjusted opacity */
+            border-collapse: separate;
+            border-spacing: 0px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: none;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(67, 56, 120, 0.8); /* Adjusted opacity */
+        }
+
+        th {
+            background-color: rgba(126, 96, 191); /* Adjusted opacity */
+            color: white;
+            font-weight: bold;
+            font-size: 25px;
+        }
+
+        .consultant {
+            background-color: rgba(98, 78, 136, 0.4); /* Adjusted opacity */
+            color: white;
+            font-weight: bold;
+            font-size: 25px;
+        }
+
+        .specialist {
+            background-color: rgba(67, 56, 120, 0.1); /* Adjusted opacity */
+            color: white;
+            font-size: 25px;
+        }
+
+        .time {
+            background-color: rgba(9, 16, 87, 0.1); /* Adjusted opacity */
+            color: white;
+            font-weight: bold;
+            font-size: 30px;
+            text-align: center;
+        }
+
+        .room {
+            background-color: rgba(2, 76, 170, 0.1); /* Adjusted opacity */
+            color: white;
+            font-weight: bold;
+            font-size: 25px;
+            text-align: center;
+        }
+
+        .status {
+            background-color: rgba(67, 56, 120, 0.1); /* Adjusted opacity */
+            color: black;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        table tr {
+            transition: all 0.3s ease;
+        }
+
+        .fixed-header {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .scrollable-table::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollable-table {
+            scrollbar-width: none;
+        }
+    </style>
+}
+<body class="fix-header fix-sidebar">
+    <div id="main-wrapper">
+        <div class="video-background">
+            <iframe width="100%" height="100%"
+                    src="https://www.youtube-nocookie.com/embed/@Model.VideoId?autoplay=1&mute=1&controls=0&loop=1&playlist=@Model.VideoId"
+                    frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
+    <div class="page-wrapper">
+        <div class="container-fluid">
+            <div class="content-wrapper">
+                <div class="logo-date">
+                    <img src="../assets/images/kumudu_logo_croped.png" alt="homepage" style="height: 50px;" /> <!-- Adjust logo size as needed -->
+                    <span class="date">@DateTime.Now.ToString("dd MMMM yyyy")</span>
+                </div>
+                <div class=" card-title"> 
+                    
+                    <h4 class="title">Today Consultant Channeling Schedule Details</h4>
+
+                </div>
+               
+                <div class="scrollable-table">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr class="fixed-header">
+                                <th >Consultant Name</th>
+                                <th>Speciality</th>
+                                <th>Schedule Time</th>
+                                <th>Room Number</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                var tomorrow = DateTime.Now.AddDays(1).Date;
+                                @foreach (var channelingShedule in Model.ChannelingScheduleList)
+                                {
+                                    if (channelingShedule.DateTime < tomorrow)
+                                    {
+                                                    <tr>
+                                                        <td class="consultant">@channelingShedule.Consultant?.Name</td>
+                                                        <td class="specialist">@channelingShedule.Consultant?.Specialist.Name</td>
+                                                        <td class="time">@channelingShedule.DateTime.ToString("hh:mm tt")</td> <!-- Display only time -->
+                                                        <td class="room">@channelingShedule.Room?.Name</td>
+                                                        <td class="status">@channelingShedule.scheduleStatus</td>
+                                                    </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="fullscreenButton" class="btn btn-primary" onclick="openFullscreen()">Enter Fullscreen</button>
+
+    <div id="AddShiftModel" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" id="AddEditContainerModel"></div>
+    </div>
+
+    @section scripts {
+        <script>
+            function openFullscreen() {
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+            }
+
+            $(document).ready(function () {
+
+                const scrollableTable = $('.scrollable-table');
+                const scrollSpeed = 1;
+                const scrollInterval = 75;
+                let scrollAmount = 0;
+
+                function scrollTable() {
+                    scrollableTable.scrollTop(scrollAmount);
+                    scrollAmount += scrollSpeed;
+                    if (scrollAmount >= scrollableTable[0].scrollHeight) {
+                        scrollAmount = 0;
+                    }
+                }
+
+                setInterval(scrollTable, scrollInterval);
+
+                $('#drpDrSpeciality').select2({
+                    width: '100%',
+                    dropdownParent: $('#filterFrm'),
+                    placeholder: 'Select one',
+                    allowClear: false
+                });
+
+                $('#basic-2').dataTable({
+                    "dom": '<"top"f>rt<"bottom"lp><"clear">',
+                    "paging": false,
+                    "info": false,
+                    "lengthChange": false,
+                    "ordering": false
+                });
+
+               
+                setInterval(function () {
+                    location.reload();
+                }, 600000);
+            });
+        </script>
+    }
+</body>

@@ -48,6 +48,7 @@ namespace HospitalMgrSystem.WebAPI
             services.AddScoped<IChannelingService, ChannelingService>();
             services.AddScoped<ISMSService, SMSService>();
             services.AddScoped<IDefaultService, DefaultService>();
+            services.AddScoped<IVideoService, VideoService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

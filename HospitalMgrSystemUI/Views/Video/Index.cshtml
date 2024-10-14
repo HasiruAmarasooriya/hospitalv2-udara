@@ -1,0 +1,24 @@
+﻿@model ChannelingSheduleDto
+
+@{
+    ViewData["Title"] = "Add New Video";
+}
+
+<h1>Add New Video</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="videoUrl">YouTube Video URL</label>
+        <input type="text" name="videoUrl" class="form-control" required />
+        <span asp-validation-for="VideoUrl" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Video</button>
+</form>
+<br />
+<div>
+    <a href="@Url.Action("Live", "Video")" class="btn btn-warning">Live Schedule</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
