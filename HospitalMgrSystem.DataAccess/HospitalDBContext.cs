@@ -70,6 +70,7 @@ namespace HospitalMgrSystem.DataAccess
 		public DbSet<SMSActivation> sMSActivations { get; set; }
 		public DbSet<ClaimBillItems> ClaimBillItemsData { get; set; }
 		public DbSet<Discount> Discounts { get; set; }
+		public DbSet<Video> Video { get; set; }
 
 		#region DTOs
 
@@ -96,7 +97,7 @@ namespace HospitalMgrSystem.DataAccess
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			optionsBuilder.UseSqlServer(ConnectionStrings.PRODUCTION_DATABASE);
+			optionsBuilder.UseSqlServer(ConnectionStrings.DEVELOPMENT_DATABASE);
 		}
 		/*protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{

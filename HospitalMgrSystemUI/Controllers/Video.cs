@@ -60,7 +60,7 @@ namespace HospitalMgrSystemUI.Controllers
             }
 
        
-            return View();
+            return View("Index");
         }
     }
 
