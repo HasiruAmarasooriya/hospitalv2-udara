@@ -185,29 +185,7 @@
                 </tr>
             </table>
             <hr>
-            <table id="total-section">
-                <tr>
-                    <td style="text-align: left;">Sub total:</td>
-                    <td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
-                </tr>
-                @if (Model.discount != 0)
-                {
-                    <tr>
-                        <td style="text-align: left;">Discount:</td>
-                        <td style="text-align: right;">Rs. @Model.discount.ToString("0.00")</td>
-                    </tr>
-                }
-
-                <tr>
-                    <td style="text-align: left;">Net Total:</td>
-                    <td style="text-align: right;">Rs. @Model.preTotal.ToString("0.00")</td>
-                </tr>
-            </table>
-
-
-            <table id="total-section">
-
-
+            <table id="total-section" style="margin-left: auto;">
 
                 @if (Model != null)
                 {
@@ -224,6 +202,21 @@
                                 totalCash = totalCash + item.CashAmount + item.CreditAmount + item.DdebitAmount + item.ChequeAmount + item.GiftCardAmount;
                         }
                     }
+                    <tr>
+                        <td style="text-align: left;">Sub total:</td>
+                        <td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
+                    </tr>
+                    @if (Model.discount != 0)
+                    {
+                        <tr>
+                            <td style="text-align: left;">Discount:</td>
+                            <td style="text-align: right;">Rs. @Model.discount.ToString("0.00")</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td style="text-align: left;">Net Total:</td>
+                        <td style="text-align: right;">Rs. @Model.preTotal.ToString("0.00")</td>
+                    </tr>
 
                     <tr>
                         <td style="text-align: left;">Cash Payment:</td>
@@ -358,24 +351,6 @@
                 </tr>
             </table>
             <hr>
-            <table id="total-section">
-                <tr>
-                    <td style="text-align: left;">Sub total:</td>
-                    <td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
-                </tr>
-                @if (Model.discount != 0)
-                {
-                    <tr>
-                        <td style="text-align: left;">Discount:</td>
-                        <td style="text-align: right;">Rs. @Model.discount.ToString("0.00")</td>
-                    </tr>
-                }
-                <tr>
-                    <td style="text-align: left;">Net Total:</td>
-                    <td style="text-align: right;">Rs. @Model.preTotal.ToString("0.00")</td>
-                </tr>
-            </table>
-
             <table id="total-section" style="margin-left: auto;">
 
                 @if (Model != null)
@@ -393,6 +368,21 @@
                                 totalCash = totalCash + item.CashAmount + item.CreditAmount + item.DdebitAmount + item.ChequeAmount + item.GiftCardAmount;
                         }
                     }
+                    <tr>
+                        <td style="text-align: left;">Sub total:</td>
+                        <td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
+                    </tr>
+                    @if (Model.discount != 0)
+                    {
+                        <tr>
+                            <td style="text-align: left;">Discount:</td>
+                            <td style="text-align: right;">Rs. @Model.discount.ToString("0.00")</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td style="text-align: left;">Net Total:</td>
+                        <td style="text-align: right;">Rs. @Model.preTotal.ToString("0.00")</td>
+                    </tr>
 
                     <tr>
                         <td style="text-align: left;">Cash Payment:</td>
@@ -552,11 +542,11 @@
 
                         <tr>
                             <td style="margin: 2px; padding: 2px; text-align: left;">Other Items</td>
-                            <td style="margin: 2px; padding: 2px; text-align: right;">Rs. @itemAmmount</td>
+                                        <td style="margin: 2px; padding: 2px; text-align: right;">Rs. @itemAmmount.ToString("0.00")</td>
                         </tr>
                         <tr style="margin-left: auto;">
                             <td style="margin: 2px; padding: 2px; text-align: left;">Hospital Fee</td>
-                            <td style="margin: 2px; padding: 2px; text-align: right;">Rs. @hospitalFee</td>
+                                        <td style="margin: 2px; padding: 2px; text-align: right;">Rs. @hospitalFee.ToString("0.00")</td>
                         </tr>
                     }
                    

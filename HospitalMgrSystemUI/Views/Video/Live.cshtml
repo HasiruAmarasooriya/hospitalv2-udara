@@ -36,7 +36,7 @@
         #main-wrapper {
             padding: 0;
             margin: 0;
-            background-color: rgba(255, 225, 255, 0.8); /* Adjusted opacity */
+            background-color: rgba(255, 225, 255, 0.8); 
         }
 
         .page-wrapper {
@@ -44,7 +44,7 @@
             padding: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(251, 234, 235, 0.8); /* Adjusted opacity */
+            background-color: rgba(251, 234, 235, 0.8);
         }
 
         .select2-selection__rendered {
@@ -65,13 +65,13 @@
             width: 90%;
             height: 70%;
             margin: 20px auto;
-            background-color: rgba(196, 215, 255, 0.7); /* Adjusted opacity */
+            background-color: rgba(196, 215, 255, 0.7); 
             padding: 20px;
             border-radius: 8px;
         }
 
         .card-title {
-            background-color: rgba(0,77,230, 0.9); /* Adjusted opacity */
+            background-color: rgba(0,77,230, 0.9); 
             border-radius: 8px;
             padding: 20px;
         }
@@ -100,7 +100,7 @@
         .scrollable-table {
             max-height: 670px;
             overflow-y: hidden;
-            background-color: rgba(67, 56, 120, 0.8); /* Adjusted opacity */
+            background-color: rgba(67, 56, 120, 0.8); 
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
 
@@ -108,7 +108,7 @@
             width: 100%;
             font-size: 14px;
             text-align: left;
-            background-color: transparent; /* Adjusted opacity */
+            background-color: transparent; 
             border-collapse: separate;
             border-spacing: 0px;
         }
@@ -120,31 +120,31 @@
         }
 
         tr:nth-child(even) {
-            background-color: rgba(67, 56, 120, 0.8); /* Adjusted opacity */
+            background-color: rgba(67, 56, 120, 0.1); 
         }
 
         th {
-            background-color: rgba(126, 96, 191); /* Adjusted opacity */
+            background-color: rgba(126, 96, 191); 
             color: white;
             font-weight: bold;
             font-size: 25px;
         }
 
         .consultant {
-            background-color: rgba(98, 78, 136, 0.4); /* Adjusted opacity */
+            background-color: rgba(98, 78, 136, 0.4); 
             color: white;
             font-weight: bold;
             font-size: 25px;
         }
 
         .specialist {
-            background-color: rgba(67, 56, 120, 0.1); /* Adjusted opacity */
+            background-color: rgba(67, 56, 120, 0.1); 
             color: white;
             font-size: 25px;
         }
 
         .time {
-            background-color: rgba(9, 16, 87, 0.1); /* Adjusted opacity */
+            background-color: rgba(9, 16, 87, 0.1);
             color: white;
             font-weight: bold;
             font-size: 30px;
@@ -152,7 +152,7 @@
         }
 
         .room {
-            background-color: rgba(2, 76, 170, 0.1); /* Adjusted opacity */
+            background-color: rgba(2, 76, 170, 0.1); 
             color: white;
             font-weight: bold;
             font-size: 25px;
@@ -160,10 +160,11 @@
         }
 
         .status {
-            background-color: rgba(67, 56, 120, 0.1); /* Adjusted opacity */
+            background-color: rgba(67, 56, 120, 0.1); 
             color: black;
             font-size: 20px;
             text-align: center;
+            color: white;
         }
 
         table tr {
@@ -183,36 +184,65 @@
         .scrollable-table {
             scrollbar-width: none;
         }
+
+        .status-icon {
+            font-weight: bold;
+            font-size: 40px;
+            margin-right: 5px;
+        }
+
+            .status-icon.active {
+                font-weight: bold;
+                font-size: 40px;
+                color: green;
+            }
+
+            .status-icon.end {
+                font-weight: bold;
+                font-size: 40px;
+                color: red;
+            }
+
+            .status-icon.cancel {
+                font-weight: bold;
+                font-size: 40px;
+                color: orange;
+            }
+
+      
+        .highlight-row {
+            background-color: #ffcccc;
+        }
     </style>
 }
 <body class="fix-header fix-sidebar">
     <div id="main-wrapper">
-        <div class="video-background">
+         <div class="video-background">
             <iframe width="100%" height="100%"
                     src="https://www.youtube-nocookie.com/embed/@Model.VideoId?autoplay=1&mute=1&controls=0&loop=1&playlist=@Model.VideoId"
                     frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
             </iframe>
+          </div>
         </div>
-    </div>
 
     <div class="page-wrapper">
         <div class="container-fluid">
             <div class="content-wrapper">
                 <div class="logo-date">
-                    <img src="../assets/images/kumudu_logo_croped.png" alt="homepage" style="height: 50px;" /> <!-- Adjust logo size as needed -->
+                    <img src="../assets/images/kumudu_logo_croped.png" alt="homepage" style="height: 100px;" /> <!-- Adjust logo size as needed -->
                     <span class="date">@DateTime.Now.ToString("dd MMMM yyyy")</span>
                 </div>
-                <div class=" card-title"> 
-                    
+                <div class=" card-title">
+
                     <h4 class="title">Today Consultant Channeling Schedule Details</h4>
 
                 </div>
-               
+                
                 <div class="scrollable-table">
                     <table class="table table-bordered">
                         <thead>
                             <tr class="fixed-header">
-                                <th >Consultant Name</th>
+                                <th>Consultant Name</th>
                                 <th>Speciality</th>
                                 <th>Schedule Time</th>
                                 <th>Room Number</th>
@@ -227,23 +257,47 @@
                                 {
                                     if (channelingShedule.DateTime < tomorrow)
                                     {
-                                                    <tr>
-                                                        <td class="consultant">@channelingShedule.Consultant?.Name</td>
-                                                        <td class="specialist">@channelingShedule.Consultant?.Specialist.Name</td>
-                                                        <td class="time">@channelingShedule.DateTime.ToString("hh:mm tt")</td> <!-- Display only time -->
-                                                        <td class="room">@channelingShedule.Room?.Name</td>
-                                                        <td class="status">@channelingShedule.scheduleStatus</td>
-                                                    </tr>
+                                        string rowClass = "";
+                                        string statusIcon = channelingShedule.scheduleStatus.ToString(); // Default to status text
+
+                                        // Switch case to handle status-based row class and icons
+                                        switch (channelingShedule.scheduleStatus)
+                                        {
+                                            case HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.ACTIVE:
+                                                statusIcon = "<span class='status-icon active'>&#x2714;</span>"; // Active (green check)
+                                                break;
+
+                                            case HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_END:
+                                                statusIcon = "<span class='status-icon end'>&#x2716;</span>"; // Session ended (red cross)
+                                                break;
+
+                                            case HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_CANCEL:
+                                                rowClass = "highlight-row"; // Highlight row
+                                                statusIcon = "<span class='status-icon cancel'>&#x2716;</span>"; // Canceled (orange cross)
+                                                break;
+
+                                            default:
+                                                // No special treatment for other statuses
+                                                break;
+                                        }
+                                        <tr>
+                                            <td class="consultant">@channelingShedule.Consultant?.Name</td>
+                                            <td class="specialist">@channelingShedule.Consultant?.Specialist.Name</td>
+                                            <td class="time">@channelingShedule.DateTime.ToString("hh:mm tt")</td> <!-- Display only time -->
+                                            <td class="room">@channelingShedule.Room?.Name</td>
+                                            <td class="status">
+                                                @Html.Raw(statusIcon) <!-- Display icon or status -->
+                                            </td>
+                                        </tr>
                                     }
                                 }
                             }
                         </tbody>
                     </table>
                 </div>
-            </div>
         </div>
     </div>
-
+    </div>
     <button id="fullscreenButton" class="btn btn-primary" onclick="openFullscreen()">Enter Fullscreen</button>
 
     <div id="AddShiftModel" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
@@ -268,6 +322,8 @@
             $(document).ready(function () {
 
                 const scrollableTable = $('.scrollable-table');
+                const tableSection = $('#tableSection');
+                const videoSection = $('#videoSection');
                 const scrollSpeed = 1;
                 const scrollInterval = 75;
                 let scrollAmount = 0;
@@ -297,7 +353,7 @@
                     "ordering": false
                 });
 
-               
+
                 setInterval(function () {
                     location.reload();
                 }, 600000);

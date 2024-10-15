@@ -20,7 +20,7 @@ namespace HospitalMgrSystemUI.Controllers
                 StartTime = DateTime.Now,
                 EndTime = DateTime.Now.AddDays(1),
                 Specialists = new ChannelingService().GetAllSpecialists(),
-                channellingScheduleStatus = ChannellingScheduleStatus.ALL,
+                channellingScheduleStatus = ChannellingScheduleStatus.ACTIVE,
                 VideoId = new VideoService().GetLeastVideoId()
             };
 
@@ -46,20 +46,20 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 try
                 {
-                    // Extract and add the video using the service
+                 
                     var videoService = new VideoService();
                     videoService.AddVideo(videoUrl);
 
-                    return View("Index");  // Redirect to a suitable page after success
+                    return View("Index");  
                 }
                 catch (Exception ex)
                 {
-                    // Add error to the model state if an exception occurs
+                   
                     ModelState.AddModelError("", ex.Message);
                 }
             }
 
-            // Return view again if validation fails or an error occurs
+       
             return View();
         }
     }
