@@ -142,14 +142,11 @@
                         <!-- User profile text-->
                         <div class="profile-text">
                             <a href="#" class="dropdown-toggle u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">@userNameCookie</a>
-                            <div class="dropdown-menu animated flipInY">
-                                <a href="" class="dropdown-item"><i class="ti-user"></i> Logout</a>
-                                @*                            <a href="#" class="dropdown-item"><i class="ti-wallet"></i> My Balance</a>
-                            <a href="#" class="dropdown-item"><i class="ti-email"></i> Inbox</a>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item"><i class="ti-settings"></i> Account Setting</a>
-                            <div class="dropdown-divider"></div>
-                            <a href="login.html" class="dropdown-item"><i class="fa fa-power-off"></i> Logout</a>*@
+
+                            <div class="dropdown-menu dropdown-menu-center" aria-labelledby="dropdownMenuButton" style="text-align:center; padding:5px; margin:0;">
+                                <form asp-controller="Login" asp-action="Logout" method="post" style="text-align:center; margin:0;">
+                                    <button type="submit" class="btn btn-danger" style="margin:0; padding:5px 10px;">Logout</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -398,7 +395,8 @@
             });
         </script>
 
-        @await RenderSectionAsync("Scripts", required: false)
+      
+        @RenderSection("Scripts", required: false)
     </body>
 }
 </html>

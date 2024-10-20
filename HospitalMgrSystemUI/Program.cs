@@ -1,9 +1,21 @@
+using HospitalMgrSystem.Service.User;
 using HospitalMgrSystemUI.Controllers;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login/Index"; // Path to the login page
+        options.LogoutPath = "/Login/Logout"; // Path to the logout action
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Set session expiration time
+    });
+
+builder.Services.AddAuthorization();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<DrugsController>();
 builder.Services.AddMvc().AddSessionStateTempDataProvider();
 builder.Services.AddSession();
@@ -27,6 +39,7 @@ app.UseRouting();
 app.UseCors("CorsPolicy");
 app.UseSession();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
@@ -34,6 +47,5 @@ app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Login}/{action=Index}/{id?}");
-//RotativaConfiguration.Setup((Microsoft.AspNetCore.Hosting.IHostingEnvironment)env);
 
 app.Run();

@@ -1,5 +1,10 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Service.User;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -7,89 +12,78 @@ namespace HospitalMgrSystemUI.Controllers
     {
         [BindProperty]
         public User myUser { get; set; }
-        private IConfiguration _configuration;
+        private readonly IUserService _userService;
 
-        public LoginController(IConfiguration configuration) 
+        public LoginController(IUserService userService)
         {
-            _configuration = configuration;
+            _userService = userService;
         }
-        
+
         public IActionResult Index()
         {
             return View();
         }
 
-        //public IActionResult LoginUser(string eete) 
-        //{
-        //    using (var httpClient = new HttpClient())
-        //    {
-
-        //        try
-        //        {
-        //            string APIUrl =  _configuration.GetValue<string>("MainAPI:APIURL");
-        //            myUser.CreateDate = DateTime.Now;
-        //            myUser.ModifiedDate = DateTime.Now;
-        //            httpClient.BaseAddress = new Uri( APIUrl + "User/");
-        //            var postObj = httpClient.PostAsJsonAsync<User>("UserLoginDetails", myUser);
-        //            postObj.Wait();
-        //            var res = postObj.Result;
-        //            var result = res.Content.ReadFromJsonAsync<User>().Result;
-        //            if (result != null && result.Id != 0)
-        //            {
-        //                string redirectUrl = string.Format("/Home/Index");
-        //                return Redirect(redirectUrl);
-        //            }
-        //            else {
-        //                return RedirectToAction("Index");
-        //            }
-
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return RedirectToAction("Index");
-        //        }
-
-        //    }
-        //}
-
-        public IActionResult LoginUser(string eete)
+        [HttpPost]
+        public async Task<IActionResult> LoginUser()
         {
-            using (var httpClient = new HttpClient())
+            var user = _userService.GetUserLogin(myUser);
+
+            if (user != null && user.Id != 0)
             {
-                try
-                {
-                    string APIUrl = _configuration.GetValue<string>("MainAPI:APIURL");
-                    myUser.CreateDate = DateTime.Now;
-                    myUser.ModifiedDate = DateTime.Now;
-                    httpClient.BaseAddress = new Uri(APIUrl + "User/");
 
-                    // Assuming myUser.UserName is the property that holds the username
-                    var postObj = httpClient.PostAsJsonAsync<User>("UserLoginDetails", myUser);
-                    postObj.Wait();
-                    var res = postObj.Result;
-                    var result = res.Content.ReadFromJsonAsync<User>().Result;
+                var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.Role, user.userRole.ToString()),
+            new Claim("UserId", user.Id.ToString())
+        };
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                    if (result != null && result.Id != 0)
-                    {
-                        // Save username as a cookie
-                        Response.Cookies.Append("UserNameCookie", result.UserName);
-                        Response.Cookies.Append("UserIdCookie", result.Id.ToString());
-                        Response.Cookies.Append("UserRoleCookie", result.userRole.ToString());
-                        string redirectUrl = "/Home/Index";
-                        return Redirect(redirectUrl);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Handle exception
-                    return RedirectToAction("Index");
-                }
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
+                HttpContext.Response.Cookies.Append("UserNameCookie", user.UserName);
+                HttpContext.Response.Cookies.Append("UserIdCookie", user.Id.ToString());
+                HttpContext.Response.Cookies.Append("UserRoleCookie", user.userRole.ToString());
+
+                string redirectUrl = "/Home/Index";
+                return Redirect(redirectUrl);
             }
+
+            return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            HttpContext.Response.Cookies.Delete("UserNameCookie");
+            HttpContext.Response.Cookies.Delete("UserIdCookie");
+            HttpContext.Response.Cookies.Delete("UserRoleCookie");
+
+            if (HttpContext.Response.Headers.ContainsKey("Cache-Control"))
+            {
+                HttpContext.Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate";
+            }
+            else
+            {
+                HttpContext.Response.Headers.Add("Cache-Control", "no-store, no-cache, must-revalidate");
+            }
+
+            if (HttpContext.Response.Headers.ContainsKey("Pragma"))
+            {
+                HttpContext.Response.Headers["Pragma"] = "no-cache";
+            }
+            else
+            {
+                HttpContext.Response.Headers.Add("Pragma", "no-cache");
+            }
+
+            return RedirectToAction("Index", "Login");
+        }
+
 
     }
 }
