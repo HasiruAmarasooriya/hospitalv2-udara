@@ -71,13 +71,23 @@ namespace HospitalMgrSystemUI.Controllers
 
                 try
                 {
-                    var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+					var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
                     if (viewOtherTransactionsDto != null)
                     {
                         if (viewOtherTransactionsDto.otherTransactions.Id == 0)
                         {
-
-                            List<CashierSession> mtList = new List<CashierSession>();
+							if (viewOtherTransactionsDto.otherTransactions.BeneficiaryID == 6)
+							{
+								TempData["ErrorMessage"] = "Please Select Beneficiary Name.";
+								return RedirectToAction("Index");
+							}
+							if (viewOtherTransactionsDto.otherTransactions.Amount == 0)
+							{
+								TempData["ErrorMessage"] = "Please Enter Valid Amount.";
+								return RedirectToAction("Index");
+							}
+							
+							List<CashierSession> mtList = new List<CashierSession>();
                             mtList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
                             if (mtList.Count > 0)
                             {
@@ -307,7 +317,6 @@ namespace HospitalMgrSystemUI.Controllers
                         otherTransactions.Status = otherTransactionsResObjById.Status;
                         otherTransactions.ApprovedByID = Convert.ToInt32(userIdCookie);
                         otherTransactions.otherTransactionsStatus = OtherTransactionsStatus.Requested;
-
                         otherTransactions.CreateUser = Convert.ToInt32(userIdCookie);
                         otherTransactions.CreateDate = DateTime.Now;
                         otherTransactions.ModifiedUser = Convert.ToInt32(userIdCookie);
