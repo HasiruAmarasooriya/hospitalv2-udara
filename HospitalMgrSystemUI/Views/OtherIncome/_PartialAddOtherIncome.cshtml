@@ -5,47 +5,71 @@
 @{
 	Layout = null;
 }
+
 <script type="text/javascript">
 	$(document).ready(function () {
-		// Hide dropBenificaryDr by default
+		// Hide dropBenificaryDr and disable the Save button by default
 		$('#dropBenificaryDr').hide();
+		$('#saveButton').prop('disabled', true); // Disable the Save button initially
+
+		// Check if beneficiary is selected on page load
+		checkBeneficiarySelection();
 	});
 
+	function checkBeneficiarySelection() {
+		const beneficiaryId = $('#hiddenBenificaryID').val();
+		if (!beneficiaryId || beneficiaryId === "0") {
+			// Show an error message if no valid beneficiary is selected
+			$('#errorMessage').text("Please select a valid beneficiary before saving.");
+			$('#saveButton').prop('disabled', true);  // Keep Save button disabled
+		} else {
+			// Hide the error message and enable the Save button
+			$('#errorMessage').text("");
+			$('#saveButton').prop('disabled', false);  // Enable Save button
+		}
+	}
+
 	function disableButton(button) {
+		const beneficiaryId = $('#hiddenBenificaryID').val();
+		if (!beneficiaryId || beneficiaryId === "0") {
+			// Show error message and prevent form submission if beneficiary not selected
+			$('#errorMessage').text("Please select a valid beneficiary before saving.");
+			$('#saveButton').prop('disabled', true);
+			return false; // Prevent form submission
+		}
+
 		// Disable the button to prevent double submission
 		button.disabled = true;
-
-		// Optionally, you can change the button text to indicate that it's processing
-		button.innerText = 'Saving...';
-
-		// Submit the form
-		button.form.submit();
+		button.innerText = 'Saving...';  // Optionally change button text to indicate processing
+		button.form.submit();  // Submit the form if validation passes
 	}
 
 	function select_onchange_invoice_type(value) {
-		console.log(value);
 		if (value != null) {
-
-
 			if (value === "7") {
-				// If value is 7, show dropBenificaryDr and hide dropBenificaryOther
+				// Show dropBenificaryDr and hide dropBenificaryOther if value is 7
 				$('#dropBenificaryDr').show();
 				$('#dropBenificaryOther').hide();
 			} else {
-				// If value is not 7, show dropBenificaryOther and hide dropBenificaryDr
+				// Otherwise, show dropBenificaryOther and hide dropBenificaryDr
 				$('#dropBenificaryDr').hide();
 				$('#dropBenificaryOther').show();
 			}
-
-
-			$('#hiddenBenificaryID').val(value);
+			// Reset beneficiary selection when invoice type changes
+			$('#hiddenBenificaryID').val("0");
+			checkBeneficiarySelection(); // Revalidate beneficiary selection
 		}
 	}
 
 	function select_onchange_benificiary(value) {
-		console.log(value);
-		if (value != null) {
+		if (value === "0") {
+			// If the default option is selected, clear the hidden input and disable Save button
+			$('#hiddenBenificaryID').val("0");
+			checkBeneficiarySelection(); // Show error and disable Save button
+		} else if (value != null) {
+			// Set the hidden input and enable Save button if valid beneficiary selected
 			$('#hiddenBenificaryID').val(value);
+			checkBeneficiarySelection(); // Check if Save button should be enabled
 		}
 	}
 </script>
@@ -135,8 +159,13 @@
 
 		</div>
 		<div class="modal-footer">
+			<!-- Error message display -->
+			<div id="errorMessage" style="color: red; font-weight: bold;"></div>
+
 			<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
-			<button type="submit" class="btn waves-effect btn-primary" onclick="disableButton(this)"><i class="fa fa-save"></i>&nbsp;Save</button>
+			<button type="submit" class="btn waves-effect btn-primary" id="saveButton" onclick="disableButton(this)">
+				<i class="fa fa-save"></i>&nbsp;Save
+			</button>
 		</div>
 	</form>
 	<div class="modal-body">
