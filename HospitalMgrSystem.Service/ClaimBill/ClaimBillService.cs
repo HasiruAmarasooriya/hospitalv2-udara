@@ -42,16 +42,43 @@ namespace HospitalMgrSystem.Service.ClaimBill
 			{
 				foreach (var item in billItemsList)
 				{
-					item.ItemName = item.ItemType switch
+					switch (item.ItemType)
 					{
-						"CHE" => dBContext.ChannelingItems.Where(x => x.Id == item.ScanItemId)
-							.Select(x => x.ItemName)
-							.SingleOrDefault(),
-						"OPD" => dBContext.Drugs.Where(x => x.Id == item.ScanItemId)
-							.Select(x => x.DrugName)
-							.SingleOrDefault(),
-						_ => item.ItemName
-					};
+						case "CHE":
+							var channelingItem = dBContext.ChannelingItems
+								.Where(x => x.Id == item.ScanItemId)
+								.Select(x => new
+								{
+									x.ItemName,
+									x.HospitalFee,
+									x.DoctorFee
+								})
+								.SingleOrDefault();
+
+							if (channelingItem != null)
+							{
+								item.ItemName = channelingItem.ItemName;
+								item.HospitalFee = channelingItem.HospitalFee;
+								item.DoctorFee = channelingItem.DoctorFee;
+							}
+							break;
+
+						case "OPD":
+							var drugItem = dBContext.Drugs
+								.Where(x => x.Id == item.ScanItemId)
+								.Select(x => new
+								{
+									ItemName = x.DrugName
+								})
+								.SingleOrDefault();
+
+							if (drugItem != null)
+							{
+								item.ItemName = drugItem.ItemName;
+							}
+							break;
+
+					}
 				}
 			}
 			catch (Exception ex)

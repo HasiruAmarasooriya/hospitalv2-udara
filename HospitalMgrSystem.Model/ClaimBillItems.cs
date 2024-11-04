@@ -30,5 +30,11 @@ namespace HospitalMgrSystem.Model
 
         [NotMapped]
         public string? ItemName { get; set; }
+		[NotMapped]
+		public decimal? HospitalFee { get; set; }
+
+		[NotMapped]
+		public decimal? DoctorFee { get; set; }
+
 	}
 }

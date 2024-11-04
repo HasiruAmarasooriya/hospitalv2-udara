@@ -115,14 +115,14 @@
                 <div class="col">
                     <div data-mdb-input-init class="form-outline">
                         <label class="form-label" for="contactNumber">Hospital Fee</label>
-                        <input type="text" id="hospitalFee" class="form-control" value="0.00"/>
+						<input type="text" id="hospitalFee" class="form-control" oninput="updateSubtotal()" value="0.00" />
                     </div>
                 </div>
 
                 <div class="col">
                     <div data-mdb-input-init class="form-outline">
                         <label class="form-label" for="contactNumber">Consultant Fee</label>
-                        <input type="text" id="consultantFee" class="form-control" value="0.00"/>
+						<input type="text" id="consultantFee" class="form-control" oninput="updateSubtotal()" value="0.00" />
                     </div>
                 </div>
             </div>
@@ -198,12 +198,12 @@
             </div>
 
             <div class="row mb-4">
-                <div class="col">
-                    <div data-mdb-input-init class="form-outline mb-4">
-                        <label class="form-label" for="subTotal">Subtotal (Rs.)</label>
-                        <input type="text" id="subTotal" class="form-control" onchange="calculate()"/>
-                    </div>
-                </div>
+				<div class="col">
+					<div data-mdb-input-init class="form-outline mb-4">
+						<label class="form-label" for="subTotal">Subtotal (Rs.)</label>
+						<input type="text" id="subtotal" class="form-control" value="0" onchange="calculate()" />
+					</div>
+				</div>
 
                 <div class="col">
                     <div data-mdb-input-init class="form-outline mb-4">
@@ -342,6 +342,36 @@
 			allowClear: false,
 		});
 	});
+	function updateSubtotal() {
+		// Initialize subtotal
+		let subtotal = 0;
+
+		// Sum amounts in drugusList
+		for (const item of drugusList) {
+			subtotal += parseFloat(item.Amount);
+		}
+
+		// Sum amounts in scansList
+		for (const item of scansList) {
+			subtotal += parseFloat(item.Amount);
+		}
+
+		// Get hospital and consultant fees
+		const hospitalFee = parseFloat(document.getElementById("hospitalFee").value) || 0;
+		const consultantFee = parseFloat(document.getElementById("consultantFee").value) || 0;
+
+		// Add hospital and consultant fees to subtotal
+		subtotal += hospitalFee + consultantFee;
+
+		
+
+		// Update subtotal display
+		console.log(subtotal);
+		
+		document.getElementById("subtotal").value = subtotal.toFixed(2);
+		calculate();
+		openPrintWindow();
+	}
 
 	function addDrugItem() {
 		var drugId = document.getElementById("drugItems").value;
@@ -391,6 +421,7 @@
 				drugusList.push(item);
 
 				console.log(drugusList);
+				updateSubtotal();
 			} else {
 				alert("Drug not found");
 			}
@@ -454,6 +485,7 @@
 
 					scansList.push(item);
 					console.log(scansList);
+					updateSubtotal();
 				}
 			});
 
@@ -470,9 +502,10 @@
 
 	function calculate() {
 		console.log("Calculating...");
-		var subtotal = parseFloat(document.getElementById('subTotal').value);
+		var subtotal = parseFloat(document.getElementById('subtotal').value) || 0;
 		var discount = parseFloat(document.getElementById('discount').value);
 		var cashPayment = parseFloat(document.getElementById('cashPayment').value);
+		console.log("IDs exist:", subtotal, discount, cashPayment);
 
 		console.log(subtotal);
 		console.log(discount);
@@ -550,7 +583,7 @@
 			var dropPatient = document.getElementById("patientName").value;
 			var contactNumber = document.getElementById("contactNumber").value;
 			var dropDoctor = document.getElementById("dropDoctor").value;
-			var subTotal = document.getElementById("subTotal").value;
+			var subTotal = document.getElementById("subtotal").value;
 			var discount = document.getElementById("discount").value;
 			var totalAmount = document.getElementById("totalAmount").value;
 			var cashPayment = document.getElementById("cashPayment").value;

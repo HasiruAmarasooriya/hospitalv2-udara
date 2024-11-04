@@ -205,9 +205,26 @@
 			</div>
 		}
 
-	<div class="text-sm font-bold" style="margin: auto; margin-top: 10px">
-		Channeling / Service Fee: <span class="pl-1 font-normal">Rs. @((Model!.HospitalFee + Model.ConsultantFee).ToString("0.00"))</span>
-	</div>
+		<div class="text-sm font-bold" style="margin: auto; margin-top: 10px">
+			<table class="table">
+
+				<tr>
+					<td rowspan="2" class="text-center">Channeling</td>
+					<td class="text-center">ConsultantFee</td>
+					<td class="text-center">HospitalFee</td>
+					<td class="text-center">Amount</td>
+				</tr>
+
+
+				<tr>
+					<td class="text-center">Rs. @((Model!.ConsultantFee).ToString("0.00"))</td>
+					<td class="text-center">Rs. @((Model!.HospitalFee).ToString("0.00"))</td>
+					<td class="text-center">Rs. @((Model!.HospitalFee + Model.ConsultantFee).ToString("0.00"))</td>
+				</tr>
+
+			</table>
+
+		</div>
 
 
 		@if (Model != null && Model.ClaimBillItemsList != null && Model.ClaimBillItemsList.Any())
@@ -216,11 +233,14 @@
 				<!-- Scan Items Table -->
 				<table class="table">
 					<thead>
+						
 						<tr>
 							<th>Items</th>
 							<th class="text-center">Qty</th>
-							<th class="text-right">Price</th>
-							<th class="text-right">Amount</th>
+							<th class="text-center">Counsultant Fee:</th>
+							<th class="text-center">Hospital Fee:</th>
+							<th class="text-center">Amount</th>
+							
 						</tr>
 					</thead>
 					<tbody>
@@ -229,8 +249,9 @@
 							<tr>
 								<td>@item.ItemName</td>
 								<td class="text-center">@item.Qty</td>
-								<td class="text-right">@item.Price?.ToString("0.00")</td>
-								<td class="text-right">@item.Amount?.ToString("0.00")</td>
+								<td class="text-center">@item.DoctorFee?.ToString("0.00")</td>
+								<td class="text-center">@item.HospitalFee?.ToString("0.00")</td>
+								<td class="text-center">@item.Amount?.ToString("0.00")</td>	
 							</tr>
 						}
 					</tbody>
