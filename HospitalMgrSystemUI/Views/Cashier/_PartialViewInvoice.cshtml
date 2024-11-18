@@ -90,7 +90,7 @@
                     Tel: 066 22 22 244 | 066 22 30 027
                 </p>
                 <p class="text-sm text-gray-400" style="margin-top: 10px;">
-                    @(Model.invoice.ModifiedDate)
+                  @(Model.invoice.ModifiedDate.ToString("dd/MM/yyyy"))
                 </p>
             </div>
             <hr>
@@ -257,7 +257,7 @@
                     Tel: 066 22 22 244 | 066 22 30 027
                 </p>
                 <p class="text-sm text-gray-400" style="margin-top: 10px;">
-                    @(Model.invoice.ModifiedDate)
+                  @(Model.invoice.ModifiedDate.ToString("dd/MM/yyyy"))
                 </p>
             </div>
             <hr>
@@ -427,7 +427,7 @@
                             Tel: 066 22 22 244 | 066 22 30 027
                         </p>
                         <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
-                            @(Model.invoice.ModifiedDate)
+                          @(Model.invoice.ModifiedDate.ToString("dd/MM/yyyy"))
                         </p>
                         <hr>
                         @if (Model.opd != null && Model.opd.Description == "X-RAY")

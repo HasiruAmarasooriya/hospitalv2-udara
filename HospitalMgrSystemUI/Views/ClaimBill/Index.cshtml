@@ -145,6 +145,48 @@
                     </div>
                 </div>
 
+				<div class="col">
+					<label for="scanItems">Scan Item Manually</label>
+					<div data-mdb-input-init class="form-group">
+
+
+						<div class="input-group">
+
+							<input type="text" class="form-control ml-2" id="manualScanItemName"  placeholder="Item Name" />
+
+							
+							<input type="number" class="form-control ml-2" id="manualScanItemQuantity"  placeholder="Qty" />
+
+							
+							<input type="number" class="form-control ml-2" id="ItemHospitalfee"  placeholder="Hospital Fee" />
+
+							
+							<input type="number" class="form-control ml-2" id="ItemCounsultantfee"  placeholder="Counsultant Fee" />
+
+							<button type="button" class="btn btn-success ml-2" onclick="addManualScanItem()">Add Item</button>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-8">
+					<table id="myTable2" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+								<th data-orderable="true">Scan Items</th>
+								<th>Qty</th>
+								<th>Price</th>
+								<th>Amount</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody id="tblBodyPayments2">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="row">
                 <div class="col">
                     <div data-mdb-input-init class="form-group">
                         <label for="drugItems">Drug / X-RAY Items</label>
@@ -161,24 +203,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <table id="myTable2" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
-                        <thead>
-                        <tr>
-                            <th data-orderable="true">Drugs Name</th>
-                            <th>Qty</th>
-                            <th>Price</th>
-                            <th>Amount</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody id="tblBodyPayments2">
-                        </tbody>
-                    </table>
-                </div>
+          
+               
 
                 <div class="col-md-6">
                     <table id="myTable3" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
@@ -432,8 +458,55 @@
 	function deleteDrugItem(button) {
 		var row = button.parentNode.parentNode;
 		row.parentNode.removeChild(row);
-	}
+	} 
+	function addManualScanItem() {
+		var selectedText = document.getElementById("manualScanItemName").value;
+		//var subTotalAddon = parseFloat(document.getElementById("manualScanItemPrice").value); //Convert to number
+		var hospitalFee = parseFloat(document.getElementById("ItemHospitalfee").value);
+		var doctorFee = parseFloat(document.getElementById("ItemCounsultantfee").value);
+		
+		var qty = parseInt(document.getElementById("manualScanItemQuantity").value); // Convert to integer
 
+
+		if (!selectedText || !hospitalFee || !qty || !doctorFee) {
+			alert("Please fill in all fields.");
+			return;
+		}
+		var price = hospitalFee + doctorFee;
+		var amount = (price * qty);
+		
+
+		// Create a new row in the table
+		var table = document.getElementById("tblBodyPayments2");
+		var row = table.insertRow();
+
+		row.innerHTML = `<td>${selectedText}</td>
+						 <td>${qty}</td>
+								 <td>${price}</td>
+							 <td>${amount}</td>
+						 <td><button type="button" class="btn btn-danger" onclick="deleteDrugItem(this)">Delete</button></td>`;
+
+		table.appendChild(row);
+		var item = {
+			ScanItemId: null, // No specific ID for manual items
+			ItemType: "CHE",
+			ItemName: selectedText,
+			HospitalFee:hospitalFee,
+			DoctorFee:doctorFee,
+			Price: price.toFixed(2),
+			Amount: amount.toFixed(2),
+			Qty: qty
+		};
+		scansList.push(item);
+		console.log(scansList);
+		updateSubtotal();
+
+		// Clear manual input fields
+		document.getElementById("manualScanItemName").value = '';
+		document.getElementById("ItemHospitalfee").value = '';
+		document.getElementById("ItemCounsultantfee").value = '';
+		document.getElementById("manualScanItemQuantity").value = '';
+	}
 
 	function addScanItem() {
 		var scanItemsDropdown = document.getElementById("scanItems");
@@ -607,6 +680,8 @@
 				HospitalFee: hospitalFee,
 				ConsultantFee: consultantFee,
 				ClaimBillCategory: claimBillCategory
+				
+
 			}
 
 			console.log(claimBill);

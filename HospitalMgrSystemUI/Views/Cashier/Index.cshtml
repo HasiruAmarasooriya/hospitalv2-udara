@@ -6,11 +6,89 @@
 }
 @inject IConfiguration Configuration
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-<script type="text/javascript">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Function to read cookies
+       
+        function getCookie(name) {
+            const value = "; " + document.cookie;
+            const parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+            return null;
+        }
+
+        // Function to delete cookies
+        function deleteCookie(name) {
+            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        }
+
+        function PrintInvoice(preId) {
+            console.log("PrintInvoice function triggered with preId:", preId);
+            const numericPreID = preId.replace(/\D/g, '');
+            JsBarcode("#barcodeSvg", numericPreID, {
+	format: "CODE128",
+	// width: 2, // Width of the bars (change to make the barcode narrower)
+	// height: 40, // Height of the barcode (adjust as needed)
+	displayValue: true // Whether to display the barcode's value below it
+});
+            console.log("PrintInvoice function triggered with preId:", numericPreID);
+            $.ajax({
+                type: "POST",
+                url: "/Cashier/PrintInvoice",
+                data: JSON.stringify({ PreID: preId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    const printWindow = window.open('', '_blank', 'width=600,height=600,location=no,menubar=no');
+                    printWindow.document.open();
+                    printWindow.document.write(response);
+                    var barcodeSvg = document.getElementById("barcodeSvg").outerHTML;
+                    printWindow.document.write('<div id="barcode">' + barcodeSvg + '</div>');
+                    printWindow.document.close();
+
+                    // Clear cookies after printing
+                    printWindow.onafterprint = function () {
+                        deleteCookie("printFlag");
+                        deleteCookie("preId");
+                        printWindow.close();
+                    };
+
+                    printWindow.print();
+                },
+                error: function (response) {
+                    console.error("Error in PrintInvoice AJAX call:", response.responseText);
+                }
+            });
+        }
+
+        // Check cookies and trigger print if printFlag is set to true
+        const printFlag = getCookie("printFlag");
+        const preId = getCookie("preId");
+        if (printFlag === "true") {
+            console.log("Conditions met for printing; initiating PrintInvoice...");
+            PrintInvoice(preId);
+        } else {
+            console.log("Conditions not met for printing. Check printFlag and preId values.");
+        }
+    });
+
 	const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
 	var originalPrice = 0;
+   
 	var priceAfterDiscount = 0;
 	var isDiscountApplied = false;
+    // $(document).ready(function () {
+    //     Get PreID from the URL
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const preId = urlParams.get('PreID');
+
+    //     if (preId) {
+    //         Call printInvoice function with preId
+    //         printInvoice(preId);
+    //     }
+    // });
+
 
 	window.onload = (event) => {
 		var urlParams = new URLSearchParams(window.location.search);
@@ -194,7 +272,7 @@
 		});
 
 	}
-
+   
 	function AddInvestigationToAdmission(id) {
 
 		$.ajax({
@@ -252,8 +330,21 @@
 		});
 
 	}
+    // function saveItemStatus() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const printFlag = urlParams.get('print');
+    //     const preId = urlParams.get('preId');
 
-	function PrintInvoice() {
+    //     console.log("Starting saveItemStatus function, flag:", printFlag);
+    //     console.log("PreID:", preId);
+
+    //     Check if the print flag is a string "true" and preId is provided
+    //     if (printFlag === "true" && preId) {
+    //         PrintInvoice(preId);
+    //     }
+    // }
+
+    function PrintInvoice(preId) {
 		var logoImage = new Image();
 		var barcodeImage = new Image();
 		var imagesLoaded = 0;
@@ -275,9 +366,19 @@
 		//logoImage.onload = checkImagesLoaded;
 		// barcodeImage.onload = checkImagesLoaded;
 
-		function openPrintWindow() {
+       
+
+        // function printInvoice(preId) {
+        //     var printWindow = window.open('/Cashier/PrintInvoice?PreID=' + preId, '_blank');
+        //     printWindow.focus();
+        // }
+
+
+
+        function openPrintWindow() {
 			var preID = document.getElementById("preID").value;
-			var numericPreID = preID.replace(/\D/g, '')
+            console.log("preID in JavaScript:", preID);
+            var numericPreID = preID.replace(/\D/g, '')
 			JsBarcode("#barcodeSvg", numericPreID, {
 				format: "CODE128",
 				// width: 2, // Width of the bars (change to make the barcode narrower)
@@ -287,7 +388,7 @@
 
 			$.ajax({
 				type: "POST",
-				url: "/Cashier/PrintInvoice",
+                url: "/Cashier/PrintInvoice",
 				data: JSON.stringify({ PreID: preID }),
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
@@ -321,6 +422,11 @@
 			openPrintWindow();
 		}
 	}
+    
+    
+
+    // Call the function on page load
+    
 
 	function PrintBill() {
 		var logoImage = new Image();
@@ -348,7 +454,7 @@
 			var preID = document.getElementById("preID").value;
 			$.ajax({
 				type: "POST",
-				url: "/Cashier/PrintBill",
+                url: "/Cashier/PrintBill",
 				data: JSON.stringify({ PreID: preID }),
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
@@ -493,15 +599,15 @@
                                         cashierBillingItemDtoListTotal += item.amount;
                                         cashierBillingItemDtoListAmountTotal += (item.price * item.qty);
                                         cashierBillingItemDtoListDiscountTotal += item.discount;
-
+                                        decimal calamount = item.qty * item.price;
                                         <tr>
-                                            <td>@item.billingItemName (@item.billingItemsTypeName)</td>
-                                            <td>@item.price</td>
-                                            <td>@item.qty</td>
-                                            <td>@(item.qty * item.price)</td>
-                                            <td>@item.discount</td>
-                                            <td>@item.amount</td>
-                                            <td></td>
+                                          <td>@item.billingItemName (@item.billingItemsTypeName)</td>
+                                          <td>@item.price.ToString("0.00")</td>
+                                          <td>@item.qty</td>
+                                          <td>@calamount.ToString("0.00")</td>
+                                          <td>@item.discount</td>
+                                          <td>@item.amount.ToString("0.00")</td>
+                                          <td></td>
                                         </tr>
                                     }
                                 }
@@ -512,7 +618,7 @@
                                         <td>Total</td>
                                         <td></td>
                                         <td></td>
-                                        <td>@cashierBillingItemDtoListAmountTotal</td>
+                                                        <td>@cashierBillingItemDtoListAmountTotal.ToString("0.00")</td>
                                         <td>@cashierBillingItemDtoListDiscountTotal</td>
                                         <td>@cashierBillingItemDtoListTotal</td>
                                         <td></td>
@@ -526,17 +632,17 @@
                                         cashierBilledItemDtoListTotal += item.amount;
                                         cashierBilledItemDtoListAmountTotal += (item.price * item.qty);
                                         cashierBilledItemDtoListDiscountTotal += item.discount;
-
-                                        itemIds.Add(item.BillingItemID);
+                                                        decimal cal = (item.qty * item.price);
+                                                        itemIds.Add(item.BillingItemID);
                                         billingItemsTypes.Add(item.billingItemsType);
 
                                         <tr>
                                             <td>@item.billingItemName (@item.billingItemsTypeName)</td>
                                             <td>@item.price</td>
                                             <td>@item.qty</td>
-                                                            <td>@(item.qty * item.price)</td>
+                                                            <td></td>
                                             <td>@item.discount</td>
-                                            <td>@item.amount</td>
+                                                            <td>@item.amount.ToString("0.00")</td>
                                             <td>
                                                 @if (Model != null)
                                                 {
@@ -558,9 +664,9 @@
                                         <td>Total</td>
                                         <td></td>
                                         <td></td>
-                                        <td>@cashierBilledItemDtoListAmountTotal</td>
+                                                        <td>@cashierBilledItemDtoListAmountTotal.ToString("0.00")</td>
                                         <td>@cashierBilledItemDtoListDiscountTotal</td>
-                                        <td>@cashierBilledItemDtoListTotal</td>
+                                                        <td>@cashierBilledItemDtoListTotal.ToString("0.00")</td>
                                         <td></td>
                                     </tr>
                                 }
@@ -582,6 +688,8 @@
 
                         @if (Model?.channel != null)
                         {
+                                        decimal calfee = Model.channel.ChannelingSchedule.HospitalFee + Model.channel.ChannelingSchedule.ConsultantFee;
+                                        ;
                             <table class="table">
                                 <thead class="table-success">
                                 <tr>
@@ -600,7 +708,7 @@
                                     <td>@Model.channel.Patient.FullName</td>
                                     <td>@Model.channel.ChannelingSchedule.ConsultantFee</td>
                                     <td>@Model.channel.ChannelingSchedule.HospitalFee</td>
-                                    <td>@(Model.channel.ChannelingSchedule.HospitalFee + Model.channel.ChannelingSchedule.ConsultantFee)</td>
+                                                    <td>@calfee.ToString("0.00")</td>
                                 </tr>
 
 
@@ -648,7 +756,7 @@
                                         <td>@item.price</td>
                                         <td>@item.qty</td>
                                         <td>@item.discount</td>
-                                        <td>@item.amount</td>
+                                        <td>@item.amount.ToString("0.00")</td>
                                         <td>
                                             @if (Model != null)
                                             {

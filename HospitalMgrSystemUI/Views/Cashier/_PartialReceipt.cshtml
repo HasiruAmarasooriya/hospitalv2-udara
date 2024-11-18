@@ -228,35 +228,30 @@
     </div>
 
     @if (Model?.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
-    {
-        <div class="text-sm font-bold" style="margin: auto; margin-top: 10px">
-            Channeling Fee: <span class="pl-1 font-normal">Rs. @((Model.ScanItem!.HospitalFee + Model.ScanItem!.DoctorFee).ToString("0.00"))</span>
-        </div>
-
-        @if (Model != null && Model.ScanItem != null)
         {
-            <div class="pt-5">
-                <!-- Scan Items Table -->
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Items</th>
-                        <th class="text-center">Qty</th>
-                        <th class="text-right">Price</th>
-                        <th class="text-right">Amount</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>@Model.ScanItem.ItemName</td>
-                        <td class="text-center">1</td>
-                        <td class="text-right">@((Model.ScanItem.HospitalFee + Model.ScanItem.DoctorFee).ToString("0.00"))</td>
-                        <td class="text-right">@((Model.ScanItem.HospitalFee + Model.ScanItem.DoctorFee).ToString("0.00"))</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        }
+            @if (Model != null && Model.ScanItem != null)
+            {
+                /* if (Model.ScanItem.ItemName != "Channelling")
+                {*/
+                <div class="pt-5">
+                    <!-- Scan Items Table -->
+                    <table class="table">
+                        <tr>
+                            <td rowspan="2" class="text-center">@(Model.ScanItem.ItemName)</td>
+                            <td class="text-center">ConsultantFee</td>
+                            <td class="text-center">HospitalFee</td>
+                            <td class="text-center">Amount</td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">Rs. @((Model.ScanItem!.DoctorFee).ToString("0.00"))</td>
+                            <td class="text-center">Rs. @((Model.ScanItem!.HospitalFee).ToString("0.00"))</td>
+                            <td class="text-center">Rs. @((Model.ScanItem!.HospitalFee + Model.ScanItem!.DoctorFee).ToString("0.00"))</td>
+                        </tr>
+                    </table>
+                </div>
+
+            }   
+
     }
 
     @if (Model?.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)

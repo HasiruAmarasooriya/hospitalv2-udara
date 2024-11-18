@@ -20,6 +20,8 @@
     const roomNumber = @Html.Raw(Json.Serialize(Model.RoomName));
     const description = @Html.Raw(Json.Serialize(Model.Description));
     const appoinmentNo = @Html.Raw(Json.Serialize(Model.appoinmentNo));
+    const createdUser = @Html.Raw(Json.Serialize(Model.CreatedUserName));
+    const createdUserId = @Html.Raw(Json.Serialize(Model.CreatedUserId));
 
     function generateQRCode(size) {
 
@@ -52,6 +54,7 @@
         printWindow.document.write('<div style="text-align: center;">');
         printWindow.document.write('<table style="margin: auto;">');
         printWindow.document.write('<tr><td>CHE:</td><td>' + opdId +" ("+ description +")"+ '</td></tr>');
+        printWindow.document.write('<tr><td>Reception:</td><td>' + createdUserId + '</td></tr>');
         printWindow.document.write('<tr><td>Consultant Name:</td><td>' + consultantName + '</td></tr>');
         printWindow.document.write('<tr><td>Appointment No:</td><td>' + appoinmentNo + '</td></tr>');
         printWindow.document.write('<tr><td>Room No:</td><td>' + roomNumber + '</td></tr>');

@@ -104,8 +104,8 @@ namespace HospitalMgrSystemUI.Controllers
 			}
 
 		}
-
-		public ActionResult PrintInvoice([FromBody] CashierDto cashierDtoPar)
+        [HttpPost]
+        public ActionResult PrintInvoice([FromBody]CashierDto cashierDtoPar)
 		{
 			var cashierDto = new CashierDto();
 			using var httpClient = new HttpClient();
@@ -1342,8 +1342,9 @@ namespace HospitalMgrSystemUI.Controllers
 
 						cashierDtoToPrint = GetCashierAlldetails(cashierDtoToPrint.PreID);
 						cashierDtoToPrint.cashierRemoveBillingItemDtoList = GetCashierAllRemoveddetails(cashierDtoToPrint.PreID);
-
-						return RedirectToAction("Index", new { PreID = cashierDtoToPrint.PreID });
+                        Response.Cookies.Append("printFlag", "true");
+                        Response.Cookies.Append("preId", cashierDtoToPrint.PreID.ToString());
+                        return RedirectToAction("Index", new { PreID = cashierDtoToPrint.PreID });
 					}
 					return RedirectToAction("Index");
 				}

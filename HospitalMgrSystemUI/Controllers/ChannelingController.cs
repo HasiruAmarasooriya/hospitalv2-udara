@@ -10,6 +10,7 @@ using HospitalMgrSystem.Service.NightShiftSession;
 using HospitalMgrSystem.Service.OPD;
 using HospitalMgrSystem.Service.Patients;
 using HospitalMgrSystem.Service.SMS;
+using HospitalMgrSystem.Service.User;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -742,7 +743,8 @@ public class ChannelingController : Controller
 					_OPDDto.phone = channelingObj.patient.MobileNumber;
 					_OPDDto.TotalAmount = total;
 					_OPDDto.RoomNumber = OPDobj.RoomID;
-					_OPDDto.ConsultantName = new ConsultantService().GetAllConsultantByID(OPDobj.ConsultantID).Name;
+                    _OPDDto.CreatedUserName = new UserService().GetUserByID(OPDobj.CreatedUser).FullName;
+                    _OPDDto.ConsultantName = new ConsultantService().GetAllConsultantByID(OPDobj.ConsultantID).Name;
 				}
 
 			}
@@ -1394,8 +1396,9 @@ public class ChannelingController : Controller
 		var roomNumber = channelingSchedule.Room!.Name;
 		var appointmentNumber = opdDto.opd.AppoimentNo;
 		var description = opdDto.opd.Description;
+        var createdUser = new UserService().GetUserByID(opdDto.opd.ModifiedUser).FullName;
 
-		_OPDDto.opdId = Id;
+        _OPDDto.opdId = Id;
 		_OPDDto.name = name;
 		_OPDDto.age = age;
 		_OPDDto.months = months;
@@ -1407,7 +1410,9 @@ public class ChannelingController : Controller
 		_OPDDto.RoomName = roomNumber;
 		_OPDDto.appoinmentNo = appointmentNumber;
 		_OPDDto.Description = description;
+        _OPDDto.CreatedUserId = opdDto.opd.ModifiedUser;
+        _OPDDto.CreatedUserName = createdUser;
 
-		return PartialView("_PartialQR", _OPDDto);
+        return PartialView("_PartialQR", _OPDDto);
 	}
 }
