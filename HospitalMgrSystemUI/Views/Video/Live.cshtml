@@ -74,19 +74,20 @@
             height: 34px !important;
         }
 
-        
+
         .card-title {
-            background-color: rgba(0,77,230, 0.9);
+            background-color: #3b2d9a;
             border-radius: 8px;
             padding: 5px;
+            box-shadow: 10px 10px 12px rgba(0, 0, 0, 0.1);
         }
 
         .title {
             font-weight: bold;
-            font-size:20px;
+            font-size: 20px;
             text-align: center;
             position: relative;
-            color: black;
+            color: #ec6a13;
         }
 
         .logo-date {
@@ -100,32 +101,30 @@
             font-size: 15px;
             font-weight: bold;
             margin-right: 10px;
+            color: #0f570f;
         }
 
         .scrollable-table {
             max-height: 670px;
             overflow-y: hidden;
-            
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
 
         .content-wrapper table {
-            width:60%;
+            width: 60%;
             font-size: 14px;
-         
             background-color: transparent;
             border-collapse: separate;
             border-spacing: 0px;
-            
             position: absolute;
-           /* Optional, if you want the container to fill the entire height */
+            /* Optional, if you want the container to fill the entire height */
             width: 50%
         }
 
         th, td {
             padding: 0;
             border: none;
-            align-items:center;
+            align-items: center;
         }
 
         tr:nth-child(even) {
@@ -147,7 +146,6 @@
         }
 
         .consultant {
-           
             color: white;
             font-weight: bold;
             font-size: 30px;
@@ -158,11 +156,10 @@
             color: white;
             font-size: 20px;
             font-weight: bold;
-            text-align:center;
+            text-align: center;
         }
 
         .time {
-          
             color: white;
             font-weight: bold;
             font-size: 20px;
@@ -205,25 +202,25 @@
 
         .status-icon {
             font-weight: bold;
-            font-size: 40px;
+            font-size: 25px;
             margin-right: 5px;
         }
 
             .status-icon.active {
                 font-weight: bold;
-                font-size: 40px;
+                font-size: 25px;
                 color: green;
             }
 
             .status-icon.end {
                 font-weight: bold;
-                font-size: 40px;
+                font-size: 25px;
                 color: red;
             }
 
             .status-icon.cancel {
                 font-weight: bold;
-                font-size: 20px;
+                font-size: 25px;
                 color: orange;
             }
 
@@ -242,10 +239,18 @@
             align-items: center; /* Ensure height is controlled by content */
         }
 
-        
-
-        
-            
+        .empty-card {
+            /* background-color: rgba(70, 53, 177, 0.8); */
+            border-radius: 8px;
+            /* box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1); */
+            width: auto; /* Occupy full width of the container */
+            margin-bottom: 10px;
+            margin-left: 10px;
+            margin-right: 10px; /* Further reduced margin between cards */
+            padding: 10px; /* Reduced padding inside cards */
+            height: 150px;
+            align-items: center; /* Ensure height is controlled by content */
+        }
 
     </style>
 }
@@ -273,11 +278,11 @@
                 </div>
 
                 <div class="scrollable-table">
-                    <table >
+                    <table>
                         <thead>
-                            <tr >
+                            <tr>
                                 <th></th>
-                               
+
                             </tr>
                         </thead>
                         <tbody>
@@ -295,20 +300,23 @@
                                         switch (channelingShedule.scheduleStatus)
                                         {
                                             case HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.ACTIVE:
-                                                statusIcon = "<span class='status-icon active'>&#x2714;</span>"; // Active (green check)
+                                                @* statusIcon = "<span class='status-icon active'>&#x2714;</span>"; // Active (green check) *@
+                                                statusIcon = "<span class='status-icon active'>ACTIVE &#x2714;</span>";
                                                 break;
 
                                             case HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_END:
-                                                statusIcon = "<span class='status-icon end'>&#x2716;</span>"; // Session ended (red cross)
+                                                @* statusIcon = "<span class='status-icon end'>&#x2716;</span>"; // Session ended (red cross) *@
+                                                statusIcon = "<span class='status-icon end'>SESSION END </span>";
                                                 break;
 
                                             case HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_CANCEL:
                                                 rowClass = "highlight-row"; // Highlight row
-                                                statusIcon = "<span class='status-icon cancel'>&#x2716;</span>"; // Canceled (orange cross)
+                                                @* statusIcon = "<span class='status-icon cancel'>&#x2716;</span>"; // Canceled (orange cross) *@
+                                                statusIcon = "<span class='status-icon cancel'>SESSION CANCELED</span>";
                                                 break;
                                             case HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_START:
                                                 rowClass = "highlight-row"; // Highlight row
-                                                statusIcon = "<span class='status-icon cancel'>Session Started</span>"; // Canceled (orange cross)
+                                                statusIcon = "<span class='status-icon cancel'>SESSION STARTED</span>"; // Canceled (orange cross)
                                                 break;
 
                                             default:
@@ -316,17 +324,22 @@
                                                 break;
                                         }
                                         <tr>
-                                           
+                                            <div class="empty-card">
+
+                                                
+
+                                            </div>
+
                                             <div class="schedule-card">
 
                                                 <div class="consultant">@channelingShedule.Consultant?.Name</div>
                                                 <div class="specialist">@channelingShedule.Consultant?.Specialist.Name</div>
-                                                <div class="time">@channelingShedule.DateTime.ToString("hh:mm tt")  <div class="room">@channelingShedule.Room?.Name</div></div>
+                                                <div class="time">@channelingShedule.DateTime.ToString("hh:mm tt")  <div class="room">@channelingShedule.Room?.Name</div>  <div class="status">@Html.Raw(statusIcon)</div></div>
+
                                                
-                                                <div class="status">@Html.Raw(statusIcon)</div>
-                                           
+
                                             </div>
-                                           
+
                                         </tr>
                                     }
                                 }
@@ -363,9 +376,9 @@
                 const scrollableTable = $('.scrollable-table');
                 const tableSection = $('#tableSection');
                 const videoSection = $('#videoSection');
-                const scrollSpeed = 1;
-                const scrollInterval = 75;
-                let scrollAmount = 0;
+                const scrollSpeed = 2;
+                const scrollInterval = 20;
+                let scrollAmount = 1;
 
                 function scrollTable() {
                     scrollableTable.scrollTop(scrollAmount);
