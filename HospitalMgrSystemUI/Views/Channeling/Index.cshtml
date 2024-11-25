@@ -194,6 +194,8 @@
 						</div>
 					</div>
 				</div>
+				<label for="tableFilter">Addon adding</label>
+				<input type="text" id="tableFilter" placeholder="Enter Ref No">
 				<div class="table-responsive">
 					<table id="basic-2" class="display">
 						<thead>
@@ -202,6 +204,7 @@
 								<th>Ref No</th>
 								<th>Cashier</th>
 								<th>QR</th>
+								<th>Add On</th>
 								<th>Pt's Name</th>
 								<th>Pt's Contact Number</th>
 								<th>Appoinment No</th>
@@ -214,7 +217,6 @@
 								<th>Payment Status</th>
 								<th>Schedule Status</th>
 								<th>View</th>
-								<th>Add On</th>
 								<th>Delete</th>
 							</tr>
 						</thead>
@@ -225,7 +227,7 @@
 								{
 									if (item.PaymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.NOT_PAID)
 									{
-										<tr class="table-warning">
+										<tr class="table-warning" data-id="@item.ID" data-schedular-id="@item.schedularId">
 
 											<td>CHE`@item.ID</td>
 											<td>
@@ -237,6 +239,9 @@
 											</td>
 											<td>
 												<button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.ID);><i class='fa fa-print'></i></button>  &nbsp;
+											</td>
+											<td>
+												<button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.ID);><i class='fa fa-plus'></i></button>
 											</td>
 											<td>@item.FullName</td>
 											<td>@item.MobileNumber</td>
@@ -252,9 +257,7 @@
 											<td>
 												<button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.ID,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
 											</td>
-											<td>
-												<button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.ID);><i class='fa fa-plus'></i></button>
-											</td>
+										
 											<td>
 												@if (@item.CSStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_END && @item.CSStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_CANCEL)
 												{
@@ -274,7 +277,7 @@
 
 									if (item.PaymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.NEED_TO_PAY)
 									{
-										<tr class="table-danger">
+										<tr class="table-danger" data-id="@item.ID" data-schedular-id="@item.schedularId">
 
 											<td>CHE`@item.ID</td>
 											<td>
@@ -286,6 +289,9 @@
 											</td>
 											<td>
 												<button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.ID);><i class='fa fa-print'></i></button>  &nbsp;
+											</td>
+											<td>
+												<button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.ID);><i class='fa fa-plus'></i></button>
 											</td>
 											<td>@item.FullName</td>
 											<td>@item.MobileNumber</td>
@@ -301,9 +307,7 @@
 											<td>
 												<button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.ID,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
 											</td>
-											<td>
-												<button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.ID);><i class='fa fa-plus'></i></button>
-											</td>
+											
 											<td>
 												@if (@item.CSStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_END && @item.CSStatus != HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_CANCEL)
 												{
@@ -324,7 +328,7 @@
 									{
 										if (item.ItemIds != null)
 										{
-											<tr class="table-danger">
+											<tr class="table-danger" data-id="@item.ID" data-schedular-id="@item.schedularId">
 
 												<td>CHE @item.ID</td>
 												<td>
@@ -336,6 +340,9 @@
 												</td>
 												<td>
 													@*<button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.ID);><i class='fa fa-print'></i></button>  &nbsp;*@
+												</td>
+												<td>
+													<button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.ID,@item.schedularId); tabindex="0">><i class='fa fa-plus'></i></button>  &nbsp;
 												</td>
 												<td>@item.FullName</td>
 												<td>@item.MobileNumber</td>
@@ -351,9 +358,7 @@
 												<td>
 													<button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.ID,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
 												</td>
-												<td>
-													<button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.ID,@item.schedularId);><i class='fa fa-plus'></i></button>  &nbsp;
-												</td>
+												
 												<td>
 													@* <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger' disabled><i class='fa fa-trash'></i></button> *@
 												</td>
@@ -374,6 +379,9 @@
 												<td>
 													<button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.ID); disabled><i class='fa fa-print'></i></button>  &nbsp;
 												</td>
+												<td>
+													<button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.ID,@item.schedularId);><i class='fa fa-plus'></i></button>  &nbsp;
+												</td>
 												<td>@item.FullName</td>
 												<td>@item.MobileNumber</td>
 												<td>@item.AppoimentNo</td>
@@ -388,9 +396,7 @@
 												<td>
 													<button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.ID,@item.schedularId);><i class='fa fa-eye'></i></button>  &nbsp;
 												</td>
-												<td>
-													<button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.ID,@item.schedularId);><i class='fa fa-plus'></i></button>  &nbsp;
-												</td>
+												
 												<td>
 													@* <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger' disabled><i class='fa fa-trash'></i></button> *@
 												</td>
@@ -711,12 +717,70 @@
 			});
 
 		}
+				document.getElementById("tableFilter").addEventListener("input", function() {
+			const filterValue = this.value.trim().toLowerCase();  // Get the search field value
+			const rows = document.querySelectorAll("#basic-2 tbody tr"); // Select all rows in the table
 
-		document.addEventListener('keydown', function (event) {
-			// You can change 'Enter' to any key you want to trigger the function
+			// Flag to check if any row was processed
+			let processedRow = false;
+
+			rows.forEach(function(row) {
+				const itemName = row.querySelector("td").textContent.toLowerCase(); // Get the item name (first column)
+
+				// Show or hide the row based on whether the item name matches the filter value
+				if (itemName.includes(filterValue)) {
+					row.style.display = "";  // Show row if it matches the filter
+					if (!processedRow) {
+						const button = row.querySelector("button"); // Find the button in the row
+						if (button) {
+							// Trigger the AddOn functionality for the first visible row
+							const id = row.getAttribute("data-id");
+							const schedularId = row.getAttribute("data-schedular-id");
+							ShowAddOnDetails(id, schedularId);  // Call the AddOn function
+							processedRow = true; // Mark that we have processed the first matching row
+						}
+					}
+				} else {
+					row.style.display = "none";  // Hide row if it doesn't match
+				}
+			});
+		});
+
+		document.addEventListener('keydown', function(event) {
 			if (event.key === 'Escape') {
-				// Call your function for Escape key
-				window.location.href = '/Channeling/';
+				window.location.href = '/Channeling/';  
+			}
+
+			if (event.key === "Tab") {
+				const filterValue = document.getElementById("tableFilter").value.trim().toLowerCase();  
+
+				
+				if (filterValue === "") {
+					event.preventDefault();  
+					return;  
+				}
+
+				const rows = document.querySelectorAll("#basic-2 tbody tr");  
+				let foundVisibleRow = false;  
+				rows.forEach(function(row) {
+					const itemName = row.querySelector("td").textContent.toLowerCase(); 
+					const shouldShowRow = itemName.includes(filterValue); 
+
+					if (shouldShowRow) {
+						const button = row.querySelector("button");  
+						if (button && !foundVisibleRow) {
+							button.focus();  
+							foundVisibleRow = true; 
+						}
+
+						
+						const id = row.getAttribute("data-id");
+						const schedularId = row.getAttribute("data-schedular-id");
+						ShowAddOnDetails(id, schedularId);
+					}
+				});
+
+				event.preventDefault();  
 			}
 		});
 		//function matchCustom(params, data) {
