@@ -229,7 +229,7 @@
 									{
 										<tr class="table-warning" data-id="@item.ID" data-schedular-id="@item.schedularId">
 
-											<td>CHE`@item.ID</td>
+											<td>CHE @item.ID</td>
 											<td>
 												@if (Model != null)
 												{
@@ -366,7 +366,7 @@
 										}
 										else
 										{
-											<tr class="table-success">
+											<tr class="table-success" data-id="@item.ID" data-schedular-id="@item.schedularId">
 
 												<td>CHE @item.ID</td>
 												<td>
@@ -647,9 +647,6 @@
 
 		}
 		function ShowShiftDetails(id, csID) {
-
-			console.log(id);
-
 			$.ajax({
 				type: "POST",
 				url: "/Channeling/CreateChanneling/" + id,
