@@ -14,7 +14,13 @@ namespace HospitalMgrSystemUI.Models
         public List<Drug>? Drugs { get; set; }
         public List<ClaimBillItems>? ClaimBillItemsList { get; set; }
 		public DateTime dateTime { get; set; }
-        public string PatientName { get; set; }
+        public string ItemName { get; set; }
+        public decimal ItemPrice { get; set; }
+        public int ItemQuantity { get; set; }
+		public decimal ItemAmount { get; set; }
+		public decimal ItemHospitalFee { get; set; }
+		public decimal ItemConsultantFee { get; set; }
+		public string PatientName { get; set; }
         public string RefNo { get; set; }
         public string ContactNumber { get; set; }
         public string NIC { get; set; }

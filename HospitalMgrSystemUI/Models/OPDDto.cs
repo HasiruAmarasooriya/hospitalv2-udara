@@ -26,8 +26,9 @@ namespace HospitalMgrSystemUI.Models
         public int? RoomNumber { get; set; }
         public string? RoomName { get; set; }
         public string? CreatedUserName { get; set; }
+        public int? CreatedUserId { get; set; }
 
-		public OPD? opd { get; set; }
+        public OPD? opd { get; set; }
         public Patient? patient { get; set; }
         public Drug? Drug { get; set; }
         public Investigation? investigation { get; set; }
@@ -90,6 +91,15 @@ namespace HospitalMgrSystemUI.Models
 
         public List<Scan>? scanList { get; set; }
         public int appoinmentNo { get; set; }
+        public int GrpvId { get; set; }
+        public int BillId { get; set; }
+        public int DrugIdRef { get; set; }
+        public int Qty { get; set; }
+        public StoreTranMethod TranType { get; set; }
+        public string RefNumber { get; set; }
+        public string Remark { get; set; }
+        public int RefNo { get; set; }
+        public int BatchNumber { get; set; }
 
         #endregion
     }
