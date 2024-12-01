@@ -714,27 +714,24 @@
 			});
 
 		}
-				document.getElementById("tableFilter").addEventListener("input", function() {
-			const filterValue = this.value.trim().toLowerCase();  // Get the search field value
-			const rows = document.querySelectorAll("#basic-2 tbody tr"); // Select all rows in the table
+		document.getElementById("tableFilter").addEventListener("input", function() {
+			const filterValue = this.value.trim().toLowerCase();  
+			const rows = document.querySelectorAll("#basic-2 tbody tr"); 
 
-			// Flag to check if any row was processed
+			
 			let processedRow = false;
 
 			rows.forEach(function(row) {
-				const itemName = row.querySelector("td").textContent.toLowerCase(); // Get the item name (first column)
-
-				// Show or hide the row based on whether the item name matches the filter value
+				const itemName = row.querySelector("td").textContent.toLowerCase();
 				if (itemName.includes(filterValue)) {
-					row.style.display = "";  // Show row if it matches the filter
+					row.style.display = "";  
 					if (!processedRow) {
-						const button = row.querySelector("button"); // Find the button in the row
+						const button = row.querySelector("button"); 
 						if (button) {
-							// Trigger the AddOn functionality for the first visible row
 							const id = row.getAttribute("data-id");
 							const schedularId = row.getAttribute("data-schedular-id");
-							ShowAddOnDetails(id, schedularId);  // Call the AddOn function
-							processedRow = true; // Mark that we have processed the first matching row
+							ShowAddOnDetails(id, schedularId);  
+							processedRow = true; 
 						}
 					}
 				} else {
@@ -746,6 +743,9 @@
 		document.addEventListener('keydown', function(event) {
 			if (event.key === 'Escape') {
 				window.location.href = '/Channeling/';  
+			}
+			if (event.key === 'F3') {
+				window.location.href = '/Cashier/Index';
 			}
 
 			if (event.key === "Tab") {

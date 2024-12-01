@@ -127,6 +127,10 @@
 			// Call your function for Escape key
 			ClearCashier();
 		}
+            if (event.key === 'F2') {
+                    
+                 GotoAddon();
+             }
 	});
 
 
@@ -135,7 +139,7 @@
 		button.disabled = true;
 
 		// Optionally, you can change the button text to indicate that it's processing
-		button.innerText = 'Processing...';
+		button.innerText = 'Processing & Printing';
 
 		// Submit the form
 		button.form.submit();
