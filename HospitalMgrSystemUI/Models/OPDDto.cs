@@ -95,7 +95,7 @@ namespace HospitalMgrSystemUI.Models
         public int BillId { get; set; }
         public int DrugIdRef { get; set; }
         public int Qty { get; set; }
-        public StoreTranMethod TranType { get; set; }
+        //public StoreTranMethod TranType { get; set; }
         public string RefNumber { get; set; }
         public string Remark { get; set; }
         public int RefNo { get; set; }
