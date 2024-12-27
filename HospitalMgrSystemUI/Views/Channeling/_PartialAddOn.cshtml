@@ -60,6 +60,9 @@
 
 
 	}
+	function handleClear() {
+		window.location.href = '/Channeling/';
+	}
 
 	function select_onchange_addon(value) {
 		const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
