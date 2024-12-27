@@ -117,19 +117,19 @@
 
 
 	document.addEventListener('keydown', function (event) {
-		// You can change 'Enter' to any key you want to trigger the function
-		if (event.key === 'Enter') {
-			// Call your function here
-			PrintInvoice();
-		}
+            // You can change 'Enter' to any key you want to trigger the function
+            if (event.key === 'Enter') {
+                // Call your function here
+                PrintInvoice();
+            }
 
-		if (event.key === 'Escape') {
-			// Call your function for Escape key
-			ClearCashier();
-		}
+            if (event.key === 'Escape') {
+                // Call your function for Escape key
+                ClearCashier();
+            }
             if (event.key === 'F2') {
-                    
-                 GotoAddon();
+
+                     window.location.href = '/Channeling/Index';
              }
 	});
 
@@ -489,7 +489,33 @@
 	function ClearCashier() {
 		window.location.href = '/Cashier/Index';
 	}
+    function GotoAddon() {
+                window.location.href = '/Channeling/Index';
+        }
+    function ShowAddOnDetails(id) {
 
+                console.log(id);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Channeling/CreateChannelingAddOn/" + id,
+                    data: { id: 101 },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "html",
+                    success: function (response) {
+                        $("#AddEditContainerModel").html(response);
+                        $("#AddShiftModel").modal('show');
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+
+    }
 </script>
 
 <div class="row page-titles">

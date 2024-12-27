@@ -9,5 +9,6 @@
         public Model.Drug GetAllDrugByID(int? id);
         public HospitalMgrSystem.Model.Drug DeleteDrug(HospitalMgrSystem.Model.Drug drug);
         public List<Model.Drug> SearchDrug(string value);
+        public Model.Drug GetDrugById(int Id);
     }
 }

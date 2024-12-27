@@ -23,6 +23,7 @@ namespace HospitalMgrSystem.Model
         public int Qty { get; set; }
         public int isStock { get; set; }
         public int Status { get; set; }
+        public string? BatchNumber { get; set; }
         public int CreateUser { get; set; }
         public int ModifiedUser { get; set; }
         public DateTime? CreateDate { get; set; }

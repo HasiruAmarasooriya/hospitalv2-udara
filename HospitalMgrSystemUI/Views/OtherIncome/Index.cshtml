@@ -5,6 +5,16 @@
 @{
 	ViewBag.Title = "Standings";
 }
+@{
+	var errorMessage = TempData["ErrorMessage"] as string;
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+	<div class="alert alert-danger" role="alert">
+		@errorMessage
+	</div>
+}
 @section Styles {
 	<style>
 		.select2-selection__rendered {
@@ -205,5 +215,6 @@
 			});
 
 		}
+
 	</script>
 }

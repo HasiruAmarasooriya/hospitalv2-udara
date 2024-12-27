@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Drawing.Printing;
 using HospitalMgrSystem.DataAccess;
 using HospitalMgrSystem.Model.DTO;
+using Microsoft.Data.SqlClient;
+using System.Security.Cryptography;
 
 namespace HospitalMgrSystem.Service.OPD
 {
@@ -428,23 +430,29 @@ namespace HospitalMgrSystem.Service.OPD
                     opdDrugus.CreateDate = DateTime.Now;
                     opdDrugus.ModifiedDate = DateTime.Now;
                     dbContext.OPDDrugus.Add(opdDrugus);
-                    dbContext.SaveChanges();
+                    dbContext.SaveChanges(); 
                 }
                 else
                 {
-                    OPDDrugus result = (from p in dbContext.OPDDrugus where p.Id == opdDrugus.Id select p).SingleOrDefault();
-                    result.ModifiedDate = DateTime.Now;
-                    result.opdId = opdDrugus.opdId;
-                    result.DrugId = opdDrugus.DrugId;
-                    result.Amount = opdDrugus.Amount;
-                    result.Price = opdDrugus.Price;
-                    result.Qty = opdDrugus.Qty;
-                    result.Type = opdDrugus.Type;
-                    dbContext.SaveChanges();
+                    OPDDrugus result = dbContext.OPDDrugus.SingleOrDefault(p => p.Id == opdDrugus.Id);
+                    if (result != null)
+                    {
+                        result.ModifiedDate = DateTime.Now;
+                        result.opdId = opdDrugus.opdId;
+                        result.DrugId = opdDrugus.DrugId;
+                        result.Amount = opdDrugus.Amount;
+                        result.Price = opdDrugus.Price;
+                        result.Qty = opdDrugus.Qty;
+                        result.Type = opdDrugus.Type;
+                        dbContext.SaveChanges();
+                    }
                 }
-                return dbContext.OPDDrugus.Find(opdDrugus.Id);
+
+                // Return the saved or updated entry
+                return opdDrugus.Id > 0 ? dbContext.OPDDrugus.Find(opdDrugus.Id) : opdDrugus;
             }
         }
+
         public Model.OPDDrugus DeleteOPDDrugus(int opdDruguID)
         {
             using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
@@ -502,6 +510,7 @@ namespace HospitalMgrSystem.Service.OPD
 
             }
         }
+         
 
 
         public Model.Invoice UpdatePaymentStatusForHospitalAndConsaltantFee(int invoiceID, int opdID)
@@ -530,6 +539,35 @@ namespace HospitalMgrSystem.Service.OPD
                 result.itemInvoiceStatus = Model.Enums.ItemInvoiceStatus.Add;
                 dbContext.SaveChanges();
                 return result;
+            }
+        }
+        public LogTranDTO GetDrugDetailsByOpdId(int id,int status)
+        {
+            using(var dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                var OpdID = new SqlParameter("@Id", id);
+                var drugStatus = new SqlParameter("@Status", status);
+
+                // Execute the stored procedure and map the result to the DTO
+                var drugInfo = dbContext.Set<LogTranDTO>()
+                    .FromSqlRaw("EXEC GetDrugDetailsByOpdId @Id, @Status", OpdID, drugStatus)
+                    .AsEnumerable()
+                    .FirstOrDefault();
+
+                return drugInfo;
+            }
+        }
+        public List<stockTransaction> RefundDrugDetailsById(int id)
+        {
+            using (var dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                var OpdID = new SqlParameter("@Id", id);
+
+
+                // Execute the stored procedure and map the result to the DTO
+                List<stockTransaction> stockTransaction = (from st in dbContext.stockTransaction where st.BillId == id select st).ToList();
+
+                return stockTransaction;
             }
         }
         #endregion

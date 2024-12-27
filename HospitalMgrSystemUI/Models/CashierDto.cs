@@ -65,5 +65,5 @@ namespace HospitalMgrSystemUI.Models
         public OPD? OpdData { get; set; }
         public List<Scan>? ScanList { get; set; }
         public Scan? ScanItem { get; set; }
-	}
+    }
 }

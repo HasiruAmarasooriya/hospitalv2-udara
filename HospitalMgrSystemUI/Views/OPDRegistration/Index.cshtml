@@ -290,7 +290,7 @@
 
 		function handleOPDTypeChange() {
 			var dropDoctor = document.getElementById('dropDoctor');
-
+			console.log('dctorfee'+dropDoctor);
 			if (dropDoctor.value == 82) {
 				document.getElementById('hospitalFeeInput').value = 0;
 			} else {
@@ -567,7 +567,7 @@
 
 
 		function submitDrugusItems() {
-
+			 $('#addButton').hide();
 			var fullName = $('#patientName').val();
 			var patientID = $('#patientId').val();
 			var contactNo = $('#txtMobileNumber').val();
@@ -608,9 +608,9 @@
 
 			var jsonOb = JSON.stringify(opdDtoObject);
 			// console.log(jsonOb);
-			console.log(opdDtoObject);
+			console.log("Data"+opdDtoObject);
 
-
+			
 			$.ajax({
 				url: '/OPDRegistration/AddNewOPD', // Adjust the URL based on your actual route
 				type: 'POST',
@@ -626,6 +626,10 @@
 				error: function (error) {
 					// Handle error
 					console.error('Error submitting drugus items:', error);
+				},
+				complete: function () {
+					// Re-enable the button after the request completes
+				$('#addButton').show();
 				}
 			});
 

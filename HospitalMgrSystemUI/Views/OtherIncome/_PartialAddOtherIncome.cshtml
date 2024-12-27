@@ -72,6 +72,46 @@
 			checkBeneficiarySelection(); // Check if Save button should be enabled
 		}
 	}
+	//  function adddisableButton(button) {
+	// 	Disable the button to prevent multiple clicks
+	// 	button.disabled = true;
+	// 	button.innerHTML = "<i class='fa fa-spinner fa-spin'></i> Processing...";
+
+	// 	Optionally, re-enable the button after some delay (if needed)
+	// 	setTimeout(() => {
+	// 		button.disabled = false;
+	// 		button.innerHTML = "<i class='fa fa-plus'></i>";
+	// 	}, 10000); 10 seconds
+	// }
+	function sendRequest(id, button) {
+		// Disable the button and show a spinner
+		button.disabled = true;
+		button.innerHTML = "<i class='fa fa-spinner fa-spin'></i> Processing...";
+
+		// Send AJAX POST request
+		$.ajax({
+			url: '/OtherIncome/CashierTransferIN',
+			type: 'POST',
+			data: { Id: id },
+			success: function (response) {
+				if (response) {
+					alert('Transaction processed successfully!');
+					 window.location.href = '/OtherIncome/Index';
+				} 
+				else {
+					alert('Failed to process the transaction. Please try again.');
+				}
+			},
+			error: function () {
+				alert('An error occurred while processing the transaction.');
+			},
+			complete: function () {
+				// Re-enable the button and restore its original content
+				button.disabled = false;
+				button.innerHTML = "<i class='fa fa-plus'></i>";
+			}
+		});
+	}
 </script>
 
 <div class="modal-content">
@@ -200,12 +240,19 @@
 											@if (Model != null)
 											{
 
-												@using (Html.BeginForm("CashierTransferIN", "OtherIncome", new { Id = @item.Id }, FormMethod.Post))
+												@*@using (Html.BeginForm("CashierTransferIN", "OtherIncome", new { Id = @item.Id }, FormMethod.Post))
 												{
 
-													<button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-plus'></i></button>
-
-												}
+													<button id='btn_@item.Id' class='btn waves-effect waves-light btn-xs btn-info'
+															onclick="adddisableButton(this)">
+														<i class='fa fa-plus'></i>
+													</button>
+												}*@
+												<button id='btn_@item.Id'
+														class='btn waves-effect waves-light btn-xs btn-info'
+														onclick="sendRequest(@item.Id, this)">
+													<i class='fa fa-plus'></i>
+												</button>
 											}
 
 										</td>

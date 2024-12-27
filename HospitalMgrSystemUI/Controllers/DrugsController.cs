@@ -179,24 +179,45 @@ namespace HospitalMgrSystemUI.Controllers
             }
         }
 
-        public IActionResult Search()
+        public IActionResult Search(string SearchValue)
         {
+            
             DrugsDto drugsDto = new DrugsDto();
+
+           
+            if (string.IsNullOrWhiteSpace(SearchValue))
+            {
+               
+                ViewBag.ErrorMessage = "Please enter a value to search.";
+                return View("Index", drugsDto);
+            }
+
             using (var httpClient = new HttpClient())
             {
                 try
                 {
+                    
                     string APIUrl = _configuration.GetValue<string>("MainAPI:APIURL");
                     httpClient.BaseAddress = new Uri(APIUrl + "Drugs/");
+
+                    
                     var postObj = httpClient.GetFromJsonAsync<List<Drug>>("SearchDrugs?text=" + SearchValue);
-                    postObj.Wait();
+                    postObj.Wait(); // Wait for the task to complete
+
+                   
                     var result = postObj.Result;
                     drugsDto.ListDrogs = result;
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                    
+                }
             }
+
+          
             return View("Index", drugsDto);
         }
+
 
     }
 }

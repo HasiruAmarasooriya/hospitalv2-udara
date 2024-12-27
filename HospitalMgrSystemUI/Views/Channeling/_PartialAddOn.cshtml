@@ -139,7 +139,9 @@
 			}
 
 		}
-
+		function handleClear() {
+		window.location.href = '/Channeling/';
+		}
 	}
 
 </script>
@@ -148,7 +150,7 @@
 <div class="modal-content">
 	<div class="modal-header">
 		<h4 class="modal-title" id="myLargeModalLabel">Add/EditChanneling</h4>
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<button type="button" class="close" data-dismiss="modal" onclick="handleClear()" aria-hidden="true">×</button>
 	</div>
 	<form>
 		<input type="hidden" id="opdIndexNumber" asp-for="opdId">
@@ -252,7 +254,7 @@
 			</div>
 		}
 		<div class="modal-footer">
-			<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+			<button type="button" class="btn btn-danger waves-effect text-left" onclick="handleClear()" data-dismiss="modal">Close</button>
 
 			<button type="button" class="btn  waves-effect btn-primary" onclick="submitChannelingAddOn(0)"><i class="fa fa-save"></i>&nbsp;Save</button>
 			@*<button type="button" class="btn waves-effect btn-primary ms-2" onclick="submitChannelingAddOn(1)">

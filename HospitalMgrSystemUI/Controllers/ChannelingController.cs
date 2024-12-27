@@ -984,8 +984,9 @@ public class ChannelingController : Controller
 					}
 				}
 			}
-
-			return RedirectToAction("Index");
+            //Response.Cookies.Append("printFlag", "true");
+            //Response.Cookies.Append("preId", cashierDtoToPrint.PreID.ToString());
+            return RedirectToAction("Index");
 		}
 		catch (Exception ex)
 		{
@@ -1243,7 +1244,7 @@ public class ChannelingController : Controller
 			}
 
 			return PartialView("_PartialQR", _OPDDto);
-		}
+        }
 		catch (Exception ex)
 		{
 			return RedirectToAction("Index");

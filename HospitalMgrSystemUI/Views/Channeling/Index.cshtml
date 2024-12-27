@@ -194,8 +194,9 @@
 						</div>
 					</div>
 				</div>
-				<label for="tableFilter">Addon adding</label>
+				
 				<input type="text" id="tableFilter" placeholder="Enter Ref No">
+				<button type="button" class="btn btn-danger waves-effect text-left" onclick=" handleClear()" data-dismiss="modal">Clear</button>
 				<div class="table-responsive">
 					<table id="basic-2" class="display">
 						<thead>
@@ -715,15 +716,17 @@
 
 		}
 		document.getElementById("tableFilter").addEventListener("input", function() {
-			const filterValue = this.value.trim().toLowerCase();  
+			const value = document.getElementById("tableFilter").value; // Get the input value
+			const filterValue = value.replace(/[^0-9]/g, '').trim().toLowerCase(); // Remove non-numeric characters
+			console.log(filterValue); // Log the cleaned value
 			const rows = document.querySelectorAll("#basic-2 tbody tr"); 
 
 			
 			let processedRow = false;
 
 			rows.forEach(function(row) {
-				const itemName = row.querySelector("td").textContent.toLowerCase();
-				if (itemName.includes(filterValue)) {
+				const itemName = row.getAttribute("data-id").toLowerCase();
+				if (itemName === filterValue)  {
 					row.style.display = "";  
 					if (!processedRow) {
 						const button = row.querySelector("button"); 

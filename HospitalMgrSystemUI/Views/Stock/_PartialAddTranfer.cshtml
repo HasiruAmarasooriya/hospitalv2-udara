@@ -1,0 +1,139 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model ItemTranferDto;
+
+@inject IConfiguration Configuration
+<script type="text/javascript">
+    function select_onchange(value) {
+        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+        var itenNo = document.getElementById("item").value;
+        var settings = {
+            "url": commonUrl + "Items/GetItemByID?Id=" + itenNo,
+            "method": "GET",
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            console.log("Price:", response.price);
+            document.getElementById("txtPrice").value = response.price.toFixed(2);
+
+            var qty = document.getElementById("txtQty").value;
+            var price = document.getElementById("txtPrice").value;
+            var amount = qty * price;
+            document.getElementById("txtAmount").value = amount.toFixed(2);
+        });
+    }
+
+    $(document).ready(function () {
+        $('#drugIdDropdown').change(function () {
+            const drugId = $(this).val();
+
+            if (drugId) {
+                $.ajax({
+                    url: '/Stock/GetBatchDetails', // Replace with your controller's route
+                    type: 'GET',
+                    data: { drugId: drugId },
+                    success: function (response) {
+                        if (response && response.length > 0) {
+                            // Assuming the response is an array and contains the first result
+                            const batchDetails = response[0];
+
+                            // Update the HTML elements with the batch details
+                            $('#BatchNumber').val(batchDetails.batchNumber);
+                            $('#GRNId').val(batchDetails.grnId);
+                            $('#GRPVId').val(batchDetails.grpvId);
+
+                            // Log the details to the console
+                            console.log("Batch Number:", batchDetails.batchNumber);
+                            console.log("GRN ID:", batchDetails.grnId);
+                            console.log("GRPV ID:", batchDetails.grpvId);
+                        } else {
+                            // Clear the fields if no batch details are found
+                            $('#BatchNumber').val('');
+                            $('#GRNId').val('');
+                            $('#GRPVId').val('');
+                        }
+                    },
+                    error: function () {
+                        alert('Error retrieving batch details.');
+                    }
+                });
+            } else {
+                // Clear fields if no drug is selected
+                $('#BatchNumber').val('');
+                $('#GRNId').val('');
+                $('#GRPVId').val('');
+            }
+        });
+    });
+
+</script>
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add Item  </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <div class="modal-body">
+        <form asp-action="AddTranfer" method="post">
+            <input type="hidden" id="@Model.GRPV." asp-for="ID">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Convener Warehouse</label>
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange(this.value);" asp-for="FromWarehouses" id="drugId">
+                            <option value="">Select Warehouse</option>
+                            @foreach (var item in Model.Warehouses)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="companyName">Beneficiary Warehouse</label>
+                        <select class="form-control ddlSearchList" asp-for="ToWarehouse" id="cars">
+                            <option value="">Select Warehouse</option>
+                            @foreach (var item in Model.Warehouses)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="companyName">Select Transfer Drug</label>
+                        <select class="form-control ddlSearchList" asp-for="DrugId" id="drugIdDropdown">
+                            <option value="">Select Drug</option>
+                            @foreach (var item in Model.GRPV)
+                            {
+                                <option value="@item.DrugId">@item.DrugName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Transfer Qty</label>
+                        <input class="form-control" id="txtPrice" type="text" value="1.00" asp-for="Qty" placeholder="Qty" />
+                    </div>
+                </div>
+                <input type="hidden" asp-for="BatchNumber" id="BatchNumber" />
+                <input type="hidden" asp-for="GRNId" id="GRNId" />
+                <input type="hidden" asp-for="GRPVId" id="GRPVId" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+            </div>
+        </form>
+    </div>
+</div>

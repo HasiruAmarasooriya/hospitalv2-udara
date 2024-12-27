@@ -309,6 +309,7 @@ namespace HospitalMgrSystemUI.Controllers
                     if (mtList.Count > 0)
                     {
                         otherTransactionsResObjById = GetOtherTransactionByID(Id);
+
                         otherTransactions.SessionID = mtList[0].Id;
                         otherTransactions.ConvenerID = otherTransactionsResObjById.ConvenerID;
                         otherTransactions.InvoiceType = InvoiceType.CASHIER_TRANSFER_IN;

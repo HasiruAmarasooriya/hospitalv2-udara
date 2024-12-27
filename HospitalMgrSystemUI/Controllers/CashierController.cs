@@ -23,6 +23,7 @@ using HospitalMgrSystem.Service.NightShiftSession;
 using HospitalMgrSystem.Service.ChannelingSchedule;
 using HospitalMgrSystem.Service.ClaimBill;
 using HospitalMgrSystem.Service.Default;
+using HospitalMgrSystem.Service.Stock;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -1098,13 +1099,13 @@ namespace HospitalMgrSystemUI.Controllers
 			return oPDDrugus;
 		}
 
-		public ActionResult AddSale()
+        public ActionResult AddSale()
 		{
 			using (var httpClient = new HttpClient())
 			{
 				var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
 
-				var invoice = new Invoice();
+                var invoice = new Invoice();
 				var invoiceItems = new List<InvoiceItem>();
 				var payments = new Payment();
 
@@ -1346,7 +1347,7 @@ namespace HospitalMgrSystemUI.Controllers
                         Response.Cookies.Append("preId", cashierDtoToPrint.PreID.ToString());
                         return RedirectToAction("Index", new { PreID = cashierDtoToPrint.PreID });
 					}
-					return RedirectToAction("Index");
+                    return RedirectToAction("Index");
 				}
 				catch (Exception ex)
 				{
@@ -1402,7 +1403,25 @@ namespace HospitalMgrSystemUI.Controllers
 						{
 							OPDService oPDService = new OPDService();
 							oPDService.RemoveOPDDrugus(Id, Convert.ToInt32(userIdCookie));
-							CashierDto cashierData = GetCashierAlldetails(PreID);
+                            var drugDetailsList = oPDService.GetDrugDetailsByOpdId(Id, (int)ItemInvoiceStatus.Remove);
+                            var stockTransaction = new stockTransaction
+                            {
+                                GrpvId = drugDetailsList.GrpvId,
+                                DrugIdRef = drugDetailsList.DrugIdRef,
+								BillId = drugDetailsList.BillId,
+                                Qty = -drugDetailsList.Qty,
+                                TranType = StoreTranMethod.OPD_Refund,
+                                RefNumber = $"Refund_{PreID}",
+                                Remark = "OPD_Drug_Refund", 
+                                BatchNumber = drugDetailsList.BatchNumber,     
+                                CreateUser = Convert.ToInt32(userIdCookie),
+                                CreateDate = DateTime.Now,      
+                                ModifiedUser = Convert.ToInt32(userIdCookie),
+                                ModifiedDate = DateTime.Now
+                            };
+                            StockService stockService = new StockService();
+							stockService.LogTransaction(stockTransaction);
+                            CashierDto cashierData = GetCashierAlldetails(PreID);
 							oPDService.UpdatePaymentStatus(Id, cashierData.subtotal, InvoiceType);
 						}
 
@@ -1540,9 +1559,9 @@ namespace HospitalMgrSystemUI.Controllers
 							updateOPD.ModifiedUser = Convert.ToInt32(userIdCookie);
 							updateOPD.paymentStatus = PaymentStatus.PAID;
 							OPD upOpd = new OPDService().UpdatePaidStatus(updateOPD);
-						}
+                        }
 
-						if (resInvoice.InvoiceType == InvoiceType.CHE)
+                        if (resInvoice.InvoiceType == InvoiceType.CHE)
 						{
 							OPD updateOPD = new OPD();
 							updateOPD.Id = resInvoice.ServiceID;

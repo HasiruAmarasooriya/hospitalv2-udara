@@ -12,6 +12,8 @@ using HospitalMgrSystem.Model.Enums;
 using HospitalMgrSystem.Service.CashierSession;
 using HospitalMgrSystem.Service.NightShiftSession;
 using HospitalMgrSystem.Service.User;
+using HospitalMgrSystem.Service.Stock;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -390,7 +392,7 @@ namespace HospitalMgrSystemUI.Controllers
         public ActionResult CreateOPDReg(int Id)
         {
             var defaultService = new DefaultService();
-            
+
             var oPDDto = new OPDDto
             {
                 consultantList = LoadActiveConsultants(),
@@ -413,6 +415,10 @@ namespace HospitalMgrSystemUI.Controllers
 
                 try
                 {
+
+
+                    //int tranType = (int)StoreTranMethod.OPD_IN;
+                    //oPDDto.OPDDrugusList = new OPDService().GetOPDDrugus(tranType);
                     oPDDto.opd = new OPDService().GetAllOPDByID(Id);
                     oPDDto.OPDDrugusList = GetOPDDrugus(Id);
                     oPDDto.opdId = Id;
@@ -462,7 +468,7 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.invoiceType = InvoiceType.OPD;
                     oPDDto.opd.ConsultantFee = 0;
                     oPDDto.opd.schedularId = activeOpdSession[0].Id;
-
+                    
                     if (oPDDto.opd.Id > 0)
                     {
                         OPDobj = new OPDService().UpdateOPDStatus(oPDDto.opd, oPDDto.OPDDrugusList);
@@ -492,6 +498,53 @@ namespace HospitalMgrSystemUI.Controllers
                             drugusItem.Amount = drugusItem.Qty * drugusItem.Price;
                             drugusItem.IsRefund = 0;
                             new OPDService().CreateOPDDrugus(drugusItem);
+                            int DrugID = drugusItem.DrugId;
+                            int refnumber = 0;
+                            int batchnumber = 0;
+                            //int TranType = (int)StoreTranMethod.OPD_IN;
+                            var TranLog = new DrugsService().GetDrugDetailsById(DrugID);
+                            decimal Qty = drugusItem.Qty;
+                            
+                            if (TranLog == null)
+                            {
+                                var stockTran = new stockTransaction
+                                {
+                                    BillId = OPDobj.Id,
+                                    DrugIdRef = drugusItem.DrugId,
+                                    Qty = -Qty,
+                                    TranType = StoreTranMethod.OPD_Out,
+                                    RefNumber = "OPD_" + drugusItem.opdId,
+                                    Remark = "OPD_Drug_Issue",
+                                    BatchNumber = 0.ToString(),
+                                    CreateUser = Convert.ToInt32(userIdCookie),
+                                    ModifiedUser = Convert.ToInt32(userIdCookie),
+                                    CreateDate = DateTime.Now,
+                                    ModifiedDate = DateTime.Now
+                                };
+                                new StockService().LogTransaction(stockTran);
+
+                            }
+                            else
+                            {
+                                var stockTran = new stockTransaction
+                                {
+                                    BillId = OPDobj.Id,
+                                    DrugIdRef = drugusItem.DrugId,
+                                    Qty = -Qty,
+                                    TranType = StoreTranMethod.OPD_Out,
+                                    RefNumber = "OPD_" + drugusItem.opdId,
+                                    Remark = "OPD_Drug_Issue",
+                                    BatchNumber = TranLog.BatchNumber,
+                                    CreateUser = Convert.ToInt32(userIdCookie),
+                                    ModifiedUser = Convert.ToInt32(userIdCookie),
+                                    CreateDate = DateTime.Now,
+                                    ModifiedDate = DateTime.Now
+                                };
+                                new StockService().LogTransaction(stockTran);
+
+
+                            }
+
                         }
                     }
                 }
@@ -529,7 +582,7 @@ namespace HospitalMgrSystemUI.Controllers
                     decimal hospitalFee = new DefaultService().GetDefailtHospitalPrice();
                     var activeOpdSession = new OPDSchedulerService().GetActiveOPDSchedulers();
 
-					oPDDto.opd.PatientID = patient.Id;
+                    oPDDto.opd.PatientID = patient.Id;
                     oPDDto.opd.DateTime = DateTime.Now;
                     oPDDto.opd.RoomID = 1;
                     oPDDto.opd.ModifiedUser = Convert.ToInt32(userIdCookie);
@@ -545,7 +598,7 @@ namespace HospitalMgrSystemUI.Controllers
                     oPDDto.opd.schedularId = activeOpdSession[0].Id;
 
 
-					if (oPDDto.opd.Id > 0)
+                    if (oPDDto.opd.Id > 0)
                     {
                         OPDobj = new OPDService().UpdateOPDStatus(oPDDto.opd, oPDDto.OPDDrugusList);
                     }
@@ -602,12 +655,34 @@ namespace HospitalMgrSystemUI.Controllers
         //Create user modify user details should be include
         public IActionResult DeleteOPD(int Id)
         {
-	        var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+            var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
             var userId = Convert.ToInt32(userIdCookie);
 
-			try
+            try
             {
                 new OPDService().DeleteOPD(Id, userId);
+                var drugDetailsList = new OPDService().RefundDrugDetailsById(Id);
+                StockService stockService = new StockService();
+                foreach (var drugDetails in drugDetailsList)
+                {
+                    var stockTransaction = new stockTransaction
+                    {
+                        GrpvId = drugDetails.GrpvId,
+                        DrugIdRef = drugDetails.DrugIdRef,
+                        BillId = Id,
+                        Qty = -drugDetails.Qty,
+                        TranType = StoreTranMethod.OPD_Refund,
+                        RefNumber = $"OPD_Bill_Deleted_{Id}",
+                        Remark = "OPD_Drug_Refund",
+                        BatchNumber = drugDetails.BatchNumber,
+                        CreateUser = Convert.ToInt32(userIdCookie),
+                        CreateDate = DateTime.Now,
+                        ModifiedUser = Convert.ToInt32(userIdCookie),
+                        ModifiedDate = DateTime.Now
+                    };
+                  
+                    stockService.LogTransaction(stockTransaction);
+                }
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -704,7 +779,7 @@ namespace HospitalMgrSystemUI.Controllers
 
         private List<OpdOtherXrayDataTableDto> LoadOPD()
         {
-            
+
             using (var httpClient = new HttpClient())
             {
                 try
@@ -770,6 +845,8 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 try
                 {
+                    //int tranType = (int)StoreTranMethod.OPD_IN;
+                    //drugs = new DrugsService().GetOPDDrugus(tranType);
                     drugs = new DrugsService().GetAllDrugsByStatus();
                 }
                 catch (Exception ex)
@@ -778,6 +855,56 @@ namespace HospitalMgrSystemUI.Controllers
             }
 
             return drugs;
+        }
+
+        public JsonResult CheckDrugQuantity(int drugId, decimal enteredQty)
+       {
+            
+            try
+            {
+                var drug = new DrugsService().GetDrugById(drugId );
+
+                if (drug != null)
+                {
+
+                    if (drug.Qty < enteredQty)
+                    {
+                        return Json(new { success = false, message = $"Not enough stock. Available quantity is {drug.Qty}" });
+                    }
+
+                    return Json(new { success = true, message = "Stock is available." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Drug not found." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error occurred while checking drug quantity." });
+            }
+        }
+        [HttpGet]
+        public JsonResult GetDrugPriceByID(int drugId)
+        {
+           
+            try
+            {
+                var drug = new DrugsService().GetDrugById(drugId);
+
+                if (drug != null)
+                {
+                    return Json(new { success = true, price = drug.Price });
+                }
+                else
+                {
+                    return Json(new { success = false, price = 0 });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error occurred while checking drug quantity." });
+            }
         }
 
         private List<OPDDrugus> GetOPDDrugus(int id)
@@ -841,7 +968,7 @@ namespace HospitalMgrSystemUI.Controllers
                 }
             }
         }
-
+        [HttpPost]
         public ActionResult OpenQR(int Id)
         {
             OPDDto opdDto = new OPDDto();

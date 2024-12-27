@@ -2,8 +2,12 @@
     var userNameCookie = Context.Request.Cookies["UserNameCookie"];
     var userRoleCookie = Context.Request.Cookies["UserRoleCookie"];
     var isLoggedIn = !string.IsNullOrEmpty(userNameCookie);
+    Context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+    Context.Response.Headers["Pragma"] = "no-cache";
+    Context.Response.Headers["Expires"] = "-1";
 }
-
+@if (isLoggedIn)
+{
 
 <!DOCTYPE html>
 <html lang="en">
@@ -65,8 +69,7 @@
     @await RenderSectionAsync("Styles", required: false)
 
 </head>
-@if (isLoggedIn)
-{
+
     <body class="fix-header fix-sidebar card-no-border">
         
         <div class="preloader">
@@ -201,6 +204,7 @@
                                     <li><a href="@Url.Action("Index", "ChannelingShedule")">Channeling Shedule</a></li>
                                     <li><a href="@Url.Action("Index", "Consultant")">Consultants</a></li>
                                     <li><a href="@Url.Action("Index", "Drugs")">All Items</a></li>
+                                    <li><a href="@Url.Action("Index", "Stock")">Warehouse</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -398,5 +402,20 @@
       
         @RenderSection("Scripts", required: false)
     </body>
-}
+
 </html>
+}
+else
+{
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <title>Login Required</title>
+    </head>
+    <body>
+       
+        <p>You need to be logged in to access this page.</p>
+        <a href="/Login">Login Here</a>
+    </body>
+    </html>
+}

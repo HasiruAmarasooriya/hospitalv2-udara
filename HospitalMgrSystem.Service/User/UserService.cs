@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Data;
+using System.Security.Cryptography;
 using System.Text;
 using HospitalMgrSystem.Model.Enums;
 
@@ -166,6 +167,19 @@ namespace HospitalMgrSystem.Service.User
             {
                 mtList = dbContext.Users.Where(o => o.Status == 0 && o.userRole == userRole).ToList<Model.User>();
 
+            }
+            return mtList;
+        }
+        public List<Model.User> GetActiveUsersByRole(UserRole userRole)
+        {
+            List<Model.User> mtList = new List<Model.User>();
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                mtList = dbContext.CashierSessions
+                    .Where(o => o.cashierSessionStatus == 0 && o.User.userRole == userRole)
+                    .OrderByDescending(o => o.Id)
+                    .Select(o => o.User) // Project to User entities
+                    .ToList();
             }
             return mtList;
         }

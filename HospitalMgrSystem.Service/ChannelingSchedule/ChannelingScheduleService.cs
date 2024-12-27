@@ -1226,6 +1226,7 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                                                 .FirstOrDefault();
 
                                             if (opdItem?.Description == "Exercise Book") scanDetails.HospitalFee = 100;
+                                            if (opdItem?.Description == "Clinic Book") scanDetails.HospitalFee = 130;
                                         }
                                         foreach (var invoice in HospitalAmountInvoice)
                                         {
@@ -1242,6 +1243,7 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                                                 .FirstOrDefault();
 
                                             if (opdItem?.Description == "Exercise Book") totalHospitalFeeAmount += 100;
+                                            if (opdItem?.Description == "Clinic Book") totalHospitalFeeAmount += 130;
                                         }
 
                                     }
