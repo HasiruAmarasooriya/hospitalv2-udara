@@ -1807,7 +1807,7 @@ namespace HospitalMgrSystem.Service.ChannelingSchedule
                 result.totalHospitalFeeAmount = GetTotalHospitalFeeAmount(id, result.HospitalFee);
                 result.totalDoctorFeeAmount = GetTotalDoctorFeeAmount(id, result.HospitalFee);
                 result.doctorPaidAppoinment = GetDoctorPaidAppoinment(id);
-                result.actualPatientCount = result.totalPatientCount - result.totalRefundDoctorFeeCount;
+                result.actualPatientCount = result.totalPatientCount - result.totalRefundDoctorFeeCount-result.fullRefundCount;
 
                 int[] scanSpList = { 44, 13, 12 };
                 if (scanSpList.Contains(result.Consultant.Specialist.Id))

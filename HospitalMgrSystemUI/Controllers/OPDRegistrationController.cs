@@ -627,6 +627,51 @@ namespace HospitalMgrSystemUI.Controllers
                             drugusItem.Amount = drugusItem.Qty * drugusItem.Price;
                             drugusItem.IsRefund = 0;
                             new OPDService().CreateOPDDrugus(drugusItem);
+                            int DrugID = drugusItem.DrugId;
+                            int refnumber = 0;
+                            int batchnumber = 0;
+                            var TranLog = new DrugsService().GetDrugDetailsById(DrugID);
+                            decimal Qty = drugusItem.Qty;
+
+                            if (TranLog == null)
+                            {
+                                var stockTran = new stockTransaction
+                                {
+                                    BillId = OPDobj.Id,
+                                    DrugIdRef = drugusItem.DrugId,
+                                    Qty = -Qty,
+                                    TranType = StoreTranMethod.OPD_Out,
+                                    RefNumber = "OPD_" + drugusItem.opdId,
+                                    Remark = "OPD_Drug_Issue",
+                                    BatchNumber = 0.ToString(),
+                                    CreateUser = Convert.ToInt32(userIdCookie),
+                                    ModifiedUser = Convert.ToInt32(userIdCookie),
+                                    CreateDate = DateTime.Now,
+                                    ModifiedDate = DateTime.Now
+                                };
+                                new StockService().LogTransaction(stockTran);
+
+                            }
+                            else
+                            {
+                                var stockTran = new stockTransaction
+                                {
+                                    BillId = OPDobj.Id,
+                                    DrugIdRef = drugusItem.DrugId,
+                                    Qty = -Qty,
+                                    TranType = StoreTranMethod.OPD_Out,
+                                    RefNumber = "OPD_" + drugusItem.opdId,
+                                    Remark = "OPD_Drug_Issue",
+                                    BatchNumber = TranLog.BatchNumber,
+                                    CreateUser = Convert.ToInt32(userIdCookie),
+                                    ModifiedUser = Convert.ToInt32(userIdCookie),
+                                    CreateDate = DateTime.Now,
+                                    ModifiedDate = DateTime.Now
+                                };
+                                new StockService().LogTransaction(stockTran);
+
+
+                            }
                         }
 
                         OPD opdDataForQr = new OPDService().GetAllOPDByID(OPDobj.Id);
