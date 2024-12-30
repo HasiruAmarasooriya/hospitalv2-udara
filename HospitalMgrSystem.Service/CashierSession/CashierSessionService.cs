@@ -343,8 +343,8 @@ namespace HospitalMgrSystem.Service.CashierSession
 				cashierSessionAmounts.ChannelingTotalRefund = refundAmount;
 				cashierSessionAmounts.ChannelingDiscountAmount = discountAmount;
 				cashierSessionAmounts.ChannelingTotalDoctorPayment = totalDoctorPaymentAmount;
-				cashierSessionAmounts.ChannelingTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
-				cashierSessionAmounts.ChannelingTotalAmount = cashierSessionAmounts.ChannelingTotalPaidAmount + totalCashierCardAmount + totalDoctorPaymentAmount;
+				cashierSessionAmounts.ChannelingTotalPaidAmount = totalCashierCashAmount + balanceAmount;
+				cashierSessionAmounts.ChannelingTotalAmount = cashierSessionAmounts.ChannelingTotalPaidAmount + totalCashierCardAmount + totalDoctorPaymentAmount + refundAmount;
 
 
 				return cashierSessionAmounts;
@@ -386,8 +386,8 @@ namespace HospitalMgrSystem.Service.CashierSession
 				cashierSessionAmounts.OPDCashBalence = balanceAmount;
 				cashierSessionAmounts.OPDTotalRefund = refundAmount;
                 cashierSessionAmounts.OPDTotalDiscount = discountAmount;
-                cashierSessionAmounts.OPDTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
-				cashierSessionAmounts.OPDTotalAmount = cashierSessionAmounts.OPDTotalPaidAmount + totalCashierCardAmount;
+                cashierSessionAmounts.OPDTotalPaidAmount = totalCashierCashAmount + balanceAmount;
+				cashierSessionAmounts.OPDTotalAmount = cashierSessionAmounts.OPDTotalPaidAmount + totalCashierCardAmount + refundAmount;
 
 
 				return cashierSessionAmounts;
@@ -430,8 +430,8 @@ namespace HospitalMgrSystem.Service.CashierSession
 				cashierSessionAmounts.XRAYCashBalence = balanceAmount;
 				cashierSessionAmounts.XRAYTotalRefund = refundAmount;
 				cashierSessionAmounts.XrayTotalDiscountAmount = discountAmount;
-				cashierSessionAmounts.XRAYTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
-				cashierSessionAmounts.XRAYTotalAmount = cashierSessionAmounts.XRAYTotalPaidAmount + totalCashierCardAmount;
+				cashierSessionAmounts.XRAYTotalPaidAmount = totalCashierCashAmount + balanceAmount ;
+				cashierSessionAmounts.XRAYTotalAmount = cashierSessionAmounts.XRAYTotalPaidAmount + totalCashierCardAmount + refundAmount;
 
 
 				return cashierSessionAmounts;
@@ -473,8 +473,8 @@ namespace HospitalMgrSystem.Service.CashierSession
 				cashierSessionAmounts.OtherCashBalence = balanceAmount;
 				cashierSessionAmounts.OtherTotalRefund = refundAmount;
 				cashierSessionAmounts.OtherTotalDiscountAmount = discountAmount;
-                cashierSessionAmounts.OtherTotalPaidAmount = totalCashierCashAmount + balanceAmount + refundAmount;
-				cashierSessionAmounts.OtherTotalAmount = cashierSessionAmounts.OtherTotalPaidAmount + totalCashierCardAmount;
+                cashierSessionAmounts.OtherTotalPaidAmount = totalCashierCashAmount + balanceAmount ;
+				cashierSessionAmounts.OtherTotalAmount = cashierSessionAmounts.OtherTotalPaidAmount + totalCashierCardAmount + refundAmount;
 
 
 				return cashierSessionAmounts;
