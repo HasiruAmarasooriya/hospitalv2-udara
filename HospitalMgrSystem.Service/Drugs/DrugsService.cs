@@ -239,10 +239,21 @@ namespace HospitalMgrSystem.Service.Drugs
 
         //        //// Execute the stored procedure and map the result to the DTO
         //        //var drugInfo = dbContext.Set<LogTranDTO>();
-                    
+
         //        //return 1;
         //    }
         //}
+
+        public Drug? GetDrugByName(string drugName)
+        {
+            using (var dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                return dbContext.Drugs
+                                .Include(d => d.DrugsCategory)
+                                .Include(d => d.DrugsSubCategory)
+                                .FirstOrDefault(d => d.DrugName.ToUpper() == drugName && d.Status == 0);
+            }
+        }
 
 
 
