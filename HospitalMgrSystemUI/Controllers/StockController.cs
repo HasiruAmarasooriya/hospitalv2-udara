@@ -152,7 +152,7 @@ namespace HospitalMgrSystemUI.Controllers
                         Id = item.DrugID,
                         SNo = drug.SNo,
                         DrugName = drug.DrugName,
-                        Price = drug.Price,
+                        Price = item.Price + ((decimal)item.Price / 100) * 30,
                         ModifiedUser = drug.ModifiedUser,
                         DrugsCategoryId = drug.DrugsCategoryId,
                         DrugsSubCategoryId = drug.DrugsSubCategoryId,
