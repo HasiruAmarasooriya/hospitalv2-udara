@@ -146,7 +146,7 @@
 	<div class="col-12">
 		<div class="card">
 			<div class="card-body">
-				<h4 class="card-title">OPD Details (@Model.listOPDTbDtoSp!.Count)</h4>
+                <h4 class="card-title">OPD Details @(Model.listOPDTbDtoSp?.Count ?? 0)</h4>
 				<input type="hidden" id="isPOP" asp-for="isPoP">
 				<input type="hidden" id="isId" asp-for="opdId">
 				<div class="table-responsive">
