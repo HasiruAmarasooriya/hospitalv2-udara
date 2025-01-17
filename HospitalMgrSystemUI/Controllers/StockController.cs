@@ -227,7 +227,7 @@ namespace HospitalMgrSystemUI.Controllers
 
             return PartialView("_PartialAddPR", itemTranfer);
         }
-
+        [HttpPost]
         public IActionResult AddPurchaseRequest([FromBody] RequestDto stockRequestDto)
         {
             var userId = HttpContext.Request.Cookies["UserIdCookie"];

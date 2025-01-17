@@ -23,7 +23,9 @@ namespace HospitalMgrSystemUI.Controllers
         {
             CashierSessionDto cashierSessionDto = new CashierSessionDto();
             CashierSessionService cashierSessionService = new CashierSessionService();
-            
+            var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
+            int userID = Convert.ToInt32(userIdCookie);
+
             try
             {
                 cashierSessionDto.printDate = DateTime.Now;
@@ -31,8 +33,12 @@ namespace HospitalMgrSystemUI.Controllers
                 cashierSessionDto.CashierPaymentData = cashierSessionService.GetCashierSessionPaymentData(cashierSessionDtoData.sessionId);
                 cashierSessionDto.ForwardBookingData = cashierSessionService.GetForwardBookingDataByCashierSessionId(cashierSessionDtoData.sessionId);
                 cashierSessionDto.AmountOfForwardBookingDto = cashierSessionService.GetTotalAmountOfForwardBookingByCashierSessionId(cashierSessionDtoData.sessionId);
+                if (userID == cashierSessionDto.cashierSession.userID)
+                {
+                    cashierSessionService.ProcessSessionToQbbok(cashierSessionDtoData.sessionId);
+                }
 
-				return PartialView("_PartialViewSummary", cashierSessionDto);
+                return PartialView("_PartialViewSummary", cashierSessionDto);
             }
             catch (Exception e)
             {
@@ -46,12 +52,14 @@ namespace HospitalMgrSystemUI.Controllers
         {
             var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
             CashierSessionDto cashierSessionDto = new CashierSessionDto();
+            CashierSessionService cashierSessionService = new CashierSessionService();
             int userID = Convert.ToInt32(userIdCookie);
             if (id > 0)
             {
                 cashierSessionDto.cashierSession = GetCashierSessionById(id);
                 cashierSessionDto.sessionDate = cashierSessionDto.cashierSession.StartingTime;
                 cashierSessionDto.user = cashierSessionDto.cashierSession.User;
+               /* cashierSessionService.ProcessSessionToQbbok(id);*/
                 return PartialView("_PartialAddCashierSession", cashierSessionDto);
             }
             else

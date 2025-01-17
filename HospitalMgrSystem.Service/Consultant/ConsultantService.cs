@@ -88,7 +88,7 @@ namespace HospitalMgrSystem.Service.Consultant
             mtList = dbContext.Consultants
 	            .Include(c => c.Specialist)
 	            .Where(o => o.Status == 0)
-	            .OrderByDescending(o => o.Id)
+	            .OrderByDescending(o => o.Name)
 	            .ToList();
 
             return mtList;

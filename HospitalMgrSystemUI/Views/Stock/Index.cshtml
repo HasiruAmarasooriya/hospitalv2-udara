@@ -1068,8 +1068,8 @@
             };
 
             $.ajax({
-                url: 'Stock/AddPurchaseRequest',
                 type: 'POST',
+                url: '/Stock/AddPurchaseRequest',
                 contentType: 'application/json',
                 data: JSON.stringify(opdDtoObject),
                 success: function (response) {
