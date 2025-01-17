@@ -1,7 +1,10 @@
-﻿using HospitalMgrSystem.Model;
+﻿using HospitalMgrSystem.DataAccess;
+using HospitalMgrSystem.Model;
 using HospitalMgrSystem.Model.DTO;
 using HospitalMgrSystem.Model.Enums;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace HospitalMgrSystem.Service.CashierSession
 {
@@ -625,6 +628,161 @@ namespace HospitalMgrSystem.Service.CashierSession
 				return result;
 			}
 		}
+        public List<ChannelingPaidReport> GetAllChannelingPaidBySessionId(int sessionId)
+        {
+            using var context = new HospitalDBContext();
+            var reportData = new List<ChannelingPaidReport>();
 
-	}
+            reportData = context.Set<ChannelingPaidReport>()
+                .FromSqlRaw("EXEC GetAllChannelingPaidReportBySessionId @Id = {0}", sessionId)
+                .ToList();
+
+            return reportData;
+        }
+		public List<Model.OtherTransactions> PaymentDetailsOtherIcomeBySessionId(int sessionId)
+		{
+			Model.CashierSession cashierSession = new Model.CashierSession();
+
+			using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+			{
+	
+
+
+
+				List<Model.OtherTransactions> otherServiceList = dbContext.OtherTransactions.Where(o => o.Status == CommonStatus.Active && o.InvoiceType == InvoiceType.OTHER_INCOME && o.SessionID == sessionId).ToList();
+				return otherServiceList;
+
+			}
+		
+		}
+       public void ProcessSessionToQbbok(int sessionId)
+		  {
+			var cashierSession = GetCashierSessionPaymentData(sessionId);
+
+			var fowardBoking = GetTotalAmountOfForwardBookingByCashierSessionId(sessionId);
+			var channeling = GetAllChannelingPaidBySessionId(sessionId);
+			var fowardBooking = GetForwardBookingDataByCashierSessionId(sessionId);
+			var otherIncome = PaymentDetailsOtherIcomeBySessionId(sessionId);
+            var paymentDataList = new List<object>();
+            // Send data for each payment type
+            foreach (var item in channeling)
+            {
+				if(item.TotalPaidAmount > 0) 
+				{
+                    paymentDataList.Add(new
+                    {
+                        Id = 117,
+                        name = "CASHIER - CHANNELING",
+                        InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                        ProductOrService = item.DocName,
+                        Rate = item.TotalPaidAmount,
+                        Amount = item.TotalPaidAmount
+                    });
+                }
+            
+            }
+            foreach (var item in fowardBooking)
+            {
+				if(item.PaidAmount>0)
+				{
+                    paymentDataList.Add(new
+                    {
+                        Id = 117,
+                        name = "CASHIER - CHANNELING",
+                        InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                        ProductOrService = "Foward Booking" + item.DoctorName,
+                        Rate = item.PaidAmount,
+                        Amount = item.PaidAmount
+                    });
+                }
+                
+            }
+            foreach (var item in otherIncome)
+            {
+				if (item.Amount > 0)
+				{
+                    paymentDataList.Add(new
+                    {
+                        Id = 117,
+                        name = "CASHIER - CHANNELING",
+                        InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                        ProductOrService = "Foward Booking" + item.Description,
+                        Rate = item.Amount,
+                        Amount = item.Amount
+                    });
+                }
+                
+            }
+			if (cashierSession.OPDTotalAmount > 0)
+			{
+                paymentDataList.Add(new
+                {
+                    Id = 117,
+                    name = "CASHIER - OPD",
+                    InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                    ProductOrService = "MEDICAL - OPD PROCEDURE",
+                    Rate = cashierSession.OPDTotalAmount,
+                    Amount = cashierSession.OPDTotalAmount
+                });
+            }
+
+			if (cashierSession.XRAYTotalAmount > 0) 
+			{
+                paymentDataList.Add(new
+                {
+                    Id = 117,
+                    name = "CASHIER - X-RAY",
+                    InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                    ProductOrService = "X RAY INCOME",
+                    Rate = cashierSession.XRAYTotalAmount,
+                    Amount = cashierSession.XRAYTotalAmount
+                });
+            }
+           
+            /*  SendToZapier(new
+              {
+                  Id = 117,
+                  name = "CASHIER - CHANNELING",
+                  InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                  ProductOrService = "MORNING & NIGHT",
+                  Rate = cashierSession.ChannelingTotalAmount,
+                  Amount = cashierSession.ChannelingTotalAmount
+              });*/
+
+            paymentDataList.Add(new
+            {
+                Id = 117,
+                name = "CASHIER - Other",
+                InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                ProductOrService = "Other",
+                Rate = cashierSession.OtherTotalAmount,
+                Amount = cashierSession.OtherTotalAmount
+            });
+           
+            SendToZapier(paymentDataList);
+        }
+        private void SendToZapier(object data)
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var json = JsonConvert.SerializeObject(data);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    /*var response = client.PostAsync("https://hooks.zapier.com/hooks/catch/21229915/2z6nsqa", content).Result;*/
+					var response = 200;
+                    if (response == 200)
+                    {
+                        Console.WriteLine($"Failed to send data to Zapier. Status Code: {0}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending data to Zapier: {ex.Message}");
+            }
+        }
+
+    }
 }

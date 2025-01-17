@@ -8,6 +8,10 @@
 @inject IConfiguration Configuration
 @section Styles{
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
+
+
     <style>
         .select2-selection__rendered {
             line-height: 31px !important;
@@ -181,7 +185,7 @@
                 <h4 class="card-title">OPD Store Item/Drug </h4>
                 <div class="row"></div>
                 <div class="table-responsive">
-                    <table id="myTable" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                    <table id="myTable1" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th>Drug Name</th>
@@ -227,7 +231,7 @@
                 <h4 class="card-title">OPD Drugs Transactions </h4>
                 <div class="row"></div>
                 <div class="table-responsive">
-                    <table id="myTable" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                    <table id="myTable2" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th>Drug Name</th>
@@ -273,7 +277,7 @@
                 <h4 class="card-title">ETU/Addmission Store Item/Drug</h4>
                 <div class="row"></div>
                 <div class="table-responsive">
-                    <table id="myTable" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                    <table id="myTable3" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th>Drug Name</th>
@@ -321,7 +325,7 @@
                 <h4 class="card-title">ETU/Addmission Item/Drug Tranactions</h4>
                 <div class="row"></div>
                 <div class="table-responsive">
-                    <table id="myTable" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                    <table id="myTable4" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th>Drug Name</th>
@@ -400,7 +404,7 @@
                 <div class="card-body">
                 <h4 class="card-title">Item/Drug Purchase Requisition</h4>
                     <div class="table-responsive">
-                        <table id="grnTable" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                        <table id="grnTable1" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th>Request ID</th>
@@ -472,111 +476,51 @@
 
 
 @section scripts{
-
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        
-
+       
    <script>
-        // $(document).on('change', '#requestId', function () {
-        //     var requestId = $(this).val();
-        //     console.log('Selected Request ID:', requestId);
+          
+        $(document).ready(function () {
+            $('#myTable').DataTable({
+                responsive: true,
+                paging: true, // Enable pagination
+                searching: true, // Enable search functionality
+                ordering: true, // Enable column sorting
+            });
+            $('#myTable1').DataTable({
+               responsive: true,
+               paging: true, // Enable pagination
+               searching: true, // Enable search functionality
+               ordering: true, // Enable column sorting
+             });
+            $('#myTable2').DataTable({
+              responsive: true,
+              paging: true, // Enable pagination
+              searching: true, // Enable search functionality
+              ordering: true, // Enable column sorting
+             });
+            $('#myTable3').DataTable({
+               responsive: true,
+               paging: true, // Enable pagination
+               searching: true, // Enable search functionality
+               ordering: true, // Enable column sorting
+             });
+            $('#myTable4').DataTable({
+              responsive: true,
+              paging: true, // Enable pagination
+              searching: true, // Enable search functionality
+              ordering: true, // Enable column sorting
+             });
+           $('#grnTable').DataTable({
+               responsive: true,
+               paging: true, // Enable pagination
+               searching: true, // Enable search functionality
+               ordering: true, // Enable column sorting
+            });
+           
+        });
+    
 
-        //     if (requestId) {
-        //         $.ajax({
-        //             url: '/Stock/RequestDetails', Replace with your controller URL
-        //             type: 'POST',
-        //             data: { requestId: requestId },
-        //             success: function (response) {
-        //                 console.log('Response:', response);
-
-        //                 Check if data was returned successfully
-        //                 if (response && response.data) {
-        //                     var tableBody = $('#tblBodyPayments2');
-        //                     var drugData = [];
-        //                     tableBody.empty(); Clear existing rows
-
-        //                     Loop through the response data and populate the table
-        //                     $.each(response.data, function (index, item) {
-        //                         var row = `
-        //                             <tr>
-        //                                         <td>${item.drugName}</td>
-        //                                         <td>${item.quantity}</td>
-        //                             </tr>
-        //                         `;
-        //                         tableBody.append(row);
-        //                         drugData.push({
-        //                             DrugId: item.drugID,
-        //                             Quantity: item.quantity
-                                
-        //                         });
-                            
-        //                     });
-        //                     console.log('DrufData:', drugData);
-        //                     Optionally update the drug dropdown
-        //                     var drugSelect = $('#drugId');
-        //                     drugSelect.empty(); Clear existing options
-        //                     drugSelect.append('<option value="">Select Drug</option>'); Default option
-        //                     $.each(response.data, function (index, item) {
-        //                         drugSelect.append('<option value="' + item.DrugID + '">' + item.DrugName + '</option>');
-        //                     });
-
-        //                 } else {
-        //                     alert('No drugs found for the selected Request ID.');
-        //                 }
-        //             },
-        //             error: function () {
-        //                 alert('An error occurred while fetching the drug list.');
-        //             }
-        //         });
-        //     } else {
-        //         $('#tblBodyPayments2').empty(); Clear table if no request ID is selected
-        //         $('#drugId').empty().append('<option value="">Select Drug</option>'); Clear the drug dropdown
-        //     }
-        // });
-        // $(document).on('click', '#submitButton', function (event) {
-        //     event.preventDefault(); Prevent the default form submission
-
-        //     Collect form data
-        //     var form = $(this).closest('form');
-        //     var formData = form.serializeArray(); Serialize the form data
-        //     var drugData = [];
-
-        //     Collect drug details from the table
-        //     $('#tblBodyPayments2 tr').each(function () {
-        //         var drugName = $(this).find('td').eq(0).text().trim();
-        //         var quantity = $(this).find('td').eq(1).text().trim();
-        //         drugData.push({
-        //             DrugName: drugName,
-        //             Quantity: quantity
-        //         });
-        //     });
-
-        //     Convert serialized form data to an object
-        //     var payload = {};
-        //     formData.forEach(function (field) {
-        //         payload[field.name] = field.value;
-        //     });
-
-        //     Add drug details to the payload
-        //     payload.DrugDetails = drugData;
-        //     console.log('Response:', payload);
-        //     Submit data via AJAX
-        //     $.ajax({
-        //         url: form.attr('action'), Use the form's action attribute
-        //         type: form.attr('method'), Use the form's method attribute
-        //         contentType: 'application/json',
-        //         data: JSON.stringify(payload),
-        //         success: function (response) {
-        //             alert(response.message || 'Data saved successfully!');
-        //             Optionally reload or update modal content
-        //             location.reload();
-        //         },
-        //         error: function () {
-        //             alert('An error occurred while submitting the data.');
-        //         }
-        //     });
-        // });
-                         function select_onchange(value, element) {
+           function select_onchange(value, element) {
             const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
 
             var settings = {
@@ -1124,8 +1068,8 @@
             };
 
             $.ajax({
-                url: 'Stock/AddPurchaseRequest',
                 type: 'POST',
+                url: '/Stock/AddPurchaseRequest',
                 contentType: 'application/json',
                 data: JSON.stringify(opdDtoObject),
                 success: function (response) {

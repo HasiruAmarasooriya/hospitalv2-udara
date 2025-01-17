@@ -152,7 +152,7 @@ namespace HospitalMgrSystemUI.Controllers
                         Id = item.DrugID,
                         SNo = drug.SNo,
                         DrugName = drug.DrugName,
-                        Price = drug.Price,
+                        Price = item.Price + ((decimal)item.Price / 100) * 30,
                         ModifiedUser = drug.ModifiedUser,
                         DrugsCategoryId = drug.DrugsCategoryId,
                         DrugsSubCategoryId = drug.DrugsSubCategoryId,
@@ -227,7 +227,7 @@ namespace HospitalMgrSystemUI.Controllers
 
             return PartialView("_PartialAddPR", itemTranfer);
         }
-
+        [HttpPost]
         public IActionResult AddPurchaseRequest([FromBody] RequestDto stockRequestDto)
         {
             var userId = HttpContext.Request.Cookies["UserIdCookie"];
@@ -272,61 +272,60 @@ namespace HospitalMgrSystemUI.Controllers
         [HttpPost]
         public IActionResult CheckAndAddDrug([FromBody] DrugRequestDto drugRequest)
         {
-            List<Drug> DrugsSubCategoryList = new List<Drug>();
-            var drugService = new DrugsService();
-            if (string.IsNullOrEmpty(drugRequest.DrugName))
+            if (string.IsNullOrEmpty(drugRequest?.DrugName))
             {
                 return Json(new { success = false, message = "Drug name is required." });
             }
 
             try
             {
-                using (var httpClient = new HttpClient())
+                var normalizedDrugName = drugRequest.DrugName.Trim().ToUpper();
+                var drugService = new DrugsService();
+
+                // Check if the drug exists
+                var existingDrug = drugService.GetDrugByName(normalizedDrugName);
+
+                if (existingDrug != null)
                 {
-                    try
+                    // Drug exists
+                    return Json(new
                     {
-                        DrugsSubCategoryList = drugService.SearchDrug(drugRequest.DrugName);
-                        foreach (var item in DrugsSubCategoryList)
-                        {
-                            if (item.DrugName == drugRequest.DrugName)
-                            {
-                                return Json(new { success = true, data = new { drugId = item.Id } });
-                            }
-                        }
-
-                        // Add new drug if not found
-                        var newDrug = new Drug
-                        {
-                            SNo = "New Insert",
-                            DrugName = drugRequest.DrugName,
-                            Price = 0,
-                            CreateUser = 0,
-                            ModifiedUser =0,
-                            DrugsCategoryId = 19,
-                            DrugsSubCategoryId = 22,
-                            billingItemsType = BillingItemsType.OTHER,
-                            Qty = 0,
-                            isStock = 0,
-                            IsDiscountAvailable = true,
-                       
-                            CreateDate = DateTime.Now,
-                            Status = 0 // Or any default status
-                        };
-                        drugService.CreateDrugs(newDrug);
-
-                        return Json(new { success = true, data = new { drugId = newDrug.Id } });
-                    }
-                    catch (Exception ex)
-                    {
-                        return Json(new { success = false, message = "Error occurred: " + ex.Message });
-                    }
+                        success = true,
+                        data = new { drugId = existingDrug.Id, drugName = existingDrug.DrugName }
+                    });
                 }
+
+                // Drug does not exist, add it
+                var newDrug = new Drug
+                {
+                    SNo = "New Insert",
+                    DrugName = normalizedDrugName,
+                    Price = 0,
+                    CreateUser = 0,
+                    ModifiedUser = 0,
+                    DrugsCategoryId = 19,
+                    DrugsSubCategoryId = 22,
+                    billingItemsType = BillingItemsType.OTHER,
+                    Qty = 0,
+                    isStock = 0,
+                    IsDiscountAvailable = true,
+                    CreateDate = DateTime.Now,
+                    Status = 0
+                };
+                drugService.CreateDrugs(newDrug);
+
+                return Json(new
+                {
+                    success = true,
+                    data = new { drugId = newDrug.Id, drugName = newDrug.DrugName }
+                });
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, message = "Error occurred: " + ex.Message });
             }
         }
+
 
         public IActionResult CreateGRN()
         {
