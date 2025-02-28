@@ -1,0 +1,101 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@*@model HospitalMgrSystem.Model.Employee*@
+@{
+    Layout = null;
+}
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/Edit OPD Patient Registration</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form asp-action="CreateNewEmployee" method="post">
+        <div class="modal-body">
+            <input type="hidden" id="custId">
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="companyName">Patient</label>
+                        <select class="form-control ddlSearchList" id="dropSex">
+                            <option value="0">Select one</option>
+                            <option value="1">Pahan Sri Madusanka</option>
+                            <option value="2">Yukitha Yuthmira </option>
+                            <option value="2">Devin Fernando </option>
+
+                        </select>
+                    </div>
+                </div>
+
+
+
+
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="companyName">  Name </label>
+                        <input class="form-control " type="text" id="txtName" placeholder=" Name" />
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Age</label>
+                        <input class="form-control " type="text" id="txtAge" placeholder="Age" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Month</label>
+                        <input class="form-control " type="text" id="txtMonth" placeholder="Month" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Date</label>
+                        <input class="form-control " type="text" id="txtDate" placeholder="Date" />
+                    </div>
+                </div>
+
+
+
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Gender</label>
+                        <select class="form-control ddlSearchList" id="dropSex">
+                            <option value="0">Select one</option>
+                            <option value="1">Male</option>
+                            <option value="2">Female</option>
+
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="companyName">TelephoneNo</label>
+                        <input class="form-control " type="text" id="txtAge" placeholder="TelephoneNo" />
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="companyName">Address</label>
+                        <textarea id="txtAddress" class="form-control " cols="40" rows="3" placeholder="Address"></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+        </div>
+    </form>
+</div>
+<!-- /.modal-content -->

@@ -1,0 +1,71 @@
+WITH TransferredBatches AS (
+    SELECT DISTINCT 
+        st.BatchNumber,
+        st.DrugIdRef
+    FROM 
+        stockTransaction st
+    WHERE 
+        st.TranType = 4  -- OPD_Stock_IN
+)
+
+SELECT 
+    st.DrugIdRef AS DrugID,
+    st.BatchNumber,
+
+    -- Calculate StockIn
+    SUM(CASE 
+            WHEN st.TranType IN ( 4) THEN st.Qty  -- Main_Stock_IN, OPD_Stock_IN
+            ELSE 0 
+        END) AS StockIn,
+
+    -- Calculate StockOut
+    SUM(CASE 
+            WHEN st.TranType IN ( 5) THEN st.Qty  -- Main_Stock_Out, OPD_Drug_Issue
+            ELSE 0 
+        END) AS StockOut,
+
+    -- Calculate Available Quantity
+    SUM(CASE 
+            WHEN st.TranType IN (4) THEN st.Qty 
+            ELSE 0 
+        END) +
+    SUM(CASE 
+            WHEN st.TranType IN ( 5) THEN st.Qty 
+            ELSE 0 
+        END) AS AvailableQuantity,
+
+    -- Include Price, Expiry Date
+    g.Price,
+    g.ExpiryDate,
+    gn.SupplierName,
+
+    -- Calculate Amount (AvailableQuantity * Price)
+    (SUM(CASE 
+            WHEN st.TranType IN ( 4) THEN st.Qty 
+            ELSE 0 
+        END) +
+    SUM(CASE 
+            WHEN st.TranType IN ( 5) THEN st.Qty 
+            ELSE 0 
+        END)) * g.Price AS Amount
+
+FROM 
+    stockTransaction st
+INNER JOIN
+    GRPV g ON st.BatchNumber = g.BatchNumber AND st.DrugIdRef = g.DrugId 
+INNER JOIN
+    GRN gn ON g.GRNId = gn.Id
+
+-- Filter to include only transferred batches
+WHERE 
+    EXISTS (
+        SELECT 1 
+        FROM TransferredBatches tb
+        WHERE tb.BatchNumber = st.BatchNumber AND tb.DrugIdRef = st.DrugIdRef
+    )
+
+GROUP BY
+    st.DrugIdRef, st.BatchNumber, g.Price, g.ExpiryDate, gn.SupplierName
+
+ORDER BY
+    st.DrugIdRef, st.BatchNumber;

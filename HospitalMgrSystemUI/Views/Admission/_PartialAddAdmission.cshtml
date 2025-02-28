@@ -1,0 +1,122 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model AdmissionDto;
+@{
+    Layout = null;
+}
+
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/Edit Admission</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form asp-action="AddNewAdmission" method="post">
+       
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">B.H.T No</label>
+                        <input class="form-control" asp-for="Admissions.BHTNumber" type="text"  id="txtFullName" placeholder="Pt's Full Name" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Date Time Admission</label>
+                        <input type="text" id="date-format" asp-for="Admissions.DateAdmission" asp-format="{0:dd.MM.yyyy hh:mm}" class="form-control" placeholder="Saturday 24 June 2017 - 21:44">
+
+                    </div>
+                </div>
+                <div class="col-md-4" id="divLoader">
+                    <div class="form-group">
+                        <label for="companyName">Room No</label>
+                        <select class="GetFromAcList form-control ddlSearchList" asp-for="Admissions.RoomId" id="appbundle_items_accountdebet" style="width:100%;height:100%">
+                            <option value="0">Select Rooms</option>
+                            @foreach (var item in Model.Rooms)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="companyName">Consultant</label>
+                        <select class="form-control ddlSearchList" asp-for="Admissions.ConsultantId" id="consultants">
+                            <option value="0">Select Consultant</option>
+                            @foreach (var item in Model.Consultants)
+                            {
+                                <option value="@item.Id">@item.Name - @item.Specialist.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="companyName">Pt's Full Name'</label>
+                        <select class="form-control ddlSearchList" asp-for="Admissions.PatientId"  id="patients">
+                            <option value="0">Select Patient</option>
+                            @foreach (var item in Model.Patients)
+                            {
+                                <option value="@item.Id">@item.FullName - ( @item.NIC )</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Name of Guardian</label>
+                        <input class="form-control " type="text" id="txtTelephoneNumber" asp-for="Admissions.Guardian" placeholder="Name of Guardian" />
+                    </div>
+                </div>
+
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Temp</label>
+                        <input class="form-control " type="text" id="txtTelephoneNumber" asp-for="Admissions.Temp" placeholder="Temp" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Pulse</label>
+                        <input class="form-control " type="text" id="txtTelephoneNumber" asp-for="Admissions.Pluse" placeholder="Pulse" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Resp</label>
+                        <input class="form-control " type="text" id="txtTelephoneNumber" asp-for="Admissions.Resp" placeholder="Resp" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Weight</label>
+                        <input class="form-control " type="text" id="txtTelephoneNumber" asp-for="Admissions.Weight" placeholder="Weight" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">BP</label>
+                        <input class="form-control " type="text" id="txtTelephoneNumber" asp-for="Admissions.BP" placeholder="BP" />
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="companyName">Details</label>
+                        <textarea  class="form-control " asp-for="Admissions.Details" cols="40" rows="5" placeholder="Details"></textarea>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+        </div>
+    </form>
+</div>

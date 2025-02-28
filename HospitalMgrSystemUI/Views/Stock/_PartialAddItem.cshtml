@@ -1,0 +1,103 @@
+﻿@using Microsoft.Extensions.Configuration
+@model GRPVDto
+@inject IConfiguration Configuration
+
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/Edit</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form id="addItemForm">
+        <input type="hidden" id="custId" asp-for="ID">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="batch">Select Puchase Request</label>
+                        <select class="form-control ddlSearchList" asp-for="RequestId" id="requestId">
+                            <option value="">Puchase Request ID</option>
+                            @foreach (var request in Model.RqeuestList)
+                            {
+                                <option value="@request.RequestID">@request.RequestID</option>
+                               
+                            }
+                           
+                        </select>
+                    </div>
+                </div>
+                <div id="drugTableContainer" class="mt-3">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Drug Name</th>
+                                <th>Quantity</th>
+                                <th>Supplier</th>
+                                <th>Product Date</th>
+                                <th>Expiry Date</th>
+                                <th>Price</th>
+                                <th>Batch Number</th>
+                                <th>Serial Number</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="drugTableBody">
+                            <!-- Dynamically added rows -->
+                        </tbody>
+                    </table>
+                </div>
+               
+                <div id="TableContainer" class="mt-3">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Drug Name</th>
+                                <th>Quantity</th>
+                                <th>Supplier</th>
+                                <th>Product Date</th>
+                                <th>Expiry Date</th>
+                                <th>Price</th>
+                                <th>Batch Number</th>
+                                <th>Serial Number</th>
+                                <th>Actions</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ItemTableBody">
+                            <!-- Dynamically added rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+          
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+            <button type="button" id="submitButton" onclick="submitItems()" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+        </div>
+    </form>
+</div>
+@section scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+
+
+        $('body').on('focus', "#date-format", function () {
+
+            $('#date-format').bootstrapMaterialDatePicker({
+                time: true,
+                format: "YYYY-MM-DD hh:mm"
+
+            });
+
+        });
+
+    </script>
+
+
+
+}

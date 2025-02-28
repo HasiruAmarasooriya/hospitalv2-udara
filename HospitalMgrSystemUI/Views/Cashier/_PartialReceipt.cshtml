@@ -1,0 +1,402 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model CashierDto;
+@{
+    Layout = null;
+}
+@inject IConfiguration Configuration
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Kumudu Hospital - Invoice</title>
+    @* <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" /> *@
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            height: 297mm;
+            width: 210mm;
+            padding: 12px;
+            padding-left: 32px;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        .text-4xl {
+            font-size: 1.5rem;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+        }
+
+        .text-gray-400 {
+            color: #718096;
+        }
+
+        .pt-16 {
+            padding-top: 4rem;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .table-auto {
+            width: 100%;
+        }
+
+        .border-b-2 {
+            border-bottom-width: 2px;
+        }
+
+        .h-10 {
+            height: 2.5rem;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .mt-5 {
+            margin-top: 1.25rem;
+        }
+
+        .justify-end {
+            justify-content: flex-end;
+        }
+
+        .pt-4 {
+            padding-top: 1rem;
+        }
+
+        .text-xl {
+            font-size: 1.25rem;
+        }
+
+        .font-bold {
+            font-weight: bold;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .flex-row {
+            flex-direction: row;
+        }
+
+        .font-normal {
+            font-weight: normal;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table tbody tr:nth-child(odd) {
+            background-color: #fff;
+        }
+
+        .table thead {
+            border-bottom: 2px solid #ddd;
+        }
+
+        .table .text-right {
+            text-align: right;
+        }
+
+        .table .text-center {
+            text-align: center;
+        }
+
+        /* Additional spacing */
+        .mt-10 {
+            margin-top: 2.5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container h-[297mm] w-[210mm] p-12 pl-32">
+    <div class="flex justify-between" style="margin: auto">
+        <div style="display: flex; align-items: center">
+            <img src="https://kumuduhospital.com/assets/images/kumudu_logo2.jpg"/>
+            <div style="padding-left: 20px; text-align: center; margin-left: 100px;">
+                <p class="pb-2 text-4xl" style="margin: auto; font-weight: bold">
+                    KUMUDU HOSPITAL
+                </p>
+                <p class="text-sm text-gray-400"
+                   style="margin-top: 10px; margin-bottom: auto">
+                    No 48, Kandy Road, Mathale,
+                </p>
+                <p class="text-sm text-gray-400"
+                   style="margin-top: 10px; margin-bottom: auto">
+                    Tel: 066 22 22 244 | 066 22 30 027
+                </p>
+
+                @if (Model != null)
+                {
+                    <input type="hidden" id="opid" asp-for="PreID" value="@Model.PreID">
+                    @if (Model.cashierBillingItemDtoList != null)
+                    {
+                        @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
+                        {
+                            @if (Model.opd != null && Model.opd.Description == "X-RAY")
+                            {
+                                <p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">X-RAY Invoice</p>
+                            }
+                            else
+                            {
+                                <p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">OPD Invoice</p>
+                            }
+                        }
+
+                        @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
+                        {
+                            <p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">Channeling Invoice</p>
+                        }
+
+                        @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
+                        {
+                            <p class="pb-3 text-4xl" style="margin: auto; margin-top: 5px">Admission Invoice</p>
+                        }
+                    }
+
+                    <p style="margin: auto; margin-top: 5px">@Model.invoice.ModifiedDate</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-between pt-16">
+        @if (Model != null)
+        {
+            <div>
+                <p class="font-bold" style="margin: auto; margin-top: 10px">
+                    Name: <span style="font-weight: normal;">@Model.customerName</span>
+                </p>
+                <p class="font-bold text-sm" style="margin: auto; margin-top: 10px">
+                    Contact Number: <span style="font-weight: normal;">@Model.patientContactNo</span>
+                </p>
+                <p class="font-bold text-sm" style="margin: auto; margin-top: 10px">
+                    Doctor Name: <span style="font-weight: normal;">@Model.consaltantName</span>
+                </p>
+                <p class="font-bold text-sm" style="margin: auto; margin-top: 10px">
+                    NIC: <span style="font-weight: normal;">@Model.patientNIC</span>
+                </p>
+                <p class="text-sm font-bold" style="margin: auto; margin-top: 10px">
+                    Ref No. <span class="pl-1 font-normal">@Model.opd.Id</span>
+                </p>
+            </div>
+        }
+    </div>
+
+    @if (Model?.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
+        {
+            @if (Model != null && Model.ScanItem != null)
+            {
+                /* if (Model.ScanItem.ItemName != "Channelling")
+                {*/
+                <div class="pt-5">
+                    <!-- Scan Items Table -->
+                    <table class="table">
+                        <tr>
+                            <td rowspan="2" class="text-center">@(Model.ScanItem.ItemName)</td>
+                            <td class="text-center">ConsultantFee</td>
+                            <td class="text-center">HospitalFee</td>
+                            <td class="text-center">Amount</td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">Rs. @((Model.ScanItem!.DoctorFee).ToString("0.00"))</td>
+                            <td class="text-center">Rs. @((Model.ScanItem!.HospitalFee).ToString("0.00"))</td>
+                            <td class="text-center">Rs. @((Model.ScanItem!.HospitalFee + Model.ScanItem!.DoctorFee).ToString("0.00"))</td>
+                        </tr>
+                    </table>
+                </div>
+
+            }   
+
+    }
+
+    @if (Model?.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
+    {
+        @if (Model != null && Model.OPDDrugusListInvoiced.Count > 0)
+        {
+            <div class="pt-5">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Items</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-right">Price</th>
+                        <th class="text-right">Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    @* For OPD Paid Items *@
+                    @foreach (var item in Model.OPDDrugusListInvoiced)
+                    {
+                        <tr>
+                            <td>@item.Drug?.DrugName</td>
+                            <td class="text-center">@item.Qty</td>
+                            <td class="text-right">@item.Price.ToString("0.00")</td>
+                            <td class="text-right">@item.Amount.ToString("0.00")</td>
+                        </tr>
+                    }
+
+                    @* For Invenstigation Paid Items *@
+                    @if (Model.OPDInvestigationList.Count > 0)
+                    {
+                        @foreach (var item in Model.OPDInvestigationList)
+                        {
+                            <tr>
+                                <td>@item.Investigation?.InvestigationName</td>
+                                <td class="text-center">@item.Qty</td>
+                                <td class="text-right">@item.Price.ToString("0.00")</td>
+                                <td class="text-right">@item.Amount.ToString("0.00")</td>
+                            </tr>
+                        }
+                    }
+
+                    @* For refund items *@
+                    @if (Model.cashierRemoveBillingItemDtoList.Count > 0)
+                    {
+                        @foreach (var item in Model.cashierRemoveBillingItemDtoList)
+                        {
+                            <tr>
+                                <td>
+                                    @item.billingItemName <span class="text-sm font-bold">(REFUND)</span>
+                                </td>
+                                <td class="text-center">@item.qty</td>
+                                <td class="text-right">- @item.price.ToString("0.00")</td>
+                                <td class="text-right">- @item.amount.ToString("0.00")</td>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <div class="font-bold text-sm mt-5" style="margin: auto; margin-top: 10px">
+            Service Charges: <span style="font-weight: normal;">Rs. @Model?.hospitalFee.ToString("0.00")</span>
+        </div>
+    }
+
+
+    @if (Model != null)
+    {
+        <div class="pt-16">
+            <table class="w-full table-auto text-sm">
+                <thead class="border-b-2">
+                <tr class="h-10 text-left">
+                    <th>Subtotal RS.</th>
+                    <th>Discount RS.</th>
+                    <th>Total Amount RS.</th>
+                    <th>Cash Payment RS.</th>
+                    <th class="text-right">Balance RS.</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="h-10">
+                    <td>@Model.preSubtotal.ToString("0.00")</td>
+                    <td>@Model.discount.ToString("0.00")</td>
+                    <td>@Model.preTotal.ToString("0.00")</td>
+                    <td>@Model.totalPaymentPaidAmount.ToString("0.00")</td>
+                    <td class="text-right font-bold">@Model.total.ToString("0.00")</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex-row justify-end text-right pt-4">
+            <div class="text-xl" style="margin-top: 200px;">____________________</div>
+            <div style="margin-top: 20px; margin-right: 65px;">Signature</div>
+        </div>
+
+        @* <hr class="mt-5" />
+
+            <div class="flex-row justify-end text-right pt-4">
+                <div>Subtotal</div>
+                <div class="text-xl">@Model.preSubtotal.ToString("0.00") LKR</div>
+            </div>
+            <div class="flex-row justify-end text-right pt-4">
+                <div>Discount</div>
+                <div class="text-xl">@Model.discount.ToString("0.00") LKR</div>
+            </div>
+            <div class="flex-row justify-end text-right pt-4">
+                <div>Total Amount</div>
+                <div class="text-xl">@Model.preTotal.ToString("0.00") LKR</div>
+            </div>
+            <div class="flex-row justify-end text-right pt-4">
+                <div>Cash Payment</div>
+                <div class="text-xl">@Model.totalPaymentPaidAmount.ToString("0.00") LKR</div>
+            </div>
+            <div class="flex-row justify-end text-right pt-4">
+                <div>Balance</div>
+                <div class="text-xl font-bold">@Model.total.ToString("0.00") LKR</div>
+            </div> *@
+    }
+
+    <p class="text-center font-bold text-xl">Thank you for your cooperation!</p>
+</div>
+
+<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+<script type="text/javascript">
+        // Call the generateQRCode function when the page loads
+        document.addEventListener("DOMContentLoaded", function () {
+            generateQRCode(50);
+        });
+
+        function generateQRCode(size) {
+            var preID = document.getElementById("preID").value;
+            console.log("pre ID is" + preID);
+            var data = preID;
+            const qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: data,
+                width: size,
+                height: size,
+            });
+        }
+
+        // Rest of your script...
+    </script>
+</body>
+</html>

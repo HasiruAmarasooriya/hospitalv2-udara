@@ -1,0 +1,112 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model EmployeeDto
+@{
+    Layout = null;
+}
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/Edit Employee</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form asp-action="CreateNewEmployee" method="post">
+        <div class="modal-body">
+            <input type="hidden" id="custId" asp-for="employee.Id">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="companyName"> First Name </label>
+                        <input class="form-control " asp-for="employee.FullName" type="text" id="txtFullName" placeholder=" First Name" />
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="companyName"> Last Name </label>
+                        <input class="form-control " asp-for="employee.FullName" type="text" id="txtFullName" placeholder=" Last Name" />
+                    </div>
+                </div>
+
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">NIV</label>
+                        <input class="form-control " asp-for="employee.NIC" type="text" id="txtNIC" placeholder="123456789V" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Mobile No</label>
+                        <input class="form-control " asp-for="employee.MobileNumber" type="text" id="txtMobileNumber" placeholder="Mobile Number" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Trlephone No</label>
+                        <input class="form-control " asp-for="employee.TelephoneNumber" type="text" id="txtTelephoneNumber" placeholder="Telephone Number" />
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">DOB</label>
+                        <input type="text" id="date-format" asp-format="{0:dd.MM.yyyy hh:mm}" class="form-control" asp-for="employee.DOB" placeholder="Saturday 24 June 2017 - 21:44">
+
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Sex</label>
+                        <select class="form-control ddlSearchList" asp-for="employee.Sex" id="dropSex">
+                            <option value="0">Select one</option>
+                            <option value="1">Male</option>
+                            <option value="2">Female</option>
+
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Religion</label>
+                        <select class="form-control ddlSearchList" asp-for="employee.Religion" id="dropReligion">
+                            <option>Select one</option>
+                            <option value="1">Buddhism</option>
+                            <option value="2">Hindus</option>
+                            <option value="3">Muslims </option>
+                            <option value="3">Christians</option>
+                            <option value="4">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Nationality</label>
+                        <select class="form-control ddlSearchList" asp-for="employee.Nationality" id="cars">
+                            <option>Select one</option>
+                            <option value="1">Sri Lankan</option>
+                            <option value="2">English</option>
+                            <option value="3">Maldivian</option>
+                            <option value="4">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="companyName">Address</label>
+                        <textarea id="txtAddress" class="form-control " asp-for="employee.Address" cols="40" rows="5" placeholder="Address"></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+        </div>
+    </form>
+</div>
+<!-- /.modal-content -->

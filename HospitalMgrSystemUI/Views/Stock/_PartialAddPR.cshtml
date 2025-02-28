@@ -1,0 +1,101 @@
+﻿@using Microsoft.Extensions.Configuration
+@model PurchaseRequestDto
+@inject IConfiguration Configuration
+
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/Edit Purchase Requisition</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form id="CreatePurchaseRquest" >
+        <input type="hidden" id="custId" asp-for="ID">
+        <div class="modal-body">
+            <div class="row">
+               @* <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="batch">Drug</label>
+                        <select class="form-control ddlSearchList" asp-for="DrugID" id="drugId">
+                            <option value="">Select Drug</option>
+                            @foreach (var item in Model.drugList)
+                            {
+                                <option value="@item.Id">@item.DrugName</option>
+                            }
+                        </select>
+                    </div>
+                </div>*@
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="drugName">Drug Name</label>
+                        <input type="text" class="form-control" id="drugName" placeholder="Enter Drug Name">
+                       
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Quantity</label>
+                        <input class="form-control" type="text" asp-for="Qty" id="txtQty" placeholder="Quantity" />
+                    </div>
+                </div>
+
+                
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group text-center">
+                        <br>
+                        @* <button type="button" id="addButton" class="btn btn-success waves-effect" style="width:100%" onclick="addDrugusItem()">Add</button> *@
+                        <button type="button" id="addButton" class="btn btn-success waves-effect" style="width:100%" onclick="checkAndAddDrug()">Add</button>
+                        
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <table id="myTable2" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+
+                                <th data-orderable="true">Drugs Name</th>
+                                <th>Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBodyPayments2">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+            <button type="button" class="btn waves-effect btn-primary" onclick="submitDrugusItems()"><i class="fa fa-save"></i>&nbsp;Save</button>
+        </div>
+    </form>
+</div>
+@section scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+
+
+        $('body').on('focus', "#date-format", function () {
+
+            $('#date-format').bootstrapMaterialDatePicker({
+                time: true,
+                format: "YYYY-MM-DD hh:mm"
+
+            });
+
+        });
+        
+
+    </script>
+
+
+
+}

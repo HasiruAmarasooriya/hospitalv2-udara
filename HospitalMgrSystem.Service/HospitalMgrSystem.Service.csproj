@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net6.0</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.11" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HospitalMgrSystem.DataAccess\HospitalMgrSystem.DataAccess.csproj" />
+    <ProjectReference Include="..\HospitalMgrSystem.Model\HospitalMgrSystem.Model.csproj" />
+	<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="7.0.11" />
+	<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />  
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ChannelingSchedule\" />
+  </ItemGroup>
+
+</Project>

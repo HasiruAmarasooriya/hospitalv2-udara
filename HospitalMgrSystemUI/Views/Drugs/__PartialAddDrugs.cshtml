@@ -1,0 +1,142 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model DrugsDto
+@{
+    Layout = null;
+}
+@inject IConfiguration Configuration
+
+<script type="text/javascript">
+        function select_onchange(value) {
+            const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+            var settings = {
+                "url": commonUrl + "Drugs/GetAllDrugsSubCategoryById?CategoryID=" + value,
+                "method": "GET",
+                "headers": {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+            };
+
+            $.ajax(settings).done(function (response) {
+                console.log(response);
+                const select = document.querySelector('#dropSubCategory');
+                
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+
+                for (let item of response) {
+                    const option = document.createElement('option');
+                    option.value = item.drugsSubCategoryId;
+                    option.text = item.drugsSubCategoryName;
+                    select.add(option);
+                }
+            });
+        }
+
+        function onChangeDiscount() {
+            var checkbox = document.getElementById("discount");
+            var discountApplied = !!checkbox.checked;
+
+            // Update the hidden input field or property bound to asp-for="discountEnabled"
+            document.getElementById("discountEnabled").value = discountApplied;
+        }
+
+    </script>
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/Edit</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form asp-action="AddNewDrugs" method="post">
+        <input type="hidden" id="custId" asp-for="Drug.Id">
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="companyName">SNo</label>
+                        <input class="form-control " type="text" asp-for="Drug.SNo" id="txtFullName" placeholder="S/ No" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="companyName">Category</label>
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange(this.value);" asp-for="Drug.DrugsCategoryId" id="dropCategory">
+                        <option value="">Please Select</option>
+                        @foreach (var item in Model.DrugsCategory)
+                        {
+                            <option value="@item.DrugsCategoryId">@item.Category</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="companyName">Sub Category</label>
+                        <select class="form-control ddlSearchList" asp-for="Drug.DrugsSubCategoryId" id="dropSubCategory">
+                        <option value="">Please Select</option>
+
+                            @if(Model.DrugsSubCategory != null){
+                                @foreach (var item in Model.DrugsSubCategory)
+                                {
+                                    <option value="@item.DrugsSubCategoryId">@item.DrugsSubCategoryName</option>
+                                }
+                            }
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="companyName">Name</label>
+                        <input class="form-control " type="text" id="txtTelephoneNumber" asp-for="Drug.DrugName" placeholder="Eg:Injection Eregometrine" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    
+	                <input class="form-check-input" type="checkbox" asp-for="Drug.IsDiscountAvailable" id="discount" name="discount" onchange="onChangeDiscount()"/>
+
+                    <label class="form-check-label" for="discount">Apply Discount</label>
+
+                    <!-- Hidden input for discountEnabled -->
+                    <input type="hidden" asp-for="Drug.IsDiscountAvailable" id="discountEnabled"/>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="companyName">Price</label>
+                        <input class="form-control " type="text" id="txtTelephoneNumber" asp-for="Drug.Price" placeholder="Price" />
+                </div>
+            </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">ReStockLevel</label>
+                        <input class="form-control " type="text" id="txtTelephoneNumber" asp-for="Drug.ReStockLevel" placeholder="ReStockLevel" />
+                    </div>
+                </div>
+
+
+
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="companyName">Description</label>
+                        <textarea id="txtAddress" class="form-control " cols="40" rows="5" asp-for="Drug.Description" placeholder="Description"></textarea>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+    </div>
+    </form>
+</div>

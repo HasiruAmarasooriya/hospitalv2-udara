@@ -1,0 +1,431 @@
+﻿@model ChannelingSheduleDto
+@{
+}
+@section Styles {
+    <style>
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+            .video-background iframe {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 100vw;
+                height: 100vh;
+                transform: translate(-50%, -50%);
+                pointer-events: none;
+            }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .left-sidebar, .topbar, .right-sidebar, .sidebar-footer, .footer {
+            display: none !important;
+        }
+
+        #main-wrapper {
+            display: flex;
+            justify-content: flex-end; /* Aligns main wrapper content to the right */
+            padding: 0;
+            margin: 0;
+        }
+
+        .page-wrapper {
+            display: flex;
+            justify-content: flex-end; /* Align content to the right */
+            margin: 0;
+            padding: 0;
+            width: 80vw; /* Full width */
+            height: 100vh; /* Full height */
+            /* background-color: rgba(251, 234, 235, 0.8); */
+            
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 63%; /* Controls the width of the content on the right */
+            height: 100vh;
+            margin-left: auto; /* Pushes content to the right */
+            /* background-color: rgba(196, 215, 255, 0.7);   */
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .select2-selection__rendered {
+            line-height: 31px !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 35px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 34px !important;
+        }
+
+
+        .card-title {
+            background: linear-gradient(135deg, #279EFF, #13005A, #00337C, #40A2E3);
+            border-radius: 20px;
+            padding: 10px 14px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height:10%;
+        }
+
+        .title {
+            font-weight: 800;
+            font-size: 23px;
+            text-align: center;
+            color: #fff;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+
+            
+
+        .logo-date {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: right;
+        }
+
+        .date {
+            font-size: 20px;
+            font-weight: bold;
+            margin-right: 10px;
+            color: #FFf;
+            background: linear-gradient(135deg, #279EFF, #13005A, #00337C, #40A2E3);
+            border-radius: 10px;
+            padding: 4px 14px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+        }
+
+        .scrollable-table {
+            max-height: 90%;
+            overflow-y: hidden;
+            /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); */
+        }
+
+        .content-wrapper table {
+            width: 100%;
+            font-size: 14px;
+            background-color: transparent;
+            border-collapse: separate;
+            border-spacing: 0px;
+            position: absolute;
+            /* Optional, if you want the container to fill the entire height */
+            
+        }
+
+        th, td {
+            padding: 0;
+            border: none;
+            align-items: center;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(67, 56, 120, 0.1);
+        }
+
+        th {
+            background-color: rgba(126, 96, 191);
+            color: white;
+            font-weight: bold;
+            font-size: 25px;
+        }
+
+        tr {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .consultant {
+            color: white;
+            font-weight: bold;
+            font-size: 32px;
+        }
+
+        .specialist {
+            background-color: rgba(67, 56, 120, 0.1);
+            color: white;
+            font-size: 27px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .time {
+            color: white;
+            font-weight: bold;
+            font-size: 27px;
+            text-align: left;
+        }
+
+        .room {
+            background-color: rgba(2, 76, 170, 0.1);
+            color: white;
+            font-weight: bold;
+            font-size: 27px;
+            text-align: right;
+        }
+
+        .status {
+            background-color: rgba(67, 56, 120, 0.1);
+            color: black;
+            font-size: 27px;
+            text-align: center;
+            color: white;
+        }
+
+        table tr {
+            transition: all 0.3s ease;
+        }
+
+        .fixed-header {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .scrollable-table::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollable-table {
+            scrollbar-width: none;
+        }
+
+        .status-icon {
+            font-weight: bold;
+            font-size: 25px;
+            margin-right: 5px;
+        }
+
+            .status-icon.active {
+                font-weight: bold;
+                font-size: 25px;
+                color: lime;
+            }
+
+            .status-icon.end {
+                font-weight: bold;
+                font-size: 25px;
+                color: red;
+            }
+
+            .status-icon.cancel {
+                font-weight: bold;
+                font-size: 25px;
+                color: orange;
+            }
+
+
+
+        .schedule-card {
+            background: linear-gradient(135deg, #13005A, #00337C, #1C82AD);
+            border-radius: 20px;
+            box-shadow: 4px 2px 8px rgba(0, 0, 0, 0.1);
+            width: 98%; /* Occupy full width of the container */
+            margin-bottom: 10px;
+            margin-left: 10px;
+            margin-right: 10px; /* Further reduced margin between cards */
+            padding: 10px; /* Reduced padding inside cards */
+            height: auto;
+            align-items: center; /* Ensure height is controlled by content */
+        }
+
+        .empty-card {
+            /* background-color: rgba(70, 53, 177, 0.8); */
+            border-radius: 20px;
+            /* box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1); */
+            width: auto; /* Occupy full width of the container */
+            margin-bottom: 10px;
+            margin-left: 10px;
+            margin-right: 10px; /* Further reduced margin between cards */
+            padding: 5px; /* Reduced padding inside cards */
+            height: 150px;
+            align-items: center; /* Ensure height is controlled by content */
+        }
+
+    </style>
+}
+<body class="fix-header fix-sidebar">
+    <div id="main-wrapper">
+        <div class="video-background">
+            <iframe width="100%" height="100%"
+                    src="https://www.youtube-nocookie.com/embed/@Model.VideoId?autoplay=1&mute=1&controls=0&loop=1&playlist=@Model.VideoId"
+                    frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
+    <div class="page-wrapper">
+        <div class="container-fluid">
+            <div class="content-wrapper">
+                <div class="logo-date">
+                    <img src="../assets/images/kumudu_logo_croped.png" alt="homepage" style="height: 50px;" /> <!-- Adjust logo size as needed -->
+                    <span class="date">@DateTime.Now.ToString("dd MMMM yyyy")</span>
+                </div>
+                <div class=" card-title">
+
+                    <h4 class="title">Today Consultant Channeling Schedule</h4>
+
+                </div>
+
+                <div class="scrollable-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th></th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                var tomorrow = DateTime.Now.AddDays(1).Date;
+                                @foreach (var channelingShedule in Model.ChannelingScheduleList)
+                                {
+                                    if (channelingShedule.DateTime < tomorrow)
+                                    {
+                                        string rowClass = "";
+                                        string statusIcon = channelingShedule.scheduleStatus.ToString(); // Default to status text
+
+                                        // Switch case to handle status-based row class and icons
+                                        switch (channelingShedule.scheduleStatus)
+                                        {
+                                            case HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.ACTIVE:
+                                                @* statusIcon = "<span class='status-icon active'>&#x2714;</span>"; // Active (green check) *@
+                                                statusIcon = "<span class='status-icon active'>ACTIVE &#x2714;</span>";
+                                                break;
+
+                                            case HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_END:
+                                                @* statusIcon = "<span class='status-icon end'>&#x2716;</span>"; // Session ended (red cross) *@
+                                                statusIcon = "<span class='status-icon end'>SESSION END </span>";
+                                                break;
+
+                                            case HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_CANCEL:
+                                                rowClass = "highlight-row"; // Highlight row
+                                                @* statusIcon = "<span class='status-icon cancel'>&#x2716;</span>"; // Canceled (orange cross) *@
+                                                statusIcon = "<span class='status-icon cancel'>SESSION CANCELED</span>";
+                                                break;
+                                            case HospitalMgrSystem.Model.Enums.ChannellingScheduleStatus.SESSION_START:
+                                                rowClass = "highlight-row"; // Highlight row
+                                                statusIcon = "<span class='status-icon cancel'>SESSION STARTED</span>"; // Canceled (orange cross)
+                                                break;
+
+                                            default:
+                                                // No special treatment for other statuses
+                                                break;
+                                        }
+                                        <tr>
+                                            <div class="empty-card">
+
+                                                
+
+                                            </div>
+
+                                            <div class="schedule-card">
+
+                                                <div class="consultant">@channelingShedule.Consultant?.Name</div>
+                                                <div class="specialist">@channelingShedule.Consultant?.Specialist.Name</div>
+                                                <div class="time">@channelingShedule.DateTime.ToString("hh:mm tt")  <div class="room">@channelingShedule.Room?.Name</div>  <div class="status">@Html.Raw(statusIcon)</div></div>
+
+                                               
+
+                                            </div>
+
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button id="fullscreenButton" class="btn btn-primary" onclick="openFullscreen()">Enter Fullscreen</button>
+
+    <div id="AddShiftModel" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" id="AddEditContainerModel"></div>
+    </div>
+
+    @section scripts {
+        <script>
+            function openFullscreen() {
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+            }
+
+            $(document).ready(function () {
+
+                const scrollableTable = $('.scrollable-table');
+                const tableSection = $('#tableSection');
+                const videoSection = $('#videoSection');
+                const scrollSpeed = 2;
+                const scrollInterval = 20;
+                let scrollAmount = 1;
+
+                function scrollTable() {
+                    scrollableTable.scrollTop(scrollAmount);
+                    scrollAmount += scrollSpeed;
+                    if (scrollAmount >= scrollableTable[0].scrollHeight) {
+                        scrollAmount = 0;
+                    }
+                }
+
+                setInterval(scrollTable, scrollInterval);
+
+                $('#drpDrSpeciality').select2({
+                    width: '100%',
+                    dropdownParent: $('#filterFrm'),
+                    placeholder: 'Select one',
+                    allowClear: false
+                });
+
+                $('#basic-2').dataTable({
+                    "dom": '<"top"f>rt<"bottom"lp><"clear">',
+                    "paging": false,
+                    "info": false,
+                    "lengthChange": false,
+                    "ordering": false
+                });
+
+
+                setInterval(function () {
+                    location.reload();
+                }, 600000);
+            });
+        </script>
+    }
+</body>

@@ -1,0 +1,110 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model OPDDto;
+@{
+    Layout = null;
+}
+@inject IConfiguration Configuration
+<script type="text/javascript">
+    const opdId = @Html.Raw(Json.Serialize(Model.opdId));
+    const fullName = @Html.Raw(Json.Serialize(Model.name));
+    const age = @Html.Raw(Json.Serialize(Model.age));
+    const months = @Html.Raw(Json.Serialize(Model.months));
+    const days = @Html.Raw(Json.Serialize(Model.days));
+    const sex = @Html.Raw(Json.Serialize(Model.sex == 1 ? "Male" : Model.sex == 2 ? "Female" : "None"));
+    const telephoneNumber = @Html.Raw(Json.Serialize(Model.phone));
+    const totalAmount = @Html.Raw(Json.Serialize(Model.TotalAmount));
+    const consultantName = @Html.Raw(Json.Serialize(Model.ConsultantName));
+    const roomNumber = @Html.Raw(Json.Serialize(Model.RoomName));
+    const description = @Html.Raw(Json.Serialize(Model.Description));
+    const appoinmentNo = @Html.Raw(Json.Serialize(Model.appoinmentNo));
+    const createdUser = @Html.Raw(Json.Serialize(Model.CreatedUserName));
+    const createdUserId = @Html.Raw(Json.Serialize(Model.CreatedUserId));
+
+    function generateQRCode(size) {
+
+        // Concatenate the variables to form the data
+        var data = "CHE" + opdId.toString();
+
+        const qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: data,
+            width: size,
+            height: size,
+        });
+    }
+
+    function printQRCode() {
+        var currentDate = new Date();
+
+        const printWindow = window.open("", "Print QR Code", "width=400,height=400");
+
+        printWindow.document.write('<div style="text-align: center; font-weight: bold;">Kumudu Hospital</div>');
+        printWindow.document.write('<div style="text-align: center; font-weight: bold;">(PVT) LTD</div>');
+        printWindow.document.write('<div style="text-align: center;">' + currentDate.toLocaleString() + '</div>');
+
+        // QR Code image with reduced size
+        var imageSize = 100; // Set your desired image size here
+        printWindow.document.write('<div style="text-align: center; margin: 5px; padding: 5px;">');
+        printWindow.document.write('<img src="' + document.getElementById("qrcode").getElementsByTagName("img")[0].src + '" width="' + imageSize + '" height="' + imageSize + '">');
+        printWindow.document.write('</div>');
+
+        // Variables data in a table
+        printWindow.document.write('<div style="text-align: center;">');
+        printWindow.document.write('<table style="margin: auto;">');
+        printWindow.document.write('<tr><td>CHE:</td><td>' + opdId +" ("+ description +")"+ '</td></tr>');
+        printWindow.document.write('<tr><td>Reception:</td><td>' + createdUserId + '</td></tr>');
+        printWindow.document.write('<tr><td>Consultant Name:</td><td>' + consultantName + '</td></tr>');
+        printWindow.document.write('<tr><td>Appointment No:</td><td>' + appoinmentNo + '</td></tr>');
+        printWindow.document.write('<tr><td>Room No:</td><td>' + roomNumber + '</td></tr>');
+        printWindow.document.write('<tr><td>Name:</td><td>' + fullName + '</td></tr>');
+        printWindow.document.write('<tr><td>Age:</td><td> Years - ' + age + ' / Months - ' + months + ' / Days - ' + days + '</td></tr>');
+        printWindow.document.write('<tr><td>Sex:</td><td>' + sex + '</td></tr>');
+        printWindow.document.write('<tr><td>Telephone:</td><td>' + telephoneNumber + '</td></tr>');
+        printWindow.document.write('<tr><td>Total Amount:</td><td> Rs. ' + totalAmount + '</td></tr>');
+        printWindow.document.write('</table>');
+        printWindow.document.write('</div>');
+        printWindow.addEventListener('beforeunload', function() {
+                // Reload the webpage when the print window is closed
+                location.reload();
+            });
+        printWindow.document.close();
+        printWindow.print();
+        printWindow.close();
+        // Reload the webpage
+        location.reload();
+
+    }
+
+
+    document.addEventListener('keydown', function (event) {
+        // You can change 'Enter' to any key you want to trigger the function
+        if (event.key === 'Enter') {
+            // Call your function here
+            printQRCode();
+        }
+    });
+
+    function closeModal() {
+        $('#modalQR').modal('hide');
+    }
+
+    generateQRCode(200)
+
+</script>
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">QR</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+
+    <div class="modal-body">
+        <div id="qrcode" class="d-flex justify-content-center"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn  waves-effect btn-primary" onclick=printQRCode();><i class="fa fa-save"></i>&nbsp;Print</button>
+    </div>
+
+</div>

@@ -1,0 +1,5 @@
+cash 95900.00M
+card 17300.00M
+doctor paymnnet 30000
+refund 5600
+cash balance z/api)/c>iTKB4#%lbN

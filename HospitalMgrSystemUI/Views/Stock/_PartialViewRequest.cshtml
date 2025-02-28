@@ -1,0 +1,242 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model WarehouseDto;
+@{
+	Layout = null;
+}
+@inject IConfiguration Configuration
+
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Kumudu Hospital - Purchase Requisition </title>
+	@* <link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" /> *@
+
+	<style>
+		body {
+			/*  font-family: Arial, sans-serif; */
+			text-align: center;
+		}
+
+		table {
+			width: 80%;
+			margin: 0 auto;
+			border-collapse: collapse;
+		}
+
+		th, td {
+			border: 1px solid #ddd;
+			padding: 8px;
+		}
+
+		th {
+			background-color: #f0f0f0;
+		}
+
+		h1, h2 {
+			color: #333;
+		}
+		@@media print{
+			.no-page-breake{
+				page-break-before:always;
+				page-break-inside:avoid;
+			}
+			table{
+				width:100% !important;
+				page-break-inside:auto;
+			}
+		}
+	</style>
+	<title>Cashier Summary</title>
+</head>
+<body>
+	<div id="address">
+		<img src="https://kumuduhospital.com/assets/images/kumudu_logo2.jpg"/>
+		<div style="padding-left: 20px; text-align: center">
+			<p class="pb-2 text-4xl" style="margin: auto; font-weight: bold">
+				KUMUDU HOSPITAL
+			</p>
+			<p class="text-sm text-gray-400"
+			   style="margin-top: 10px; margin-bottom: auto">
+				No 48, Kandy Road, Mathale,
+			</p>
+			<p class="text-sm text-gray-400"
+			   style="margin-top: 10px; margin-bottom: auto">
+				Tel: 066 22 22 244
+			</p>
+		</div>
+	</div>
+
+	<h4>Purchase Requisition</h4>
+	<table class="table" style="">
+		<thead>
+			<tr>
+				<th>Request ID</th>
+				<th>Request By</th>
+				<th>Request Date</th>
+				
+
+
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var request in Model.RqeuestList)
+			{
+				<tr>
+					<td>@request.RequestID</td>
+					<td>@request.CreatedBy</td>
+					<td>@request.CreateDate.ToString("dd-MM-yyyy")</td>
+					
+				</tr>
+			}
+		</tbody>
+	</table>
+	<table class="table" style="">
+		<tr>
+			<th style="text-align: center;" colspan="2">Item Summay</th>
+			
+				
+		</tr>
+		<tr>
+		
+
+			<th style="text-align: center;">Item Name</th>
+			<th style="text-align: center;">Quntity</th>
+
+		</tr>
+		<tbody>
+
+			@foreach (var request in Model.RqeuestList)
+			{
+			
+				@foreach (var item in request.Items)
+				{
+				<tr>
+					<td>@item.DrugName</td>
+					<td>@item.Quantity</td>
+				</tr>
+				}
+			}
+		</tbody>
+	</table>
+
+	<table class="table" style="">
+		<tr>
+			<td style="border-bottom: 1px solid white; text-align: center;" colspan="2"></td>
+			<td style="border-bottom: 1px solid white; text-align: center;" colspan="2"></td>
+			<td style="border-bottom: 1px solid white; text-align: center;" colspan="2"></td>
+		</tr>
+		<tr>
+			<td style="border-bottom: 1px solid white; text-align: center;" colspan="2"></td>
+			<td style="border-bottom: 1px solid white; text-align: center;" colspan="2"></td>
+			<td style="border-bottom: 1px solid white; text-align: center;" colspan="2"></td>
+		</tr>
+		<tr>
+			<td style="border-bottom: 1px solid white; text-align: center;" colspan="2">........................................</td>
+			<td style="border-bottom: 1px solid white; text-align: center;" colspan="2">........................................</td>
+			<td style="border-bottom: 1px solid white; text-align: center;" colspan="2">........................................</td>
+		</tr>
+		<tr>
+			<td style="border-bottom: 1px solid #ddd; text-align: center;" colspan="2">Store Keeper Signature</td>
+			<td style="border-bottom: 1px solid #ddd; text-align: center;" colspan="2">Medical Diector Signature</td>
+			<td style="border-bottom: 1px solid #ddd; text-align: center;" colspan="2">Account Manager Signature</td>
+		</tr>
+	</table>
+
+
+
+
+
+
+	@*     <table border="1">
+	<tr>
+	<th>Category</th>
+	<th>Total Amount</th>
+	<th>Paid Amount</th>
+	<th>Refund</th>
+	</tr>
+	<tr>
+	<td>OPD</td>
+	<td>@Model.CashierPaymentData.OPDTotalAmount</td>
+	<td>@Model.CashierPaymentData.OPDTotalPaidAmount</td>
+	<td>@Model.CashierPaymentData.OPDTotalRefund</td>
+	</tr>
+	</table>
+
+	<!-- X-RAY Summary -->
+	<h2>X-RAY Summary</h2>
+	<table border="1">
+	<tr>
+	<th>Category</th>
+	<th>Total Amount</th>
+	<th>Paid Amount</th>
+	<th>Refund</th>
+	</tr>
+	<tr>
+	<td>X-RAY</td>
+	<td>@Model.CashierPaymentData.XRAYTotalAmount</td>
+	<td>@Model.CashierPaymentData.XRAYTotalPaidAmount</td>
+	<td>@Model.CashierPaymentData.XRAYTotalRefund</td>
+	</tr>
+	</table>
+
+	<!-- OTHER Services Summary -->
+	<h2>OTHER Services Summary</h2>
+	<table border="1">
+	<tr>
+	<th>Category</th>
+	<th>Total Amount</th>
+	<th>Paid Amount</th>
+	<th>Refund</th>
+	</tr>
+	<tr>
+	<td>OTHER</td>
+	<td>@Model.CashierPaymentData.OtherTotalAmount</td>
+	<td>@Model.CashierPaymentData.OtherTotalPaidAmount</td>
+	<td>@Model.CashierPaymentData.OtherTotalRefund</td>
+	</tr>
+	</table>
+
+	<!-- Channeling Summary -->
+	<h2>Channeling Summary</h2>
+	<table border="1">
+	<tr>
+	<th>Category</th>
+	<th>Total Amount</th>
+	<th>Paid Amount</th>
+	<th>Refund</th>
+	</tr>
+	<tr>
+	<td>Channeling</td>
+	<td>@Model.CashierPaymentData.ChannelingTotalAmount</td>
+	<td>@Model.CashierPaymentData.ChannelingTotalPaidAmount</td>
+	<td>@Model.CashierPaymentData.ChannelingTotalRefund</td>
+	</tr>
+	</table> *@
+
+
+
+	<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+	<script type="text/javascript">
+		// Call the generateQRCode function when the page loads
+		document.addEventListener("DOMContentLoaded", function () {
+			generateQRCode(50);
+		});
+
+		function generateQRCode(size) {
+			const qrcode = new QRCode(document.getElementById("qrcode"), {
+				text: 'Hello kohomada',
+				width: size,
+				height: size,
+			});
+		}
+
+		// Rest of your script...
+	</script>
+</body>
+</html>

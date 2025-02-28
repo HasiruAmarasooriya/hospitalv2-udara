@@ -1,0 +1,365 @@
+﻿@using HospitalMgrSystem.Model.Enums
+@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model OPDDto;
+@{
+}
+@inject IConfiguration Configuration
+<script>
+        
+    // function checkDrugQuantity() {
+    //     var drugId = $('#drugus').val();
+    //     var enteredQty = parseFloat($('#txtQty').val());
+
+    //     if (drugId > 0 && enteredQty > 0) {
+    //         $.ajax({
+    //             url: '/OPDRegistration/CheckDrugQuantity',
+    //             type: 'POST',
+    //             data: { drugId: drugId, enteredQty: enteredQty },
+    //             success: function (response) {
+    //                 if (!response.success) {
+    //                     $('#qtyError').text(response.message);
+    //                     $('#txtQty').css('border-color', 'red');
+    //                      $('#addButton').hide();
+    //                 } else {
+    //                     $('#qtyError').text('');
+    //                     $('#txtQty').css('border-color', 'blue');
+    //                     $('#addButton').show();
+    //                 }
+    //             },
+    //             error: function () {
+    //                 alert('Error occurred while checking drug quantity.');
+    //                   $('#addButton').hide();
+    //             }
+    //         });
+    //     } else {
+    //         $('#qtyError').text('');
+    //         $('#txtQty').css('border-color', '');
+    //     }
+    // }
+       
+    function checkDrugPrice() {
+        var drugId = $('#drugus').val(); // Get the selected drug ID
+
+        // Reset the price field to avoid showing stale data
+        $('#txtPrice').val('0.00');
+
+        if (drugId > 0) { // Ensure a valid drug is selected
+            $.ajax({
+                url: '/OPDRegistration/GetDrugPriceByID', // Controller action to fetch price
+                type: 'GET',
+                data: { drugId: drugId },
+                success: function (response) {
+                    if (response.success) {
+                        // Assuming `response.price` contains the drug price
+                        $('#txtPrice').val(response.price.toFixed(2));
+                    } else {
+                        alert('No price detected for this Drug/Item. Please contact SK.');
+                    }
+                },
+                error: function () {
+                    alert('Error occurred while fetching drug price.');
+                }
+            });
+        } else {
+            alert('Please select a valid drug.');
+        }
+    }
+    function updateAmount(){
+        var price = document.getElementById("txtPrice").value;
+        var qty = document.getElementById("txtQty").value;
+        console.log("price"+ price);
+        console.log("qty"+ qty);
+        if (!isNaN(price) && !isNaN(qty) && qty > 0) {
+        // Calculate the amount
+        var amount = price * qty;
+        $('#txtAmount').val(amount.toFixed(2)); // Update the amount field
+        console.log(amount);
+    } else if (qty <= 0) {
+       
+        $('#txtQty').css('border-color', 'red');
+        $('#txtAmount').val('0.00'); // Reset amount field
+    } else {
+        $('#txtAmount').val('0.00'); // Reset amount field if inputs are invalid
+    }
+    }
+
+</script>
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add New OPD</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <div class="modal-body" id="newOpdFrm">
+        <form asp-action="AddNewOPD" method="post">
+            <input type="hidden" id="opdIndexNumber" asp-for="opdId">
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Patient</label>
+                        @*<select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="opd.PatientID" id="dropPatient">
+                            <option value="-2">Select one</option>
+                            @foreach (var item in Model.patientsList)
+                            {
+                                <option value="@item.Id">@item.FullName (@item.MobileNumber)</option>
+                            }
+                        </select>*@
+                        <input class="form-control" type="text" id="patientId" asp-for="opd!.PatientID" hidden />
+                        <input class="form-control" type="text" id="patientName" placeholder="Patient Name" asp-for="opd!.patient!.FullName" onchange="javascript:select_onchange_patient();" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Mobile Number </label>
+                        <input class="form-control " type="text" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd!.patient!.MobileNumber" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Sex</label>
+                        <select class="form-control ddlSearchList" id="dropSex" asp-for="opd!.patient!.Sex">
+                            <option value="0">Select one</option>
+                            <option value="1">Male</option>
+                            <option value="2">Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="companyName">Age</label>
+                        <input class="form-control" type="text" id="txtAge" placeholder="Age" asp-for="opd.patient.Age" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="companyName">Months</label>
+                        <input class="form-control" type="text" id="txtMonths" placeholder="Months" asp-for="opd.patient.Months" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="companyName">Days</label>
+                        <input class="form-control" type="text" id="txtDays" placeholder="Days" asp-for="opd.patient.Days" />
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="row">
+                <div class="col-md-6" id="doctorFields">
+                    <div class="form-group">
+                        <label for="companyName">OPD Doctor</label>
+
+                        @{
+                            if (Model.opdId == 0)
+                            {
+                                <select class="form-control ddlSearchList" id="dropDoctor" onchange="handleOPDTypeChange()">
+                                    <option value="1">Please Select</option>
+                                    @{
+                                        if (Model.opd.ConsultantID > 0)
+                                        {
+                                            <option value="@Model.opd.ConsultantID">@Model.opd.consultant.Name</option>
+                                        }
+                                    }
+                                    @foreach (var item in Model.consultantList)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                    <option value="82">Investigation</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <input class="form-control" type="text" id="selectedDoctorId" value="@Model.opd.consultant.Name" style="text-align:left;" placeholder="Consultant Name" name="@Model.opd.ConsultantID" disabled />
+                            }
+
+                        }
+
+
+                    </div>
+                </div>
+                <div class="col-md-6" id="investigationFields">
+                    <div class="form-group">
+                        <label for="companyName">Hospital Fee:</label>
+                        <input class="form-control " type="number" id="hospitalFeeInput" style="text-align:right;" placeholder="Amount" asp-for="opd!.HospitalFee" disabled />
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Name</label>
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange_drug(this.value);" id="drugus" asp-for="opdDrugus!.DrugId" disabled="@(Model.opd.paymentStatus == PaymentStatus.PAID && Model.opdId > 0)">
+                            <option value="0">Select Drug</option>
+                            @foreach (var item in Model.Drugs)
+                            {
+                                <option value="@item.Id">@item.DrugName - @item.DrugsCategory.Category</option>
+
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="companyName">Qty </label>
+                        <input class="form-control " type="text" style="text-align:right;" id="txtQty" placeholder="Qty" oninput="updateAmount();" value="1.00" id="txtQty" placeholder="Qty" />
+                        <div id="qtyError" style="color: red;"></div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="companyName">Price</label>
+                        <input class="form-control " type="text" style="text-align:right;" id="txtPrice" value="0.00" placeholder="Price" />
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="companyName">Amount</label>
+                        <input class="form-control " type="text" style="text-align:right;" id="txtAmount" value="0.00" placeholder="Amount" disabled />
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group text-center">
+                        <br>
+                        <button type="button" id="addButton" class="btn btn-success waves-effect" style="width:100%" onclick="addDrugusItem()" disabled="@(Model.opd.paymentStatus == PaymentStatus.PAID && Model.opdId > 0)">Add</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                        <table id="myTable2" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+           
+                                    <th data-orderable="true">Drugs Name</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Amount</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblBodyPayments2">
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+
+            <input type="hidden" asp-for="GrpvId" id="GRPVId" />
+            <input type="hidden" asp-for="BatchNumber" id="BatchNumber" />
+        </form>
+    </div>
+
+    <div class="text-left mx-3">
+        @* <div>
+        Total: <input id="total" class="form-control" type="text" placeholder="Your Total will Appear Here" readonly>
+        </div> *@
+        <div class="mt-4 text-right">
+            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Close</button>
+            <button type="button" class="btn waves-effect btn-primary ms-2" onclick="submitDrugusItems()">
+                <i class="fa fa-save"></i>&nbsp;Save
+            </button>
+            <button type="button" class="btn waves-effect btn-primary ms-2" onclick="submitDrugusItemsWithQR()">
+                <i class='fa fa-print'></i>&nbsp;Print & Save
+            </button>
+        </div>
+    </div>
+
+
+    <div class="modal-footer">
+        <hr>
+        <div class="col-md-12">
+                <table id="myTable" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+
+                          
+                        </tr>
+                    </thead>
+                    <tbody id="tblBodyPayments">
+                        @{
+                            decimal totalAmount = 0;
+                        }
+                        @if (Model != null && Model.OPDDrugusList != null)
+                        {
+
+                            @foreach (var item in Model.OPDDrugusList)
+                            {
+                                <tr>
+                                    @{
+                                        totalAmount = totalAmount + item.Amount;
+                                    }
+
+                                    <td>@item.Drug.DrugName</td>
+
+                                    <td>@item.Qty</td>
+
+                                    <td>@item.Price</td>
+
+                                    <td>@item.Amount</td>
+
+                                    <td>
+                                        @if (Model != null && Model.opd!.paymentStatus != PaymentStatus.PAID)
+                                        {
+
+                                            @using (Html.BeginForm("DeleteOPDDrug", "OPDRegistration", new { Id = @item.Id }, FormMethod.Post))
+                                            {
+
+                                                <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+
+                                            }
+                                        }
+
+                                    </td>
+                                </tr>
+                            }
+
+
+                        }
+
+                        @{
+                            var subTotal = totalAmount + Model.opd.HospitalFee;
+                        }
+
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="companyName">Total: </label>
+                            <input id="total" class="form-control" value="@totalAmount" type="text" placeholder="Your Total will Appear Here" readonly>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="companyName">Hospital Fee: </label>
+                            <input id="hospitalCharges" class="form-control" type="text" asp-for="opd.HospitalFee" placeholder="Your Hopital Charges will Appear Here" readonly>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="companyName">Sub Total: </label>
+                            <input id="subTotal" class="form-control" value="@subTotal" type="text" placeholder="Your Sub Total will Appear Here" readonly>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>

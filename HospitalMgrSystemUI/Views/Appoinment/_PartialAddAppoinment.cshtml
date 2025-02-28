@@ -1,0 +1,108 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@*@model AdmissionDto;*@
+@{
+    Layout = null;
+}
+
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/EditAppoinment</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form asp-action="AddNewAdmission" method="post">
+
+        <div class="modal-body">
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="companyName">Specialist</label>
+                        <select class="form-control ddlSearchList" id="dropSex">
+                            <option value="0">Select one</option>
+                            <option value="1">Pathology</option>
+                            <option value="2">Pediatrics</option>
+                            <option value="3">Allergy and immunology</option>
+                            <option value="4">Dermatology</option>
+                            <option value="5">Family medicine</option>
+                            <option value="6">Emergency medicine</option>
+                            <option value="7">Diagnostic radiology</option>
+                            <option value="8">Internal medicine</option>
+                            <option value="9">Medical genetics</option>
+                            <option value="10">Neurology</option>
+                        </select>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+
+
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="companyName">DoctorName</label>
+                        <select class="form-control ddlSearchList" id="dropDoctor">
+                            <option>Select one</option>
+                            <option value="1">DR.U.D.S.Chandana</option>
+                            <option value="2">EEG</option>
+                            <option value="3">EX:ECG </option>
+                            <option value="3">MR.Tharanga</option>
+                            <option value="4">DR.Dinush Darmawardana</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Appoinment No</label>
+                        <select class="form-control ddlSearchList" id="dropSex">
+                            <option value="0">1</option>
+                            <option value="1">2</option>
+                            <option value="2">3</option>
+                            <option value="3">4</option>
+                            <option value="4">5</option>
+                           
+                        </select>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Appoinment Date</label>
+                        <input type="text" id="date-format"  asp-format="{0:dd.MM.yyyy hh:mm}" class="form-control" placeholder="Saturday 24 June 2017 - 21:44">
+
+                    </div>
+                </div>
+
+
+            </div>
+
+            
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+        </div>
+    </form>
+</div>

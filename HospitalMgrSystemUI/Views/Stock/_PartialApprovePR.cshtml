@@ -1,0 +1,101 @@
+﻿@using Microsoft.Extensions.Configuration
+@model PurchaseRequestDto
+@inject IConfiguration Configuration
+
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/Edit</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form asp-action="AddPurchaseRequest" method="post">
+        <input type="hidden" id="custId" asp-for="ID">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="batch">Drug</label>
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange(this.value);" asp-for="DrugID" id="drugId">
+                            <option value="">Select Drug</option>
+                            @foreach (var item in Model.drugList)
+                            {
+                                <option value="@item.Id">@item.DrugName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="seriel">Supplier</label>
+                        <select class="form-control ddlSearchList" asp-for="SupplierID" id="grnID">
+                            <option value="">Supplier</option>
+                            @foreach (var item in Model.supplierList)
+                            {
+                                <option value="@item.Id">@item.SupplierName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="product-date">Batch Number</label>
+                        <input type="number" id="Batch" asp-for="BatchNumber" class="form-control" placeholder="Batch Number">
+
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="expire-date">Expire Date</label>
+                        <input type="number" id="Batch" asp-for="BatchNumber" class="form-control" placeholder="Batch Number">
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Quantity</label>
+                        <input class="form-control" type="text" asp-for="Qty" placeholder="Quantity" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Appoved By</label>
+                        <input class="form-control" type="text" asp-for="CreateUser" placeholder="Approved By" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Comments</label>
+                        <input class="form-control" type="text" asp-for="CreateUser" placeholder="Comments" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+        </div>
+    </form>
+</div>
+@section scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+
+
+        $('body').on('focus', "#date-format", function () {
+
+            $('#date-format').bootstrapMaterialDatePicker({
+                time: true,
+                format: "YYYY-MM-DD hh:mm"
+
+            });
+
+        });
+
+    </script>
+
+
+
+}

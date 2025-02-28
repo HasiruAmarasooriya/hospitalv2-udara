@@ -1,0 +1,606 @@
+@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model CashierDto;
+@{
+	Layout = null;
+}
+@inject IConfiguration Configuration
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 15px;
+        }
+
+        h1, h2, h3, h4, h5, h6, p, td, th {
+            font-size: inherit;
+        }
+
+        #logo {
+            text-align: center;
+        }
+
+        #address {
+            text-align: center;
+        }
+
+        hr {
+            border: 1px solid #000;
+        }
+
+        #patient-details {
+            text-align: left;
+            margin: 10px 0;
+            font-size: 15px;
+        }
+
+        table {
+            max-width: 350px;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin-bottom: 0;
+        }
+
+        table, th, td {
+            border: none;
+            font-size: 15px;
+        }
+
+        table th {
+            background-color: #f0f0f0;
+        }
+
+        #total-section {
+            text-align: right;
+            margin: 10px 0;
+        }
+
+        #barcode {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        @@media print {
+            .page-break {
+                page-break-before: always;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+</head>
+<body>
+    <!-- Customer Copy -->
+    <div id="Customer">
+        @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
+        {
+
+            <div id="address">
+                <p class="pb-2 text-4xl" style="margin: auto; font-weight: bold">
+                    KUMUDU HOSPITAL
+                </p>
+                <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
+                    No 48, Kandy Road, Mathale,
+                </p>
+                <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
+                    Tel: 066 22 22 244 | 066 22 30 027
+                </p>
+                <p class="text-sm text-gray-400" style="margin-top: 10px;">
+                  @(Model.invoice.ModifiedDate.ToString("dd/MM/yyyy"))
+                </p>
+            </div>
+            <hr>
+
+            <h4 style="margin: 0 0 10px 0; padding: 0; text-align: center;">Channeling Bill </h4>
+            <h4 style="margin: 10px 0 0 0; padding: 0; text-align: center;">Customer Copy</h4>
+            <h4 style="text-align:center"> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+            <hr>
+            <h5 style="margin: 0; padding: 0; text-align: center;">Ref No: CHE-@Model.opd.Id</h5>
+            <hr>
+            <table id="patient-details" style="margin-right: auto;">
+                <tr>
+                    <td style="text-align: left;">Patient Name:</td>
+                    <td style="text-align: left;">@Model.customerName</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Phone No:</td>
+                    <td style="text-align: left;">@(Model.patientContactNo == "" ? "None" : Model.patientContactNo)</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Doctor Name:</td>
+                    <td style="text-align: left;">@Model.consaltantName</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Specialist:</td>
+                    <td style="text-align: left;">@Model.opd!.consultant!.Specialist!.Name</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Appointment No:</td>
+                    <td style="text-align: left;">@Model.opd!.AppoimentNo</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Room No:</td>
+                    <td style="text-align: left;">@Model.ChannelingSchedule!.Room!.Name</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Date:</td>
+                    <td style="text-align: left;">@DateTime.Now</td>
+                </tr>
+            </table>
+            <hr>
+            <table>
+                @{
+                    string itemName = Model.ItemName;
+                    string displayItemName;
+
+                    switch (itemName)
+                    {
+                        case "VOG Scan":
+                            displayItemName = itemName + " Counsultant Fee:";
+                            break;
+                        case "Echo Test":
+                            displayItemName = displayItemName = itemName + " Technical Counsultant Fee:";
+                            break;
+                        case "Channelling":
+                            displayItemName = "Consultant Fee:";
+                            break;
+                        default:
+                            displayItemName = " Counsultant Fee:";
+                            break;
+                    }
+                }
+                <tr>
+
+                    <td style="text-align: left;">@displayItemName</td>
+                    <td style="text-align: right;">Rs. @Model.consaltantFee.ToString("0.00")</td>
+                </tr>
+                <tr>
+                    @{
+
+                        string Scan;
+
+                        switch (itemName)
+                        {
+                            case "VOG Scan":
+                                Scan = "VOG Scan Fee:";
+                                break;
+                            case "Echo Test":
+                                Scan = "Echo Scan Fee:";
+                                break;
+                            case "Channelling":
+                                Scan = "Hospital Fee:";
+                                break;
+                            default:
+                                Scan = " Scan Fee:";
+                                break;
+                        }
+
+                    }
+                    <td style="text-align: left;">@Scan</td>
+                    <td style="text-align: right;">Rs. @Model.hospitalFee.ToString("0.00")</td>
+                </tr>
+            </table>
+            <hr>
+            <table id="total-section" style="margin-left: auto;">
+
+                @if (Model != null)
+                {
+                    decimal totalCash = 0;
+                    decimal totalBlence = 0;
+
+                    @if (Model.paymentList != null)
+                    {
+                        @foreach (var item in Model.paymentList)
+                        {
+                            @if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.BALENCE)
+                                totalBlence = totalBlence + item.CashAmount;
+                            @if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.CASHIER)
+                                totalCash = totalCash + item.CashAmount + item.CreditAmount + item.DdebitAmount + item.ChequeAmount + item.GiftCardAmount;
+                        }
+                    }
+                    <tr>
+                        <td style="text-align: left;">Sub total:</td>
+                        <td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
+                    </tr>
+                    @if (Model.discount != 0)
+                    {
+                        <tr>
+                            <td style="text-align: left;">Discount:</td>
+                            <td style="text-align: right;">Rs. @Model.discount.ToString("0.00")</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td style="text-align: left;">Net Total:</td>
+                        <td style="text-align: right;">Rs. @Model.preTotal.ToString("0.00")</td>
+                    </tr>
+
+                    <tr>
+                        <td style="text-align: left;">Cash Payment:</td>
+                        <td style="text-align: right;">Rs. @totalCash.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">Balance:</td>
+                        <td style="text-align: right;">Rs. @(Math.Abs(totalBlence).ToString("0.00"))</td>
+                    </tr>
+                }
+
+            </table>
+            <hr>
+            <div id="barcodeCustomer" style="margin-top: -15px !important; padding: 0; line-height: 0;">
+                <svg id="barcodeSvgCustomer" style="width: 100%; height: 40px; margin: 0; padding: 0;"></svg>
+            </div>
+
+            <p style="margin-top: 0px !important; padding: 0;">Payment Successfully Completed !</p>
+            <hr>
+        }
+    </div>
+
+    <!-- Page Break for True Copy -->
+    <div class="page-break"></div>
+
+    <!-- True Copy -->
+    <div id="TrueCopy">
+        @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.CHE)
+        {
+            <div id="address">
+                <p class="pb-2 text-4xl" style="margin: auto; font-weight: bold">
+                    KUMUDU HOSPITAL
+                </p>
+                <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
+                    No 48, Kandy Road, Mathale,
+                </p>
+                <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
+                    Tel: 066 22 22 244 | 066 22 30 027
+                </p>
+                <p class="text-sm text-gray-400" style="margin-top: 10px;">
+                  @(Model.invoice.ModifiedDate.ToString("dd/MM/yyyy"))
+                </p>
+            </div>
+            <hr>
+            <h4 style="margin: 0 0 10px 0; padding: 0; text-align: center;">Channeling Bill </h4>
+            <h4 style="margin: 10px 0 0 0; padding: 0; text-align: center;">True Copy</h4>
+            <h4 style="text-align:center"> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+            <hr>
+            <h5 style="margin: 0; padding: 0; text-align: center;">Ref No: CHE-@Model.opd.Id</h5>
+            <hr>
+            <table id="patient-details" style="margin-right: auto;">
+                <tr>
+                    <td style="text-align: left;">Patient Name:</td>
+                    <td style="text-align: left;">@Model.customerName</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Phone No:</td>
+                    <td style="text-align: left;">@(Model.patientContactNo == "" ? "None" : Model.patientContactNo)</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Doctor Name:</td>
+                    <td style="text-align: left;">@Model.consaltantName</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Specialist:</td>
+                    <td style="text-align: left;">@Model.opd!.consultant!.Specialist!.Name</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Appointment No:</td>
+                    <td style="text-align: left;">@Model.opd!.AppoimentNo</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Room No:</td>
+                    <td style="text-align: left;">@Model.ChannelingSchedule!.Room!.Name</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Date:</td>
+                    <td style="text-align: left;">@DateTime.Now</td>
+                </tr>
+            </table>
+            <hr>
+            <table>
+                @{
+                    string itemName = Model.ItemName;
+                    string displayItemName;
+
+                    switch (itemName)
+                    {
+                        case "VOG Scan":
+                            displayItemName = itemName + " Counsultant Fee:";
+                            break;
+                        case "Echo Test":
+                            displayItemName = displayItemName = itemName + " Technical Counsultant Fee:";
+                            break;
+                        case "Channelling":
+                            displayItemName = "Consultant Fee:";
+                            break;
+                        default:
+                            displayItemName = " Counsultant Fee:";
+                            break;
+                    }
+                }
+                <tr>
+
+                    <td style="text-align: left;">@displayItemName</td>
+                    <td style="text-align: right;">Rs. @Model.consaltantFee.ToString("0.00")</td>
+                </tr>
+                <tr>
+                    @{
+
+                        string Scan;
+
+                        switch (itemName)
+                        {
+                            case "VOG Scan":
+                                Scan = "VOG Scan Fee:";
+                                break;
+                            case "Echo Test":
+                                Scan = "Echo Scan Fee:";
+                                break;
+                            case "Channelling":
+                                Scan = "Hospital Fee:";
+                                break;
+                            default:
+                                Scan = " Scan Fee:";
+                                break;
+                        }
+
+                    }
+                    <td style="text-align: left;">@Scan</td>
+                    <td style="text-align: right;">Rs. @Model.hospitalFee.ToString("0.00")</td>
+                </tr>
+            </table>
+            <hr>
+            <table id="total-section" style="margin-left: auto;">
+
+                @if (Model != null)
+                {
+                    decimal totalCash = 0;
+                    decimal totalBlence = 0;
+
+                    @if (Model.paymentList != null)
+                    {
+                        @foreach (var item in Model.paymentList)
+                        {
+                            @if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.BALENCE)
+                                totalBlence = totalBlence + item.CashAmount;
+                            @if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.CASHIER)
+                                totalCash = totalCash + item.CashAmount + item.CreditAmount + item.DdebitAmount + item.ChequeAmount + item.GiftCardAmount;
+                        }
+                    }
+                    <tr>
+                        <td style="text-align: left;">Sub total:</td>
+                        <td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
+                    </tr>
+                    @if (Model.discount != 0)
+                    {
+                        <tr>
+                            <td style="text-align: left;">Discount:</td>
+                            <td style="text-align: right;">Rs. @Model.discount.ToString("0.00")</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td style="text-align: left;">Net Total:</td>
+                        <td style="text-align: right;">Rs. @Model.preTotal.ToString("0.00")</td>
+                    </tr>
+
+                    <tr>
+                        <td style="text-align: left;">Cash Payment:</td>
+                        <td style="text-align: right;">Rs. @totalCash.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">Balance:</td>
+                        <td style="text-align: right;">Rs. @(Math.Abs(totalBlence).ToString("0.00"))</td>
+                    </tr>
+                }
+
+            </table>
+            <hr>
+            <div id="barcodeTrueCopy" style="margin-top: -15px !important; padding: 0; line-height: 0;">
+                <svg id="barcodeSvgTrueCopy" style="width: 100%; height: 40px; margin: 0; padding: 0;"></svg>
+            </div>
+
+            <p style="margin-top: 0px !important; padding: 0;">Payment Successfully Completed !</p>
+            <hr>
+        }
+    </div>
+
+    <div id="receipt">
+
+        @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
+           {
+            @if (Model != null)
+              {
+                @if (Model.cashierBillingItemDtoList != null)
+                  {
+                    <div id="logo">
+                        <img src="https://kumuduhospital.com/assets/images/kumudu_logo2.jpg" alt="Logo" width="100">
+                    </div>
+                    <div id="address">
+                        <p class="pb-2 text-4xl" style="margin: auto; font-weight: bold">
+                            KUMUDU HOSPITAL
+                        </p>
+                        <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
+                            No 48, Kandy Road, Mathale,
+                        </p>
+                        <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
+                            Tel: 066 22 22 244 | 066 22 30 027
+                        </p>
+                        <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
+                          @(Model.invoice.ModifiedDate.ToString("dd/MM/yyyy"))
+                        </p>
+                        <hr>
+                        @if (Model.opd != null && Model.opd.Description == "X-RAY")
+                        {
+                            <h4 style="margin: 0; padding: 0;">X-RAY Bill </h4>
+                            <h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+                            <h5 style="margin: 0; padding: 0;">@Model.ItemName</h5>
+                        }
+                        else
+                        {
+                            <h5 style="margin: 0; padding: 0;">OPD Bill </h5>
+                            <h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+                        }
+                    
+
+                   
+
+                    @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
+                    {
+                        <h5 style="margin: 0; padding: 0;"></h5>
+                    }
+                
+            
+                     </div>
+        <hr>
+
+        @if (Model.cashierBillingItemDtoList != null)
+        {
+            @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
+            {
+                @if (Model.opd != null && Model.opd.Description == "X-RAY")
+                {
+                    <h5 style="margin: 0; padding: 0; text-align:center;">Ref No:XRAY-@Model.opd.Id</h5>
+                }
+                else
+                {
+                    <h5 style="margin: 0; padding: 0; text-align:center;">Ref No:OPD-@Model.opd.Id</h5>
+                }
+            }
+
+            
+
+            @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
+            {
+                <h5 style="margin: 0; padding: 0; text-align:center;">Ref No:ADM-@Model.opd.Id</h5>
+            }
+        }
+
+        <hr>
+        @if (Model != null)
+        {
+            var currentTime = DateTime.Now;
+
+            <table id="patient-details" style="margin-right: auto;">
+                <tr>
+                    <td style="text-align: left;">Patient Name:</td>
+                    <td style="text-align: left;">@Model.customerName</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Phone No:</td>
+                    <td style="text-align: left;">@(Model.patientContactNo == "" ? "None" : Model.patientContactNo)</td>
+                </tr>
+                @if (Model.opd != null && Model.opd.Description != "X-RAY")
+                {
+                    <tr>
+                        <td style="text-align: left;">Doctor Name:</td>
+                        <td style="text-align: left;">@Model.consaltantName</td>
+                    </tr>
+                }
+                @if (Model.ChannelingSchedule != null)
+                {
+                    <tr>
+                        <td style="text-align: left;">Specialist:</td>
+                        <td style="text-align: left;">@Model.opd!.consultant!.Specialist!.Name</td>
+                    </tr>
+                }
+
+               
+            </table>
+
+            <hr>
+            @if (Model.cashierBillingItemDtoList != null)
+            {
+                <table>
+                    <tr>
+                        
+                        @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
+                        {
+                        }
+                    </tr>
+                    @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.OPD)
+                    {
+                        var rowNumber = 1;
+                        decimal itemAmmount = 0;
+                        decimal hospitalFee = 0;
+                        @foreach (var item in Model.cashierBilledItemDtoList)
+                        {
+                            @if (item.amount > 0)
+                            {
+                                if (item.billingItemsType == HospitalMgrSystem.Model.Enums.BillingItemsType.Hospital)
+                                {
+                                    hospitalFee = item.amount;
+                                }
+                                else
+                                {
+                                    itemAmmount = itemAmmount + item.amount;
+                                }
+
+                                rowNumber++;
+                            }
+                        }
+
+                        <tr>
+                            <td style="margin: 2px; padding: 2px; text-align: left;">Other Items</td>
+                                        <td style="margin: 2px; padding: 2px; text-align: right;">Rs. @itemAmmount.ToString("0.00")</td>
+                        </tr>
+                        <tr style="margin-left: auto;">
+                            <td style="margin: 2px; padding: 2px; text-align: left;">Hospital Fee</td>
+                                        <td style="margin: 2px; padding: 2px; text-align: right;">Rs. @hospitalFee.ToString("0.00")</td>
+                        </tr>
+                    }
+                   
+                </table>
+                <hr>
+
+                <table id="total-section" style="margin-left: auto;">
+                    <tr>
+                        <td style="text-align: left;">Net total:</td>
+                        <td style="text-align: right;">Rs. @Model.preSubtotal.ToString("0.00")</td>
+                    </tr>
+
+
+                    @if (Model != null)
+                    {
+                        decimal totalCash = 0;
+                        decimal totalBlence = 0;
+
+                        @if (Model.paymentList != null)
+                        {
+                            @foreach (var item in Model.paymentList)
+                            {
+                                @if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.BALENCE)
+                                    totalBlence = totalBlence + item.CashAmount;
+                                @if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.CASHIER)
+                                    totalCash = totalCash + item.CashAmount + item.CreditAmount + item.DdebitAmount + item.ChequeAmount + item.GiftCardAmount;
+                            }
+                        }
+
+                        <tr>
+                            <td style="text-align: left;">Cash Payment:</td>
+                            <td style="text-align: right;">Rs. @totalCash.ToString("0.00")</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;">Balance:</td>
+                            <td style="text-align: right;">Rs. @(Math.Abs(totalBlence).ToString("0.00"))</td>
+                        </tr>
+                    }
+
+                </table>
+            }
+
+          
+        }
+       }
+      }     <hr>
+            <p>Payment Successfully Completed !</p>
+            <hr>
+     }
+
+        
+    </div>
+
+  
+   
+</body>
+</html>

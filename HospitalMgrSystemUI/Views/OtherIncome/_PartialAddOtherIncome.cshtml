@@ -1,0 +1,269 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model OtherTransactionsDto
+@{
+	Layout = null;
+}
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		// Hide dropBenificaryDr and disable the Save button by default
+		$('#dropBenificaryDr').hide();
+		$('#saveButton').prop('disabled', true); // Disable the Save button initially
+
+		// Check if beneficiary is selected on page load
+		checkBeneficiarySelection();
+	});
+
+	function checkBeneficiarySelection() {
+		const beneficiaryId = $('#hiddenBenificaryID').val();
+		if (!beneficiaryId || beneficiaryId === "0") {
+			// Show an error message if no valid beneficiary is selected
+			$('#errorMessage').text("Please select a valid beneficiary before saving.");
+			$('#saveButton').prop('disabled', true);  // Keep Save button disabled
+		} else {
+			// Hide the error message and enable the Save button
+			$('#errorMessage').text("");
+			$('#saveButton').prop('disabled', false);  // Enable Save button
+		}
+	}
+
+	function disableButton(button) {
+		const beneficiaryId = $('#hiddenBenificaryID').val();
+		if (!beneficiaryId || beneficiaryId === "0") {
+			// Show error message and prevent form submission if beneficiary not selected
+			$('#errorMessage').text("Please select a valid beneficiary before saving.");
+			$('#saveButton').prop('disabled', true);
+			return false; // Prevent form submission
+		}
+
+		// Disable the button to prevent double submission
+		button.disabled = true;
+		button.innerText = 'Saving...';  // Optionally change button text to indicate processing
+		button.form.submit();  // Submit the form if validation passes
+	}
+
+	function select_onchange_invoice_type(value) {
+		if (value != null) {
+			if (value === "7") {
+				// Show dropBenificaryDr and hide dropBenificaryOther if value is 7
+				$('#dropBenificaryDr').show();
+				$('#dropBenificaryOther').hide();
+			} else {
+				// Otherwise, show dropBenificaryOther and hide dropBenificaryDr
+				$('#dropBenificaryDr').hide();
+				$('#dropBenificaryOther').show();
+			}
+			// Reset beneficiary selection when invoice type changes
+			$('#hiddenBenificaryID').val("0");
+			checkBeneficiarySelection(); // Revalidate beneficiary selection
+		}
+	}
+
+	function select_onchange_benificiary(value) {
+		if (value === "0") {
+			// If the default option is selected, clear the hidden input and disable Save button
+			$('#hiddenBenificaryID').val("0");
+			checkBeneficiarySelection(); // Show error and disable Save button
+		} else if (value != null) {
+			// Set the hidden input and enable Save button if valid beneficiary selected
+			$('#hiddenBenificaryID').val(value);
+			checkBeneficiarySelection(); // Check if Save button should be enabled
+		}
+	}
+	//  function adddisableButton(button) {
+	// 	Disable the button to prevent multiple clicks
+	// 	button.disabled = true;
+	// 	button.innerHTML = "<i class='fa fa-spinner fa-spin'></i> Processing...";
+
+	// 	Optionally, re-enable the button after some delay (if needed)
+	// 	setTimeout(() => {
+	// 		button.disabled = false;
+	// 		button.innerHTML = "<i class='fa fa-plus'></i>";
+	// 	}, 10000); 10 seconds
+	// }
+	function sendRequest(id, button) {
+		// Disable the button and show a spinner
+		button.disabled = true;
+		button.innerHTML = "<i class='fa fa-spinner fa-spin'></i> Processing...";
+
+		// Send AJAX POST request
+		$.ajax({
+			url: '/OtherIncome/CashierTransferIN',
+			type: 'POST',
+			data: { Id: id },
+			success: function (response) {
+				if (response) {
+					alert('Transaction processed successfully!');
+					 window.location.href = '/OtherIncome/Index';
+				} 
+				else {
+					alert('Failed to process the transaction. Please try again.');
+				}
+			},
+			error: function () {
+				alert('An error occurred while processing the transaction.');
+			},
+			complete: function () {
+				// Re-enable the button and restore its original content
+				button.disabled = false;
+				button.innerHTML = "<i class='fa fa-plus'></i>";
+			}
+		});
+	}
+</script>
+
+<div class="modal-content">
+	<div class="modal-header">
+		<h4 class="modal-title" id="myLargeModalLabel">Add/Edit</h4>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	</div>
+	<form asp-action="CreateNewOtherIncome" method="post">
+		<div class="modal-body">
+			<input type="hidden" id="custId">
+			<div class="row">
+				<input type="hidden" asp-for="otherTransactions.Id">
+				<input type="hidden" asp-for="otherTransactions.BeneficiaryID" id="hiddenBenificaryID">
+				<div class="col-md-12">
+					<div class="form-group">
+						<label for="companyName">Select Session</label>
+						<input class="form-control " type="text" id="" asp-for="sessionDetails" placeholder="Name" disabled />
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="companyName">Invoice Type</label>
+						<select class="form-control ddlSearchList" onchange="javascript:select_onchange_invoice_type(this.value);" asp-for="otherTransactions.InvoiceType" id="dropSex">
+							<option value="3">OTHER_INCOME</option>
+							<option value="4">OTHER_EXPENSES</option>
+							<option value="6">CASHIER_TRANSFER_OUT</option>
+							<option value="7">DOCTOR_PAYMENT</option>
+
+						</select>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="companyName">Amount</label>
+						<input class="form-control " type="number" id="txtTelephoneNumber" asp-for="otherTransactions.Amount" placeholder="0.00 LKR" />
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="companyName">Convener Name</label>
+						<input class="form-control " type="text" id="txtMobileNumber" asp-for="username" placeholder="Name" />
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="companyName">Beneficiary</label>
+						<select class="form-control ddlSearchList" id="dropBenificaryOther" asp-for="otherTransactions.BeneficiaryID" onchange="javascript:select_onchange_benificiary(this.value);">
+							<option value="0">Select Beneficiary Other</option>
+							@if (Model.benificaryList != null)
+							{
+
+								@foreach (var item in Model.benificaryList)
+								{
+									<option value="@item.Id">@item.FullName</option>
+								}
+							}
+
+						</select>
+						<select class="form-control ddlSearchList" id="dropBenificaryDr" asp-for="otherTransactions.BeneficiaryID" onchange="javascript:select_onchange_benificiary(this.value);">
+							<option value="0">Select Beneficiary Dr</option>
+							@if (Model.benificaryDrList != null)
+							{
+
+								@foreach (var item in Model.benificaryDrList)
+								{
+									<option value="@item.Id">@item.Name</option>
+								}
+							}
+
+						</select>
+					</div>
+				</div>
+
+
+				<div class="col-md-12">
+					<div class="form-group">
+						<label for="companyName">Description</label>
+						<textarea id="txtAddress" class="form-control " cols="40" rows="5" asp-for="otherTransactions.Description" placeholder="Description"></textarea>
+					</div>
+				</div>
+
+
+			</div>
+
+
+		</div>
+		<div class="modal-footer">
+			<!-- Error message display -->
+			<div id="errorMessage" style="color: red; font-weight: bold;"></div>
+
+			<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+			<button type="submit" class="btn waves-effect btn-primary" id="saveButton" onclick="disableButton(this)">
+				<i class="fa fa-save"></i>&nbsp;Save
+			</button>
+		</div>
+	</form>
+	<div class="modal-body">
+		<h4 class="modal-title">Your Cashier Transfer - IN </h4>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="table">
+					<table id="myTable" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+
+								<th data-orderable="true">Convener</th>
+								<th>Benificary</th>
+								<th>Amount</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody id="tblBodyPayments">
+							@if (Model != null && Model.benificaryOutTransactionList != null)
+							{
+
+								@foreach (var item in Model.benificaryOutTransactionList)
+								{
+									<tr>
+										<td>@item.Convener.FullName</td>
+
+										<td>@item.Description</td>
+
+										<td>@item.Amount</td>
+
+										<td>
+											@if (Model != null)
+											{
+
+												@*@using (Html.BeginForm("CashierTransferIN", "OtherIncome", new { Id = @item.Id }, FormMethod.Post))
+												{
+
+													<button id='btn_@item.Id' class='btn waves-effect waves-light btn-xs btn-info'
+															onclick="adddisableButton(this)">
+														<i class='fa fa-plus'></i>
+													</button>
+												}*@
+												<button id='btn_@item.Id'
+														class='btn waves-effect waves-light btn-xs btn-info'
+														onclick="sendRequest(@item.Id, this)">
+													<i class='fa fa-plus'></i>
+												</button>
+											}
+
+										</td>
+									</tr>
+								}
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /.modal-content -->

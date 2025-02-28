@@ -1,0 +1,1210 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model OPDDto;
+@{
+
+}
+@inject IConfiguration Configuration
+<script type="text/javascript">
+    var drugusList = [];
+    var isCheckedVOG = 0;
+    var isCheckedECO = 0;
+    var isCheckedEXE = 0;
+    var channelingItemID = 0;
+    var isCheckedChanneling = 0;
+
+    function handleSubmit(button) {
+        // Disable the button to prevent double submission
+        button.disabled = true;
+
+        // Optionally, you can change the button text to indicate that it's processing
+        button.innerText = 'Saving...';
+
+        var opdID = $('#opdIndexNumber').val();
+        if (opdID == 0) {
+            submitChanneling();
+        } else {
+            updatePatientDetails();
+        }
+    }
+
+    function updatePatientDetails() {
+        var opdID = $('#opdIndexNumber').val();
+        var fullName = $('#patientName').val();
+        var patientID = $('#patientId').val();
+        var contactNo = $('#txtMobileNumber').val();
+        var sex = $('#dropSex').val();
+        var age = $('#txtAge').val();
+        var months = $('#txtMonths').val();
+        var days = $('#txtDays').val();
+
+        //remove  non-letter characters
+        var lettersAndSpacesOnlyName = fullName.replace(/[^a-zA-Z\s]/g, '');
+        fullName = lettersAndSpacesOnlyName.toUpperCase();
+
+
+        var patientObject = {
+            Id: patientID,
+            FullName: fullName,
+            MobileNumber: contactNo,
+            Age: age,
+            Months: months,
+            Days: days,
+        }
+
+        var opdObject = {
+            Id: opdID
+        };
+
+        var opdDtoObject = {
+            patient: patientObject,
+            opd: opdObject
+        };
+
+        console.log(opdDtoObject);
+
+        $.ajax({
+            url: '/Channeling/UpdatePatientAndSendMessage', // Adjust the URL based on your actual route
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(opdDtoObject),
+            success: function (data) {
+                drugusList = [];
+                // document.getElementById("tblBodyPayments2").innerHTML = "";
+                // Handle success, e.g., redirect to another page
+                window.location.href = '/Channeling/Index';
+
+            },
+            error: function (error) {
+                // Handle error
+                console.error('Error submitting drugus items:', error);
+            }
+        });
+
+    }
+
+
+
+    function submitChanneling() {
+        var fullName = $('#patientName').val();
+        var patientID = $('#patientId').val();
+        var contactNo = $('#txtMobileNumber').val();
+        var sex = $('#dropSex').val();
+        var age = $('#txtAge').val();
+        var appoinmentNumber = $('#dropNoOfAppoinment').val();
+        var schedularId = $('#dropShedule').val();
+        var months = $('#txtMonths').val();
+        var days = $('#txtDays').val();
+        // selectedDoctorId
+
+        //remove  non-letter characters
+        var lettersAndSpacesOnlyName = fullName.replace(/[^a-zA-Z\s]/g, '');
+        fullName = lettersAndSpacesOnlyName.toUpperCase();
+
+        var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
+        var doctortID = parseInt(docId);
+        var opdID = $('#opdIndexNumber').val();
+        var opdType = parseInt(docId) == 82 ? 0 : 1;
+
+        var patientObject = {
+            Id: patientID,
+            FullName: fullName,
+            MobileNumber: contactNo,
+            Age: age,
+            Months: months,
+            Days: days,
+            Sex: sex
+        };
+
+        var opdObject = {
+            Id: opdID,
+            ConsultantID: doctortID,
+            invoiceType: 2,
+            AppoimentNo: appoinmentNumber,
+            schedularId: schedularId,
+        };
+
+        var opdDtoObject = {
+            patient: patientObject,
+            OPDDrugusList: drugusList,
+            opd: opdObject,
+            OpdType: opdType,
+            isVOGScan: isCheckedVOG,
+            isCardioScan: isCheckedECO,
+            isExerciseBook: isCheckedEXE,
+            isChanneling: isCheckedChanneling,
+            scanId: channelingItemID
+        };
+
+        var jsonOb = JSON.stringify(opdDtoObject);
+        // console.log(jsonOb);
+        console.log(opdDtoObject);
+
+        $.ajax({
+            url: '/Channeling/AddNewChannel', // Adjust the URL based on your actual route
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(opdDtoObject),
+            success: function (data) {
+                drugusList = [];
+                document.getElementById("tblBodyPayments2").innerHTML = "";
+                console.log(data);
+
+                // Handle success, e.g., redirect to another page
+                window.location.href = '/Channeling/Index';
+
+            },
+            error: function (error) {
+                // Handle error
+                return Toastify({
+                    text: error.responseText,
+                    duration: 3000,
+                    destination: "",
+                    newWindow: true,
+                    close: true,
+                    gravity: "bottom", // `top` or `bottom`
+                    position: "right", // `left`, `center` or `right`
+                    stopOnFocus: true, // Prevents dismissing of toast on hover
+                    style: {
+                        background: "linear-gradient(to right, #ff0000, #ff0000)", // Red background color
+                    },
+                    onClick: function () { } // Callback after click
+                }).showToast();
+            }
+        });
+    }
+
+    function submitChannelingWithQR() {
+        var fullName = $('#patientName').val();
+        var patientID = $('#patientId').val();
+        var contactNo = $('#txtMobileNumber').val();
+        var sex = $('#dropSex').val();
+        var age = $('#txtAge').val();
+        var appoinmentNumber = $('#dropNoOfAppoinment').val();
+        var schedularId = $('#dropShedule').val();
+        // selectedDoctorId
+
+        //remove  non-letter characters
+        var lettersAndSpacesOnlyName = fullName.replace(/[^a-zA-Z\s]/g, '');
+        fullName = lettersAndSpacesOnlyName.toUpperCase();
+
+        var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
+        var doctortID = parseInt(docId);
+        var opdID = $('#opdIndexNumber').val();
+        var opdType = parseInt(docId) == 82 ? 0 : 1;
+
+        var patientObject = {
+            Id: patientID,
+            FullName: fullName,
+            MobileNumber: contactNo,
+            Age: age,
+            Sex: sex
+        };
+
+        var opdObject = {
+            Id: opdID,
+            ConsultantID: doctortID,
+            invoiceType: 2,
+            AppoimentNo: appoinmentNumber,
+            schedularId: schedularId,
+        };
+
+        var opdDtoObject = {
+            patient: patientObject,
+            OPDDrugusList: drugusList,
+            opd: opdObject,
+            OpdType: opdType,
+            isVOGScan: isCheckedVOG,
+            isCardioScan: isCheckedECO,
+            isExerciseBook: isCheckedEXE,
+            isChanneling: isCheckedChanneling,
+            scanId: channelingItemID
+        };
+
+        var jsonOb = JSON.stringify(opdDtoObject);
+        // console.log(jsonOb);
+        console.log(opdDtoObject);
+
+        $.ajax({
+            url: '/Channeling/AddNewChannelWithQR', // Adjust the URL based on your actual route
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(opdDtoObject),
+            success: function (data) {
+                drugusList = [];
+                document.getElementById("tblBodyPayments2").innerHTML = "";
+                var opdId = @Html.Raw(Json.Serialize(Model.opdId));
+
+                $("#AddEditContainerModel").html(data);
+
+            },
+            error: function (error) {
+                // Handle error
+                return Toastify({
+                    text: error.responseText,
+                    duration: 3000,
+                    destination: "",
+                    newWindow: true,
+                    close: true,
+                    gravity: "bottom", // `top` or `bottom`
+                    position: "right", // `left`, `center` or `right`
+                    stopOnFocus: true, // Prevents dismissing of toast on hover
+                    style: {
+                        background: "linear-gradient(to right, #ff0000, #ff0000)", // Red background color
+                    },
+                    onClick: function () { } // Callback after click
+                }).showToast();
+            }
+        });
+    }
+
+    function select_onchange_patient() {
+        @*var settings = {
+            url: "/OPDRegistration/LoadPatientsAjax/" + value,
+            "method": "GET",
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            var data = response;
+            if (data != null) {
+                $('#txtMobileNumber').val(data.mobileNumber);
+                $('#dropSex').val(data.sex);
+                $('#txtAge').val(data.age);
+                $('#txtMonths').val(data.months);
+                $('#txtDays').val(data.days);
+            }
+        });*@
+
+        var age = $('#txtAge').val();
+        var months = $('#txtMonths').val();
+        var days = $('#txtDays').val();
+
+        if (age == "") {
+            $('#txtAge').val("0");
+        }
+
+        if (months == "") {
+            $('#txtMonths').val("0");
+        }
+
+        if (days == "") {
+            $('#txtDays').val("0");
+        }
+    }
+
+    function handleCheckboxChange() {
+        var tableBody = document.getElementById("tblBodyPayments2");
+        var total = 0;
+        var HospitalTotal = 0;
+        var DoctorTotal = 0;
+
+        isCheckedVOG = 0;
+        isCheckedECO = 0;
+        isCheckedEXE = 0;
+        isCheckedChanneling = 0;
+
+        channelingItemID = 0;
+
+        while (tableBody.firstChild) {
+            tableBody.removeChild(tableBody.firstChild);
+        }
+
+        var cheText = "Channelling";
+        var doctorFee = parseInt($('#DoctorFeee').val(), 10);
+        var hospitalFee = parseInt($('#HospitalFee').val(), 10);
+
+        var vogText = $('#vogScanText').val();
+        var vogScanHPFee = parseInt($('#vogScanHPFeeId').val(), 10);
+        var vogScanDRFee = parseInt($('#vogScanDRFeeId').val(), 10);
+
+        var echoText = $('#cardiopScanText').val();
+        var echoScanHPFee = parseInt($('#cardioScanHPFee').val(), 10);
+        var echoScanDRFee = parseInt($('#cardioScanDRFee').val(), 10);
+
+        var exerciseText = "Exersice Book";
+        var exerciseFee = parseInt($('#exersiceBookFee').val(), 10);
+        const selectedCheckboxes = [];
+
+        @*var tableBody = document.getElementById("tblBodyPayments2");
+        var newRow = tableBody.insertRow();
+        var cell1 = newRow.insertCell(0);
+        var cell2 = newRow.insertCell(1);
+        var cell3 = newRow.insertCell(2);
+        var cell4 = newRow.insertCell(3);
+
+        var cheText = "Channelling";
+        cell1.innerHTML = cheText;
+        cell2.innerHTML = doctorFee;
+        cell3.innerHTML = hospitalFee;
+        cell4.innerHTML = doctorFee + hospitalFee;
+
+        var chTotal = doctorFee + hospitalFee;
+        DoctorTotal = DoctorTotal + doctorFee;
+        HospitalTotal = HospitalTotal + hospitalFee;
+        total = total + chTotal;*@
+        
+        if (document.getElementById('inlineCheckbox4').checked) {
+            selectedCheckboxes.push(document.getElementById('inlineCheckbox4').value);
+            var tableBody = document.getElementById("tblBodyPayments2");
+            var newRow = tableBody.insertRow();
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+
+            var cheText = "Channelling";
+            cell1.innerHTML = cheText;
+            cell2.innerHTML = doctorFee;
+            cell3.innerHTML = hospitalFee;
+            cell4.innerHTML = doctorFee + hospitalFee;
+
+            var chTotal = doctorFee + hospitalFee;
+            DoctorTotal = DoctorTotal + doctorFee;
+            HospitalTotal = HospitalTotal + hospitalFee;
+            total = total + chTotal;
+            
+            isCheckedChanneling = 1;
+        }
+
+        if (document.getElementById('inlineCheckbox1').checked) {
+            selectedCheckboxes.push(document.getElementById('inlineCheckbox1').value);
+            var tableBody = document.getElementById("tblBodyPayments2");
+            var newRow = tableBody.insertRow();
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+
+
+            cell1.innerHTML = vogText;
+            cell2.innerHTML = vogScanDRFee;
+            cell3.innerHTML = vogScanHPFee;
+            cell4.innerHTML = vogScanHPFee + vogScanDRFee;
+
+            var vogTotal = vogScanHPFee + vogScanDRFee;
+            DoctorTotal = DoctorTotal + vogScanDRFee;
+            HospitalTotal = HospitalTotal + vogScanHPFee;
+            total = total + vogTotal;
+
+            isCheckedVOG = 1;
+        }
+
+        if (document.getElementById('inlineCheckbox2').checked) {
+            selectedCheckboxes.push(document.getElementById('inlineCheckbox2').value);
+
+            var tableBody = document.getElementById("tblBodyPayments2");
+            var newRow = tableBody.insertRow();
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+
+
+            cell1.innerHTML = echoText;
+            cell2.innerHTML = echoScanDRFee;
+            cell3.innerHTML = echoScanHPFee;
+            cell4.innerHTML = echoScanHPFee + echoScanDRFee;
+
+            var echoTotal = echoScanHPFee + echoScanDRFee;
+            DoctorTotal = DoctorTotal + echoScanDRFee;
+            HospitalTotal = HospitalTotal + echoScanHPFee;
+            total = total + echoTotal;
+
+            isCheckedECO = 1;
+        }
+
+        if (document.getElementById('inlineCheckbox3').checked) {
+            selectedCheckboxes.push(document.getElementById('inlineCheckbox3').value);
+
+            var tableBody = document.getElementById("tblBodyPayments2");
+            var newRow = tableBody.insertRow();
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+
+
+            cell1.innerHTML = exerciseText;
+            cell2.innerHTML = 0;
+            cell3.innerHTML = exerciseFee;
+            cell4.innerHTML = exerciseFee;
+
+
+            HospitalTotal = HospitalTotal + exerciseFee;
+            total = total + exerciseFee;
+
+            isCheckedEXE = 1;
+
+        }
+
+        $("#total").val(DoctorTotal);
+        $("#hospitalCharges").val(HospitalTotal);
+        $("#subTotal").val(total);
+
+
+    }
+
+    function addDrugusItem() {
+        // var opdID = document.getElementById("opid").value;
+        var drugId = document.getElementById("drugus").value;
+        var qty = document.getElementById("txtQty").value;
+        var price = document.getElementById("txtPrice").value;
+        var amount = qty * price;
+        total = total + amount;
+
+        let newTotal = parseInt($("#total").val());
+        newTotal += amount;
+        $("#total").val(newTotal);
+
+        var docId = $("#dropDoctor").val() == null ? $("#selectedDoctorId").attr("name") : $("#dropDoctor").val();
+        var doctortID = parseInt(docId);
+        let hospitalCharges = doctortID == 82 ? 0 : 700;
+        $("#hospitalCharges").val(hospitalCharges)
+
+        let subTotal = newTotal + hospitalCharges;
+        $("#subTotal").val(subTotal);
+
+        // document.getElementById("total").value = total;
+
+        console.log(total);
+
+        // Create a new drugus item and add it to the list
+        var drugusItem = {
+            DrugId: drugId,
+            Qty: qty,
+            Price: price,
+            Amount: amount
+
+        };
+        drugusList.push(drugusItem);
+
+        // Append the item to the table
+        var tableBody = document.getElementById("tblBodyPayments2");
+        var newRow = tableBody.insertRow();
+        var cell1 = newRow.insertCell(0);
+        var cell2 = newRow.insertCell(1);
+        var cell3 = newRow.insertCell(2);
+        var cell4 = newRow.insertCell(3);
+        var cell5 = newRow.insertCell(4);
+
+        cell1.innerHTML = document.getElementById("drugus").options[document.getElementById("drugus").selectedIndex].text;
+        cell2.innerHTML = qty;
+        cell3.innerHTML = price;
+        cell4.innerHTML = amount;
+
+        // Add a delete button for each row
+        var deleteButton = document.createElement("button");
+        deleteButton.className = "btn waves-effect waves-light btn-xs btn-danger";
+        deleteButton.innerHTML = "<i class='fa fa-trash'></i>";
+        deleteButton.onclick = function () {
+            // Find the closest row and delete it
+            var rowIndex = this.closest("tr").rowIndex;
+            drugusList.splice(rowIndex - 1, 1);
+            tableBody.deleteRow(rowIndex - 1);
+
+            // Update the total
+            let total = $("#total").val()
+            total -= amount;
+            $("#total").val(total);
+        };
+        cell5.appendChild(deleteButton);
+
+        // Clear input fields
+        document.getElementById("drugus").value = "0";
+        document.getElementById("txtQty").value = "0.00";
+        document.getElementById("txtPrice").value = "0.00";
+        document.getElementById("txtAmount").value = "0.00";
+    }
+
+    function select_onchange_drug(value) {
+        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+        var itenNo = document.getElementById("drugus").value;
+        var settings = {
+            "url": commonUrl + "Drugs/GetAllDrugByID?Id=" + itenNo,
+            "method": "GET",
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            console.log(response.price);
+            document.getElementById("txtPrice").value = response.price.toFixed(2);
+
+            var qty = document.getElementById("txtQty").value;
+            var price = document.getElementById("txtPrice").value;
+            amount = qty * price;
+            document.getElementById("txtAmount").value = amount.toFixed(2);
+
+        });
+    }
+
+    function select_onchange_qty(value) {
+        var qty = document.getElementById("txtQty").value;
+        var price = document.getElementById("txtPrice").value;
+        amount = qty * price;
+        document.getElementById("txtAmount").value = amount.toFixed(2);
+    }
+
+    function select_onchange_channelingItems(value) {
+        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+
+        var settings = {
+            "url": commonUrl + "ChannelingShedule/GetChannelingItemById?Id=" + value,
+            "method": "GET",
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            console.log(response.doctorFee);
+            var doctorFee = response.doctorFee;
+            var hospitalFee = response.hospitalFee;
+            document.getElementById("DoctorFeee").value = response.doctorFee;
+            document.getElementById("HospitalFee").value = response.hospitalFee;
+            channelingItemID = response.id;
+            var tableBody = document.getElementById("tblBodyPayments2");
+
+            while (tableBody.firstChild) {
+                tableBody.removeChild(tableBody.firstChild);
+            }
+
+            var newRow = tableBody.insertRow();
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+
+            var cheText = response.itemName;
+            cell1.innerHTML = cheText;
+            cell2.innerHTML = doctorFee;
+            cell3.innerHTML = hospitalFee;
+            cell4.innerHTML = doctorFee + hospitalFee;
+
+            var total = 0;
+            var HospitalTotal = 0;
+            var DoctorTotal = 0;
+
+            isCheckedVOG = 0;
+            isCheckedECO = 0;
+            isCheckedEXE = 0;
+            isCheckedChanneling = 1;
+
+            var chTotal = doctorFee + hospitalFee;
+            DoctorTotal = DoctorTotal + doctorFee;
+            HospitalTotal = HospitalTotal + hospitalFee;
+            total = total + chTotal;
+
+            $("#total").val(DoctorTotal);
+            $("#hospitalCharges").val(HospitalTotal);
+            $("#subTotal").val(total);
+
+
+
+        });
+    }
+
+
+    function select_onchange_shedule(value) {
+        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+
+        var opdID = $('#opdIndexNumber').val();
+
+        if (opdID == null || opdID == 0) {
+
+            // var selectedDate = document.getElementById("date-format").value;
+            var settings = {
+                "url": commonUrl + "ChannelingShedule/GetSheduleGetById?Id=" + value,
+                "method": "GET",
+                "headers": {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+            };
+
+            $.ajax(settings).done(function (response) {
+                console.log(response);
+
+                if (response.consultant.specialistId == 12) {
+                    document.getElementById("dropChannelingItems").disabled = false;
+                } else {
+                    document.getElementById("dropChannelingItems").disabled = true;
+                }
+
+                var doctorFee = response.consultantFee; // Assuming the doctor's fee is present in the response
+                document.getElementById("DoctorFeee").value = doctorFee;
+
+                var hospitalFee = response.hospitalFee; // Assuming the hospital fee is present in the response
+                document.getElementById("HospitalFee").value = hospitalFee;
+
+                document.getElementById('inlineCheckbox1').checked = false;
+                document.getElementById('inlineCheckbox2').checked = false;
+                document.getElementById('inlineCheckbox3').checked = false;
+                document.getElementById('inlineCheckbox4').checked = true;
+
+                isCheckedVOG = 0;
+                isCheckedECO = 0;
+                isCheckedEXE = 0;
+                isCheckedChanneling = 1;
+                channelingItemID = 0;
+
+                var tableBody = document.getElementById("tblBodyPayments2");
+
+                while (tableBody.firstChild) {
+                    tableBody.removeChild(tableBody.firstChild);
+                }
+
+                var newRow = tableBody.insertRow();
+                var cell1 = newRow.insertCell(0);
+                var cell2 = newRow.insertCell(1);
+                var cell3 = newRow.insertCell(2);
+                var cell4 = newRow.insertCell(3);
+
+                var cheText = "Channelling";
+                cell1.innerHTML = cheText;
+                cell2.innerHTML = doctorFee;
+                cell3.innerHTML = hospitalFee;
+                cell4.innerHTML = doctorFee + hospitalFee;
+
+                var total = 0;
+                var HospitalTotal = 0;
+                var DoctorTotal = 0;
+
+                isCheckedVOG = 0;
+                isCheckedECO = 0;
+                isCheckedEXE = 0;
+                channelingItemID = 0;
+
+                var chTotal = doctorFee + hospitalFee;
+                DoctorTotal = DoctorTotal + doctorFee;
+                HospitalTotal = HospitalTotal + hospitalFee;
+                total = total + chTotal;
+
+                $("#total").val(DoctorTotal);
+                $("#hospitalCharges").val(HospitalTotal);
+                $("#subTotal").val(total);
+                //var dateInput = document.getElementById('date-format');
+                //dateInput.value = response.dateTime;
+
+                // var dateInput = document.getElementById('date-format');
+                @*var options = {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric'
+                };*@
+                // dateInput.value = response.dateTime.toLocaleString(undefined, options);
+
+                const select = document.querySelector('#dropNoOfAppoinment');
+
+                var settings2 = {
+                    "url": commonUrl + "Channeling/ChannelingGetBySheduleId?Id=" + response.id,
+                    "method": "GET",
+                    "headers": {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                };
+
+                console.log(response);
+
+                var appointmentCount = response.noOfAppointment;
+
+                $.ajax(settings2).done(function (response) {
+                    console.log("appoinment");
+                    console.log(response);
+
+                    while (select.options.length > 1) {
+                        select.remove(1);
+                    }
+
+                    var appointmentCount2 = response;
+
+                    for (var i = 1; i <= appointmentCount; i++) {
+                        var isMatch = false;
+
+                        for (var x = 0; x < appointmentCount2.length; x++) {
+                            var secondVal = i
+                            if (i == appointmentCount2[x].appoimentNo) {
+                                isMatch = true;
+                            }
+
+                        }
+                        if (isMatch == false) {
+                            const option = document.createElement('option');
+                            option.value = i;
+                            option.text = i;
+                            select.add(option);
+                        }
+                    }
+                });
+            });
+
+        }
+
+    }
+
+    function select_onchange_doctor(value) {
+        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+        // var selectedDate = document.getElementById("date-format").value;
+        var settings = {
+            "url": commonUrl + "ChannelingShedule/GetAllSheduleGetByConsultantId?Id=" + value,
+            "method": "GET",
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+
+            const select = document.querySelector('#dropShedule');
+
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+
+            for (let item of response) {
+                const option = document.createElement('option');
+                option.value = item.id;
+
+                // Format the date and time
+                const dateTime = new Date(item.dateTime).toLocaleString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                });
+
+                option.text = dateTime;
+                select.add(option);
+            }
+        });
+    }
+
+    function validateMobileNumber() {
+        // Get the input field and its value
+        var mobileInput = document.getElementById('txtMobileNumber');
+        var mobileNumber = mobileInput.value;
+
+        // Get the validator message element
+        var validatorMessage = document.getElementById('mValidator');
+
+        // Check if the mobile number contains exactly 10 digits and only numbers
+        var isValid = /^[0-9]{10}$/.test(mobileNumber);
+
+        if (isValid) {
+            validatorMessage.innerText = "Valid mobile number.";
+            validatorMessage.style.color = "green";
+        } else {
+            validatorMessage.innerText = "Invalid mobile number. It should contain exactly 10 digits.";
+            validatorMessage.style.color = "red";
+        }
+    }
+</script>
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/EditChanneling</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form>
+        <input type="hidden" id="opdIndexNumber" asp-for="opdId">
+        <input type="hidden" id="cheHPFeeId" asp-for="channeling.ChannelingSchedule.HospitalFee">
+        <input type="hidden" id="cheDRFeeId" asp-for="channeling.ChannelingSchedule.ConsultantFee">
+
+        <input type="hidden" id="vogScanText" asp-for="vogScan.ItemName">
+        <input type="hidden" id="vogScanHPFeeId" asp-for="vogScan.HospitalFee">
+        <input type="hidden" id="vogScanDRFeeId" asp-for="vogScan.DoctorFee">
+
+        <input type="hidden" id="cardiopScanText" asp-for="echoScan.ItemName">
+        <input type="hidden" id="cardioScanHPFee" asp-for="echoScan.HospitalFee">
+        <input type="hidden" id="cardioScanDRFee" asp-for="echoScan.DoctorFee">
+
+        <input type="hidden" id="exersiceBookFee" asp-for="exerciseBook.Price">
+
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Patient</label>
+                        @*<select class="form-control ddlSearchList" onchange="javascript:select_onchange_patient(this.value);" asp-for="opd.PatientID" id="dropPatient">
+                            <option value="-2">Select one</option>
+                            @foreach (var item in Model.PatientList)
+                            {
+                                <option value="@item.Id">@item.FullName-@item.MobileNumber</option>
+                            }
+                        </select>*@
+                        <input class="form-control" type="text" id="patientId" asp-for="opd!.PatientID" hidden />
+                        <input class="form-control" type="text" id="patientName" placeholder="Patient Name" asp-for="opd!.patient!.FullName" onchange="javascript:select_onchange_patient();" />
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Mobile Number </label>
+@*                         <input class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" type="tel" maxlength="10" minlength="10" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd.patient.MobileNumber" required /> *@
+                        <input class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" type="tel" maxlength="10" minlength="10" id="txtMobileNumber" placeholder="Mobile Number" asp-for="opd!.patient!.MobileNumber"  onchange="validateMobileNumber()" />
+                        <br />
+                        <h6 id="mValidator"></h6>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Sex</label>
+                        <select class="form-control ddlSearchList" id="dropSex" asp-for="opd!.patient!.Sex">
+                            <option value="0">Select one</option>
+                            <option value="1">Male</option>
+                            <option value="2">Female</option>
+
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Age</label>
+                        <input class="form-control " type="text" id="txtAge" placeholder="Age" asp-for="opd!.patient!.Age" />
+                    </div>
+                </div>
+                
+                <div class="col-md-2" hidden>
+                    <div class="form-group">
+                        <label for="companyName">Months</label>
+                        <input class="form-control " type="text" id="txtMonths" placeholder="Months" asp-for="opd!.patient!.Months" />
+                    </div>
+                </div>
+
+                <div class="col-md-2" hidden>
+                    <div class="form-group">
+                        <label for="companyName">Days</label>
+                        <input class="form-control " type="text" id="txtDays" placeholder="Days" asp-for="opd!.patient!.Days" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Doctor Name</label>
+                        @{
+                            if (Model.opdId == 0)
+                            {
+                                <select class="form-control ddlSearchList" id="dropDoctor" onchange="javascript:select_onchange_doctor(this.value);" asp-for="channeling.ChannelingSchedule.ConsultantId">
+                                    <option value="">Select one</option>
+                                    @foreach (var item in Model.listConsultants)
+                                    {
+                                        <option value="@item.Id">@item.Specialist.Name - @item.Name</option>
+                                    }
+                                </select>
+                            }
+                            else
+                            {
+                                <input class="form-control" type="text" id="selectedDoctorId" value="@Model.opd.consultant.Name" style="text-align:right;" placeholder="Consultant Name" name="@Model.opd.consultant.Id" disabled />
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Channeling Schedule</label>
+                        @{
+                            if (Model.opdId == 0)
+                            {
+                                <select class="form-control ddlSearchList" id="dropShedule" onchange="javascript:select_onchange_shedule(this.value);" asp-for="channeling.ChannelingScheduleID">
+                                    <option>Select one</option>
+                                    @foreach (var item in Model.listChannelingSchedule)
+                                    {
+                                        <option value="@item.Id">@item.DateTime.ToString("M/d/yyyy dddd h:mm:ss tt")</option>
+                                    }
+                                </select>
+                            }
+                            else
+                            {
+                                <input class="form-control" type="text" id="dropShedule" value="@Model.channelingSchedule.DateTime" style="text-align:right;" placeholder="Schedule Time" disabled />
+                            }
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="companyName">Channeling Items</label>
+                        @{
+                            if (Model.opdId == 0)
+                            {
+                                <select class="form-control ddlSearchList" id="dropChannelingItems" onchange="javascript:select_onchange_channelingItems(this.value)" asp-for="channelingItem.Id" disabled>
+                                    <option>Select one</option>
+                                    @foreach (var item in Model.listChannelingItems)
+                                    {
+                                        <option value="@item.Id">@item.ItemName</option>
+                                    }
+                                </select>
+                            }
+                            else
+                            {
+                                <input class="form-control" type="text" id="dropChannelingItems" value="@Model.opd.Description" style="text-align:right;" placeholder="Item Name" disabled />
+                            }
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Doctor Fee:</label>
+                        <input disabled class="form-control" type="text" asp-for="channelingSchedule.ConsultantFee" style="text-align:right;" id="DoctorFeee" placeholder="Amount" />
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Hospital Fee:</label>
+                        <input disabled class="form-control " type="text" asp-for="channelingSchedule.HospitalFee" style="text-align:right;" id="HospitalFee" placeholder="Amount" />
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Appoinment Number</label>
+                        @{
+                            if (Model.opdId == 0)
+                            {
+                                <select class="form-control ddlSearchList" id="dropNoOfAppoinment" asp-for="channeling.AppointmentNo">
+
+                                    @if (Model != null)
+                                    {
+                                        if (Model.channeling != null)
+                                        {
+                                            @if (Model.channeling.AppointmentNo > 0)
+                                            {
+                                                <option>@Model.channeling.AppointmentNo</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            // <option>Select one</option>
+                                        }
+
+                                    }
+                                </select>
+                            }
+                            else
+                            {
+                                <input class="form-control" type="text" id="dropNoOfAppoinment" value="@Model.opd.AppoimentNo" style="text-align:right;" placeholder="Appoinment Number" disabled />
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="form-group">
+                        @{
+                            if (Model.opdId == 0)
+                            {
+                                <label for="companyName">Add On</label>
+
+                                <br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="inlineCheckbox4" value="Channeling" onchange="handleCheckboxChange()">
+                                    <label class="form-check-label" for="inlineCheckbox4">Channeling</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="VOG Scan" onchange="handleCheckboxChange()">
+                                    <label class="form-check-label" for="inlineCheckbox1">VOG Scan</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="Echo Scan" onchange="handleCheckboxChange()">
+                                    <label class="form-check-label" for="inlineCheckbox2">Echo Scan</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Exercise Book" onchange="handleCheckboxChange()">
+                                    <label class="form-check-label" for="inlineCheckbox3">Exercise Book</label>
+                                </div>
+                            }
+                        }
+
+                    </div>
+                </div>
+            </div>
+
+            @*            <div class="row">
+            <div class="col-md-12">
+            <div class="form-group">
+            <label for="companyName">Name</label>
+            <select class="form-control ddlSearchList" onchange="javascript:select_onchange_drug(this.value);" id="drugus" asp-for="opdDrugus.DrugId">
+            <option value="0">Select Drug</option>
+            @foreach (var item in Model.Drugs)
+            {
+            <option value="@item.Id">@item.DrugName - @item.DrugsCategory.Category</option>
+            }
+            </select>
+            </div>
+            </div>
+
+            <div class="col-md-4">
+            <div class="form-group">
+            <label for="companyName">Qty </label>
+            <input class="form-control " type="text" style="text-align:right;" onkeyup="javascript:select_onchange_qty();" value="0.00" id="txtQty" placeholder="Qty" />
+            </div>
+            </div>
+
+            <div class="col-md-4">
+            <div class="form-group">
+            <label for="companyName">Price</label>
+            <input class="form-control " type="text" style="text-align:right;" id="txtPrice" value="0.00" placeholder="Price" />
+            </div>
+            </div>
+
+            <div class="col-md-4">
+            <div class="form-group">
+            <label for="companyName">Amount</label>
+            <input class="form-control " type="text" style="text-align:right;" id="txtAmount" value="0.00" placeholder="Amount" disabled />
+            </div>
+            </div>
+
+            </div>
+
+            <div class="row">
+            <div class="col-md-12">
+            <div class="form-group text-center">
+            <br>
+            <button type="button" class="btn btn-success waves-effect" style="width:100%" onclick="addDrugusItem()">Add</button>
+            </div>
+            </div>
+            </div>
+            *@
+            <div class="row">
+                <div class="col-md-12">
+                    @if (Model.opdId == 0)
+                    {
+                        <table id="myTable2" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th data-orderable="true">Billing Item Name</th>
+                                    <th>Doctor Fee</th>
+                                    <th>Hospital Fee</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblBodyPayments2">
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <hr>
+            <div class="col-md-12">
+                <div class="table">
+                    @{
+                        decimal totalAmount = 0;
+                    }
+                    @if (Model != null && Model.OPDDrugusList != null && Model.OPDDrugusList.Count > 0)
+                    {
+                        <table id="myTable" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th data-orderable="true">Billing Item Name</th>
+                                    <th>Doctor Fee</th>
+                                    <th>Hospital Fee</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblBodyPayments">
+
+
+
+                                @foreach (var item in Model.OPDDrugusList)
+                                {
+                                    <tr>
+                                        @{
+                                            totalAmount = totalAmount + item.Amount;
+                                        }
+                                        <td>@item.Drug.DrugName</td>
+
+                                        <td>@item.Qty</td>
+
+                                        <td>@item.Price</td>
+
+                                        <td>@item.Amount</td>
+
+                                        <td>
+                                            @if (Model != null)
+                                            {
+                                                @using (Html.BeginForm("DeleteOPDDrug", "OPDRegistration", new { Id = @item.Id }, FormMethod.Post))
+                                                {
+                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+
+
+                            </tbody>
+                        </table>
+                    }
+                    @{
+                        var subTotal = totalAmount;
+                    }
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="companyName">Total Doctor Fee: </label>
+                                <input id="total" class="form-control" value="@totalAmount" type="text" placeholder="Your Total will Appear Here" readonly>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="companyName">Total Hospital Fee: </label>
+                                <input id="hospitalCharges" class="form-control" value="@totalAmount" type="text" placeholder="Your Hopital Charges will Appear Here" readonly>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="companyName">Sub Total: </label>
+                                <input id="subTotal" class="form-control" value="@subTotal" type="text" placeholder="Your Sub Total will Appear Here" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+
+            <button type="button" class="btn  waves-effect btn-primary" onclick="handleSubmit(this)"><i class="fa fa-save"></i>&nbsp;Save</button>
+            <button type="button" class="btn waves-effect btn-primary ms-2" onclick="submitChannelingWithQR()">
+                <i class='fa fa-print'></i>&nbsp;Print & Save
+            </button>
+        </div>
+    </form>
+</div>

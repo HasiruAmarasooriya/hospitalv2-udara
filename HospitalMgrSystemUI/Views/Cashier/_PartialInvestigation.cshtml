@@ -1,0 +1,149 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model OPDDto;
+@{
+}
+@inject IConfiguration Configuration
+<script type="text/javascript">
+    function select_onchange(value) {
+        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+        var itenNo = document.getElementById("investigation").value;
+        var settings = {
+            "url": commonUrl + "Investigation/GetAllInvestigationByID?Id=" + itenNo,
+            "method": "GET",
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            console.log(response.price);
+            document.getElementById("txtPrice").value = response.price.toFixed(2);
+
+            var qty = document.getElementById("txtQty").value;
+            var price = document.getElementById("txtPrice").value;
+            amount = qty * price;
+            document.getElementById("txtAmount").value = amount.toFixed(2);
+
+        });
+    }
+
+</script>
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/Edit Investigation  </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <div class="modal-body">
+
+        <form asp-action="AddNewInvestigation" method="post">
+            <input type="hidden" id="custId" asp-for="opdId">
+            <div class="row">
+
+
+
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Type</label>
+                        <select class="form-control ddlSearchList" asp-for="investigationID" name="cars" id="cars">
+                            <option value="1">Lab Investigation</option>
+                            <option value="2">Thearter Investigation</option>
+                            <option value="3">Other Investigation</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="companyName">Name of Investigation </label>
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange(this.value);" asp-for="opdInvestigation.InvestigationId" id="investigation">
+                            <option value="0">Name of Investigation</option>
+                            @foreach (var item in Model.Investigations)
+                            {
+                                <option value="@item.Id">@item.InvestigationName - @item.InvestigationCategory.Investigation</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Qty </label>
+                        <input class="form-control " type="text" asp-for="opdInvestigation.Qty" placeholder="Qty" onkeyup="javascript:select_onchange();" value="1.00" id="txtQty" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Price</label>
+                        <input class="form-control " type="text" id="txtPrice" asp-for="opdInvestigation.Price" value="1.00" placeholder="Price" />
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Amount</label>
+                        <input class="form-control " type="text" id="txtAmount" value="0.00" asp-for="opdInvestigation.Amount" placeholder="Amount" disabled />
+                    </div>
+                </div>
+
+
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="myTable" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+
+                            <th>Investigation Name</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblBodyPayments">
+                        @foreach (var item in Model.OPDInvestigationList)
+                        {
+                            <tr>
+
+
+                                <td>@item.Investigation.InvestigationName</td>
+
+                                <td>@item.Qty</td>
+
+                                <td>@item.Price</td>
+                                <td>@item.Amount</td>
+
+                                <td>
+                                    @if (Model != null)
+                                    {
+
+                                        @using (Html.BeginForm("DeleteOPDInvestigation", "Cashier", new { Id = @item.Id, OPDID = Model.opdId }, FormMethod.Post))
+                                        {
+
+                                            <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+
+                                        }
+                                    }
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

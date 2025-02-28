@@ -1,0 +1,150 @@
+﻿@using Microsoft.Extensions.Configuration
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model AdmissionDto;
+@{
+}
+
+@inject IConfiguration Configuration
+<script type="text/javascript">
+    function select_onchange(value) {
+
+        const commonUrl = @Json.Serialize(@Configuration.GetSection("MainAPI").GetSection("APIURL").Value);
+        var itenNo = document.getElementById("item").value;
+        var settings = {
+            "url": commonUrl + "Items/GetItemByID?Id=" + itenNo,
+            "method": "GET",
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            console.log(response.price);
+            document.getElementById("txtPrice").value = response.price.toFixed(2);
+
+            var qty = document.getElementById("txtQty").value;
+            var price = document.getElementById("txtPrice").value;
+            amount = qty * price;
+            document.getElementById("txtAmount").value = amount.toFixed(2);
+
+        });
+    }
+
+</script>
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add Item  </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <div class="modal-body">
+        <form asp-action="CreateAdmissionItems" method="post">
+        <input type="hidden" id="custId" asp-for="AdmissionsId">
+            <div class="row">
+           
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Type</label>
+                        <select class="form-control ddlSearchList" asp-for="AdmissionItem.Type" s" id="cars">
+                            <option value="1">PH. Drugs</option>
+                            <option value="2">Thearter Drugs</option>
+                            <option value="3">OT Drugs</option>
+                            <option value="4">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="companyName">Name of Item </label>
+                        <select class="form-control ddlSearchList" onchange="javascript:select_onchange(this.value);" asp-for="AdmissionItem.ItemId" id="item">
+                            <option value="0">Name of Consultant</option>
+                            @foreach (var item in Model.Items)
+                            {
+                                <option value="@item.Id">@item.ItemName - @item.ItemCategory.ItemCategoryName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Qty </label>
+                        <input class="form-control " id="txtQty" onkeyup="javascript:select_onchange();" asp-for="AdmissionItem.Qty" value="1.00" type="text" placeholder="Qty" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Price</label>
+                        <input class="form-control " id="txtPrice" type="text" value="1.00" asp-for="AdmissionItem.Price" placeholder="Price" />
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Amount</label>
+                        <input class="form-control " type="text" id="txtAmount" value="1.00" asp-for="AdmissionItem.Amount" placeholder="Amount" disabled />
+                    </div>
+                </div>
+
+          
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="myTable" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblBodyPayments">
+                        @foreach (var item in Model.AdmissionItemsList)
+                        {
+                            <tr>
+
+
+                                <td>@item.Item.ItemName</td>
+
+                                <td>@item.Qty</td>
+
+                                <td>@item.Price</td>
+                                <td>@item.Amount</td>
+
+                                <td>
+                                    @if (Model != null)
+                                    {
+
+                                        @using (Html.BeginForm("DeleteAdmissionItems", "Admission", new { Id = @item.Id }, FormMethod.Post))
+                                        {
+
+                                            <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+
+                                        }
+                                    }
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

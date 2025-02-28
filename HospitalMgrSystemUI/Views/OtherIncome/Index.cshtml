@@ -1,0 +1,220 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model OtherTransactionsDto
+@{
+	ViewBag.Title = "Standings";
+}
+@{
+	var errorMessage = TempData["ErrorMessage"] as string;
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+	<div class="alert alert-danger" role="alert">
+		@errorMessage
+	</div>
+}
+@section Styles {
+	<style>
+		.select2-selection__rendered {
+			line-height: 31px !important;
+		}
+
+		.select2-container .select2-selection--single {
+			height: 35px !important;
+		}
+
+		.select2-selection__arrow {
+			height: 34px !important;
+		}
+	</style>
+}
+<div class="row page-titles">
+	<div class="col-md-5 col-8 align-self-center">
+		<h3 class="text-themecolor m-b-0 m-t-0">Manage Other Income & Expenses </h3>
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+			<li class="breadcrumb-item active">Manage Other Income & Expenses</li>
+		</ol>
+	</div>
+
+	<div class="col-md-7 col-4 align-self-center">
+		<div class="d-flex m-t-10 justify-content-end">
+			<div class="d-flex m-r-20 m-l-10 hidden-md-down">
+				<div class="spark-chart form-material">
+				</div>
+				<div class="spark-chart form-material">
+					<button type="button" id="btnCreateShift" class="btn waves-effect waves-light btn-block btn-info" onclick="ShowShiftDetails()"><i class="mdi mdi-account-plus"></i>&nbsp;Add New</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-12">
+		<div class="card">
+			<div class="card-body">
+				<h4 class="card-title">Transaction</h4>
+				<div class="col-md-2 ">
+					<!-- Aligning to the right -->
+					<div class="form-group">
+						<label for="transactionFilter" class="mr-2"><h4 class="card-title text-left">Filter by Transaction Type:</h4></label>
+						<select id="transactionFilter" class="form-control">
+							<option value="">All</option>
+							<option value="OTHER_INCOME">OTHER INCOME</option>
+							<option value="CASHIER_TRANSFER_IN">CASHIER TRANSFER IN</option>
+							<option value="CASHIER_TRANSFER_OUT">CASHIER TRANSFER OUT</option>
+							<option value="DOCTOR_PAYMENT">DOCTOR PAYMENT</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="table-responsive">
+					<table id="basic-2" class="display">
+						<thead>
+							<tr>
+
+								<th data-orderable="true">SNo</th>
+								<th>Description</th>
+								<th>Beneficiary Name</th>
+								<th>In/Out</th>
+								<th>Amount</th>
+								<th>Date</th>
+								<th>Status</th>
+								<th>Approved By</th>
+								<th>Action</th>
+								<th>View</th>
+							</tr>
+						</thead>
+						<tbody id="tblBodyPayments">
+							@foreach (var item in Model.otherTransactionsList)
+							{
+								<tr>
+
+									<td>@item.Id</td>
+									<td>@item.Description</td>
+									<td>@item.BeneficiaryName</td>
+									<td>@item.InvoiceType</td>
+									<td>@item.Amount</td>
+									<td>@item.CreateDate</td>
+									<td>@item.OtherTransactionsStatus</td>
+
+									@if (item.OtherTransactionsStatus != HospitalMgrSystem.Model.Enums.OtherTransactionsStatus.Requested)
+									{
+										<td>@item.ApprovedBy</td>
+
+									}
+									else
+									{
+										<td>NOT YET</td>
+									}
+
+
+									<td>
+										@if (Model != null)
+										{
+											@if (item.OtherTransactionsStatus == HospitalMgrSystem.Model.Enums.OtherTransactionsStatus.Requested)
+											{
+
+												@using (Html.BeginForm("ApproveOtherIncome", "OtherIncome", new { Id = @item.Id }, FormMethod.Post))
+												{
+
+													<button id='link_copy' class='btn waves-effect waves-light btn-xs btn-success'>Approve</button>
+
+												}
+
+											}
+											@if (item.OtherTransactionsStatus == HospitalMgrSystem.Model.Enums.OtherTransactionsStatus.Approved)
+											{
+
+
+												@using (Html.BeginForm("CompleteOtherIncome", "OtherIncome", new { Id = @item.Id }, FormMethod.Post))
+												{
+
+													<button id='link_copy' class='btn waves-effect waves-light btn-xs btn-success'>Done</button>
+
+												}
+
+											}
+
+
+										}
+									</td>
+									<td>
+										<button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="AddShiftModel" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+	<div class="modal-dialog modal-lg" id="AddEditContainerModel">
+	</div>
+</div>
+
+@section Scripts
+{
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+	<script>
+
+		$(document).ready(function () {
+			$("#basic-2").dataTable().fnDestroy();
+			$('#basic-2').dataTable({
+				"dom": '<"top"f>rt<"bottom"lp><"clear">',
+				"paging": false, // Keep pagination if needed
+				"info": false, // Hide table information
+				"lengthChange": false, // Disable the "show entries" dropdown
+				"ordering": false // Disable sorting in all columns
+			});
+		});
+
+		$('#transactionFilter').change(function () {
+			var selectedTransactionType = $(this).val();
+
+			$('#basic-2 tbody tr').each(function () {
+				var rowTransactionType = $(this).find('td:eq(3)').text(); // Index of the payment status column (zero-based)
+
+				if (selectedTransactionType === '' || rowTransactionType === selectedTransactionType) {
+					$(this).show();
+				} else {
+					$(this).hide();
+				}
+			});
+		});
+
+		function ShowShiftDetails(id) {
+
+			console.log(id);
+
+			$.ajax({
+				type: "POST",
+				url: "/OtherIncome/CreateOtherIncome/" + id,
+				data: { id: 101 },
+				contentType: "application/json; charset=utf-8",
+				dataType: "html",
+				success: function (response) {
+					$("#AddEditContainerModel").html(response);
+					$("#AddShiftModel").modal('show');
+				},
+				failure: function (response) {
+					alert(response.responseText);
+				},
+				error: function (response) {
+					alert(response.responseText);
+				}
+			});
+
+		}
+
+	</script>
+}

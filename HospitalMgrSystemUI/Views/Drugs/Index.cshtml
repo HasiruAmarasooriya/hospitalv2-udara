@@ -1,0 +1,160 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model DrugsDto;
+@{
+}
+
+
+<div class="row page-titles">
+    <div class="col-md-5 col-8 align-self-center">
+        <h3 class="text-themecolor m-b-0 m-t-0">Manage All Items Details</h3>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">Manage All Items Details</li>
+        </ol>
+    </div>
+
+    <div class="col-md-7 col-4 align-self-center">
+        <div class="d-flex m-t-10 justify-content-end">
+            <div class="d-flex m-r-20 m-l-10 hidden-md-down">
+                <div class="spark-chart form-material">
+                </div>
+                <div class="spark-chart form-material">
+                    <button type="button" id="btnCreateShift" class="btn waves-effect waves-light btn-block btn-info" onclick="ShowShiftDetails()"><i class="mdi mdi-account-plus"></i>&nbsp;Add New</button>
+
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                @*<h4 class="card-title">Details</h4>
+                @using (Html.BeginForm("Search", "Drugs", new { value = 100 }, FormMethod.Post))
+                {
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group-sm ">
+                                <input class="form-control " type="text" id="txtSearch" asp-for="SearchValue" placeholder="Search.." />
+                            <label for="StartShiftUtc">&nbsp;</label>
+
+                        </div>
+                    </div>
+                    <div class="col-md-2" id="divLoader">
+                        <div class="form-group-sm ">
+                            <button type="submit" class="btn btn btn-primary" id="btnfilter" data-toggle="tooltip" data-placement="top" title="Filter Records By Date Range"><i class="fa fa-filter"></i> &nbsp;Filter</button>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mt-4-q">
+
+                        </div>
+                    </div>
+                </div>
+                }*@
+
+                <div class="row"></div>
+                <div class="table-responsive">
+                    <table class="display" id="basic-2">
+                        <thead>
+                            <tr>
+
+                                <th data-orderable="true">SNo</th>
+                                <th>Item Type</th>
+                                <th>Category</th>
+                                <th>Item Name</th>
+                                <th>Price</th>
+                                <th>ReStockLevel</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ListDrogs)
+                            {
+                                <tr>
+
+
+                                    <td>@item.SNo</td>
+                                    <td>
+                                            @item.billingItemsType
+                                    </td>
+                                    <td>
+                                        @if (item.DrugsCategory != null)
+                                        {
+                                            @item.DrugsCategory.Category
+                                        }
+                                    </td>
+                                    <td>@item.DrugName</td>
+                                   
+                                    <td>@item.Price</td>
+                                    <td>@item.ReStockLevel</td>
+                                    <td>
+                                        <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-success' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-edit'></i></button>  &nbsp;
+                                    </td>
+
+                                    <td>
+                                        @if (Model != null)
+                                        {
+
+                                            @using (Html.BeginForm("DeleteDrug", "Drugs", new { Id = @item.Id }, FormMethod.Post))
+                                            {
+
+                                                <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-trash'></i></button>
+
+                                            }
+                                        }
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="AddShiftModel" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" id="AddEditContainerModel">
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        function ShowShiftDetails(id) {
+
+            $.ajax({
+                type: "POST",
+                url: "/Drugs/CreateDrug/" + id,
+                data: '{customerId: 100 }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $("#AddEditContainerModel").html(response);
+                    $("#AddShiftModel").modal('show');
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        }
+
+    </script>
+}

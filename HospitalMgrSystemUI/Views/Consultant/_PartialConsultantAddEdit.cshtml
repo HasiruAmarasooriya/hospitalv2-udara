@@ -1,0 +1,97 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model ConsultantDto
+@{
+    Layout = null;
+}
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/Edit Consultant </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form asp-action="AddNewConsultant" method="post">
+        <div class="modal-body">
+            <input type="hidden" id="custId" asp-for="Consultant.Id">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Email</label>
+                        <input class="form-control " type="text" id="txtTelephoneNumber" asp-for="Consultant.Email" placeholder="Email" required/>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Gender</label>
+                        <select class="form-control ddlSearchList" asp-for="Consultant.Gender" id="cars" required>
+                            <option value="">Please Select</option>
+                            <option value="1">Male</option>
+                            <option value="2">Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="companyName">Specialist</label>
+                        <select class="form-control ddlSearchList" asp-for="Consultant.SpecialistId" id="cars" required>
+                            <option value="">Please Select</option>
+                            @foreach (var item in Model.Specialists)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+	                <div class="form-group">
+		                <label for="companyName">Name of Consultant</label>
+		                <input class="form-control " asp-for="Consultant.Name" type="text" id="txtTelephoneNumber" placeholder="Name of Consultant" required />
+	                </div>
+                </div>
+
+                <div class="col-md-4">
+	                <div class="form-group">
+		                <label for="companyName">Age</label>
+		                <input class="form-control " type="text" asp-for="Consultant.Age" id="txtTelephoneNumber" placeholder="Age" required/>
+	                </div>
+                </div>
+
+                <div class="col-md-4">
+	                <div class="form-group">
+		                <label for="companyName">Contact Number</label>
+		                <input class="form-control " type="text" id="txtTelephoneNumber" asp-for="Consultant.ContectNumber" placeholder="Contact Number" required/>
+	                </div>
+                </div>
+                
+                <div class="col-md-4">
+	                <div class="form-group">
+		                <label for="companyName">Consultant Charge</label>
+                        <input class="form-control " type="text" id="txtConsultantCharge" asp-for="Consultant.DoctorFee" placeholder="Consultant Charge" required />
+	                </div>
+                </div>
+                
+                <div class="col-md-4">
+	                <div class="form-group">
+		                <label for="companyName">Hospital Charge</label>
+                        <input class="form-control " type="text" id="txtHospitalCharge" asp-for="Consultant.HospitalFee" placeholder="Hospital Charge" required />
+	                </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="companyName">Address</label>
+                        <textarea class="form-control " asp-for="Consultant.Address" cols="40" rows="5" placeholder="Address" required></textarea>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+        </div>
+    </form>
+</div>

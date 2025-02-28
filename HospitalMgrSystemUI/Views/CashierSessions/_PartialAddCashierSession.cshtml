@@ -1,0 +1,154 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model CashierSessionDto
+@{
+    Layout = null;
+}
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Cashier Session</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form asp-action="CreateNewCashierSession" method="post">
+        <div class="modal-body">
+            <input type="hidden" asp-for="cashierSession.Id">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Date</label>
+                        <input class="form-control " type="text" id="txtMobileNumber" asp-for="sessionDate" placeholder="Mobile Number" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Cashier Name</label>
+                        <input class="form-control " type="text" id="txtMobileNumber" asp-for="user.FullName" placeholder="Mobile Number" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Start Amount</label>
+                        <input class="form-control " type="number" id="txtTelephoneNumber" asp-for="cashierSession.StartBalence" placeholder="Telephone Number" />
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">End Amount</label>
+                        <input class="form-control " type="number" id="txtEndBalence" asp-for="cashierSession.EndBalence" placeholder="Telephone Number" />
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="table-responsive">
+
+                                <table class="table" style="">
+
+                                    <tr>
+                                        <td style="border-bottom: 1px solid white;"><span class="label label-success">Card Payments</span></td>
+                                        <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" id="col11" asp-for="cashierSession.EndCardBalence" placeholder="" onkeyup="javascript:select_onchange_payments();" /></b></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="border-bottom: 1px solid white;"><span class="label label-success">5000 X</span></td>
+                                        <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" id="col10" asp-for="cashierSession.col10" placeholder="" onkeyup="javascript:select_onchange_payments();" /></b></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border-bottom: 1px solid white;"><span class="label label-success">1000 X</span></td>
+                                        <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" id="col9" asp-for="cashierSession.col9" placeholder="" onkeyup="javascript:select_onchange_payments();"  /></b></td>
+                                    </tr>
+                                    <tr>
+
+                                        <td style="border-bottom: 1px solid white;"><span class="label label-success">500 X</span></td>
+                                        <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" id="col8" asp-for="cashierSession.col8" placeholder="" onkeyup="javascript:select_onchange_payments();"  /></b></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border-bottom: 1px solid white;"><span class="label label-success">100 X</span></td>
+                                        <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" id="col7" asp-for="cashierSession.col7" placeholder="" onkeyup="javascript:select_onchange_payments();"  /></b></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border-bottom: 1px solid white;"><span class="label label-success">50 X</span></td>
+                                        <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" id="col6" asp-for="cashierSession.col6" placeholder="" onkeyup="javascript:select_onchange_payments();"  /></b></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="border-bottom: 1px solid white;"><span class="label label-success">20 X</span></td>
+                                        <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" id="col5" asp-for="cashierSession.col5" placeholder="" onkeyup="javascript:select_onchange_payments();"  /></b></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border-bottom: 1px solid white;"><span class="label label-success">10 X</span></td>
+                                        <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" id="col4" asp-for="cashierSession.col4" placeholder="" onkeyup="javascript:select_onchange_payments();"  /></b></td>
+                                    </tr>
+                                    <tr>
+
+                                        <td style="border-bottom: 1px solid white;"><span class="label label-success">5 X</span></td>
+                                        <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" id="col3" asp-for="cashierSession.col3" placeholder="" onkeyup="javascript:select_onchange_payments();"  /></b></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border-bottom: 1px solid white;"><span class="label label-success">2 X</span></td>
+                                        <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" id="col2" asp-for="cashierSession.col2" placeholder="" onkeyup="javascript:select_onchange_payments();"  /></b></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border-bottom: 1px solid white;"><span class="label label-success">1 X</span></td>
+                                        <td style="border-bottom: 1px solid white;"><b><input class="form-control " type="number" id="col1" asp-for="cashierSession.col1" placeholder="" onkeyup="javascript:select_onchange_payments();"  /></b></td>
+                                    </tr>
+
+                                    <tr style="font-size:14px;text-align:center;">
+                                        <td style="border-bottom: 1px solid white;">Total Amount</td>
+                                        <td style="border-right:1px solid #f3f1f1"><input class="form-control " type="text" id="totalPaidAmountID" placeholder="" readonly /></td>
+
+                                    </tr>
+
+                                </table>
+
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        @if (Model.cashierSession.Id > 0)
+                        {
+                            if (Model.cashierSession.cashierSessionStatus == 0)
+                            {
+                                <button type="submit" class="btn btn-danger btn-block waves-effect">END </button>
+                            }
+
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-primary btn-block waves-effect"> START</button>
+                        }
+
+
+
+                    </div>
+                </div>
+
+
+
+
+
+
+            </div>
+
+        </div>
+        <div class="modal-footer">
+        </div>
+    </form>
+</div>
+<!-- /.modal-content -->

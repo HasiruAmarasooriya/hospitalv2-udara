@@ -1,0 +1,85 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model UserDto
+@{
+    Layout = null;
+}
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">Add/Edit User</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <form asp-action="CreateNewUser" method="post">
+        <div class="modal-body">
+            <input type="hidden" id="custId" asp-for="user.Id">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName"> First Name </label>
+                        <input class="form-control " asp-for="user.FullName" type="text" id="txtFullName" placeholder=" First Name" />
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Username</label>
+                        <input class="form-control " asp-for="user.UserName" type="text" id="txtUsername" placeholder="" autocomplete="off"/>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Email</label>
+                        <input id="txtemail" class="form-control " asp-for="user.EmailAddr" placeholder="" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="companyName">Mobile No</label>
+                        <input class="form-control " asp-for="user.MobileNumber" type="text" id="txtMobileNumber" placeholder="Mobile Number" />
+                    </div>
+                </div>
+                @if (Model.user == null){
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="companyName">New Password</label>
+                            <input class="form-control " asp-for="user.Password" type="password" id="txtPassoword1" placeholder="" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="companyName">Confirm Password</label>
+                            <input class="form-control " asp-for="user.Password" type="password" id="txtPassoword2" placeholder="" />
+                        </div>
+                    </div>
+                }
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="companyName">User Role</label>
+                        <select class="form-control ddlSearchList" id="dropSex" asp-for="user.userRole">
+                            <option value="0">ADMIN</option>
+                            <option value="1">HOSPITAL_MANAGER</option>
+                            <option value="2">ACCOUNTANT</option>
+                            <option value="3">OPDNURSE</option>
+                            <option value="4">RECEPTIONIST</option>
+                            <option value="5">X_RAY_TECHNICIAN</option>
+                            <option value="6">CASHIER</option>
+
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+        </div>
+    </form>
+</div>
+<!-- /.modal-content -->
