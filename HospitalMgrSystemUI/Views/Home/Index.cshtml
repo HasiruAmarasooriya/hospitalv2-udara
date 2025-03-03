@@ -6,23 +6,41 @@
 
 
         .order-card {
-            color: #fff;
+            
+            border-radius: 15px;
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            overflow: hidden;
+            transform: perspective(1000px) rotateY(0deg);
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
+            .order-card:hover {
+                transform: perspective(1000px) rotateY(20deg) translateY(30px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            }
+
+
+
         .bg-c-blue {
-            background: linear-gradient(45deg,#4099ff,#73b4ff);
+            background: linear-gradient(135deg, #98D8EF, #A6CDC6);
         }
 
         .bg-c-green {
-            background: linear-gradient(45deg,#2ed8b6,#59e0c5);
+            background: linear-gradient(135deg, #00b09b, #BAD8B6);
         }
 
         .bg-c-yellow {
-            background: linear-gradient(45deg,#FFB64D,#ffcb80);
+            background: linear-gradient(135deg, #F3C623,#F2F597);
         }
 
         .bg-c-pink {
-            background: linear-gradient(45deg,#FF5370,#ff869a);
+            background: linear-gradient(135deg, #ff4b5c, #ff8e67);
+        }
+
+        .bg-info {
+            background: linear-gradient(135deg, #17a2b8, #81DAE3);
         }
 
 
@@ -40,8 +58,19 @@
                 padding: 25px;
             }
 
+       
+
         .order-card i {
-            font-size: 26px;
+            font-size: 40px;
+            margin-bottom: 10px;
+             
+        }
+
+        .order-card h2, .order-card .count {
+            font-weight: 600;
+            font-size: 22px;
+            margin-bottom: 10px;
+            
         }
 
         .f-left {
@@ -94,7 +123,7 @@
 		    <div class="card bg-info order-card">
 			    <div class="card-block">
 				    <h2 class="m-b-20">X-RAY</h2>
-				    <h2 class="text-right"><i class="fa fa-money f-left"></i><span>486</span></h2>
+				    <h2 class="text-right"><i class="fa fa-print f-left"></i><span>486</span></h2>
 				    @* <p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
 			    </div>
 		    </div>

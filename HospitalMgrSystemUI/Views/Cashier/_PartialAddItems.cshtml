@@ -6,6 +6,78 @@
 @{
 }
 
+@section Styles {
+    <style>
+        .select2-selection__rendered {
+            line-height: 31px !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 35px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 34px !important;
+        }
+
+
+
+
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Primary button (Add Item) */
+        .btn-primary {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+        }
+
+        
+
+        /* Danger button (Add Supplier) */
+        .btn-danger {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+        }
+
+    
+
+
+       
+
+        /*Table*/
+
+        .table tbody tr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .spark-chart.form-material1 {
+            display: flex; /* Use flexbox to align buttons horizontally */
+            gap: 2px; /* Add space between buttons */
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+
+
+        .modal-dialog {
+            max-width: 95%; /* Adjust to fit the modal within the screen */
+            max-height: 95%; /* Ensure the modal fits vertically */
+        }
+
+        .modal-content {
+            overflow-y: auto; /* Add scrolling for the modal content */
+        }
+    </style>
+}
+
 @inject IConfiguration Configuration
 <script type="text/javascript">
     function select_onchange(value) {
