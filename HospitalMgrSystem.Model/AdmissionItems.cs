@@ -1,4 +1,5 @@
-﻿using HospitalMgrSystem.Model.Enums;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using HospitalMgrSystem.Model.Enums;
 
 namespace HospitalMgrSystem.Model
 {
@@ -18,5 +19,11 @@ namespace HospitalMgrSystem.Model
         public int ModifiedUser { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
+         public PaymentStatus paymentStatus { get; set; }
+        public ItemInvoiceStatus itemInvoiceStatus { get; set; }
+        public int IsRefund { get; set; }
+        [NotMapped]
+        public string ItemName { get; set; }
+
     }
 }

@@ -29,5 +29,6 @@ namespace HospitalMgrSystem.Model
         public DateTime? CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
         public bool IsDiscountAvailable { get; set; }
+        public decimal ReStockLevel { get; set; }
     }
 }

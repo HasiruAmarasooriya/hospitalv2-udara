@@ -3,14 +3,15 @@ using HospitalMgrSystem.Model.Enums;
 
 namespace HospitalMgrSystem.Model
 {
-    public class AdmissionInvestigation
+    public class AdmissionsCharges
     {
         public int Id { get; set; }
         public int AdmissionId { get; set; }
+        [ForeignKey("AdmissionId")]
         public Admission? Admission { get; set; }
-        public int InvestigationId { get; set; }
-        public Investigation? Investigation { get; set; }
-        public int Type { get; set; }
+        public int HospitalFeeId { get; set; }
+        [ForeignKey("HospitalFeeId")]
+        public AdmissionHospitalFee? Item { get; set; }
         public decimal Qty { get; set; }
         public decimal Price { get; set; }
         public decimal Amount { get; set; }
@@ -19,11 +20,11 @@ namespace HospitalMgrSystem.Model
         public int ModifiedUser { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
-        public PaymentStatus paymentStatus { get; set; }
+         public PaymentStatus paymentStatus { get; set; }
         public ItemInvoiceStatus itemInvoiceStatus { get; set; }
         public int IsRefund { get; set; }
         [NotMapped]
-        public string InvestigationName { get; set; }
+        public string ItemName { get; set; }
 
     }
 }

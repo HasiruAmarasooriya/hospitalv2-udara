@@ -136,6 +136,22 @@ namespace HospitalMgrSystem.Model
         public decimal AllServiceTotalAmount { get; set; }
 		[NotMapped]
 		public decimal AllServiceDiscountAmount { get; set; }
+        #region Admission
+        [NotMapped]
+        public decimal AdmissionTotalAmount { get; set; }
+        [NotMapped]
+        public decimal AdmissionTotalPaidAmount { get; set; }
+        [NotMapped]
+        public decimal AdmissionTotalPaidCardAmount { get; set; }
+        [NotMapped]
+        public decimal AdmissionTotalDoctorPayment { get; set; }
+        [NotMapped]
+        public decimal AdmissionTotalRefund { get; set; }
+        [NotMapped]
+        public decimal AdmissionCashBalence { get; set; }
+        [NotMapped]
+        public decimal AdmissionDiscountAmount { get; set; }
+        #endregion
 
         [NotMapped]
         public List<Consultant> notInSyestemConsultantList { get; set; }

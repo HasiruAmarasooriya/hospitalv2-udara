@@ -10,5 +10,6 @@
         CASHIER_TRANSFER_IN,
         CASHIER_TRANSFER_OUT,
         DOCTOR_PAYMENT,
+        ADM_DOCTOR_PAYMENT
     }
 }

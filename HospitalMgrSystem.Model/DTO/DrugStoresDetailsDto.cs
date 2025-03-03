@@ -15,6 +15,6 @@ namespace HospitalMgrSystem.Model.DTO
         public decimal Amount { get; set; }
         public string SupplierName { get; set; }
         public DateTime ExpiryDate { get; set; }
- 
+ public decimal ReStockLevel { get; set; }
     }
 }

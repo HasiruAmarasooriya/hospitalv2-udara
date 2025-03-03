@@ -77,6 +77,8 @@ namespace HospitalMgrSystem.DataAccess
         public DbSet<stockTransaction> stockTransaction { get; set; }
         public DbSet<StockRequest> StockRequest { get; set; }
         public DbSet<StockRequestItem> StockRequestItem { get; set; }
+        public DbSet<AdmissionHospitalFee> AdmissionHospitalFees { get; set; }
+		public DbSet<AdmissionsCharges> AdmissionsCharges { get; set; }
 
         #region DTOs
 
@@ -107,40 +109,42 @@ namespace HospitalMgrSystem.DataAccess
         public DbSet<StockQuantityDto> StockQuantityDto { get; set; }
         public DbSet<RequestDetailsByIdDto> RequestDetailsByIdDto { get; set; }
         public DbSet<StoresDetailsDto> StoresDetailsDto { get; set; }
-        
+        public DbSet<HospitalFeeListDto> HospitalFeeList { get; set; }
+     
         #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			optionsBuilder.UseSqlServer(ConnectionStrings.DEVELOPMENT_DATABASE);
 		}
-       /* protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
-			base.OnModelCreating(modelBuilder);
+        /* protected override void OnModelCreating(ModelBuilder modelBuilder)
+           {
+               base.OnModelCreating(modelBuilder);
 
-			#region Ignoring DTOs
+               #region Ignoring DTOs
 
-			modelBuilder.Ignore<ClaimBillDto>();
-			modelBuilder.Ignore<PaymentSummaryOfDoctorsOPDDTO>();
-			modelBuilder.Ignore<ForwardBookingDataTableDTO>();
-			modelBuilder.Ignore<TotalPaidAmountOfForwardBookingDTO>();
-			modelBuilder.Ignore<OtherTransactionsDTO>();
-			modelBuilder.Ignore<PatientsDataTableDTO>();
-			modelBuilder.Ignore<CashierSessionDTO>();
-			modelBuilder.Ignore<ChannelingPaidReport>();
-			modelBuilder.Ignore<PreviousForwardBookingDataDto>();
-			modelBuilder.Ignore<ChannelingRefundReportDto>();
-			modelBuilder.Ignore<ChannelingPaymentSummaryReportDto>();
-			modelBuilder.Ignore<GRPVDetailsDto>();
-			modelBuilder.Ignore<LogTranDTO>();
-		    modelBuilder.Ignore<RequestDetailsDto>();
-		    modelBuilder.Ignore<RequestItemDetailsDto>();
-			modelBuilder.Ignore<DrugStoresDetailsDto>();
-			modelBuilder.Ignore<StockQuantityDto>();
-			modelBuilder.Ignore<RequestDetailsByIdDto>();
-			modelBuilder.Ignore<StoresDetailsDto>();
-		
-			#endregion
-		}*/
+               modelBuilder.Ignore<ClaimBillDto>();
+               modelBuilder.Ignore<PaymentSummaryOfDoctorsOPDDTO>();
+               modelBuilder.Ignore<ForwardBookingDataTableDTO>();
+               modelBuilder.Ignore<TotalPaidAmountOfForwardBookingDTO>();
+               modelBuilder.Ignore<OtherTransactionsDTO>();
+               modelBuilder.Ignore<PatientsDataTableDTO>();
+               modelBuilder.Ignore<CashierSessionDTO>();
+               modelBuilder.Ignore<ChannelingPaidReport>();
+               modelBuilder.Ignore<PreviousForwardBookingDataDto>();
+               modelBuilder.Ignore<ChannelingRefundReportDto>();
+               modelBuilder.Ignore<ChannelingPaymentSummaryReportDto>();
+               modelBuilder.Ignore<GRPVDetailsDto>();
+               modelBuilder.Ignore<LogTranDTO>();
+               modelBuilder.Ignore<RequestDetailsDto>();
+               modelBuilder.Ignore<RequestItemDetailsDto>();
+               modelBuilder.Ignore<DrugStoresDetailsDto>();
+               modelBuilder.Ignore<StockQuantityDto>();
+               modelBuilder.Ignore<RequestDetailsByIdDto>();
+               modelBuilder.Ignore<StoresDetailsDto>();
+		       modelBuilder.Ignore<HospitalFeeListDto>();
+              
+               #endregion
+           }*/
     }
 }

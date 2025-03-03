@@ -10,7 +10,7 @@ namespace HospitalMgrSystem.Model.DTO
 		public DateTime RefundedDate { get; set; }
 		public string Cashier { get; set; }
 		public string PatientName { get; set; }
-		public string Description { get; set; }
+		public string? Description { get; set; }
 		public decimal Amount { get; set; }
 	}
 }

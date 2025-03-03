@@ -63,4 +63,9 @@ public class OPD
 	[NotMapped] public decimal? DoctorDiscountAmount { get; set; }
 
 	[NotMapped] public List<Model.Scan>? scanDoctorSessionDetails { get; set; }
+	[NotMapped] public List<AdmissionConsultant> admissionConsultants { get; set; }
+	[NotMapped]public List<AdmissionDrugus>admissionDrugus { get; set; }
+	[NotMapped]public List<AdmissionInvestigation> admissionInvestigations { get; set; }
+	[NotMapped]public List<AdmissionItems> admissionItems{ get; set; }
+    [NotMapped] public List<AdmissionsCharges> admissionsCharges { get; set; }
 }
