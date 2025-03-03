@@ -1,4 +1,4 @@
-﻿@{
+@{
     var userNameCookie = Context.Request.Cookies["UserNameCookie"];
     var userRoleCookie = Context.Request.Cookies["UserRoleCookie"];
     var isLoggedIn = !string.IsNullOrEmpty(userNameCookie);
@@ -56,9 +56,62 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+  
+    <style>
+      
+            .theme-toggle {
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                padding: 8px 12px;
+                background-color: #222;
+                color: white;
+                border: none;
+                cursor: pointer;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+
+                .theme-toggle:hover {
+                    background-color: #444;
+                }
+
+
+    </style>
+
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0D06XW4GNH"></script>
     <script>
+                     document.addEventListener("DOMContentLoaded", function () {
+                const body = document.body;
+                const toggleButton = document.getElementById("darkModeToggle");
+
+                // Check if dark mode was previously enabled
+                if (localStorage.getItem("darkMode") === "enabled") {
+                    body.classList.add("dark-theme");
+                    toggleButton.textContent = "☀ Light Mode"; // Update button text
+                } else {
+                    body.classList.remove("dark-theme");
+                    toggleButton.textContent = "🌙 Dark Mode";
+                }
+
+                toggleButton.addEventListener("click", function () {
+                    if (body.classList.contains("dark-theme")) {
+                        // Switch to Light Mode
+                        body.classList.remove("dark-theme");
+                        localStorage.setItem("darkMode", "disabled");
+                        toggleButton.textContent = "🌙 Dark Mode";
+                    } else {
+                        // Switch to Dark Mode
+                        body.classList.add("dark-theme");
+                        localStorage.setItem("darkMode", "enabled");
+                        toggleButton.textContent = "☀ Light Mode";
+                    }
+                });
+            });
+
+
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
@@ -82,8 +135,9 @@
             
             <header class="topbar">
                 <nav class="navbar top-navbar navbar-expand-md navbar-light">
-                    
+                   
                     <div class="navbar-header">
+
                         <a class="navbar-brand" href="index.html">
                             <!-- Logo icon --><b>
                                 <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
@@ -103,7 +157,8 @@
                     </div>
                     
                     <div class="navbar-collapse">
-                        
+                        <button id="darkModeToggle" class="btn btn-primary">🌙 Dark Mode</button>
+
                         <ul class="navbar-nav mr-auto mt-md-0">
                           
                         </ul>
@@ -186,6 +241,7 @@
                                     <li><a href="@Url.Action("Index", "Channeling")">Channeling</a></li>
                                     <li><a href="@Url.Action("Index", "OPDRegistration")">OPD</a></li>
                                     <li><a href="@Url.Action("Index", "XRAY")">X-Ray</a></li>
+                                    <li><a href="@Url.Action("Index", "Admission")">Admission</a></li>
                                 </ul>
                             </li>
 
@@ -373,6 +429,7 @@
 
         <script src="~/assets/plugins/styleswitcher/jQuery.style.switcher.js"></script>
         <script>
+               
             @*document.getElementById('logoutBtn').addEventListener('click', function () {
                 // Clear the cookie
                 document.cookie = 'UserNameCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
