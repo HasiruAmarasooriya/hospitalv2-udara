@@ -47,7 +47,7 @@
     <!--This page css - Morris CSS -->
     <link href="~/assets/plugins/c3-master/c3.min.css" rel="stylesheet">
     <!-- Custom CSS -->
-    <link href="~/css/style.css" rel="stylesheet">
+        <link href="~/css/style.css" rel="stylesheet">
     <!-- You can change the theme colors from here -->
     <link href="~/css/colors/blue.css" id="theme" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -57,14 +57,141 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
   
-    <style>
-      
+        <style>
+            /* Dark Theme Wrapper for Page */
+            .dark-theme-wrapper {
+                background-color: #121212 !important;
+                color: #ffffff !important;
+            }
+
+            /* Specific Elements */
+            .page-wrapper.dark-theme-wrapper {
+                background-color: #121212 !important;
+                color: #ffffff !important;
+            }
+
+            .sidebar-nav.dark-theme-wrapper {
+                background-color: #121212 !important;
+                color: #ffffff !important;
+            }
+            .card .dark-theme-wrapper{
+                background-color: #121212 !important;
+                color: #ffffff !important;
+            }
+
+          
+
+            .card-body.dark-theme-wrapper {
+                background-color: #121212 !important;
+                color: #ffffff !important;
+            }
+
+           
+            .container-fluid.dark-theme-wrapper {
+                    color: #ffffff !important;
+            }
+            .scroll-sidebar.dark-theme-wrapper {
+                background-color: #121212 !important;
+                color: #ffffff !important;
+            }
+
+            .sidebar-footer.dark-theme-wrapper {
+                background-color: #121212 !important;
+                color: #ffffff !important;
+            }
+
+            .table-responsive.dark-theme-wrapper {
+               
+                color: #ffffff !important;
+            }
+
+            .table-responsive {
+               
+                color: #121212 !important;
+            }
+            .footer.dark-theme-wrapper {
+                background-color: #121212 !important;
+                color: #ffffff !important;
+            }
+
+            /* Apply to other areas inside dark theme wrapper */
+            .dark-theme-wrapper .bg-light {
+                background-color: #1c1c1c !important;
+            }
+
+            .dark-theme-wrapper .bg-white {
+                background-color: #121212 !important;
+            }
+
+            .dark-theme-wrapper .text-dark {
+                color: #ffffff !important;
+            }
+
+            /* Apply to Scroll Sidebar */
+            .dark-theme.scroll-sidebar {
+                background-color: #1f1f1f !important;
+                color: #ffffff !important;
+            }
+
+            /* Sidebar Footer */
+            .dark-theme .sidebar-footer {
+                background-color: #1f1f1f !important;
+                color: #ffffff !important;
+            }
+
+            /* Footer */
+            .dark-theme footer {
+                background-color: #1f1f1f !important;
+                color: #ffffff !important;
+            }
+
+            /* Dark Mode */
+            .dark-theme {
+                background-color: #121212 !important;
+                color: #ffffff !important;
+            }
+
+                .dark-theme.navbar {
+                    background-color: #1f1f1f !important;
+                    color: #ffffff !important;
+                }
+
+                .dark-theme.sidebar-nav {
+                    background: #1f1f1f !important;
+                    color: #ffffff !important;
+                }
+
+                .dark-theme.preloader {
+                    background-color: #1f1f1f !important;
+                }
+
+
+                .dark-theme.sidebar {
+                    background-color: #222 !important;
+                }
+
+
+
+                .dark-theme .card {
+                    background-color: #1c1c1c !important;
+                    color: white !important;
+                }
+
+                .dark-theme .btn {
+                    background-color: #333 !important;
+                    color: white !important;
+                }
+
+                .dark-theme .sidebar-nav {
+                    background-color: #222 !important;
+                }
+
             .theme-toggle {
                 position: fixed;
                 top: 10px;
                 right: 10px;
                 padding: 8px 12px;
-                background-color: #222;
+                background-color: #444;
                 color: white;
                 border: none;
                 cursor: pointer;
@@ -73,57 +200,20 @@
             }
 
                 .theme-toggle:hover {
-                    background-color: #444;
+                    background-color: #666;
                 }
 
-
-    </style>
-
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0D06XW4GNH"></script>
-    <script>
-                     document.addEventListener("DOMContentLoaded", function () {
-                const body = document.body;
-                const toggleButton = document.getElementById("darkModeToggle");
-
-                // Check if dark mode was previously enabled
-                if (localStorage.getItem("darkMode") === "enabled") {
-                    body.classList.add("dark-theme");
-                    toggleButton.textContent = "☀ Light Mode"; // Update button text
-                } else {
-                    body.classList.remove("dark-theme");
-                    toggleButton.textContent = "🌙 Dark Mode";
-                }
-
-                toggleButton.addEventListener("click", function () {
-                    if (body.classList.contains("dark-theme")) {
-                        // Switch to Light Mode
-                        body.classList.remove("dark-theme");
-                        localStorage.setItem("darkMode", "disabled");
-                        toggleButton.textContent = "🌙 Dark Mode";
-                    } else {
-                        // Switch to Dark Mode
-                        body.classList.add("dark-theme");
-                        localStorage.setItem("darkMode", "enabled");
-                        toggleButton.textContent = "☀ Light Mode";
-                    }
-                });
-            });
+        </style>
 
 
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'G-0D06XW4GNH');
-    </script>
+   
+    
 
     @await RenderSectionAsync("Styles", required: false)
 
 </head>
 
-    <body class="fix-header fix-sidebar card-no-border">
+    <body class="dark-theme-wrapper">
         
         <div class="preloader">
             <svg class="circular" viewBox="25 25 50 50">
@@ -157,7 +247,7 @@
                     </div>
                     
                     <div class="navbar-collapse">
-                        <button id="darkModeToggle" class="btn btn-primary">🌙 Dark Mode</button>
+                        <button id="darkModeToggle" class="theme-toggle">🌙 Dark Mode</button>
 
                         <ul class="navbar-nav mr-auto mt-md-0">
                           
@@ -310,12 +400,12 @@
                             <div class="r-panel-body">
                                 <ul id="themecolors" class="m-t-20">
                                     <li><b>With Light sidebar</b></li>
-                                    <li><a href="javascript:void(0)" data-theme="default" class="default-theme">1</a></li>
-                                    <li><a href="javascript:void(0)" data-theme="green" class="green-theme">2</a></li>
-                                    <li><a href="javascript:void(0)" data-theme="red" class="red-theme">3</a></li>
-                                    <li><a href="javascript:void(0)" data-theme="blue" class="blue-theme working">4</a></li>
-                                    <li><a href="javascript:void(0)" data-theme="purple" class="purple-theme">5</a></li>
-                                    <li><a href="javascript:void(0)" data-theme="megna" class="megna-theme">6</a></li>
+                                    <li><a href="" data-theme="default" class="default-theme">1</a></li>
+                                    <li><a href="" data-theme="green" class="green-theme">2</a></li>
+                                    <li><a href="" data-theme="red" class="red-theme">3</a></li>
+                                    <li><a href="" data-theme="blue" class="blue-theme working">4</a></li>
+                                    <li><a href="" data-theme="purple" class="purple-theme">5</a></li>
+                                    <li><a href="" data-theme="megna" class="megna-theme">6</a></li>
                                     <li class="d-block m-t-30"><b>With Dark sidebar</b></li>
                                     <li><a href="javascript:void(0)" data-theme="default-dark" class="default-dark-theme">7</a></li>
                                     <li><a href="javascript:void(0)" data-theme="green-dark" class="green-dark-theme">8</a></li>
@@ -324,33 +414,7 @@
                                     <li><a href="javascript:void(0)" data-theme="purple-dark" class="purple-dark-theme">11</a></li>
                                     <li><a href="javascript:void(0)" data-theme="megna-dark" class="megna-dark-theme ">12</a></li>
                                 </ul>
-                                <ul class="m-t-20 chatonline">
-                                    <li><b>Chat option</b></li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/1.jpg" alt="user-img" class="img-circle"> <span>Varun Dhavan <small class="text-success">online</small></span></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/2.jpg" alt="user-img" class="img-circle"> <span>Genelia Deshmukh <small class="text-warning">Away</small></span></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/3.jpg" alt="user-img" class="img-circle"> <span>Ritesh Deshmukh <small class="text-danger">Busy</small></span></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/4.jpg" alt="user-img" class="img-circle"> <span>Arijit Sinh <small class="text-muted">Offline</small></span></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/5.jpg" alt="user-img" class="img-circle"> <span>Govinda Star <small class="text-success">online</small></span></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/6.jpg" alt="user-img" class="img-circle"> <span>John Abraham<small class="text-success">online</small></span></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/7.jpg" alt="user-img" class="img-circle"> <span>Hritik Roshan<small class="text-success">online</small></span></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/8.jpg" alt="user-img" class="img-circle"> <span>Pwandeep rajan <small class="text-success">online</small></span></a>
-                                    </li>
-                                </ul>
+                                
                             </div>
                         </div>
                     </div>
@@ -379,7 +443,8 @@
         <!-- ============================================================== -->
         <!-- All Jquery -->
         <!-- ============================================================== -->
-
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-0D06XW4GNH"></script>
 
         <script src="../assets/plugins/jquery/jquery.min.js"></script>
         <!-- Select 2 drop down -->
@@ -421,14 +486,79 @@
         @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>*@
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-
-
-
         <script src="~/assets/plugins/moment/moment.js"></script>
         <script src="~/assets/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
         <script src="~/assets/plugins/styleswitcher/jQuery.style.switcher.js"></script>
         <script>
+                                       document.addEventListener("DOMContentLoaded", function () {
+                const body = document.body;
+                const pageWrapper = document.querySelector(".page-wrapper");
+                const sidebarNav = document.querySelector(".sidebar-nav");
+                const scrollSidebar = document.querySelector(".scroll-sidebar");
+                const sidebarFooter = document.querySelector(".sidebar-footer");
+                const footer = document.querySelector("footer");
+                const toggleButton = document.getElementById("darkModeToggle");
+                const cardtitle = document.querySelector(".container-fluid");
+                 const card = document.querySelector(".card");
+                  const cardbody = document.querySelector(".card-body");
+
+                // Check if dark mode was previously enabled
+                if (localStorage.getItem("darkMode") === "enabled") {
+                    body.classList.add("dark-theme");
+                    pageWrapper.classList.add("dark-theme-wrapper");
+                    sidebarNav.classList.add("dark-theme-wrapper");
+                    scrollSidebar.classList.add("dark-theme-wrapper");
+                    sidebarFooter.classList.add("dark-theme-wrapper");
+                    cardtitle.classList.add("dark-theme-wrapper");
+                    card.classList.add("dark-theme-wrapper");
+                    cardbody.classList.add("dark-theme-wrapper");
+                    footer.classList.add("dark-theme-wrapper");
+                    toggleButton.textContent = "☀ Light Mode";
+                } else {
+                    body.classList.remove("dark-theme");
+                    pageWrapper.classList.remove("dark-theme-wrapper");
+                    sidebarNav.classList.remove("dark-theme-wrapper");
+                    scrollSidebar.classList.remove("dark-theme-wrapper");
+                    sidebarFooter.classList.remove("dark-theme-wrapper");
+                    cardtitle.classList.remove("dark-theme-wrapper");
+                    card.classList.remove("dark-theme-wrapper");
+                    cardbody.classList.remove("dark-theme-wrapper");
+                    footer.classList.remove("dark-theme-wrapper");
+                    toggleButton.textContent = "🌙 Dark Mode";
+                }
+
+                // Toggle dark mode
+                toggleButton.addEventListener("click", function () {
+                    if (body.classList.contains("dark-theme")) {
+                        body.classList.remove("dark-theme");
+                        pageWrapper.classList.remove("dark-theme-wrapper");
+                        sidebarNav.classList.remove("dark-theme-wrapper");
+                        scrollSidebar.classList.remove("dark-theme-wrapper");
+                        sidebarFooter.classList.remove("dark-theme-wrapper");
+                         cardtitle.classList.remove("dark-theme-wrapper");
+                         card.classList.remove("dark-theme-wrapper");
+                         cardbody.classList.remove("dark-theme-wrapper");
+                        footer.classList.remove("dark-theme-wrapper");
+                        localStorage.setItem("darkMode", "disabled");
+                        toggleButton.textContent = "🌙 Dark Mode";
+                    } else {
+                        body.classList.add("dark-theme");
+                        pageWrapper.classList.add("dark-theme-wrapper");
+                        sidebarNav.classList.add("dark-theme-wrapper");
+                        scrollSidebar.classList.add("dark-theme-wrapper");
+                        sidebarFooter.classList.add("dark-theme-wrapper");
+                        cardtitle.classList.add("dark-theme-wrapper");
+                        card.classList.add("dark-theme-wrapper");
+                        cardbody.classList.add("dark-theme-wrapper");
+                        footer.classList.add("dark-theme-wrapper");
+                        localStorage.setItem("darkMode", "enabled");
+                        toggleButton.textContent = "☀ Light Mode";
+                    }
+                });
+            });
+
+
                
             @*document.getElementById('logoutBtn').addEventListener('click', function () {
                 // Clear the cookie
@@ -454,6 +584,7 @@
                 
                 window.location.href = '/';
             });
+
         </script>
 
       
