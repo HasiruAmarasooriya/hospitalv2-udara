@@ -58,23 +58,151 @@
         <![endif]-->
 
         <style>
-            /* Dark Mode Base Styles */
-            .body.dark-theme {
-                background-color: #121212;
-                color: #ffffff;
+            #basic-2 tbody tr:hover {
+                background-color: rgba(0, 123, 255, 0.1) !important; /* Light blue hover */
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease-in-out;
+            }
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
             }
 
+            /* Primary button (Add Item) */
+            .btn-primary {
+                background: linear-gradient(135deg, #6a11cb, #2575fc);
+                color: white;
+            }
+
+            /* Info button (Add Transfer) */
+            .btn-info {
+                background: linear-gradient(90deg, rgba(23,47,133,1) 0%, rgba(20,111,245,0.6896008403361344) 100%, rgba(0,198,10,1) 100%);
+                
+                color: white;
+            }
+
+            /* Danger button (Add Supplier) */
+            .btn-danger {
+                background: radial-gradient(circle, rgba(245,6,6,1) 6%, rgba(248,86,86,1) 97%, rgba(246,36,36,1) 99%);
+                color: white;
+            }
+
+            /* Warning button (Add Purchase Requisition) */
+            .btn-warning {
+                background: radial-gradient(circle, rgba(245,146,6,1) 6%, rgba(246,142,51,1) 85%, rgba(255,220,159,1) 100%);
+                color: white;
+            }
+
+            .table-success {
+                background: #96c281 !important;
+            }
+
+            .yellow {
+                background: #96c281 !important;
+                font-size: 16px;
+            }
+
+            /* Icon styling */
+            .btn i {
+               
+                font-size: 14px;
+            }
+
+            /*Table*/
+
+            .table tbody tr:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .spark-chart.form-material1 {
+                display: flex; /* Use flexbox to align buttons horizontally */
+                gap: 2px; /* Add space between buttons */
+            }
+
+            .dropdown-menu {
+                border: none;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            }
+
+
+
+            .modal-dialog {
+                max-width: 95%; /* Adjust to fit the modal within the screen */
+                max-height: 95%; /* Ensure the modal fits vertically */
+            }
+
+            .modal-content {
+                overflow-y: auto; /* Add scrolling for the modal content */
+            }
+            /* Dark Mode Base Styles */
+            .body.dark-theme {
+                background-color: #262626;
+                color: #F8F8F2;
+            }
+
+            .dark-theme .select2-selection {
+                background-color: #333 !important;
+                color: #fff !important;
+                border: 1px solid #555 !important;
+            }
+
+            .dark-theme .select2-selection__rendered {
+                color: #fff !important;
+            }
+
+            .dark-theme .select2-selection__arrow b {
+                border-color: #fff transparent transparent transparent !important;
+            }
+
+            /* Dark Theme for Select2 Dropdown */
+            .dark-theme .select2-dropdown {
+                background-color: #222 !important;
+                color: #fff !important;
+                border: 1px solid #555 !important;
+            }
+
+            .dark-theme .select2-results__option {
+                background-color: #222 !important;
+                color: #fff !important;
+            }
+
+            .dark-theme .select2-results__option--highlighted {
+                background-color: #444 !important;
+                color: #fff !important;
+            }
+            .dark-theme .paginate_button,
+            .dark-theme .paginate_button disabled{
+                background: #262626 !important;
+                color: #F8F8F2 !important;
+            }
             /* Dark Mode Wrapper for All Elements */
             .dark-theme-wrapper {
-                background-color: #121212 !important;
-                color: #ffffff !important;
+                background-color: #262626 !important;
+                color: #F8F8F2 !important;
             }
 
             .dark-theme .table-responsive {
-                
-                color: #ffffff !important;
+                color: #F8F8F2 !important;
             }
 
+            .dark-theme .table-success th {
+                background: #437149 !important;
+                color: #282828 !important;
+            }
+
+
+            .dark-theme .table-danger th,
+            .dark-theme .table-danger  {
+                background: #f15553 !important;
+                color: #282828 !important;
+            }
+
+            .dark-theme .table-primary th {
+                background: #f15553 !important;
+                color: #282828 !important;
+            }
                 .dark-theme .table-responsive th,
                 .dark-theme .table-responsive td {
                     border: 1px solid #333 !important;
@@ -82,17 +210,17 @@
 
                 .dark-theme .table-responsive th {
                     background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(0,255,243,1) 80%);
-                    color: #000 !important;
+                    color: #F8F8F2 !important;
                 }
 
                 .dark-theme .table-responsive td {
-                    background-color: #121212 !important;
-                    color: #ffffff !important;
+                    background-color: #262626 !important;
+                    color: #F8F8F2 !important;
                 }
 
             .dark-theme .display {
-                background-color: #1c1c1c !important;
-                color: #ffffff !important;
+                background-color: #262626 !important;
+                color: #F8F8F2 !important;
             }
 
                 .dark-theme .display thead th {
@@ -104,8 +232,8 @@
                 }
 
                 .dark-theme .display tbody tr {
-                    background-color: #121212 !important;
-                    color: #ffffff !important;
+                    background-color: #262626 !important;
+                    color: #F8F8F2 !important;
                 }
             /* Specific Areas */
             .dark-theme .sidebar-nav,
@@ -116,28 +244,52 @@
             .dark-theme .preloader,
             .dark-theme .page-wrapper,
             .dark-theme .page-titles,
-            .dark-theme .card-title,
+           
             .dark-theme .dataTables_filter,
             .dark-theme .basic-2,
-            .dark-theme .dataTables_length{
-                background-color: #121212 !important;
-                color: #ffffff !important;
+            .dark-theme .dataTables_length {
+                background-color: #262626 !important;
+                color: #F8F8F2 !important;
             }
 
+            .dark-theme .card-title {
+               
+                color: #F8F8F2 !important;
+            }
+            /* Dark Theme for Table Search Input */
+            .dark-theme input[type="search"] {
+                background-color: #333 !important;
+                color: #fff !important;
+                border: 1px solid #555 !important;
+                padding: 5px;
+                border-radius: 5px;
+            }
+
+                .dark-theme input[type="search"]::placeholder {
+                    color: #bbb !important;
+                }
             .dark-theme .card,
             .dark-theme .card-body,
             .dark-theme .table-responsive,
             .dark-theme .container-fluid,
-            .dark-theme .dataTables_wrapper {
-                background-color: #121212 !important;
-                color: #ffffff !important;
+            .dark-theme .dataTables_wrapper,
+            .dark-theme .modal-content,
+            .dark-theme .modal-title,
+            .dark-theme .form-control,
+            .dark-theme .select2-hidden-accessible,
+            .dark-theme .selection,
+            .dark-theme .close,
+            .dark-theme .select2-selection__rendered,
+            .dark-theme .select2-selection--single,
+            .dark-theme .dropdown-wrapper {
+                background-color: #262626 !important;
+                color: #F8F8F2 !important;
             }
 
-             .card,
-             .card-body,
+            .card,
+            .card-body,
             .table-responsive,
             .container-fluid {
-               
                 color: #1c1c1c !important;
             }
             /* Apply for other areas inside dark theme wrapper */
@@ -150,7 +302,7 @@
             }
 
             .dark-theme .text-dark {
-                color: #ffffff !important;
+                color: #F8F8F2 !important;
             }
 
             /* Button Styles */
@@ -267,7 +419,7 @@
                     </div>
                     <!-- End User profile text-->
                     <!-- Sidebar navigation-->
-                    <nav class="sidebar-nav">
+                     <nav class="sidebar-nav">
                         <ul id="sidebarnav">
                             @*                        <li class="nav-small-cap">Dashboard</li>*@
                             <li>
@@ -326,11 +478,7 @@
                 </div>
                 <!-- End Sidebar scroll-->
                 <!-- Bottom points-->
-                <div class="sidebar-footer">
-                    <!-- item--><a href="" class="link" data-toggle="tooltip" title="Settings"><i class="ti-settings"></i></a>
-                    <!-- item--><a href="" class="link" data-toggle="tooltip" title="Email"><i class="mdi mdi-gmail"></i></a>
-                    <!-- item--><a href="" class="link" data-toggle="tooltip" title="Logout"><i class="mdi mdi-power"></i></a>
-                </div>
+              
                 <!-- End Bottom points-->
             </aside>
             <!-- ============================================================== -->
