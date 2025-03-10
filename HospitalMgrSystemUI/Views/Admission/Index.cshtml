@@ -18,6 +18,11 @@
         .select2-selection__arrow {
             height: 34px !important;
         }
+
+        .modal-dialog {
+            max-width: 60%; /* Adjust to fit the modal within the screen */
+            max-height: 70%; /* Ensure the modal fits vertically */
+        }
     </style>
 }
 
@@ -82,58 +87,67 @@
                 }
                     <div class="row"></div>
                     <div class="table-responsive">
-                        <table id="myTable" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
+                    <table id="basic-2" class="display">
                             <thead>
                                 <tr>
 
                                     <th data-orderable>B.H.T No</th>
-                                    <th>Pt's Full Name</th>
+                                    <th>Cashier</th>
+                                    <th>QR</th>
+                                    <th>Full Name</th>
                                     <th>Room No</th>
                                     <th>Consultant</th>
                                     <th>Status</th>
-                                    <th>Date & Time</th>
-                                    <th>Action 1</th>
-                                    <th>Action 2</th>
+                                    <th>Date Admited</th>
+                                    <th>Date Dicharge</th>
+                                    <th>View</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody id="tblBodyPayments">
-                                @foreach (var item in Model.listAdmission)
-                                {
-                                    <tr>
+                            @foreach (var item in Model.listAdmission)
+                            {
+                                <tr class="@GetRowClass(item.paymentStatus,item.itemInvoiceStatus)">
 
 
-                                        <td>@item.BHTNumber</td>
-                                        <td>@item.Patient.FullName</td>
-                                        <td>@item.Room.Name</td>
-                                        <td>
-                                            @if (item.Consultant != null)
-                                            {@item.Consultant.Name}
-                                        </td>
+                                    <td>BHT @item.Id</td>
+                                    <td>
+                                        @if (Model != null)
+                                        {
+                                            <a href="/Cashier?PreID=ADM+@item.Id"><button id='link_copy' class='btn waves-effect waves-light btn-xs btn-info'><i class='fa fa-money'></i></button></a>
+                                        }
 
-                                        <td>@item.Status</td>
-                                        <td>@item.DateAdmission</td>
-                                       @* <td> @{ TimeSpan? Difference = (DateTime.Now - DateTime.Parse(item.DateAdmission)); } @Difference.Value.Days D @Difference.Value.Hours H @Difference.Value.Minutes M</td> *@ <td>
-                                            <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
-                                        <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-info' onclick=AddDrugusToAdmission(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
-                                        <button id='btnEdit2' class='btn waves-effect waves-light btn-xs btn-info' onclick=AddInvestigationToAdmission(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
-                                        <button id='btnEdit3' class='btn waves-effect waves-light btn-xs btn-info' onclick=AddConsultantToAdmission(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
-                                        <button id='btnEdit4' class='btn waves-effect waves-light btn-xs btn-info' onclick=AddItemsToAdmission(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
-                                        </td>
+                                    </td>
+                                    <td>
+                                        @if (Model != null && item.paymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.NOT_PAID)
+                                        {
 
-                                        <td>
-                                            @if (Model != null)
-                                            {
 
-                                                @using (Html.BeginForm("DeleteAdmission", "Admission", new { Id = @item.Id }, FormMethod.Post))
-                                                {
 
-                                                    <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger'><i class='fa fa-clipboard'></i></button>
+                                            <button id='link_copy' class='btn waves-effect waves-light btn-xs btn-danger' onclick=PrintQr(@item.Id);><i class='fa fa-clipboard'></i></button>
 
-                                                }
-                                            }
 
-                                        </td>
-                                    </tr>
+                                        }
+
+                                    </td>
+                                    <td>@item.Patient.FullName</td>
+                                    <td>@item.Room.Name</td>
+                                    <td>
+                                        @if (item.Consultant != null)
+                                        {
+                                            @item.Consultant.Name
+                                        }
+                                    </td>
+
+                                    <td>@item.paymentStatus</td>
+                                    <td>@item.DateAdmission</td>
+                                    <td>@item.DischargeDate</td>
+                                    <td>
+                                        <button id='btnEdit1' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-eye'></i></button>  &nbsp;
+                                    </td>
+
+
+                                </tr>
                                 }
                             </tbody>
                         </table>
@@ -149,12 +163,68 @@
     </div>
 </div>
 
-
+@functions {
+    // Helper function to determine the CSS class based on payment status
+    public string GetRowClass(HospitalMgrSystem.Model.Enums.PaymentStatus paymentStatus, HospitalMgrSystem.Model.Enums.ItemInvoiceStatus invoiceStatus)
+    {
+        if (paymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.Refund)
+        {
+            return "table-danger";
+        }
+        if (paymentStatus    == HospitalMgrSystem.Model.Enums.PaymentStatus.PAID)
+        {
+            return "table-success";
+        }
+        if (paymentStatus == HospitalMgrSystem.Model.Enums.PaymentStatus.NOT_PAID)
+        {
+            return "table-warning";
+        }
+        switch (paymentStatus)
+        {
+            case HospitalMgrSystem.Model.Enums.PaymentStatus.NOT_PAID:
+                return "table-warning";
+            case HospitalMgrSystem.Model.Enums.PaymentStatus.Refund:
+                return "table-danger";
+            case HospitalMgrSystem.Model.Enums.PaymentStatus.PAID:
+                return "table-success";
+            default:
+                return ""; // No additional class for other statuses
+        }
+    }
+}
 @section scripts{
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
+                function discharge(id) {
+            console.log("Discharge function called with id:", id);
+            $.ajax({
+                type: "GET",
+                url: "/Admission/DischargeAdmission/" + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json", // Ensures response is treated as JSON
+                success: function (response) {
+                    console.log("Raw AJAX Success Response:", response); // Debugging
+
+                    // Ensure response is properly parsed
+                    var jsonResponse = (typeof response === "string") ? JSON.parse(response) : response;
+                    console.log("Parsed Response:", jsonResponse);
+
+                    if (jsonResponse && jsonResponse.message) {
+                        alert(jsonResponse.message); // Show success message
+                        location.reload();
+                    } else {
+                        alert("Unexpected response format: " + JSON.stringify(response));
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("AJAX Error:", xhr.responseText);
+                    alert("An error occurred: " + xhr.responseText);
+                }
+            });
+        }
+
         function ShowShiftDetails(id) {
 
             $.ajax({
@@ -164,17 +234,9 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "html",
                 success: function (response) {
-
-                    
-                   
-                    
-
                     $("#AddEditContainerModel").html(response);
                     $("#AddShiftModel").modal('show');
 
-                    //$('#appbundle_items_accountdebet').select2({
-                    //    dropdownParent: $('#AddShiftModel')
-                    //});
                     $("#appbundle_items_accountdebet").select2({
                         width: '100%',
                         height: "auto !important",
@@ -188,16 +250,6 @@
                         dropdownCssClass: "bigdrop",
                         dropdownParent: $('#AddShiftModel')
                     });
-
-                    $("#patients").select2({
-                        width: '100%',
-                        height: "auto !important",
-                        dropdownCssClass: "bigdrop",
-                        dropdownParent: $('#AddShiftModel')
-                    });
-
-                    
-
 
                 },
                 failure: function (response) {
@@ -270,6 +322,28 @@
             });
 
         }
+
+                function PrintQr(id)
+        {
+            $.ajax({
+                type: "GET",  // Change to GET since it's fetching data
+                url: "/Admission/CreateAdmissionWithQr/" + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $("#AddEditContainerModel").html(response);
+                    $("#AddShiftModel").modal('show');
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
+
+
 
         function AddConsultantToAdmission(id) {
 

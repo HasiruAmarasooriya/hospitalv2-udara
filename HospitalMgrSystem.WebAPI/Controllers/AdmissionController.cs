@@ -1,4 +1,6 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Model.Enums;
+using HospitalMgrSystem.Service.Admission;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HospitalMgrSystem.WebAPI.Controllers
@@ -99,9 +101,10 @@ namespace HospitalMgrSystem.WebAPI.Controllers
         }
 
         [HttpGet("GetAdmissionDrugus")]
-        public ActionResult<List<AdmissionDrugus>> GetAdmissionDrugus()
+        public ActionResult<List<AdmissionDrugus>> GetAdmissionDrugus(int AdmissionID)
         {
-            var newAdmissionDrugus = _admissionService.GetAdmissionDrugus();
+            AdmissionService admissionService = new AdmissionService();
+            var newAdmissionDrugus = admissionService.GetAdmissionDrugusbyAdmissionID(AdmissionID);
             if (newAdmissionDrugus == null)
             {
                 return NoContent();
@@ -141,9 +144,10 @@ namespace HospitalMgrSystem.WebAPI.Controllers
         }
 
         [HttpGet("GetAdmissionInvestigation")]
-        public ActionResult<List<AdmissionInvestigation>> GetAdmissionInvestigation()
+        public ActionResult<List<AdmissionInvestigation>> GetAdmissionInvestigation(int AdmissionId)
         {
-            var newAdmissionInvestigation = _admissionService.GetAdmissionInvestigation();
+            AdmissionService admissionService = new AdmissionService();
+            var newAdmissionInvestigation = admissionService.GetAdmissionInvestigationbyAdmissionID(AdmissionId);
             if (newAdmissionInvestigation == null)
             {
                 return NoContent();
@@ -184,9 +188,10 @@ namespace HospitalMgrSystem.WebAPI.Controllers
         }
 
         [HttpGet("GetAdmissionConsultant")]
-        public ActionResult<List<AdmissionConsultant>> GetAdmissionConsultant()
+        public ActionResult<List<AdmissionConsultant>> GetAdmissionConsultant(int AdmissionId)
         {
-            var newAdmissionConsultant = _admissionService.GetAdmissionConsultant();
+            AdmissionService admissionService = new AdmissionService();
+            var newAdmissionConsultant = admissionService.GetAdmissionConsultantbyAdmissionID(AdmissionId);
             if (newAdmissionConsultant == null)
             {
                 return NoContent();
@@ -228,9 +233,9 @@ namespace HospitalMgrSystem.WebAPI.Controllers
 
 
         [HttpGet("GetAdmissionItems")]
-        public ActionResult<List<AdmissionItems>> GetAdmissionItems()
+        public ActionResult<List<AdmissionItems>> GetAdmissionItems(int AdmissionId, PaymentStatus PayStatus)
         {
-            var newAdmissionItems = _admissionService.GetAdmissionItems();
+            var newAdmissionItems = _admissionService.GetAdmissionItems(AdmissionId, PayStatus);
             if (newAdmissionItems == null)
             {
                 return NoContent();

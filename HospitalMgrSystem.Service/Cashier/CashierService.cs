@@ -19,7 +19,7 @@ namespace HospitalMgrSystem.Service.Cashier
 	    {
 		    using var dbContext = new DataAccess.HospitalDBContext();
 
-		    var result = (from p in dbContext.Invoices where p.ServiceID == id && (p.InvoiceType == InvoiceType.OPD || p.InvoiceType == InvoiceType.CHE) select p).SingleOrDefault();
+		    var result = (from p in dbContext.Invoices where p.ServiceID == id && (p.InvoiceType == InvoiceType.OPD || p.InvoiceType == InvoiceType.CHE|| p.InvoiceType ==InvoiceType.ADM) select p).SingleOrDefault();
 
 		    return result;
 	    }
@@ -28,14 +28,14 @@ namespace HospitalMgrSystem.Service.Cashier
 	    {
 		    using var dbContext = new DataAccess.HospitalDBContext();
 
-		    var result = (from p in dbContext.Invoices where p.ServiceID == serviceId && (p.InvoiceType == InvoiceType.OPD || p.InvoiceType == InvoiceType.CHE) select p).SingleOrDefault();
+		    var result = (from p in dbContext.Invoices where p.ServiceID == serviceId && (p.InvoiceType == InvoiceType.OPD || p.InvoiceType == InvoiceType.CHE || p.InvoiceType == InvoiceType.ADM) select p).SingleOrDefault();
 
 		    if (result == null) return 999;
 
 		    result.PrintCount++;
 		    dbContext.SaveChanges();
 
-		    return (from p in dbContext.Invoices where p.ServiceID == serviceId && (p.InvoiceType == InvoiceType.OPD || p.InvoiceType == InvoiceType.CHE) select p).SingleOrDefault()!.PrintCount;
+		    return (from p in dbContext.Invoices where p.ServiceID == serviceId && (p.InvoiceType == InvoiceType.OPD || p.InvoiceType == InvoiceType.CHE || p.InvoiceType == InvoiceType.ADM) select p).SingleOrDefault()!.PrintCount;
 	    }
 
 		public Invoice AddInvoice(Invoice invoice)
@@ -100,6 +100,23 @@ namespace HospitalMgrSystem.Service.Cashier
                         dbContext.InvoiceItems.Add(invoiceItem);
                         dbContext.SaveChanges();
                     }
+                    else
+                    {
+                        HospitalMgrSystem.Model.InvoiceItem result = (from p in dbContext.InvoiceItems where p.Id == invoiceItem.Id && p.InvoiceId ==invoiceItem.InvoiceId select p).SingleOrDefault();
+                        result.price = invoiceItem.price; // Update only the "Price" column
+                        result.ModifiedDate = invoiceItem.ModifiedDate; // Optional, set the ModifiedDate if needed
+                        result.ModifiedUser = invoiceItem.ModifiedUser; // Optional, set the ModifiedDate if needed
+                        result.qty = invoiceItem.qty; // Optional, set the ModifiedDate if needed
+                        result.Discount = invoiceItem.Discount; // Optional, set the ModifiedDate if needed
+                        result.Total = invoiceItem.Total; // Optional, set the ModifiedDate if needed
+                        result.itemInvoiceStatus = invoiceItem.itemInvoiceStatus; // Optional, set the ModifiedDate if needed
+                        // This will affect when the discount is applied
+                        result.DiscountPercentage = invoiceItem.DiscountPercentage;
+                        result.PrevPrice = invoiceItem.PrevPrice;
+                        dbContext.SaveChanges();
+                    }
+
+                    
                     
 
                     return dbContext.InvoiceItems.Find(invoiceItem.Id);
@@ -332,7 +349,34 @@ namespace HospitalMgrSystem.Service.Cashier
 
             }
         }
+        public Model.InvoiceItem GetADMInvoiceItemByItemId(Model.InvoiceItem invoiceItems)
+        {
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
 
+                InvoiceItem invoiceItem = new InvoiceItem();
+                try
+                {
+
+                    HospitalMgrSystem.Model.InvoiceItem result = (from p in dbContext.InvoiceItems where p.InvoiceId == invoiceItems.InvoiceId && p.billingItemsType == invoiceItems.billingItemsType && p.ItemID == invoiceItems.ItemID select p).SingleOrDefault();
+                    if (result != null)
+                    {
+                        invoiceItem = result;
+
+                    }
+
+                    return invoiceItem;
+
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+
+
+
+            }
+        }
         public decimal getDiscountedPrice(int itemId)
         {
             using var dbContext = new DataAccess.HospitalDBContext();

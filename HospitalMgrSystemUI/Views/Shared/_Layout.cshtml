@@ -9,81 +9,384 @@
 @if (isLoggedIn)
 {
 
-<!DOCTYPE html>
-<html lang="en">
+    <!DOCTYPE html>
+    <html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Tell the browser to be responsive to screen width -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon.png">
-    <title>@ViewData["Title"]</title>
-    <!-- Bootstrap Core CSS -->
-    <link href="~/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-
-
-    <link href="~/assets/plugins/select2/dist/css/select2.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/assets/plugins/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" />
-
-    <link href="~/assets/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
-    <!-- Page plugins css -->
-    <link href="~/assets/plugins/clockpicker/dist/jquery-clockpicker.min.css" rel="stylesheet">
-    <!-- Color picker plugins css -->
-    <link href="~/assets/plugins/jquery-asColorPicker-master/css/asColorPicker.css" rel="stylesheet">
-    <!-- Date picker plugins css -->
-    <link href="~/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
-    <!-- Daterange picker plugins css -->
-    <link href="~/assets/plugins/timepicker/bootstrap-timepicker.min.css" rel="stylesheet">
-    <link href="~/assets/plugins/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/datatables.css">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- Tell the browser to be responsive to screen width -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <!-- Favicon icon -->
+        <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon.png">
+        <title>@ViewData["Title"]</title>
+        <!-- Bootstrap Core CSS -->
+        <link href="~/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 
 
+        <link href="~/assets/plugins/select2/dist/css/select2.min.css" rel="stylesheet" type="text/css" />
+        <link href="~/assets/plugins/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" />
+
+        <link href="~/assets/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
+        <!-- Page plugins css -->
+        <link href="~/assets/plugins/clockpicker/dist/jquery-clockpicker.min.css" rel="stylesheet">
+        <!-- Color picker plugins css -->
+        <link href="~/assets/plugins/jquery-asColorPicker-master/css/asColorPicker.css" rel="stylesheet">
+        <!-- Date picker plugins css -->
+        <link href="~/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
+        <!-- Daterange picker plugins css -->
+        <link href="~/assets/plugins/timepicker/bootstrap-timepicker.min.css" rel="stylesheet">
+        <link href="~/assets/plugins/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="~/assets/css/datatables.css">
 
 
-    <!--This page css - Morris CSS -->
-    <link href="~/assets/plugins/c3-master/c3.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="~/css/style.css" rel="stylesheet">
-    <!-- You can change the theme colors from here -->
-    <link href="~/css/colors/blue.css" id="theme" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0D06XW4GNH"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
 
-        gtag('config', 'G-0D06XW4GNH');
-    </script>
 
-    @await RenderSectionAsync("Styles", required: false)
+        <!--This page css - Morris CSS -->
+        <link href="~/assets/plugins/c3-master/c3.min.css" rel="stylesheet">
+        <!-- Custom CSS -->
+        <link href="~/css/style.css" rel="stylesheet">
+        <!-- You can change the theme colors from here -->
+        <link href="~/css/colors/blue.css" id="theme" rel="stylesheet">
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
 
-</head>
+        <style>
+            #basic-2 tbody tr:hover {
+                background-color: rgba(0, 123, 255, 0.1) !important; /* Light blue hover */
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease-in-out;
+            }
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            }
 
-    <body class="fix-header fix-sidebar card-no-border">
-        
+            /* Primary button (Add Item) */
+            .btn-primary {
+                background: linear-gradient(135deg, #6a11cb, #2575fc);
+                color: white;
+            }
+
+            /* Info button (Add Transfer) */
+            .btn-info {
+                background: linear-gradient(90deg, rgba(23,47,133,1) 0%, rgba(20,111,245,0.6896008403361344) 100%, rgba(0,198,10,1) 100%);
+                
+                color: white;
+            }
+
+            /* Danger button (Add Supplier) */
+            .btn-danger {
+                background: radial-gradient(circle, rgba(245,6,6,1) 6%, rgba(248,86,86,1) 97%, rgba(246,36,36,1) 99%);
+                color: white;
+            }
+
+            /* Warning button (Add Purchase Requisition) */
+            .btn-warning {
+                background: radial-gradient(circle, rgba(245,146,6,1) 6%, rgba(246,142,51,1) 85%, rgba(255,220,159,1) 100%);
+                color: white;
+            }
+
+            .btn-success {
+                background: linear-gradient(225deg, rgba(11,154,18,1) 6%, rgba(64,246,51,1) 47%, rgba(151,228,208,1) 100%);
+                color: black;
+            }
+            
+            .table-success {
+                background: #96c281 !important;
+            }
+
+            .bg-success {
+                background: #0b289a;
+            }
+            .yellow {
+                background: #96c281 !important;
+                font-size: 16px;
+            }
+
+            /* Icon styling */
+            .btn i {
+               
+                font-size: 14px;
+            }
+
+            /*Table*/
+
+            .table tbody tr:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .spark-chart.form-material1 {
+                display: flex; /* Use flexbox to align buttons horizontally */
+                gap: 2px; /* Add space between buttons */
+            }
+
+            .dropdown-menu {
+                border: none;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            }
+
+
+            
+           
+
+            .modal-content {
+                overflow-y: auto; /* Add scrolling for the modal content */
+            }
+            /* Dark Mode Base Styles */
+            .body.dark-theme {
+                background-color: #262626;
+                color: #F8F8F2;
+            }
+                /* Dark Mode */
+                .body.dark-theme .yellow {
+                    background-color: #444 !important; /* Darker shade for dark mode */
+                    color: #F8F8F2 !important; /* Light text for visibility */
+                }
+            .dark-theme .select2-selection {
+                background-color: #333 !important;
+                color: #fff !important;
+                border: 1px solid #555 !important;
+            }
+
+            .dark-theme .select2-selection__rendered {
+                color: #fff !important;
+            }
+
+            .dark-theme .select2-selection__arrow b {
+                border-color: #fff transparent transparent transparent !important;
+            }
+
+            /* Dark Theme for Select2 Dropdown */
+            .dark-theme .select2-dropdown {
+                background-color: #222 !important;
+                color: #fff !important;
+                border: 1px solid #555 !important;
+            }
+
+            .dark-theme .select2-results__option {
+                background-color: #222 !important;
+                color: #fff !important;
+            }
+
+            .dark-theme .select2-results__option--highlighted {
+                background-color: #444 !important;
+                color: #fff !important;
+            }
+            .dark-theme .paginate_button,
+            .dark-theme .paginate_button disabled{
+                background: #262626 !important;
+                color: #F8F8F2 !important;
+            }
+            /* Dark Mode Wrapper for All Elements */
+            .dark-theme-wrapper {
+                background-color: #262626 !important;
+                color: #F8F8F2 !important;
+            }
+
+            .dark-theme .table-responsive {
+                color: #F8F8F2 !important;
+            }
+
+            .dark-theme .table-success th {
+                background: #437149 !important;
+                color: #282828 !important;
+            }
+
+
+            .dark-theme .table-danger th,
+            .dark-theme .table-danger  {
+                background: #f15553 !important;
+                color: #282828 !important;
+            }
+
+            .dark-theme .table-primary th {
+                background: #f15553 !important;
+                color: #282828 !important;
+            }
+                .dark-theme .table-responsive th,
+                .dark-theme .table-responsive td {
+                    border: 1px solid #333 !important;
+                }
+
+                .dark-theme .table-responsive th {
+                    background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(0,255,243,1) 80%);
+                    color: #F8F8F2 !important;
+                }
+
+                .dark-theme .table-responsive td {
+                    background-color: #262626 !important;
+                    color: #F8F8F2 !important;
+                }
+
+            .dark-theme .display {
+                background-color: #262626 !important;
+                color: #F8F8F2 !important;
+            }
+
+            .yellow {
+                background-color: aqua !important;
+                color: #F8F8F2 !important;
+            }
+                .dark-theme .display thead th {
+                    background-color: #333333 !important;
+                }
+
+                .dark-theme .display tbody tr:hover {
+                    background-color: #333333 !important;
+                }
+
+                .dark-theme .display tbody tr {
+                    background-color: #262626 !important;
+                    color: #F8F8F2 !important;
+                }
+            /* Specific Areas */
+            .dark-theme .sidebar-nav,
+            .dark-theme .scroll-sidebar,
+            .dark-theme .sidebar-footer,
+            .dark-theme .footer,
+            .dark-theme .navbar,
+            .dark-theme .preloader,
+            .dark-theme .page-wrapper,
+            .dark-theme .page-titles,
+           
+            .dark-theme .dataTables_filter,
+            .dark-theme .basic-2,
+            .dark-theme .dataTables_length,
+            .dark-theme .dataTable tr {
+                background-color: #262626 !important;
+                color: #F8F8F2 !important;
+            }
+
+            .dark-theme .table-striped tr
+            .dark-theme .table tr,
+            .dark-theme .table-bordered tr {
+                background-color: #262626 !important;
+                    color: aqua !important;
+            }
+            .dark-theme .card-title {
+               
+                color: #F8F8F2 !important;
+            }
+            /* Dark Theme for Table Search Input */
+            .dark-theme input[type="search"] {
+                background-color: #333 !important;
+                color: #fff !important;
+                border: 1px solid #555 !important;
+                padding: 5px;
+                border-radius: 5px;
+            }
+
+                .dark-theme input[type="search"]::placeholder {
+                    color: #bbb !important;
+                }
+            .dark-theme .card,
+            .dark-theme .card-body,
+            .dark-theme .table-responsive,
+            .dark-theme .container-fluid,
+            .dark-theme .dataTables_wrapper,
+            .dark-theme .modal-content,
+            .dark-theme .modal-title,
+            .dark-theme .form-control,
+            .dark-theme .select2-hidden-accessible,
+            .dark-theme .selection,
+            .dark-theme .close,
+            .dark-theme .select2-selection__rendered,
+            .dark-theme .select2-selection--single,
+            .dark-theme .dropdown-wrapper {
+                background-color: #262626 !important;
+                color: #F8F8F2 !important;
+            }
+
+            .card,
+            .card-body,
+            .table-responsive,
+            .container-fluid {
+                color: #1c1c1c !important;
+            }
+            /* Apply for other areas inside dark theme wrapper */
+            .dark-theme .bg-light {
+                background-color: #1c1c1c !important;
+            }
+
+            .dark-theme .bg-white {
+                background-color: #121212 !important;
+            }
+
+            .dark-theme .text-dark {
+                color: #F8F8F2 !important;
+            }
+
+            /* Button Styles */
+            .theme-toggle {
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                padding: 8px 12px;
+                background-color: #444;
+                color: white;
+                border: none;
+                cursor: pointer;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+
+                .theme-toggle:hover {
+                    background-color: #666;
+                }
+
+            .dark-theme .table-danger {
+                background-color: #a94442 !important; /* Example: muted red for dark mode */
+                color: #F8F8F2 !important;
+            }
+
+            .dark-theme .table-primary {
+                background-color: #337ab7 !important;
+                color: #F8F8F2 !important;
+            }
+
+            .yellow, .dark-theme .yellow {
+                transition: background-color 0.3s ease, color 0.3s ease;
+            }
+            /* Default (Light Mode) */
+           
+
+            
+
+
+        </style>
+
+
+
+
+
+        @await RenderSectionAsync("Styles", required: false)
+
+    </head>
+
+    <body class="dark-theme-wrapper">
+
         <div class="preloader">
             <svg class="circular" viewBox="25 25 50 50">
                 <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
             </svg>
         </div>
-        
+
         <div id="main-wrapper">
-            
+
             <header class="topbar">
                 <nav class="navbar top-navbar navbar-expand-md navbar-light">
-                    
+
                     <div class="navbar-header">
+
                         <a class="navbar-brand" href="index.html">
                             <!-- Logo icon --><b>
                                 <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
@@ -101,11 +404,11 @@
                             </span>
                         </a>
                     </div>
-                    
+
                     <div class="navbar-collapse">
-                        
+                        <button id="darkModeToggle" class="theme-toggle">🌙 Dark Mode</button>
+
                         <ul class="navbar-nav mr-auto mt-md-0">
-                          
                         </ul>
                         <!-- ============================================================== -->
                         <!-- User profile and search -->
@@ -155,7 +458,7 @@
                     </div>
                     <!-- End User profile text-->
                     <!-- Sidebar navigation-->
-                    <nav class="sidebar-nav">
+                     <nav class="sidebar-nav">
                         <ul id="sidebarnav">
                             @*                        <li class="nav-small-cap">Dashboard</li>*@
                             <li>
@@ -168,7 +471,7 @@
                             <li class="nav-devider"></li>
                             @*                        <li class="nav-small-cap">Operations</li>*@
                             <li>
-                                <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-book-multiple"></i><span class="hide-menu">Cashier</span></a>
+                                <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-currency-usd"></i><span class="hide-menu">Cashier</span></a>
                                 <ul aria-expanded="false" class="collapse">
                                     <li><a href="@Url.Action("Index", "Cashier")">Cashier</a></li>
                                     <li><a href="@Url.Action("Index", "OtherIncome")">Other Income/Expenses</a></li>
@@ -186,13 +489,14 @@
                                     <li><a href="@Url.Action("Index", "Channeling")">Channeling</a></li>
                                     <li><a href="@Url.Action("Index", "OPDRegistration")">OPD</a></li>
                                     <li><a href="@Url.Action("Index", "XRAY")">X-Ray</a></li>
+                                    <li><a href="@Url.Action("Index", "Admission")">Admission</a></li>
                                 </ul>
                             </li>
 
                             <li class="nav-devider"></li>
                             @*                        <li class="nav-small-cap">Master Data</li>*@
                             <li>
-                                <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-book-multiple"></i><span class="hide-menu">Master Data</span></a>
+                                <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-database"></i><span class="hide-menu">Master Data</span></a>
                                 <ul aria-expanded="false" class="collapse">
                                     <li><a href="@Url.Action("Index", "Patient")">Register Patient</a></li>
                                     @if (userRoleCookie == "ADMIN")
@@ -213,11 +517,7 @@
                 </div>
                 <!-- End Sidebar scroll-->
                 <!-- Bottom points-->
-                <div class="sidebar-footer">
-                    <!-- item--><a href="" class="link" data-toggle="tooltip" title="Settings"><i class="ti-settings"></i></a>
-                    <!-- item--><a href="" class="link" data-toggle="tooltip" title="Email"><i class="mdi mdi-gmail"></i></a>
-                    <!-- item--><a href="" class="link" data-toggle="tooltip" title="Logout"><i class="mdi mdi-power"></i></a>
-                </div>
+              
                 <!-- End Bottom points-->
             </aside>
             <!-- ============================================================== -->
@@ -254,12 +554,12 @@
                             <div class="r-panel-body">
                                 <ul id="themecolors" class="m-t-20">
                                     <li><b>With Light sidebar</b></li>
-                                    <li><a href="javascript:void(0)" data-theme="default" class="default-theme">1</a></li>
-                                    <li><a href="javascript:void(0)" data-theme="green" class="green-theme">2</a></li>
-                                    <li><a href="javascript:void(0)" data-theme="red" class="red-theme">3</a></li>
-                                    <li><a href="javascript:void(0)" data-theme="blue" class="blue-theme working">4</a></li>
-                                    <li><a href="javascript:void(0)" data-theme="purple" class="purple-theme">5</a></li>
-                                    <li><a href="javascript:void(0)" data-theme="megna" class="megna-theme">6</a></li>
+                                    <li><a href="" data-theme="default" class="default-theme">1</a></li>
+                                    <li><a href="" data-theme="green" class="green-theme">2</a></li>
+                                    <li><a href="" data-theme="red" class="red-theme">3</a></li>
+                                    <li><a href="" data-theme="blue" class="blue-theme working">4</a></li>
+                                    <li><a href="" data-theme="purple" class="purple-theme">5</a></li>
+                                    <li><a href="" data-theme="megna" class="megna-theme">6</a></li>
                                     <li class="d-block m-t-30"><b>With Dark sidebar</b></li>
                                     <li><a href="javascript:void(0)" data-theme="default-dark" class="default-dark-theme">7</a></li>
                                     <li><a href="javascript:void(0)" data-theme="green-dark" class="green-dark-theme">8</a></li>
@@ -268,33 +568,7 @@
                                     <li><a href="javascript:void(0)" data-theme="purple-dark" class="purple-dark-theme">11</a></li>
                                     <li><a href="javascript:void(0)" data-theme="megna-dark" class="megna-dark-theme ">12</a></li>
                                 </ul>
-                                <ul class="m-t-20 chatonline">
-                                    <li><b>Chat option</b></li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/1.jpg" alt="user-img" class="img-circle"> <span>Varun Dhavan <small class="text-success">online</small></span></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/2.jpg" alt="user-img" class="img-circle"> <span>Genelia Deshmukh <small class="text-warning">Away</small></span></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/3.jpg" alt="user-img" class="img-circle"> <span>Ritesh Deshmukh <small class="text-danger">Busy</small></span></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/4.jpg" alt="user-img" class="img-circle"> <span>Arijit Sinh <small class="text-muted">Offline</small></span></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/5.jpg" alt="user-img" class="img-circle"> <span>Govinda Star <small class="text-success">online</small></span></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/6.jpg" alt="user-img" class="img-circle"> <span>John Abraham<small class="text-success">online</small></span></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/7.jpg" alt="user-img" class="img-circle"> <span>Hritik Roshan<small class="text-success">online</small></span></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)"><img src="../assets/images/users/8.jpg" alt="user-img" class="img-circle"> <span>Pwandeep rajan <small class="text-success">online</small></span></a>
-                                    </li>
-                                </ul>
+
                             </div>
                         </div>
                     </div>
@@ -323,7 +597,8 @@
         <!-- ============================================================== -->
         <!-- All Jquery -->
         <!-- ============================================================== -->
-
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-0D06XW4GNH"></script>
 
         <script src="../assets/plugins/jquery/jquery.min.js"></script>
         <!-- Select 2 drop down -->
@@ -365,14 +640,43 @@
         @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>*@
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-
-
-
         <script src="~/assets/plugins/moment/moment.js"></script>
         <script src="~/assets/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
         <script src="~/assets/plugins/styleswitcher/jQuery.style.switcher.js"></script>
         <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                const body = document.body;
+                const toggleButton = document.getElementById("darkModeToggle");
+
+                // Check if dark mode was previously enabled
+                const isDarkModeEnabled = localStorage.getItem("darkMode") === "enabled";
+
+                // Apply dark theme if enabled
+                if (isDarkModeEnabled) {
+                    body.classList.add("dark-theme");
+                    toggleButton.textContent = "☀ Light Mode";
+                } else {
+                    body.classList.remove("dark-theme");
+                    toggleButton.textContent = "🌙 Dark Mode";
+                }
+
+                // Toggle dark mode on button click
+                toggleButton.addEventListener("click", function () {
+                    if (body.classList.contains("dark-theme")) {
+                        body.classList.remove("dark-theme");
+                        localStorage.setItem("darkMode", "disabled");
+                        toggleButton.textContent = "🌙 Dark Mode";
+                    } else {
+                        body.classList.add("dark-theme");
+                        localStorage.setItem("darkMode", "enabled");
+                        toggleButton.textContent = "☀ Light Mode";
+                    }
+                });
+            });
+
+
+
             @*document.getElementById('logoutBtn').addEventListener('click', function () {
                 // Clear the cookie
                 document.cookie = 'UserNameCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
@@ -394,16 +698,17 @@
             // Attach event listener to logout button
             document.querySelector('.dropdown-item').addEventListener('click', function() {
                 deleteAllCookies();
-                
+
                 window.location.href = '/';
             });
+
         </script>
 
-      
+
         @RenderSection("Scripts", required: false)
     </body>
 
-</html>
+    </html>
 }
 else
 {
@@ -413,7 +718,7 @@ else
         <title>Login Required</title>
     </head>
     <body>
-       
+
         <p>You need to be logged in to access this page.</p>
         <a href="/Login">Login Here</a>
     </body>

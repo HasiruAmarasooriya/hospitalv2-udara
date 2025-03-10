@@ -15,6 +15,9 @@
         body {
             font-family: Arial, sans-serif;
             font-size: 15px;
+            margin: 0 auto; /* Center the content */
+            max-width: 800px; /* Limit the width of the receipt */
+            padding: 60px; /* Add padding to the left and right */
         }
 
         h1, h2, h3, h4, h5, h6, p, td, th {
@@ -40,7 +43,7 @@
         }
 
         table {
-            max-width: 350px;
+            width: 90%; /* Full width */
             border-collapse: collapse;
             table-layout: fixed;
             margin-bottom: 0;
@@ -51,9 +54,9 @@
             font-size: 15px;
         }
 
-        table th {
-            background-color: #f0f0f0;
-        }
+            table th {
+                background-color: #f0f0f0;
+            }
 
         #total-section {
             text-align: right;
@@ -68,6 +71,232 @@
         @@media print {
             .page-break {
                 page-break-before: always;
+            }
+
+            body {
+                margin: 0;
+                padding: 10px; /* Remove padding for print */
+            }
+
+            .header, .details, .bill-table, #barcodeTrueCopy, p, hr {
+                margin: 0;
+                padding: 0;
+            }
+
+            .logo {
+                max-width: 120px; /* Ensure logo fits in print */
+                height: auto;
+            }
+
+            .address, .contact {
+                font-size: 15px; /* Adjust font size for print */
+            }
+
+            h2 {
+                font-size: 18px; /* Adjust heading size for print */
+            }
+
+            h4 {
+                font-size: 14px; /* Adjust subheading size for print */
+            }
+
+            .bill-table th, .bill-table td {
+                padding: 5px;
+                font-size: 15px; /* Adjust table font size for print */
+            }
+
+            p {
+                font-size: 15px; /* Adjust paragraph font size for print */
+            }
+            /* Ensure table borders and colors are visible in print */
+            .bill-table th {
+                background-color: #f2f2f2 !important; /* Force background color in print */
+                -webkit-print-color-adjust: exact; /* Ensure colors are printed */
+            }
+
+            .bill-table td {
+                border-right: 1px solid #000 !important; /* Force borders in print */
+            }
+            /* Ensure images (logos) are loaded in print */
+            img {
+                visibility: visible !important; /* Force images to be visible in print */
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            max-width: 150px;
+            height: auto;
+            margin: 10px;
+        }
+
+        .address, .contact {
+            font-size: 15px;
+            margin: 5px 0;
+        }
+
+        h2, h4 {
+            margin: 10px 0;
+        }
+
+        /* Details Section */
+        .details {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 40px; /* Add more space from left and right borders in print */
+            margin: 0 auto; /* Center the details container */
+            font-size: 15px;
+        }
+
+            .details div {
+                width: 48%;
+            }
+
+                .details div:last-child {
+                    text-align: right;
+                }
+
+        /* Table Styles */
+        .bill-table {
+            width: 90%; /* Increase table width to 90% of the page */
+            margin: 0 auto; /* Center the table horizontally */
+            padding: 20px 20px;
+            margin-bottom: 20px;
+            table-layout: fixed;
+        }
+
+            .bill-table th {
+                padding: 8px;
+                text-align: left; /* Align header text to the right */
+                background-color: #f2f2f2; /* Light gray background for headers */
+            }
+
+            .bill-table td {
+                /* Vertical border for columns */
+                padding: 8px;
+                text-align: right; /* Default alignment for all columns */
+            }
+
+                .bill-table td:first-child {
+                    text-align: left; /* Align first column data to the left */
+                    border-left: none; /* Remove left border for the first column */
+                }
+
+            .bill-table th:nth-child(2) {
+                text-align: right; /* Align first column data to the left */
+                /* Remove left border for the first column */
+            }
+
+            .bill-table th:first-child,
+            .bill-table td:first-child {
+                /* Remove left border for the first column */
+                padding-left: 8px;
+                width: 85%; /* First column (Description) takes up more space */
+            }
+
+            .bill-table th:last-child,
+            .bill-table td:last-child {
+                border-right: none; /* Remove right border for the last column */
+                border-left: none;
+                width: 15%;
+            }
+
+        /* Barcode Section */
+        #barcodeTrueCopy {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Footer Styles */
+        p {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #000;
+            margin: 20px 0;
+        }
+
+        /* Print-specific Styles */
+        @@media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            .details {
+                padding: 0 20px; /* Add more space from left and right borders in print */
+                margin: 0 auto; /* Center the details container */
+                width: 90%; /* Ensure it takes up 90% of the page width */
+                font-size: 15px;
+            }
+
+                .details div {
+                    width: 48%; /* Maintain the width of the child divs */
+                }
+
+                    .details div:last-child {
+                        text-align: right; /* Ensure the last div is right-aligned */
+                    }
+
+            .header, .details, .bill-table, #barcodeTrueCopy, p, hr {
+                margin: 0;
+            }
+
+            .logo {
+                max-width: 120px;
+            }
+
+            .address, .contact {
+                font-size: 15px;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+
+            h4 {
+                font-size: 15px;
+            }
+
+            .bill-table th, .bill-table td {
+                padding: 5px;
+                font-size: 15px;
+            }
+
+                .bill-table td:first-child {
+                    text-align: left; /* Align first column data to the left */
+                    border-left: none; /* Remove left border for the first column */
+                }
+
+                .bill-table th:nth-child(2) {
+                    text-align: right; /* Align first column data to the left */
+                    border-left: none; /* Remove left border for the first column */
+                }
+
+                .bill-table th:first-child,
+                .bill-table td:first-child {
+                    border-left: none; /* Remove left border for the first column */
+                    padding-left: 8px;
+                    width: 85%; /* First column (Description) takes up more space */
+                }
+
+                .bill-table th:last-child,
+                .bill-table td:last-child {
+                    border-right: none; /* Remove right border for the last column */
+                    border-left: 1px solid #000;
+                    width: 15%;
+                }
+
+            p {
+                font-size: 15px;
             }
         }
     </style>
@@ -84,7 +313,7 @@
                     KUMUDU HOSPITAL
                 </p>
                 <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
-                    No 48, Kandy Road, Mathale,
+                    No 48, Kandy Road, Matale,
                 </p>
                 <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
                     Tel: 066 22 22 244 | 066 22 30 027
@@ -97,7 +326,7 @@
 
             <h4 style="margin: 0 0 10px 0; padding: 0; text-align: center;">Channeling Bill </h4>
             <h4 style="margin: 10px 0 0 0; padding: 0; text-align: center;">Customer Copy</h4>
-            <h4 style="text-align:center"> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+            <h4 style="text-align:center"> @(Model.PrintCount > 1 ? "Re-Print " : "") </h4>
             <hr>
             <h5 style="margin: 0; padding: 0; text-align: center;">Ref No: CHE-@Model.opd.Id</h5>
             <hr>
@@ -251,7 +480,7 @@
                     KUMUDU HOSPITAL
                 </p>
                 <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
-                    No 48, Kandy Road, Mathale,
+                    No 48, Kandy Road, Matale,
                 </p>
                 <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
                     Tel: 066 22 22 244 | 066 22 30 027
@@ -263,7 +492,7 @@
             <hr>
             <h4 style="margin: 0 0 10px 0; padding: 0; text-align: center;">Channeling Bill </h4>
             <h4 style="margin: 10px 0 0 0; padding: 0; text-align: center;">True Copy</h4>
-            <h4 style="text-align:center"> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+            <h4 style="text-align:center"> @(Model.PrintCount > 1 ? "Re-Print " : "") </h4>
             <hr>
             <h5 style="margin: 0; padding: 0; text-align: center;">Ref No: CHE-@Model.opd.Id</h5>
             <hr>
@@ -421,7 +650,7 @@
                             KUMUDU HOSPITAL
                         </p>
                         <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
-                            No 48, Kandy Road, Mathale,
+                            No 48, Kandy Road, Matale,
                         </p>
                         <p class="text-sm text-gray-400" style="margin-top: 10px; margin-bottom: auto">
                             Tel: 066 22 22 244 | 066 22 30 027
@@ -433,13 +662,13 @@
                         @if (Model.opd != null && Model.opd.Description == "X-RAY")
                         {
                             <h4 style="margin: 0; padding: 0;">X-RAY Bill </h4>
-                            <h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+                            <h4> @(Model.PrintCount > 1 ? "Re-Print" : "") </h4>
                             <h5 style="margin: 0; padding: 0;">@Model.ItemName</h5>
                         }
                         else
                         {
                             <h5 style="margin: 0; padding: 0;">OPD Bill </h5>
-                            <h4> @(Model.PrintCount > 1 ? "Re-Print (" + Model.PrintCount + ")" : "") </h4>
+                            <h4> @(Model.PrintCount > 1 ? "Re-Print" : "") </h4>
                         }
                     
 
@@ -587,6 +816,7 @@
                     }
 
                 </table>
+
             }
 
           
@@ -599,8 +829,185 @@
 
         
     </div>
+ 
+    <div id="receipt">
+        @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
+        {
+            @if (Model != null)
+            {
+                <div class="header">
+                    <!-- Add a fallback for the logo image -->
+                    <img src="https://kumuduhospital.com/assets/images/kumudu_logo2.jpg" alt="Kumudu Hospital Logo"/>
 
-  
+                    <div class="address">
+                        KUMUDU HOSPITAL PLC<br>
+                        No 48, Kandy Road, Matale.
+                    </div>
+                    <div class="contact">
+                        Tel: 066 22 22 244 | 066 22 30 027<br>
+                        Email: kumuduhospital@gmail.com
+                    </div>
+                    <h2>Inpatients Final Bill</h2>
+                    <h4 style="text-align:center"> @(Model.PrintCount > 1 ? "Re-Print" : "") </h4>
+                </div>
+
+                <div class="details">
+                    <div>
+                        Bill No: BHT-@Model.adm.Id<br>
+                        Name: @Model.customerName<br>
+                        Address:@Model.address <br>
+                        Primary Consultant: @Model.consaltantName<br>
+                    </div>
+                    <div>
+                        Date Of Bill: @DateTime.Now<br>
+                        Arrival:@Model.Admission.CreateDate <br>
+                        Departure:@Model.Admission.DischargeDate. <br>
+                        Bed/Room: @Model.adm!.Room!.Name
+                    </div>
+                </div>
+
+                <table class="bill-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Amount (Rs.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Hospital General Fees -->
+                        @if (Model.AdmissionFeeList != null)
+                        {
+                            foreach (var Item in Model.AdmissionFeeList)
+                            {
+                                <tr>
+                                    <td>@Item.ItemName</td>
+                                    <td>Rs. @Item.Amount.ToString("0.00")</td>
+                                </tr>
+                            }
+                        }
+                        <!-- Consultant Fees -->
+                        @if (Model.AdmissionConsultantList != null)
+                        {
+                            foreach (var Item in Model.AdmissionConsultantList)
+                            {
+                                <tr>
+                                    <td>@Item.ConsultantName</td>
+                                    <td>Rs. @Item.DoctorFee.ToString("0.00")</td>
+                                </tr>
+                            }
+                        }
+
+                        <!-- Investigation Charges -->
+                        @if (Model.AdmissionInvestigationList != null)
+                        {
+                            foreach (var Item in Model.AdmissionInvestigationList)
+                            {
+                                <tr>
+                                    <td>@Item.InvestigationName</td>
+                                    <td>Rs. @Item.Amount.ToString("0.00")</td>
+                                </tr>
+                            }
+                        }
+                        <!-- Other Items -->
+                        @if (Model.AdmissionItemsList != null)
+                        {
+                            foreach (var Item in Model.AdmissionItemsList)
+                            {
+                                <tr>
+                                    <td>@Item.ItemName</td>
+                                    <td>Rs. @Item.Amount.ToString("0.00")</td>
+                                </tr>
+                            }
+                        }
+                        <!-- Drug Fees -->
+                        @if (Model.TotalDrugsAmount != 0)
+                        {
+                            <tr>
+                                <td>Total Drugs Chargers</td>
+                                <td>Rs. @Model.TotalDrugsAmount.ToString("0.00")</td>
+                            </tr>
+                        }
+
+                        @if (Model != null)
+                        {
+                            decimal totalCash = 0;
+                            decimal totalBlence = 0;
+
+                            @if (Model.paymentList != null)
+                            {
+                                @foreach (var item in Model.paymentList)
+                                {
+                                    @if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.BALENCE)
+                                        totalBlence = totalBlence + item.CashAmount;
+                                    @if (item.BillingType == HospitalMgrSystem.Model.Enums.BillingType.CASHIER)
+                                        totalCash = totalCash + item.CashAmount + item.CreditAmount + item.DdebitAmount + item.ChequeAmount + item.GiftCardAmount;
+                                }
+                            }
+                            <tr>
+                                <td style="text-align : center; "></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : center; "></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Total Hospital Chargers:</td>
+                                <td><hr>Rs.@Model.hospitalFee.ToString("0.00") </td>
+                            </tr>
+                            <tr>
+                                <td>Total CONSULTANT CHARGES:</td>
+                                <td>Rs.@Model.consaltantFee.ToString("0.00")</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : center; "></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : right;">Sub total:</td>
+                                <td><hr>Rs.@Model.preSubtotal.ToString("0.00")</td>
+                            </tr>
+                            @if (Model.discount != 0)
+                            {
+                                <tr>
+                                    <td style="text-align : right;">Discount:</td>
+                                    <td>Rs.@Model.discount.ToString("0.00")</td>
+                                </tr>
+                            }
+                            <tr>
+                                <td style="text-align : right;">Net Total:</td>
+                                <td>Rs.@Model.preTotal.ToString("0.00")</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : right;">Cash Payment:</td>
+                                <td>Rs.@totalCash.ToString("0.00")<hr></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : right;">Balance:</td>
+                                <td><hr>Rs.@(Math.Abs(totalBlence).ToString("0.00"))<hr><hr></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div id="barcodeTrueCopy">
+                    <svg id="barcodeSvgTrueCopy"></svg>
+                </div>
+                @if (Model.totalDueAmount <= 0)
+                {
+
+                }
+                @if (Model.totalDueAmount >= 0)
+                {
+
+                }
+                <hr>
+            }
+        }
+    </div>
+
+
+
    
 </body>
 </html>

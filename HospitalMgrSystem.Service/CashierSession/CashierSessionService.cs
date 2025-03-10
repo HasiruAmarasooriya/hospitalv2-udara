@@ -50,6 +50,7 @@ namespace HospitalMgrSystem.Service.CashierSession
 				//Model.CashierSession otherHospitalIncome = PaymentDetailsOtherTransactrion(sessionId, InvoiceIds);
 				Model.CashierSession otherHospitalIncome = PaymentDetailsOtherIcome(sessionId, InvoiceIds);
 				Model.CashierSession cashierTransferInAndOut = CashierTransferDetails(sessionId, InvoiceIds);
+				Model.CashierSession AdmisionPaymentData = PaymentDetailsADM(sessionId, InvoiceIds);
 
 				cashierSessionAmounts.OPDTotalAmount = OPDPayementData.OPDTotalAmount;
 				cashierSessionAmounts.OPDTotalPaidAmount = OPDPayementData.OPDTotalPaidAmount;
@@ -80,12 +81,20 @@ namespace HospitalMgrSystem.Service.CashierSession
 				cashierSessionAmounts.ChannelingTotalPaidCardAmount = ChannelingPayementData.ChannelingTotalPaidCardAmount;
 				cashierSessionAmounts.ChannelingCashBalence = ChannelingPayementData.ChannelingCashBalence;
 
-				cashierSessionAmounts.AllServiceTotalPaidAmount = cashierSessionAmounts.OPDTotalPaidAmount + cashierSessionAmounts.XRAYTotalPaidAmount + cashierSessionAmounts.OtherTotalPaidAmount + cashierSessionAmounts.ChannelingTotalPaidAmount;
-				cashierSessionAmounts.AllServiceTotalPaidCardAmount = cashierSessionAmounts.OPDTotalPaidCardAmount + cashierSessionAmounts.XRAYTotalPaidCardAmount + cashierSessionAmounts.OtherTotalPaidCardAmount + cashierSessionAmounts.ChannelingTotalPaidCardAmount;
-				cashierSessionAmounts.AllServiceTotalRefund = cashierSessionAmounts.OPDTotalRefund + cashierSessionAmounts.XRAYTotalRefund + cashierSessionAmounts.OtherTotalRefund + cashierSessionAmounts.ChannelingTotalRefund;
-				cashierSessionAmounts.AllServiceDiscountAmount = cashierSessionAmounts.OPDTotalDiscount + cashierSessionAmounts.XrayTotalDiscountAmount + cashierSessionAmounts.OtherTotalDiscountAmount + cashierSessionAmounts.ChannelingDiscountAmount;
-				cashierSessionAmounts.AllServiceTotalAmount = cashierSessionAmounts.OPDTotalAmount + cashierSessionAmounts.XRAYTotalAmount + cashierSessionAmounts.OtherTotalAmount + cashierSessionAmounts.ChannelingTotalAmount + cashierTransferInAndOut.totalCashierTransferIn + cashierTransferInAndOut.totalCashierTransferOut + otherHospitalIncome.totalHospitaOtherIncome;
-				cashierSessionAmounts.AllServiceCashBalence = cashierSession.EndBalence - cashierSession.StartBalence;
+                cashierSessionAmounts.AdmissionTotalAmount = AdmisionPaymentData.AdmissionTotalAmount;
+                cashierSessionAmounts.AdmissionTotalPaidAmount = AdmisionPaymentData.AdmissionTotalPaidAmount;
+                cashierSessionAmounts.AdmissionTotalRefund = AdmisionPaymentData.AdmissionTotalRefund;
+                cashierSessionAmounts.AdmissionDiscountAmount = AdmisionPaymentData.AdmissionDiscountAmount;
+                cashierSessionAmounts.AdmissionTotalDoctorPayment = AdmisionPaymentData.AdmissionTotalDoctorPayment;
+                cashierSessionAmounts.AdmissionTotalPaidCardAmount = AdmisionPaymentData.AdmissionTotalPaidCardAmount;
+                cashierSessionAmounts.AdmissionCashBalence = AdmisionPaymentData.AdmissionCashBalence;
+
+                cashierSessionAmounts.AllServiceTotalPaidAmount =cashierSessionAmounts.AdmissionTotalPaidAmount + cashierSessionAmounts.OPDTotalPaidAmount + cashierSessionAmounts.XRAYTotalPaidAmount + cashierSessionAmounts.OtherTotalPaidAmount + cashierSessionAmounts.ChannelingTotalPaidAmount;
+				cashierSessionAmounts.AllServiceTotalPaidCardAmount = cashierSessionAmounts.AdmissionTotalPaidCardAmount + cashierSessionAmounts.OPDTotalPaidCardAmount + cashierSessionAmounts.XRAYTotalPaidCardAmount + cashierSessionAmounts.OtherTotalPaidCardAmount + cashierSessionAmounts.ChannelingTotalPaidCardAmount;
+				cashierSessionAmounts.AllServiceTotalRefund = cashierSessionAmounts.AdmissionTotalRefund +cashierSessionAmounts.OPDTotalRefund + cashierSessionAmounts.XRAYTotalRefund + cashierSessionAmounts.OtherTotalRefund + cashierSessionAmounts.ChannelingTotalRefund;
+				cashierSessionAmounts.AllServiceDiscountAmount = cashierSessionAmounts.AllServiceDiscountAmount +cashierSessionAmounts.AdmissionDiscountAmount+cashierSessionAmounts.OPDTotalDiscount + cashierSessionAmounts.XrayTotalDiscountAmount + cashierSessionAmounts.OtherTotalDiscountAmount + cashierSessionAmounts.ChannelingDiscountAmount;
+				cashierSessionAmounts.AllServiceTotalAmount = cashierSessionAmounts.AllServiceTotalAmount +cashierSessionAmounts.AdmissionTotalAmount+ cashierSessionAmounts.OPDTotalAmount + cashierSessionAmounts.XRAYTotalAmount + cashierSessionAmounts.OtherTotalAmount + cashierSessionAmounts.ChannelingTotalAmount + cashierTransferInAndOut.totalCashierTransferIn + cashierTransferInAndOut.totalCashierTransferOut + otherHospitalIncome.totalHospitaOtherIncome;
+				cashierSessionAmounts.AllServiceCashBalence = cashierSessionAmounts.AllServiceCashBalence + cashierSession.EndBalence - cashierSession.StartBalence;
 
 
 				//cashierSessionAmounts.notInSyestemConsultantList = otherHospitalIncome.notInSyestemConsultantList;
@@ -94,7 +103,7 @@ namespace HospitalMgrSystem.Service.CashierSession
 				cashierSessionAmounts.totalHospitaOtherIncome = otherHospitalIncome.totalHospitaOtherIncome;
 				cashierSessionAmounts.otherIncomeList = otherHospitalIncome.otherIncomeList;
 				cashierSessionAmounts.totalHospitaOtherIncome = otherHospitalIncome.totalHospitaOtherIncome;
-				cashierSessionAmounts.totalGrandIncome = cashierSessionAmounts.OPDTotalAmount + cashierSessionAmounts.XRAYTotalAmount + cashierSessionAmounts.OtherTotalAmount + cashierSessionAmounts.ChannelingTotalAmount + otherHospitalIncome.totalHospitaOtherIncome; ;
+				cashierSessionAmounts.totalGrandIncome = cashierSessionAmounts.AdmissionTotalAmount+cashierSessionAmounts.OPDTotalAmount + cashierSessionAmounts.XRAYTotalAmount + cashierSessionAmounts.OtherTotalAmount + cashierSessionAmounts.ChannelingTotalAmount + otherHospitalIncome.totalHospitaOtherIncome; ;
 				return cashierSessionAmounts;
 			}
 
@@ -483,7 +492,58 @@ namespace HospitalMgrSystem.Service.CashierSession
 				return cashierSessionAmounts;
 			}
 		}
-		public Model.CashierSession CreateCashierSession(Model.CashierSession cashierSession)
+        private Model.CashierSession PaymentDetailsADM(int sessionId, List<int> InvoiceIds)
+        {
+            Model.CashierSession cashierSessionAmounts = new Model.CashierSession();
+
+            using (DataAccess.HospitalDBContext dbContext = new DataAccess.HospitalDBContext())
+            {
+
+                List<Invoice> invoiceList = dbContext.Invoices.Where(o => InvoiceIds.Contains(o.Id) && o.InvoiceType == InvoiceType.ADM && o.Status == 0).ToList();
+
+                List<int> invoiceServiceIdList = invoiceList.Select(o => o.ServiceID).ToList();
+
+                List<int> opdIds = dbContext.Admissions.Where(o => invoiceServiceIdList.Contains(o.Id) && o.Status == AdmissionStatus.New  && o.invoiceType == InvoiceType.ADM && o.paymentStatus != PaymentStatus.NOT_PAID).Select(r => r.Id).ToList();
+
+                List<int> invoiceIds = invoiceList.Where(o => opdIds.Contains(o.ServiceID) && o.InvoiceType == InvoiceType.ADM && o.Status == 0).Select(o => o.Id).ToList();
+                List<int> DrPaymentsServiceIdsList = dbContext.Invoices.Where(o => InvoiceIds.Contains(o.Id) && o.InvoiceType == InvoiceType.ADM_DOCTOR_PAYMENT && o.Status == 0).Select(r => r.ServiceID).ToList();
+                List<int> otherServiceIds = dbContext.OtherTransactions.Where(o => DrPaymentsServiceIdsList.Contains(o.Id) && o.Status == CommonStatus.Active && o.InvoiceType == InvoiceType.ADM_DOCTOR_PAYMENT).Select(r => r.Id).ToList();
+
+                List<int> doctorPaymentServiceIdsList = dbContext.Invoices.Where(o => otherServiceIds.Contains(o.ServiceID) && o.InvoiceType == InvoiceType.ADM_DOCTOR_PAYMENT && o.Status == 0).Select(r => r.Id).ToList();
+
+
+
+
+                decimal totalCashierCashAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.CASHIER && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                                .Sum(o => o.CashAmount);
+
+                decimal totalCashierCardAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.CASHIER && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                                .Sum(o => o.CreditAmount + o.DdebitAmount + o.ChequeAmount + o.GiftCardAmount);
+                decimal totalDoctorPaymentAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.OTHER_OUT && o.sessionID == sessionId && doctorPaymentServiceIdsList.Contains(o.InvoiceID))
+                                                .Sum(o => o.CashAmount);
+
+                decimal balanceAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.BALENCE && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
+
+                decimal refundAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.REFUND && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
+                decimal discountAmount = dbContext.Payments.Where(o => o.BillingType == BillingType.DISCOUNT && o.sessionID == sessionId && invoiceIds.Contains(o.InvoiceID))
+                                        .Sum(o => o.CashAmount);
+
+
+                cashierSessionAmounts.AdmissionTotalPaidCardAmount = totalCashierCardAmount;
+                cashierSessionAmounts.AdmissionCashBalence = balanceAmount;
+                cashierSessionAmounts.AdmissionTotalRefund = refundAmount;
+                cashierSessionAmounts.AdmissionDiscountAmount = discountAmount;
+				cashierSessionAmounts.AdmissionTotalDoctorPayment = totalDoctorPaymentAmount;
+                cashierSessionAmounts.AdmissionTotalPaidAmount = totalCashierCashAmount + balanceAmount;
+                cashierSessionAmounts.AdmissionTotalAmount = cashierSessionAmounts.AdmissionTotalPaidAmount + totalCashierCardAmount+totalDoctorPaymentAmount + refundAmount;
+
+
+                return cashierSessionAmounts;
+            }
+        }
+        public Model.CashierSession CreateCashierSession(Model.CashierSession cashierSession)
 		{
 			using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
 			{
@@ -665,54 +725,64 @@ namespace HospitalMgrSystem.Service.CashierSession
 			var otherIncome = PaymentDetailsOtherIcomeBySessionId(sessionId);
             var paymentDataList = new List<object>();
             // Send data for each payment type
-            foreach (var item in channeling)
-            {
-				if(item.TotalPaidAmount > 0) 
-				{
-                    paymentDataList.Add(new
+            if (channeling.Count > 0)
+			{
+                foreach (var item in channeling)
+                {
+                    if (item.TotalPaidAmount > 0)
                     {
-                        Id = 117,
-                        name = "CASHIER - CHANNELING",
-                        InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                        ProductOrService = item.DocName,
-                        Rate = item.TotalPaidAmount,
-                        Amount = item.TotalPaidAmount
-                    });
+                        paymentDataList.Add(new
+                        {
+                            Id = 117,
+                            name = "CASHIER - CHANNELING",
+                            InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                            ProductOrService = item.DocName,
+                            Rate = item.TotalPaidAmount,
+                            Amount = item.TotalPaidAmount
+                        });
+                    }
+
                 }
-            
             }
-            foreach (var item in fowardBooking)
-            {
-				if(item.PaidAmount>0)
-				{
-                    paymentDataList.Add(new
+            if (fowardBoking != null)
+			{
+                foreach (var item in fowardBooking)
+                {
+                    if (item.PaidAmount > 0)
                     {
-                        Id = 117,
-                        name = "CASHIER - CHANNELING",
-                        InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                        ProductOrService = "Foward Booking" + item.DoctorName,
-                        Rate = item.PaidAmount,
-                        Amount = item.PaidAmount
-                    });
+                        paymentDataList.Add(new
+                        {
+                            Id = 117,
+                            name = "CASHIER - CHANNELING",
+                            InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                            ProductOrService = "Foward Booking" + item.DoctorName,
+                            Rate = item.PaidAmount,
+                            Amount = item.PaidAmount
+                        });
+                    }
+
                 }
-                
             }
-            foreach (var item in otherIncome)
-            {
-				if (item.Amount > 0)
-				{
-                    paymentDataList.Add(new
+            if (otherIncome.Count > 0)
+			{
+                foreach (var item in otherIncome)
+                {
+                    if (item.Amount > 0)
                     {
-                        Id = 117,
-                        name = "CASHIER - CHANNELING",
-                        InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                        ProductOrService = "Foward Booking" + item.Description,
-                        Rate = item.Amount,
-                        Amount = item.Amount
-                    });
+                        paymentDataList.Add(new
+                        {
+                            Id = 117,
+                            name = "CASHIER - CHANNELING",
+                            InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                            ProductOrService = "Foward Booking" + item.Description,
+                            Rate = item.Amount,
+                            Amount = item.Amount
+                        });
+                    }
+
                 }
-                
             }
+               
 			if (cashierSession.OPDTotalAmount > 0)
 			{
                 paymentDataList.Add(new

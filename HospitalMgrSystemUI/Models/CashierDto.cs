@@ -11,6 +11,7 @@ namespace HospitalMgrSystemUI.Models
         public int invoiceID { get; set; }
         public string customerName { get; set; }
         public string consaltantName { get; set; }
+        public string address { get; set; }
         public int patientAge { get; set; }
         public SexStatus patientSex { get; set; }
         public string patientContactNo { get; set; }
@@ -44,7 +45,11 @@ namespace HospitalMgrSystemUI.Models
         public decimal AvailableDiscount { get; set; }
 
         public decimal defaultAmountOPD { get; set; }
+        public decimal TotalDrugsAmount { get; set; }
+        public decimal TotalInvestigationAmount { get; set; }
+        public decimal TotalItemAmount { get; set; }
         public OPD opd { get; set; }
+        public Admission adm { get; set; }
         public Invoice invoice { get; set; }
         public List<OPDDrugus> OPDDrugusList { get; set; }
         public List<OPDDrugus> OPDDrugusListInvoiced { get; set; }
@@ -65,5 +70,16 @@ namespace HospitalMgrSystemUI.Models
         public OPD? OpdData { get; set; }
         public List<Scan>? ScanList { get; set; }
         public Scan? ScanItem { get; set; }
+        public List<AdmissionConsultant> AdmissionConsultantList { get; set; }
+        public List<AdmissionDrugus> AdmissionDrugusList { get; set; }
+        public List<AdmissionInvestigation> AdmissionInvestigationList { get; set; }
+        public List<AdmissionItems> AdmissionItemsList { get; set; }
+        public List<AdmissionsCharges> AdmissionFeeList { get; set; }
+        public List<AdmissionConsultant> AdmConsultantListInvoiced { get; set; }
+        public List<AdmissionDrugus> AdmDrugusListInvoiced { get; set; }
+        public List<AdmissionInvestigation> AdmInvestigationListInvoiced { get; set; }
+        public List<AdmissionItems> AdmItemsListInvoiced { get; set; }
+        public List<AdmissionsCharges> AdmFeeListInvoiced { get; set; }
+        public Admission Admission { get; set; }
     }
 }

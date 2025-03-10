@@ -1,4 +1,4 @@
-﻿@*
+﻿﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @model DrugsDto;
@@ -73,6 +73,7 @@
                                 <th>Category</th>
                                 <th>Item Name</th>
                                 <th>Price</th>
+                                <th>ReStockLevel</th>
                                 <th>Edit</th>
                                 <th>Delete</th>
                             </tr>
@@ -85,7 +86,7 @@
 
                                     <td>@item.SNo</td>
                                     <td>
-                                            @item.billingItemsType
+                                        @item.billingItemsType
                                     </td>
                                     <td>
                                         @if (item.DrugsCategory != null)
@@ -94,8 +95,9 @@
                                         }
                                     </td>
                                     <td>@item.DrugName</td>
-                                   
+
                                     <td>@item.Price</td>
+                                    <td>@item.ReStockLevel</td>
                                     <td>
                                         <button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-success' onclick=ShowShiftDetails(@item.Id);><i class='fa fa-edit'></i></button>  &nbsp;
                                     </td>
@@ -130,7 +132,7 @@
 </div>
 
 
-@section scripts{
+@section scripts {
     <script>
         function ShowShiftDetails(id) {
 

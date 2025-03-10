@@ -33,13 +33,105 @@
 
         });
     }
+     function updateAmount() {
+        var price = parseFloat($("#txtPrice").val()) || 0;
+        var qty = parseFloat($("#txtQty").val()) || 0;
+        var totalAmount = price * qty;
+        $("#txtAmount").val(totalAmount.toFixed(2));
+    }
+     let itemList = [];
+
+    function addItem() {
+        var drugDropdown = document.getElementById("item");
+        var selectedDrugId = drugDropdown.value;
+        var selectedDrugName = drugDropdown.options[drugDropdown.selectedIndex].text;
+        console.log('item ID',selectedDrugId);
+        console.log('item ID',selectedDrugName);
+        var price = parseFloat(document.getElementById("txtPrice").value) || 0;
+        var qty = parseFloat(document.getElementById("txtQty").value) || 0;
+        var amount = price * qty;
+
+        if (selectedDrugId == 0) {
+            alert("Please select a valid drug.");
+            return;
+        }
+        if (qty <= 0) {
+            alert("Please enter a valid quantity.");
+            return;
+        }
+
+        const AdmissionId = $("#custId").val();
+
+        console.log('list qty:', qty);
+        console.log('list price:', price);
+        console.log('list Amount:', amount);
+
+        // Add drug to list
+        itemList.push({
+            AdmissionId: AdmissionId,
+            ItemId: selectedDrugId,
+            DrugName: selectedDrugName,
+            Price: price,
+            Qty: qty,
+            Amount: amount
+        });
+
+        // Append new row to the table
+        const newRow = `
+            <tr id="row_${selectedDrugId}">
+                <td>${selectedDrugName}</td>
+                <td>${qty.toFixed(2)}</td>
+                <td>${price.toFixed(2)}</td>
+                <td>${amount.toFixed(2)}</td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removedrug(${selectedDrugId})">Remove</button>
+                </td>
+            </tr>
+        `;
+
+        $("#tempConsultantTable tbody").append(newRow);
+
+        // Clear input fields after adding the drug
+        $("#drugus").val(0);
+        $("#txtQty").val("1.00");
+        $("#txtPrice").val("1.00");
+    }
+
+    function removedrug(id) {
+        // Remove from the list
+        itemList = itemList.filter(drug => drug.ItemId != id);
+
+        // Remove row from table
+        $(`#row_${id}`).remove();
+    }
+     function saveItem() 
+     {
+        if (itemList.length === 0) {
+            alert("No Drugs to save.");
+            return;
+        }
+         console.log('length:', itemList.length);
+         console.log('list:', itemList);
+        $.ajax({
+            type: "POST",
+            url: "/Admission/CreateAdmissionItems",
+            contentType: 'application/json',
+            data: JSON.stringify(itemList),
+            success: function (response) {
+               ShowShiftDetails(@Model.AdmissionsId) // Navigate  to Admission
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+      }
 
 </script>
 
 <div class="modal-content">
     <div class="modal-header">
         <h4 class="modal-title" id="myLargeModalLabel">Add Item  </h4>
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="ShowShiftDetails(@Model.AdmissionsId)">×</button>
     </div>
     <div class="modal-body">
         <form asp-action="CreateAdmissionItems" method="post">
@@ -73,7 +165,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="companyName">Qty </label>
-                        <input class="form-control " id="txtQty" onkeyup="javascript:select_onchange();" asp-for="AdmissionItem.Qty" value="1.00" type="text" placeholder="Qty" />
+                        <input class="form-control " id="txtQty" onkeyup="updateAmount();" asp-for="AdmissionItem.Qty" value="1.00" type="text" placeholder="Qty" />
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -90,13 +182,32 @@
                     </div>
                 </div>
 
-          
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success" onclick="addItem()">Add Item</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="tempConsultantTable" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
 
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal" onclick="ShowShiftDetails(@Model.AdmissionsId)">Close</button>
+                <button type="button" class="btn  waves-effect btn-primary" onclick="saveItem()"><i class="fa fa-save"></i>&nbsp;Save</button>
             </div>
         </form>
     </div>

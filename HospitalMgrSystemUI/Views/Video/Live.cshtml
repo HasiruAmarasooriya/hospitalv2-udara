@@ -47,16 +47,16 @@
             padding: 0;
             width: 80vw; /* Full width */
             height: 100vh; /* Full height */
-            background-color: rgba(251, 234, 235, 0.8);
+            
         }
 
         .content-wrapper {
             position: relative;
             z-index: 2;
-            width: 40%; /* Controls the width of the content on the right */
+            width: 63%; /* Controls the width of the content on the right */
             height: 100vh;
             margin-left: auto; /* Pushes content to the right */
-            background-color: rgba(196, 215, 255, 0.7);
+            
             padding: 20px;
             border-radius: 8px;
             text-align: center;
@@ -76,18 +76,23 @@
 
 
         .card-title {
-            background-color: #3b2d9a;
-            border-radius: 8px;
-            padding: 5px;
-            box-shadow: 10px 10px 12px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg,#279EFF,#13005A,#00337C,#40A2E3);
+            border-radius: 20px;
+            padding: 10px 14px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.15);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            height:10%;
         }
 
         .title {
-            font-weight: bold;
-            font-size: 20px;
+            font-weight: 850;
+            font-size: 26px;
             text-align: center;
             position: relative;
-            color: #ec6a13;
+            color: #ffffff;
+            letter-spacing:0.5px;
         }
 
         .logo-date {
@@ -98,27 +103,34 @@
         }
 
         .date {
-            font-size: 15px;
+            font-size: 20px;
             font-weight: bold;
             margin-right: 10px;
-            color: #0f570f;
+            color: #fff;
+            background: linear-gradient(135deg,#279EFF,#13005A,#00337C,#40A2E3);
+            border-radius:10px;
+            padding:4px 14px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
         }
 
         .scrollable-table {
-            max-height: 670px;
+            max-height: 90%;
             overflow-y: hidden;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            
         }
 
         .content-wrapper table {
-            width: 60%;
+            width: 100%;
             font-size: 14px;
             background-color: transparent;
             border-collapse: separate;
             border-spacing: 0px;
             position: absolute;
-            /* Optional, if you want the container to fill the entire height */
-            width: 50%
+            
         }
 
         th, td {
@@ -148,13 +160,13 @@
         .consultant {
             color: white;
             font-weight: bold;
-            font-size: 30px;
+            font-size: 40px;
         }
 
         .specialist {
             background-color: rgba(67, 56, 120, 0.1);
             color: white;
-            font-size: 20px;
+            font-size: 27px;
             font-weight: bold;
             text-align: center;
         }
@@ -162,7 +174,7 @@
         .time {
             color: white;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 27px;
             text-align: left;
         }
 
@@ -170,14 +182,14 @@
             background-color: rgba(2, 76, 170, 0.1);
             color: white;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 27px;
             text-align: right;
         }
 
         .status {
             background-color: rgba(67, 56, 120, 0.1);
             color: black;
-            font-size: 20px;
+            font-size: 27px;
             text-align: center;
             color: white;
         }
@@ -209,7 +221,7 @@
             .status-icon.active {
                 font-weight: bold;
                 font-size: 25px;
-                color: green;
+                color: lime;
             }
 
             .status-icon.end {
@@ -227,10 +239,10 @@
 
 
         .schedule-card {
-            background-color: rgba(70, 53, 177, 0.8);
-            border-radius: 8px;
-            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1);
-            width: 95%; /* Occupy full width of the container */
+            background: linear-gradient(135deg,#13005A,#00337C,#1C82AD);
+            border-radius: 20px;
+            box-shadow: 4px 2px 8px rgba(0, 0, 0, 0.1);
+            width: 98%; /* Occupy full width of the container */
             margin-bottom: 10px;
             margin-left: 10px;
             margin-right: 10px; /* Further reduced margin between cards */
@@ -241,7 +253,7 @@
 
         .empty-card {
             /* background-color: rgba(70, 53, 177, 0.8); */
-            border-radius: 8px;
+            border-radius: 20px;
             /* box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1); */
             width: auto; /* Occupy full width of the container */
             margin-bottom: 10px;
@@ -257,8 +269,8 @@
 <body class="fix-header fix-sidebar">
     <div id="main-wrapper">
         <div class="video-background">
-            <iframe width="100%" height="100%"
-                    src="https://www.youtube-nocookie.com/embed/@Model.VideoId?autoplay=1&mute=1&controls=0&loop=1&playlist=@Model.VideoId"
+            <iframe id="videoFrame" width="100%" height="100%"
+                    src="https://www.youtube-nocookie.com/embed/@Model.VideoId?autoplay=1&controls=0&loop=1&playlist=@Model.VideoId&enablejsapi=1"
                     frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
             </iframe>
         </div>
@@ -376,9 +388,9 @@
                 const scrollableTable = $('.scrollable-table');
                 const tableSection = $('#tableSection');
                 const videoSection = $('#videoSection');
-                const scrollSpeed = 2;
-                const scrollInterval = 20;
-                let scrollAmount = 1;
+                const scrollSpeed = 1;
+                const scrollInterval = 15;
+                let scrollAmount = 5;
 
                 function scrollTable() {
                     scrollableTable.scrollTop(scrollAmount);

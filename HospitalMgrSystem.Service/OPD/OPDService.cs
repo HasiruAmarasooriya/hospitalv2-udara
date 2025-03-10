@@ -492,7 +492,11 @@ namespace HospitalMgrSystem.Service.OPD
                 {
                     invoiceData = (from p in dbContext.Invoices where p.ServiceID == opdData.Id && p.InvoiceType == InvoiceType.CHE select p).SingleOrDefault();
                 }
-                if(invoiceData != null)
+                if (invoiceType == InvoiceType.ADM)
+                {
+                    invoiceData = (from p in dbContext.Invoices where p.ServiceID == opdData.Id && p.InvoiceType == InvoiceType.ADM select p).SingleOrDefault();
+                }
+                if (invoiceData != null)
                 {
                     if (cashierSubTotal < 0)
                     {

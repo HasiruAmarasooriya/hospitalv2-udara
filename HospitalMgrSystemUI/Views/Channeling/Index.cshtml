@@ -21,9 +21,7 @@
 		.select2-selection__arrow {
 			height: 34px !important;
 		}
-	</style>
-
-	<style>
+	
 
 
 		.order-card {
@@ -73,6 +71,9 @@
 			float: right;
 		}
 
+		
+
+		
 	</style>
 
 }
@@ -163,7 +164,7 @@
 					<div class="modal-footer d-flex justify-content-between">
 						<div></div>
 						<div>
-							<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal" onclick="handleClear()">&nbsp;Clear</button>
+							<button type="button" class="btn btn-danger btn" data-dismiss="modal" onclick="handleClear()">&nbsp;Clear</button>
 							<button type="submit" class="btn waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Filter</button>
 						</div>
 					</div>
@@ -196,7 +197,7 @@
 				</div>
 				
 				<input type="text" id="tableFilter" placeholder="Enter Ref No">
-				<button type="button" class="btn btn-danger waves-effect text-left" onclick=" handleClear()" data-dismiss="modal">Clear</button>
+				<button type="button" class="btn btn-danger btn" onclick=" handleClear()" data-dismiss="modal">Clear</button>
 				<div class="table-responsive">
 					<table id="basic-2" class="display">
 						<thead>
@@ -239,7 +240,7 @@
 
 											</td>
 											<td>
-												<button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.ID);><i class='fa fa-print'></i></button>  &nbsp;
+												<button id='btnEdit' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowQR(@item.ID);><i class='fa fa-print'></i></button>
 											</td>
 											<td>
 												<button id='btnAddOn' class='btn waves-effect waves-light btn-xs btn-info' onclick=ShowAddOnDetails(@item.ID);><i class='fa fa-plus'></i></button>

@@ -30,7 +30,7 @@ namespace HospitalMgrSystemUI.Controllers
             {
                 warehouseDto = new WarehouseDto();
             }
-           
+
             var stockService = new StockService();
             warehouseDto.supplierList = stockService.GetAllGRN();
             //warehouseDto.grpvList = GetAllGRPV();
@@ -39,17 +39,17 @@ namespace HospitalMgrSystemUI.Controllers
             warehouseDto.RqeuestList = requestDetails
             .GroupBy(rd => rd.RequestID)
              .Select(group => new RequestDetailsDto
-            {
-             RequestID = group.Key,
-             CreatedBy = group.First().CreatedBy,
-             CreateDate = group.First().CreateDate,
-             Items = group.Select(item => new RequestItemDetailsDto
              {
-                 RequestID = item.StockRequestItemID,
-                 DrugName = item.DrugName,
-                 Quantity = item.Quantity
-             }).ToList()
-         })
+                 RequestID = group.Key,
+                 CreatedBy = group.First().CreatedBy,
+                 CreateDate = group.First().CreateDate,
+                 Items = group.Select(item => new RequestItemDetailsDto
+                 {
+                     RequestID = item.StockRequestItemID,
+                     DrugName = item.DrugName,
+                     Quantity = item.Quantity
+                 }).ToList()
+             })
          .ToList();
             var (mainStoresList, opdStoresList, addminStoresList) = GetOPDDrugDetails();
             warehouseDto.MainStore = mainStoresList;
@@ -89,7 +89,7 @@ namespace HospitalMgrSystemUI.Controllers
          .ToList();
             return PartialView("_PartialAddItem", GRPV);
         }
-       
+
         [HttpPost]
         public JsonResult AddItem([FromBody] GRPVDto grpvDto)
         {
@@ -109,7 +109,8 @@ namespace HospitalMgrSystemUI.Controllers
                 if (drug.SNo == "New Insert")
 
                 {
-                    var drugs = new Drug {
+                    var drugs = new Drug
+                    {
                         Id = item.DrugID,
                         SNo = "GRN",
                         DrugName = drug.DrugName,
@@ -124,7 +125,8 @@ namespace HospitalMgrSystemUI.Controllers
                         IsDiscountAvailable = true,
                         ModifiedDate = DateTime.Now,
                         CreateUser = item.CreateUser,
-                        Status = 0 // Or any default status
+                        Status = 0, // Or any default status
+                        ReStockLevel = drug.ReStockLevel
                     };
                     drugService.CreateDrugs(drugs);
                     var addgrrn = new GRPV
@@ -141,12 +143,15 @@ namespace HospitalMgrSystemUI.Controllers
                         CreateUser = item.CreateUser,
                         ModifiedUser = item.ModifiedUser,
                         CreateDate = DateTime.Now,
-                        ModifiedDate = DateTime.Now
+                        ModifiedDate = DateTime.Now,
+                        ReStockLevel = drug.ReStockLevel
+
                     };
                     stockService.AddGRPV(addgrrn);
 
                 }
-                else {
+                else
+                {
                     var drugs = new Drug
                     {
                         Id = item.DrugID,
@@ -168,21 +173,21 @@ namespace HospitalMgrSystemUI.Controllers
                     drugService.CreateDrugs(drugs);
                     var grpv = new GRPV
                     {
-                    DrugId = item.DrugID,
-                    GRNId = item.GRNId,
-                    BatchNumber = item.BatchNumber,
-                    SN = item.SerialNumber,
-                    Qty = item.Qty,
-                    Price = item.Price,
-                    SellPrecentage = 30,
-                    ExpiryDate = item.ExpireDate,
-                    ProductDate = item.ProductDate,
-                    CreateUser = item.CreateUser,
-                    ModifiedUser = item.ModifiedUser,
-                    CreateDate = DateTime.Now,
-                    ModifiedDate = DateTime.Now
+                        DrugId = item.DrugID,
+                        GRNId = item.GRNId,
+                        BatchNumber = item.BatchNumber,
+                        SN = item.SerialNumber,
+                        Qty = item.Qty,
+                        Price = item.Price,
+                        SellPrecentage = 30,
+                        ExpiryDate = item.ExpireDate,
+                        ProductDate = item.ProductDate,
+                        CreateUser = item.CreateUser,
+                        ModifiedUser = item.ModifiedUser,
+                        CreateDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now
                     };
-                 stockService.AddGRPV(grpv);
+                    stockService.AddGRPV(grpv);
                 }
             }
             //stockService.PurchaseReqestSStatusUpdate(item.RequestId);
@@ -209,7 +214,7 @@ namespace HospitalMgrSystemUI.Controllers
             return DrugsCategoryList;
         }
 
-        
+
 
         public IActionResult CreateTranfer()
         {
@@ -254,12 +259,12 @@ namespace HospitalMgrSystemUI.Controllers
                         ModifiedDate = DateTime.Now
                     }).ToList()
                 };
-                
+
                 var result = StockService.AddPurchaseRequest(stockRequest);
                 return Json(new { success = true, message = "Purchase request added successfully!" });
 
 
-                
+
             }
             catch (Exception ex)
             {
@@ -526,8 +531,8 @@ namespace HospitalMgrSystemUI.Controllers
 
             return Json(BatchList);
         }
-       
-    
+
+
         public IActionResult GetAllStockRequests()
         {
             try
@@ -544,7 +549,8 @@ namespace HospitalMgrSystemUI.Controllers
                         CreatedBy = group.First().CreatedBy,
                         CreateDate = group.First().CreateDate,
                         Items = group.Select(item => new RequestItemDetailsDto
-                        {   RequestID = item.RequestID,
+                        {
+                            RequestID = item.RequestID,
                             DrugName = item.DrugName,
                             Quantity = item.Quantity
                         }).ToList()
@@ -564,7 +570,7 @@ namespace HospitalMgrSystemUI.Controllers
         {
             try
             {
-               
+
                 var requestData = new StockService().GetStockRequestDetails(requestId);
 
                 if (requestData == null || !requestData.Any())
@@ -587,12 +593,12 @@ namespace HospitalMgrSystemUI.Controllers
                         }).ToList()
                     })
                     .ToList();
-				var warehouseDto = new WarehouseDto
-				{
-					RqeuestList = groupedpintdata
-				};
-				// Pass only the relevant data to the view
-				return View("_PartialViewRequest", warehouseDto);
+                var warehouseDto = new WarehouseDto
+                {
+                    RqeuestList = groupedpintdata
+                };
+                // Pass only the relevant data to the view
+                return View("_PartialViewRequest", warehouseDto);
             }
             catch (Exception ex)
             {
@@ -620,7 +626,9 @@ namespace HospitalMgrSystemUI.Controllers
                 Price = drug.Price,
                 Amount = drug.Amount,
                 SupplierName = drug.SupplierName,
-                ExpiryDate = drug.ExpiryDate
+                ExpiryDate = drug.ExpiryDate,
+                ReStockLevel = drug.ReStockLevel
+
             }).ToList();
             var opdrugList = new StockService().GetStoresDetailsByTranType(OPDIn, OPDOut);
             var opdStoresList = opdrugList.Select(drug => new OPDStoresDto
@@ -633,7 +641,8 @@ namespace HospitalMgrSystemUI.Controllers
                 Price = drug.Price,
                 Amount = drug.Amount,
                 SupplierName = drug.SupplierName,
-                ExpiryDate = drug.ExpiryDate
+                ExpiryDate = drug.ExpiryDate,
+
             }).ToList();
             var AddminrugList = new StockService().GetStoresDetailsByTranType(AddminIn, AddminOut);
             var AddminStoresList = AddminrugList.Select(drug => new AddmisionStoresDto
@@ -646,23 +655,30 @@ namespace HospitalMgrSystemUI.Controllers
                 Price = drug.Price,
                 Amount = drug.Amount,
                 SupplierName = drug.SupplierName,
-                ExpiryDate = drug.ExpiryDate
+                ExpiryDate = drug.ExpiryDate,
+
             }).ToList();
 
             return (mainStoresList, opdStoresList, AddminStoresList);
         }
+
+        private static object GetReStockLevel(DrugStoresDetailsDto drug)
+        {
+            return drug.ReStockLevel;
+        }
+
         public (List<OPDStoresDetaisDto>, List<AddmisionStoresDetailsDto>) DrugDetailsbydate()
         {
-            
+
             int OPDIn = (int)StoreTranMethod.OPD_IN;
             int OPDOut = (int)StoreTranMethod.OPD_Out;
             int OPDRefund = (int)StoreTranMethod.OPD_Refund;
             int AddminIn = (int)StoreTranMethod.Addmission_In;
             int AddminOut = (int)StoreTranMethod.Addmission_Out;
             int AddminRefund = (int)StoreTranMethod.Addmission_Refund;
-            DateTime Start =  DateTime.Today;
-            DateTime End = Start.AddDays(1).AddMilliseconds(-1); 
-            var opdrugList = new StockService().GetStoresDetailsByTranTypeByDate(OPDIn, OPDOut,OPDRefund,Start,End);
+            DateTime Start = DateTime.Today;
+            DateTime End = Start.AddDays(1).AddMilliseconds(-1);
+            var opdrugList = new StockService().GetStoresDetailsByTranTypeByDate(OPDIn, OPDOut, OPDRefund, Start, End);
             var opdStoresList = opdrugList.Select(drug => new OPDStoresDetaisDto
             {
                 DrugName = drug.DrugName,
@@ -673,7 +689,7 @@ namespace HospitalMgrSystemUI.Controllers
                 AvailableQuantity = drug.AvailableQuantity,
                 Price = drug.Price,
                 Amount = drug.Amount,
-                RefNumber =drug.RefNumber,
+                RefNumber = drug.RefNumber,
                 ExpiryDate = drug.ExpiryDate
             }).ToList();
             var AddminrugList = new StockService().GetStoresDetailsByTranTypeByDate(AddminIn, AddminOut, AddminRefund, Start, End);
@@ -683,7 +699,7 @@ namespace HospitalMgrSystemUI.Controllers
                 BatchNumber = drug.BatchNumber,
                 StockIn = drug.StockIn,
                 StockOut = drug.StockOut,
-                RefundQty= drug.RefundQty,
+                RefundQty = drug.RefundQty,
                 AvailableQuantity = drug.AvailableQuantity,
                 Price = drug.Price,
                 Amount = drug.Amount,
@@ -714,6 +730,46 @@ namespace HospitalMgrSystemUI.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+        public IActionResult LowStockItem()
+        {
+            // Fetch main store data
+            var (mainStoresList, _, _) = GetOPDDrugDetails();
+
+            // Filter low stock items
+            var lowStockItems = mainStoresList
+                .Where(s => s.AvailableQuantity <= s.ReStockLevel)
+                .ToList();
+
+            // Pass the filtered data to the view
+            var warehouseDto = new WarehouseDto
+            {
+                MainStore = lowStockItems
+            };
+
+            return PartialView("_PartialLowStockItem", warehouseDto);
+        }
+
+        public IActionResult ExpiringSoon()
+        {
+            // Fetch main store data
+            var (mainStoresList, _, _) = GetOPDDrugDetails();
+
+            // Filter items expiring within the next 3 months
+            var expiringSoonItems = mainStoresList
+                .Where(s => s.ExpiryDate <= DateTime.Now.AddMonths(3)) // Filter condition
+                .ToList();
+
+            // Pass the filtered data to the view
+            var warehouseDto = new WarehouseDto
+            {
+                MainStore = expiringSoonItems
+            };
+
+            return PartialView("_partialExpiringSoon", warehouseDto);
+        }
+
+
 
     }
 

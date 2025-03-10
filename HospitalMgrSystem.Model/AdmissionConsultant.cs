@@ -25,5 +25,7 @@ namespace HospitalMgrSystem.Model
 
         [NotMapped]
         public string ConsultantName { get; set; }
+        [NotMapped]
+        public decimal discount { get; set; }
     }
 }

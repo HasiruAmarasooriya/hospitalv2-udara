@@ -23,22 +23,108 @@
         $.ajax(settings).done(function (response) {
             console.log(response);
             console.log(response.price);
-            document.getElementById("txtPrice").value = response.price.toFixed(2);
+    
 
-            var qty = document.getElementById("txtQty").value;
-            var price = document.getElementById("txtPrice").value;
-            amount = qty * price;
+            var hospitalfee = document.getElementById("txtHospitalFee").value;
+            var docotrfee = document.getElementById("txtDoctorFee").value;
+            console.log('Hospitlfee'+hospitalfee);
+            console.log('Doctorfee'+docotrfee);
+            amount = hospitalfee + docotrfee;
             document.getElementById("txtAmount").value = amount.toFixed(2);
 
         });
     }
+    function loadConsultantDetails() {
+        const selectedOption = $("#consultant option:selected");
+
+        // Parse the values to numbers
+        const doctorFee = parseFloat(selectedOption.data("doctorfee")) || 0;
+        const hospitalFee = parseFloat(selectedOption.data("hospitalfee")) || 0;
+
+        console.log('docFee:', doctorFee);
+        console.log('hosFee:', hospitalFee);
+
+        // Calculate amount
+        const amount = hospitalFee + doctorFee;
+        console.log('amount:', amount);
+
+        // Update form fields
+        $("#txtDoctorFee").val(doctorFee.toFixed(2));
+        $("#txtHospitalFee").val(hospitalFee.toFixed(2));
+        $("#txtAmount").val(amount.toFixed(2));
+    }
+
+        let consultantList = [];
+
+    function addConsultant() {
+         const selectedOption = $("#consultant option:selected");
+        const ConsultantId = $("#consultant").val();
+        const consultantName = $("#consultant option:selected").text();
+        const DocFee =  parseFloat(selectedOption.data("doctorfee")) || 0;
+        const HospitalFee = parseFloat(selectedOption.data("hospitalfee")) || 0;
+        const AdmissionId = $("#custId").val()
+        console.log('list qty:', DocFee);
+        console.log('list price:', HospitalFee);
+        const Amount = DocFee + HospitalFee;
+        console.log('list amount:', Amount);
+        if (ConsultantId == 0) {
+            alert("Please select a consultant.");
+            return;
+        }
+
+        consultantList.push({AdmissionId, ConsultantId, consultantName, DocFee, HospitalFee, Amount });
+
+        const newRow = `
+            <tr>
+                <td>${consultantName}</td>
+                <td>${DocFee}</td>
+                <td>${HospitalFee.toFixed(2)}</td>
+                <td>${Amount.toFixed(2)}</td>
+                <td><button type="button" class="btn btn-danger btn-sm" onclick="removeConsultant('${ConsultantId}')">Remove</button></td>
+            </tr>
+        `;
+        $("#tempConsultantTable tbody").append(newRow);
+
+        // Clear fields
+        $("#consultant").val(0);
+        $("#txtQty").val("1.00");
+        $("#txtPrice").val("1.00");
+    }
+
+    function removeConsultant(id) {
+        consultantList = consultantList.filter(c => c.ConsultantId !== id);
+        $(`#tempConsultantTable tbody tr:has(button[onclick*='${id}'])`).remove();
+    }
+     
+    function saveConsultants() {
+        if (consultantList.length === 0) {
+            alert("No consultants to save.");
+            return;
+        }
+         console.log('length:', consultantList.length);
+         console.log('list:', consultantList);
+        $.ajax({
+            type: "POST",
+            url: "/Admission/AddNewConsultant",
+            contentType: 'application/json',
+            data: JSON.stringify(consultantList),
+            success: function (response) {
+               ShowShiftDetails(@Model.AdmissionsId);// Refresh the page or update the UI
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+
+
 
 </script>
 
 <div class="modal-content">
     <div class="modal-header">
         <h4 class="modal-title" id="myLargeModalLabel">Add/Edit Consultants  </h4>
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="ShowShiftDetails(@Model.AdmissionsId)">×</button>
     </div>
   
     <div class="modal-body">
@@ -63,27 +149,39 @@
             <div class="col-md-8">
                 <div class="form-group">
                         <label for="companyName">Name of Consultants </label>
-                    <select class="form-control ddlSearchList" onchange="javascript:select_onchange(this.value);" asp-for="AdmissionConsultants.ConsultantId" id="consultant">
+                        <select class="form-control ddlSearchList" onchange="loadConsultantDetails()" asp-for="AdmissionConsultants.ConsultantId" id="consultant">
                         <option value="0">Name of Consultant</option>
-                        @foreach (var item in Model.consultants)
+                        @foreach (var item in Model.Consultants)
                         {
-                            <option value="@item.Id">@item.Name - @item.Specialist.Name</option>
+                                <option value="@item.Id" data-doctorfee="@item.DoctorFee" data-hospitalfee="@item.HospitalFee">@item.Name - @item.Specialist.Name</option>
                         }
                     </select>
                 </div>
             </div>
-            <div class="col-md-4">
+            @*<div class="col-md-4">
                 <div class="form-group">
                     <label for="companyName">Qty </label>
                         <input class="form-control " type="text" id="txtQty" asp-for="AdmissionConsultants.Qty" value="1.00" onkeyup="javascript:select_onchange();" placeholder="Qty" />
                 </div>
-            </div>
+            </div>*@
             <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="txtHospitalFee">Hospital Fee</label>
+                        <input class="form-control" type="text" id="txtHospitalFee" readonly placeholder="Hospital Fee" />
+                    </div>
+            </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="txtDoctorFee">Consultant Fee</label>
+                        <input class="form-control" type="text" id="txtDoctorFee" readonly placeholder="Consultant Fee" />
+                    </div>
+                </div>
+            @*<div class="col-md-4">
                 <div class="form-group">
                     <label for="companyName">Price</label>
                     <input class="form-control" id="txtPrice" type="text" value="1.00" placeholder="Price" asp-for="AdmissionConsultants.Price"/>
                 </div>
-            </div>
+            </div>*@
 
             <div class="col-md-4">
                 <div class="form-group">
@@ -91,11 +189,33 @@
                         <input class="form-control " type="text" id="txtAmount" asp-for="AdmissionConsultants.Amount" value="0.00" placeholder="Amount" />
                 </div>
             </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success" onclick="addConsultant()">Add Consultant</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="tempConsultantTable" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Consultant Name</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
               
         </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal" onclick="ShowShiftDetails(@Model.AdmissionsId)">Close</button>
+                <button type="button" class="btn  waves-effect btn-primary" onclick="saveConsultants()"><i class="fa fa-save"></i>&nbsp;Save</button>
+
+                @* <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>*@
             </div>
     </form>
     </div>
@@ -107,8 +227,8 @@
                     <thead>
                         <tr>
                             <th>Consultant Name</th>
-                            <th>Price</th>
-                            <th>Qty</th>
+                            <th>Hospital Fee</th>
+                            <th>Doctor Fee</th>
                             <th>Amount</th>
                             <th>Action</th>
                         </tr>
@@ -121,9 +241,9 @@
 
                                 <td>@item.Consultant.Name</td>
 
-                                <td>@item.Qty</td>
+                                <td>@item.HospitalFee</td>
 
-                                <td>@item.Price</td>
+                                <td>@item.DoctorFee</td>
                                 <td>@item.Amount</td>
 
                                 <td>

@@ -152,8 +152,16 @@ namespace HospitalMgrSystemUI.Controllers
 						oPdDto.XrayPaymentDataDto = reportsService.GetAllOPDPaymentsDataSP(_OPDDto.StartTime, "X-RAY");
 
 						return View("XRAYIndex", oPdDto);
+                    case 4:
+                        oPdDto.ADMPaidDtos = reportsService.GetAllAdmissionPaidDetailsSp(_OPDDto.StartTime);
+                        oPdDto.ADMRefundDtos = reportsService.GetAdmissionRefundDetailsSp(_OPDDto.StartTime);
+                        oPdDto.listADMDGrugsDto = reportsService.GetAllOpdXrayOtherDrugsSP(_OPDDto.StartTime, "ADM");
+                        oPdDto.ADMPaymentDataDto = reportsService.GetAllAdmissionPaymentsDataSP(_OPDDto.StartTime);
+                        oPdDto.ADMPaymentDataOfDoctorsDto = reportsService.GetAdmissionPaymentsDataOfDoctors(_OPDDto.StartTime);
 
-					default:
+                        return View("ADMIndex", oPdDto);
+
+                    default:
 						return RedirectToAction("Index");
 				}
 			}

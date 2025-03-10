@@ -67,7 +67,7 @@ namespace HospitalMgrSystem.Service.Drugs
                     result.ModifiedUser = drug.ModifiedUser;
                     result.Price = drug.Price;
                     result.BatchNumber = drug.BatchNumber;
-
+                    result.ReStockLevel = drug.ReStockLevel;
                     dbContext.SaveChanges();
                 }
                 return dbContext.Drugs.Find(drug.Id);

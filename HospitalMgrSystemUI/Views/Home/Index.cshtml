@@ -1,118 +1,250 @@
-﻿@{
+﻿﻿@{
     ViewData["Title"] = "Home Page";
 }
-@section Styles{
+@section Styles {
     <style>
-
-
+        /* General Container Styles */
         .order-card {
-            color: #fff;
+            border-radius: 15px;
+            transition: all 0.5s ease-in-out;
+            cursor: pointer;
+            overflow: hidden;
+            transform: perspective(1500px) rotateY(0deg) rotateX(0deg) translateZ(0);
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 60px rgba(255, 255, 255, 0.1) inset;
+            background: #fff;
+            will-change: transform, box-shadow;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #333;
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border for depth */
         }
 
+        .dark-theme .order-card {
+            border-radius: 15px;
+            transition: all 0.5s ease-in-out;
+            cursor: pointer;
+            overflow: hidden;
+            transform: perspective(1500px) rotateY(0deg) rotateX(0deg) translateZ(0);
+            position: relative;
+            box-shadow: 0px 78px 78px -9px rgba(51,49,51,0.66);
+           
+            will-change: transform, box-shadow;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #333;
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border for depth */
+        }
+
+            .dark-theme .order-card:hover {
+            transform: perspective(1500px) rotateY(15deg) rotateX(10deg) translateY(-20px) translateZ(50px);
+                box-shadow: 0 20px 40px rgb(240, 240, 240), 0 0 60px rgb(210, 210, 210) inset;
+            filter: brightness(1.1);
+            animation: pulse 1.5s ease-in-out infinite, cardBounce 0.6s ease-out;
+        }
+
+        /* Card Glow Effect */
+            .dark-theme  .order-card:hover {
+                box-shadow: 0px 49px 78px -9px rgba(82,79,82,1);
+        }
+            .order-card:hover {
+                transform: perspective(1500px) rotateY(15deg) rotateX(10deg) translateY(-20px) translateZ(50px);
+                box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), 0 0 100px rgba(255, 255, 255, 0.6) inset;
+                filter: brightness(1.1);
+                animation: pulse 1.5s ease-in-out infinite, cardBounce 0.6s ease-out;
+            }
+
+            /* Card Glow Effect */
+            .order-card:hover {
+                box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), 0 0 100px rgba(255, 255, 255, 0.6) inset;
+                filter: brightness(1.1);
+            }
+
+        /* Gradient Backgrounds with Depth */
         .bg-c-blue {
-            background: linear-gradient(45deg,#4099ff,#73b4ff);
+            background: linear-gradient(135deg, #98D8EF, #A6CDC6);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 50px rgba(255, 255, 255, 0.3) inset;
         }
 
         .bg-c-green {
-            background: linear-gradient(45deg,#2ed8b6,#59e0c5);
+            background: linear-gradient(135deg, #00b09b, #BAD8B6);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 50px rgba(255, 255, 255, 0.3) inset;
         }
 
         .bg-c-yellow {
-            background: linear-gradient(45deg,#FFB64D,#ffcb80);
+            background: linear-gradient(135deg, #F3C623, #F2F597);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 50px rgba(255, 255, 255, 0.3) inset;
         }
 
         .bg-c-pink {
-            background: linear-gradient(45deg,#FF5370,#ff869a);
+            background: linear-gradient(135deg, #ff4b5c, #ff8e67);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 50px rgba(255, 255, 255, 0.3) inset;
         }
 
+        .bg-info {
+            background: linear-gradient(135deg, #17a2b8, #81DAE3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 50px rgba(255, 255, 255, 0.3) inset;
+        }
 
+        /* Card Style */
         .card {
-            border-radius: 5px;
-            -webkit-box-shadow: 0 1px 2.94px 0.06px rgba(4,26,55,0.16);
-            box-shadow: 0 1px 2.94px 0.06px rgba(4,26,55,0.16);
-            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 50px rgba(255, 255, 255, 0.3) inset;
             margin-bottom: 30px;
-            -webkit-transition: all 0.3s ease-in-out;
             transition: all 0.3s ease-in-out;
+            position: relative;
         }
 
+            .card:hover {
+                transform: scale(1.05);
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 80px rgba(255, 255, 255, 0.5) inset;
+            }
+
+            /* Card Content */
             .card .card-block {
                 padding: 25px;
             }
 
+        /* Icon Styles */
         .order-card i {
-            font-size: 26px;
+            font-size: 40px;
+            margin-bottom: 10px;
+            transition: all 0.5s ease-in-out;
+            transform: rotate(0deg);
+            color: inherit; /* Inherit color from parent */
+            position: relative;
         }
 
+        /* Icon Rotate and Popup Effect on Hover */
+        .order-card:hover i {
+            transform: rotate(360deg) scale(1.2);
+            color: inherit; /* Keep the same color as the card background */
+            animation: rotatePopup 0.6s forwards;
+        }
+
+        /* Header and Count Styles */
+        .order-card h3, h2 {
+            font-weight: 600;
+            font-size: 22px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease-in-out;
+            color: black;
+        }
+
+        .order-card:hover h2, h3 {
+            color: black;
+            transform: translateY(-10px);
+            letter-spacing: 1.2px;
+        }
+
+        /* Subtle 3D Hover Effect */
+        .order-card:active {
+            transform: perspective(1500px) rotateX(15deg) rotateY(15deg) translateZ(30px);
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.6), 0 0 120px rgba(255, 255, 255, 0.7) inset;
+        }
+
+        /* Card Shadow Rotation */
+        .order-card:active {
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 100px rgba(255, 255, 255, 0.6) inset;
+            transform: perspective(1500px) rotateY(25deg) rotateX(15deg) translateY(5px) translateZ(50px);
+        }
+
+        /* Floating Elements */
         .f-left {
             float: left;
+            transition: all 0.3s ease-in-out;
         }
 
         .f-right {
             float: right;
+            transition: all 0.3s ease-in-out;
         }
+
+            /* Subtle Shadow Effects for Floating Elements */
+            .f-left:hover, .f-right:hover {
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            }
+
+       
 
     </style>
 }
 
+<!-- FullCalendar CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.css" rel="stylesheet">
 
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="background-animation">
+    <!-- Pill bullets will be generated dynamically -->
+
 
     <div class="row">
 
-	    <div class="col-md-4 col-xl-3 mt-5" id="admissionDiv">
-		    <div class="card bg-c-blue order-card">
-			    <div class="card-block">
-				    <h2 class="m-b-20">Admission</h2>
-				    <h2 class="text-right"><i class="fa fa-bed f-left"></i><span>486</span></h2>
-				    @*<p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
-			    </div>
-		    </div>
-	    </div>
+        <div class="col-md-4 col-xl-3 mt-5" id="admissionDiv">
+            <div class="card bg-c-blue order-card">
+                <div class="card-block">
+                    <h2 class="m-b-20">
+                        <span>A</span><span>d</span><span>m</span><span>i</span><span>s</span><span>s</span><span>i</span><span>o</span><span>n</span>
+                    </h2>
+                    <h3 class="text-right"><i class="fa fa-bed f-left"></i><span>486</span></h3>
+                </div>
+            </div>
+        </div>
 
-	    <div class="col-md-4 col-xl-3 mt-5" id="opdDiv">
-		    <div class="card bg-c-green order-card">
-			    <div class="card-block">
-				    <h2 class="m-b-20">OPD</h2>
-				    <h2 class="text-right"><i class="fa fa-stethoscope f-left"></i><span>486</span></h2>
-				    @*                        <p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
-			    </div>
-		    </div>
-	    </div>
+        <div class="col-md-4 col-xl-3 mt-5" id="opdDiv">
+            <div class="card bg-c-green order-card">
+                <div class="card-block">
+                    <h2 class="m-b-20">
+                        <span>O</span><span>P</span><span>D</span>
+                    </h2>
+                    <h3 class="text-right"><i class="fa fa-stethoscope f-left"></i><span>486</span></h3>
+                </div>
+            </div>
+        </div>
 
-	    <div class="col-md-4 col-xl-3 mt-5" id="channelingDiv">
-		    <div class="card bg-c-yellow order-card">
-			    <div class="card-block">
-				    <h2 class="m-b-20">Channeling</h2>
-				    <h2 class="text-right"><i class="fa fa-user-md f-left"></i><span>486</span></h2>
-				    @*<p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
-			    </div>
-		    </div>
-	    </div>
-        
-	    <div class="col-md-4 col-xl-3 mt-5" id="xrayDiv">
-		    <div class="card bg-info order-card">
-			    <div class="card-block">
-				    <h2 class="m-b-20">X-RAY</h2>
-				    <h2 class="text-right"><i class="fa fa-money f-left"></i><span>486</span></h2>
-				    @* <p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
-			    </div>
-		    </div>
-	    </div>
+        <div class="col-md-4 col-xl-3 mt-5" id="channelingDiv">
+            <div class="card bg-c-yellow order-card">
+                <div class="card-block">
+                    <h2 class="m-b-20">
+                        <span>C</span><span>h</span><span>a</span><span>n</span><span>n</span><span>e</span><span>l</span><span>i</span><span>n</span><span>g</span>
+                    </h2>
+                    <h3 class="text-right"><i class="fa fa-user-md f-left"></i><span>486</span></h3>
+                </div>
+            </div>
+        </div>
 
-	    <div class="col-md-4 col-xl-3 mt-5" id="cashierDiv">
-		    <div class="card bg-c-pink order-card">
-			    <div class="card-block">
-				    <h2 class="m-b-20">Cashier</h2>
-				    <h2 class="text-right"><i class="fa fa-money f-left"></i><span>486</span></h2>
-				    @* <p class="m-b-0">Completed Orders<span class="f-right">351</span></p>*@
-			    </div>
-		    </div>
-	    </div>
+        <div class="col-md-4 col-xl-3 mt-5" id="xrayDiv">
+            <div class="card bg-info order-card">
+                <div class="card-block">
+                    <h2 class="m-b-20">
+                        <span>X</span><span>-</span><span>R</span><span>A</span><span>Y</span>
+                    </h2>
+                    <h3 class="text-right"><i class="fa fa-print f-left"></i><span>486</span></h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-xl-3 mt-5" id="cashierDiv">
+            <div class="card bg-c-pink order-card">
+                <div class="card-block">
+                    <h2 class="m-b-20">
+                        <span>C</span><span>a</span><span>s</span><span>h</span><span>i</span><span>e</span><span>r</span>
+                    </h2>
+                    <h3 class="text-right"><i class="fa fa-money f-left"></i><span>486</span></h3>
+                </div>
+            </div>
+        </div>
+
     </div>
-    
 
-    @section scripts{
+</div>
+
+@section scripts {
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
@@ -133,7 +265,4 @@
             window.location.href = "@Url.Action("Index", "XRAY")";
         });
     </script>
-
-
-
 }

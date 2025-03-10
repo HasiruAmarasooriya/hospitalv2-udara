@@ -32,12 +32,125 @@
 
         });  
      }
+     function updateAmount(){
+        var price = document.getElementById("txtPrice").value;
+        var qty = document.getElementById("txtQty").value;
+        console.log("price", price);
+        console.log("qty", qty);
+        if (!isNaN(price) && !isNaN(qty) && qty > 0) {
+        // Calculate the amount
+        var amount = price * qty;
+        $('#txtAmount').val(amount.toFixed(2)); // Update the amount field
+        console.log(amount);
+    } else if (qty <= 0) {
 
+        $('#txtQty').css('border-color', 'red');
+        $('#txtAmount').val('0.00'); // Reset amount field
+    } else {
+        $('#txtAmount').val('0.00'); // Reset amount field if inputs are invalid
+    }
+    }
+         let dugList = [];
+
+    function addDrugs() {
+        var drugDropdown = document.getElementById("drugus");
+        var selectedDrugId = drugDropdown.value;
+        var selectedDrugName = drugDropdown.options[drugDropdown.selectedIndex].text;
+
+        var price = parseFloat(document.getElementById("txtPrice").value) || 0;
+        var qty = parseFloat(document.getElementById("txtQty").value) || 0;
+        var amount = price * qty;
+
+        if (selectedDrugId == 0) {
+            alert("Please select a valid drug.");
+            return;
+        }
+        if (qty <= 0) {
+            alert("Please enter a valid quantity.");
+            return;
+        }
+
+        const AdmissionId = $("#custId").val();
+
+        console.log('list qty:', qty);
+        console.log('list price:', price);
+        console.log('list Amount:', amount);
+
+        // Add drug to list
+        dugList.push({
+            AdmissionId: AdmissionId,
+            DrugId: selectedDrugId,
+            DrugName: selectedDrugName,
+            Price: price,
+            Qty: qty,
+            Amount: amount
+        });
+
+        // Append new row to the table
+        const newRow = `
+            <tr id="row_${selectedDrugId}">
+                <td>${selectedDrugName}</td>
+                <td>${qty.toFixed(2)}</td>
+                <td>${price.toFixed(2)}</td>
+                <td>${amount.toFixed(2)}</td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removedrug(${selectedDrugId})">Remove</button>
+                </td>
+            </tr>
+        `;
+
+        $("#tempConsultantTable tbody").append(newRow);
+
+        // Clear input fields after adding the drug
+        $("#drugus").val(0);
+        $("#txtQty").val("1.00");
+        $("#txtPrice").val("1.00");
+    }
+
+    function removedrug(id) {
+        // Remove from the list
+        dugList = dugList.filter(drug => drug.DrugId != id);
+
+        // Remove row from table
+        $(`#row_${id}`).remove();
+    }
+
+    // Function to update amount when quantity changes
+    function updateAmount() {
+        var price = parseFloat($("#txtPrice").val()) || 0;
+        var qty = parseFloat($("#txtQty").val()) || 0;
+        var totalAmount = price * qty;
+        $("#txtAmount").val(totalAmount.toFixed(2));
+    }
+
+    function saveDrugs() {
+        if (dugList.length === 0) {
+            alert("No Drugs to save.");
+            return;
+        }
+         console.log('length:', dugList.length);
+         console.log('list:', dugList);
+        $.ajax({
+            type: "POST",
+            url: "/Admission/AddNewDrugs",
+            contentType: 'application/json',
+            data: JSON.stringify(dugList),
+            success: function (response) {
+              
+                console.log(@Model.AdmissionsId);
+                ShowShiftDetails(@Model.AdmissionsId)
+                //location.reload(); // Refresh the page or update the UI
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
     </script>
 <div class="modal-content">
     <div class="modal-header">
         <h4 class="modal-title" id="myLargeModalLabel">Add/Edit Drugus  </h4>
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="ShowShiftDetails(@Model.AdmissionsId)">×</button>
     </div>
  
     <div class="modal-body">
@@ -92,7 +205,7 @@
                         <option value="0">Select Drug</option>
                         @foreach (var item in Model.Drugs)
                         {
-                            <option value="@item.Id">@item.DrugName - @item.DrugsCategory.Category</option>
+                                <option value="@item.Id" data-prrice="@item.Price">@item.DrugName - @item.DrugsCategory.Category</option>
                         }
                     </select>
                 </div>
@@ -100,7 +213,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="companyName">Qty </label>
-                    <input class="form-control " type="text" asp-for="AdmissionDrugus.Qty" style="text-align:right;" onkeyup="javascript:select_onchange();" value="1.00" id="txtQty" placeholder="Qty" />
+                        <input class="form-control " type="text" asp-for="AdmissionDrugus.Qty" style="text-align:right;" oninput="updateAmount();" value="1.00" id="txtQty" placeholder="Qty" />
                 </div>
             </div>
             <div class="col-md-4">
@@ -116,11 +229,31 @@
                     <input class="form-control " type="text" asp-for="AdmissionDrugus.Amount" style="text-align:right;" id="txtAmount" value="0.00" placeholder="Amount" disabled />
                 </div>
             </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success" onclick="addDrugs()">Add Drugs</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="tempConsultantTable" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Drug Name</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
                
         </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn  waves-effect btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal" onclick="ShowShiftDetails(@Model.AdmissionsId)">Close</button>
+                <button type="button" class="btn  waves-effect btn-primary" onclick="saveDrugs()"><i class="fa fa-save"></i>&nbsp;Save</button>
             </div>
     </form>
     </div>

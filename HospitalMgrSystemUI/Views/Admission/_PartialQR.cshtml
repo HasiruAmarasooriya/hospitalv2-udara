@@ -1,0 +1,122 @@
+﻿@using Microsoft.Extensions.Configuration
+@model AdmissionDto;
+@{
+    Layout = null;
+}
+@inject IConfiguration Configuration
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+
+
+<script type="text/javascript">
+         function initializeQRCode() {
+        console.log("Initializing QR Code...");
+
+        // Fetch model data inside function scope
+        let opdId = @Html.Raw(Json.Serialize(Model.AdmissionsId));
+        let fullName = @Html.Raw(Json.Serialize(Model.name));
+        let age = @Html.Raw(Json.Serialize(Model.age));
+        let sex = @Html.Raw(Json.Serialize(Model.sex == 1 ? "Male" : Model.sex == 2 ? "Female" : "None"));
+        let telephoneNumber = @Html.Raw(Json.Serialize(Model.phone));
+        let totalAmount = @Html.Raw(Json.Serialize(Model.TotalAmount));
+        let createdUser = @Html.Raw(Json.Serialize(Model.CreatedUserName));
+
+        let qrText = `OPD${opdId}-${fullName}-${age}-${sex}-${telephoneNumber}-${totalAmount}`;
+
+        // Clear previous QR code before generating a new one
+        let qrContainer = document.getElementById("qrcode");
+        qrContainer.innerHTML = "";
+
+        if (typeof QRCode === 'function') {
+            new QRCode(qrContainer, {
+                text: qrText,
+                width: 200,
+                height: 200
+            });
+            console.log("QR Code generated successfully.");
+        } else {
+            console.error("QRCode library not loaded properly.");
+        }
+    }
+
+    // Detect modal show event and trigger QR code generation
+    $(document).on('shown.bs.modal', '#AddShiftModel', function () {
+        initializeQRCode();
+    });
+
+
+    function printQRCode() {
+        let opdId = @Html.Raw(Json.Serialize(Model.AdmissionsId));
+        let fullName = @Html.Raw(Json.Serialize(Model.name));
+        let age = @Html.Raw(Json.Serialize(Model.age));
+        let sex = @Html.Raw(Json.Serialize(Model.sex == 1 ? "Male" : Model.sex == 2 ? "Female" : "None"));
+        let telephoneNumber = @Html.Raw(Json.Serialize(Model.phone));
+        let totalAmount = @Html.Raw(Json.Serialize(Model.TotalAmount));
+        let createdUser = @Html.Raw(Json.Serialize(Model.CreatedUserName));
+
+        let currentDate = new Date();
+        let printWindow = window.open("", "Print QR Code", "width=400,height=400");
+
+        printWindow.document.write('<div style="text-align: center; font-weight: bold;">Kumudu Hospital</div>');
+        printWindow.document.write('<div style="text-align: center; font-weight: bold;">(PVT) LTD</div>');
+        printWindow.document.write('<div style="text-align: center;">' + currentDate.toLocaleString() + '</div>');
+
+        let qrElement = document.getElementById("qrcode").getElementsByTagName("img")[0];
+        if (qrElement) {
+            printWindow.document.write('<div style="text-align: center; margin: 5px; padding: 5px;">');
+            printWindow.document.write('<img src="' + qrElement.src + '" width="100" height="100">');
+            printWindow.document.write('</div>');
+        } else {
+            printWindow.document.write('<div style="text-align: center;">QR code generation failed.</div>');
+        }
+
+        printWindow.document.write('<div style="text-align: center;">');
+        printWindow.document.write('<table style="margin: auto;">');
+        printWindow.document.write('<tr><td>BHT:</td><td>' + opdId + '</td></tr>');
+        printWindow.document.write('<tr><td>Nurse:</td><td>' + createdUser + '</td></tr>');
+        printWindow.document.write('<tr><td>Name:</td><td>' + fullName + '</td></tr>');
+        printWindow.document.write('<tr><td>Age:</td><td>' + age + ' Years</td></tr>');
+        printWindow.document.write('<tr><td>Sex:</td><td>' + sex + '</td></tr>');
+        printWindow.document.write('<tr><td>Telephone:</td><td>' + telephoneNumber + '</td></tr>');
+        printWindow.document.write('<tr><td>Total Amount:</td><td>Rs. ' + totalAmount + '</td></tr>');
+        printWindow.document.write('</table>');
+        printWindow.document.write('</div>');
+
+        printWindow.document.close();
+        printWindow.print();
+        printWindow.close();
+    }
+
+    function PrintQr(id) {
+        $.ajax({
+            type: "GET",
+            url: "/Admission/CreateAdmissionWithQr/" + id,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $("#AddEditContainerModel").html(response);
+                $("#AddShiftModel").modal('show');
+            },
+            error: function (response) {
+                alert("Error loading QR: " + response.responseText);
+            }
+        });
+    }
+   
+
+</script>
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLargeModalLabel">QR</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+
+    <div class="modal-body">
+        <div id="qrcode" class="d-flex justify-content-center"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary waves-effect" onclick="printQRCode();"><i class="fa fa-print"></i>&nbsp;Print</button>
+    </div>
+</div>

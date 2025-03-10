@@ -1446,5 +1446,60 @@ namespace HospitalMgrSystem.Service.Report
 				.FromSqlRaw("EXEC GetAllChannelingDiscountByDateForReport @Date = {0}", dateTime)
 				.ToList();
 		}
-	}
+        #region Admission
+        public List<ReportOpdXrayOtherPaidDto> GetAllAdmissionPaidDetailsSp(DateTime dateTime)
+        {
+            using var context = new HospitalDBContext();
+            var reportDataOpdPaidDtos = new List<ReportOpdXrayOtherPaidDto>();
+
+            reportDataOpdPaidDtos = context.Set<ReportOpdXrayOtherPaidDto>()
+                .FromSqlRaw("EXEC GetAdmissionReportByDateAndDesc @SelectedDate = {0}", dateTime)
+                .ToList();
+
+            return reportDataOpdPaidDtos;
+        }
+        public List<ReportOpdXrayOtherRefundDTO> GetAdmissionRefundDetailsSp(DateTime dateTime)
+        {
+            using var context = new HospitalDBContext();
+            var reportDataOpdPaidDtos = new List<ReportOpdXrayOtherRefundDTO>();
+
+            reportDataOpdPaidDtos = context.Set<ReportOpdXrayOtherRefundDTO>()
+                .FromSqlRaw("EXEC GetAdmissionRefundsReportByDateAndDesc @SelectedDate = {0}", dateTime)
+                .ToList();
+
+            return reportDataOpdPaidDtos;
+        }
+        public PaymentSummaryOpdXrayOtherDTO GetAllAdmissionPaymentsDataSP(DateTime startDate)
+        {
+            using var context = new HospitalDBContext();
+            var reportDataOpdPaidDtos = new List<PaymentSummaryOpdXrayOtherDTO>();
+
+            reportDataOpdPaidDtos = context.Set<PaymentSummaryOpdXrayOtherDTO>()
+                .FromSqlRaw("EXEC GetAdmissionPaymentsSummaryReportByDate @SelectedDate = {0}", startDate)
+                .ToList();
+
+            if (reportDataOpdPaidDtos.Count <= 0) return new PaymentSummaryOpdXrayOtherDTO();
+
+            var paymentSummaryOpdXrayOtherDto = new PaymentSummaryOpdXrayOtherDTO
+            {
+                TotalAmount = reportDataOpdPaidDtos[0].TotalAmount,
+                TotalRefundAmount = reportDataOpdPaidDtos[0].TotalRefundAmount,
+                TotalPaidAmount = reportDataOpdPaidDtos[0].TotalPaidAmount
+            };
+
+            return paymentSummaryOpdXrayOtherDto;
+        }
+        public List<PaymentSummaryOfDoctorsOPDDTO> GetAdmissionPaymentsDataOfDoctors(DateTime startDate)
+        {
+            using var context = new HospitalDBContext();
+            var reportDataOpdPaidDtos = new List<PaymentSummaryOfDoctorsOPDDTO>();
+
+            reportDataOpdPaidDtos = context.Set<PaymentSummaryOfDoctorsOPDDTO>()
+                .FromSqlRaw("EXEC GetPaymentSummaryAdmissionDoctor @SelectedDate = {0}", startDate)
+                .ToList();
+
+            return reportDataOpdPaidDtos;
+        }
+        #endregion
+    }
 }

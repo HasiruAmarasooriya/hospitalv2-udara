@@ -68,6 +68,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="Views\Admission\_PartialQR.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
 	  <Content Update="Views\Stock\_PartialViewRequest.cshtml">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

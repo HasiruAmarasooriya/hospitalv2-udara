@@ -10,9 +10,24 @@ namespace HospitalMgrSystemUI.Models
 		public DateTime EndTime { get; set; }
 		public DateTime DateTime { get; set; }
 		public int InvoicedType { get; set; }
+        #region Admision DATA
+        public (List<Admission>?, int?, decimal?) listadmission { get; set; }
+        public List<Admission>? listPartialADM { get; set; }
+        public List<Admission>? listNeedToPayADM { get; set; }
+        public List<Admission>? listNightShiftADM { get; set; }
+        public List<Admission>? listNotPaidADM { get; set; }
+        public Payment? ADMPaymentData { get; set; }
+        public PaymentSummaryOpdXrayOtherDTO? ADMPaymentDataDto { get; set; }
+        public List<PaymentSummaryOfDoctorsOPDDTO>? ADMPaymentDataOfDoctorsDto { get; set; }
+        public List<AdmissionDrugus>? listADMGrugs { get; set; }
+        public List<ReportOpdXrayOtherDrugs> listADMDGrugsDto { get; set; }
+        public List<ReportOpdXrayOtherPaidDto> ADMPaidDtos { get; set; }
+        public List<ReportOpdXrayOtherRefundDTO> ADMRefundDtos { get; set; }
 
-		#region OPD DATA
-		public (List<OPD>?, int?, decimal?) listopd { get; set; }
+        #endregion
+
+        #region OPD DATA
+        public (List<OPD>?, int?, decimal?) listopd { get; set; }
 		public List<OPD>? listPartialPaidOPD { get; set; }
 		public List<OPD>? listNeedToPayOPD { get; set; }
 		public List<OPD>? listNightShiftOPD { get; set; }

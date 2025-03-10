@@ -190,28 +190,47 @@
 
 	<table class="table" style="">
 		<tr>
+			<th colspan="2">Admission Payment</th>
 			<th colspan="2">All Department Payment Summary</th>
 		</tr>
 		<tr>
+			<td style="border-bottom: 1px solid white; text-align: left;">Total Cash Amount</td>
+			<td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AdmissionTotalPaidAmount</td>
 			<td style="border-bottom: 1px solid white; text-align: left;">Total Cash Amount</td>
 			<td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.AllServiceTotalPaidAmount</td>
 		</tr>
 		<tr>
 			<td style="border-bottom: 1px solid white; text-align: left;">Total Card Amount</td>
+			<td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AdmissionTotalPaidCardAmount</td>
+			<td style="border-bottom: 1px solid white; text-align: left;">Total Card Amount</td>
 			<td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AllServiceTotalPaidCardAmount</td>
 		</tr>
 		<tr>
 			<td style="border-bottom: 1px solid white; text-align: left;">Total Refund</td>
+			<td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.AdmissionTotalRefund</td>
+			<td style="border-bottom: 1px solid white; text-align: left;">Total Refund</td>
 			<td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AllServiceTotalRefund</td>
+			
 		</tr>
 		<tr>
+			<td style="border-bottom: 1px solid white; text-align: left;">Total Discount</td>
+			<td style="border-bottom: 1px solid white; text-align: right;"> @Model.CashierPaymentData.AdmissionDiscountAmount</td>
 			<td style="border-bottom: 1px solid white; text-align: left;">Total Discount</td>
 			<td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AllServiceDiscountAmount</td>
 		</tr>
 		<tr>
-			<td style="border-bottom: 1px solid #ddd; text-align: left;">Total Amount</td>
-			<td style="border-bottom: 1px solid #ddd; text-align: right;">@Model.CashierPaymentData.AllServiceTotalAmount</td>
+			<td style="border-bottom: 1px solid white; text-align: left;">Total Doctor Payment Amount</td>
+			<td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AdmissionTotalDoctorPayment</td>
+			<td style="border-bottom: 1px solid white; text-align: left;">Total Amount</td>
+			<td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AllServiceTotalAmount	</td>
 		</tr>
+		<tr>
+			<td style="border-bottom: 1px solid white; text-align: left;">Total Amount</td>
+			<td style="border-bottom: 1px solid white; text-align: right;">@Model.CashierPaymentData.AdmissionTotalAmount</td>
+			<td style="border-bottom: 1px solid white; text-align: left;"></td>
+			<td style="border-bottom: 1px solid white; text-align: right;"></td>
+		</tr>
+	
 		@*         <tr>
 		<td style="border-bottom: 1px solid #ddd; text-align: left;">Total Cash Balence</td>
 		<td style="border-bottom: 1px solid #ddd; text-align: right;">@Model.CashierPaymentData.AllServiceCashBalence</td>

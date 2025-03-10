@@ -112,7 +112,7 @@ body {
   overflow-x: hidden;
   font-family: "Montserrat", sans-serif;
   color: #242934;
-  background-color: #f5f7fb; }
+   }
 
 ul {
   padding-left: 0px;
@@ -4310,7 +4310,7 @@ table tbody .border-bottom-warning td {
     transition: 0.5s; }
 
 .page-wrapper .page-body-wrapper {
-  background-color: #f5f7fb; }
+   }
   .page-wrapper .page-body-wrapper .page-body {
     min-height: calc(100vh - 76px);
     margin-top: 76px;
@@ -4318,7 +4318,7 @@ table tbody .border-bottom-warning td {
     position: relative;
     -webkit-transition: 0.5s;
     transition: 0.5s;
-    background-color: #f5f7fb; }
+   }
   .page-wrapper .page-body-wrapper .page-header {
     padding-bottom: 30px; }
     .page-wrapper .page-body-wrapper .page-header .row {
@@ -5265,7 +5265,7 @@ table tbody .border-bottom-warning td {
       .page-wrapper.compact-wrapper .page-body-wrapper header.main-nav .main-navbar .nav-menu.custom-scrollbar::-webkit-scrollbar-thumb {
         -webkit-box-shadow: inset 0 0 0 10px;
                 box-shadow: inset 0 0 0 10px;
-        background-color: #f5f7fb; }
+       }
       .page-wrapper.compact-wrapper .page-body-wrapper header.main-nav .main-navbar .nav-menu:hover.custom-scrollbar {
         color: rgba(36, 105, 92, 0.2); }
       .page-wrapper.compact-wrapper .page-body-wrapper header.main-nav .main-navbar .nav-menu .dropdown ul.nav-submenu li a.active {
@@ -8088,7 +8088,7 @@ table tbody .border-bottom-warning td {
   min-height: 500px;
   width: 100%;
   border-radius: 4px;
-  background-color: #f5f7fb;
+  
   border-color: #e6edef; }
 
 .form-builder .popover .controls {
