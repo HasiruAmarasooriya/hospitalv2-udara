@@ -932,14 +932,17 @@
                                     <div>
                                     Name:&nbsp;&nbsp; <b>@Model.customerName</b><br>
                                     Address:&nbsp;&nbsp;@Model.address <br>
-                                    Primary Consultant: &nbsp;&nbsp;@Model.consaltantName<br>
-                                    Age : &nbsp;&nbsp; @Model.patientAge
+                                    NIC :&nbsp;&nbsp; @Model.patientNIC<br>
+                                    Age : &nbsp;&nbsp; @Model.patientAge<br>
+                                    Contact Number :&nbsp;&nbsp;@Model.patientContactNo <br>
+                                    
                                         
                                     </div>
                                 </td>
                                 <td>
                                     <div>
                                     Bill No: &nbsp;&nbsp; BHT-@Model.adm.Id<br>
+                                    Primary Consultant: &nbsp;&nbsp;@Model.consaltantName<br>
                                     Date Of Bill: &nbsp;&nbsp;@DateTime.Now<br>
                                     Arrival: &nbsp;&nbsp;@Model.Admission.CreateDate <br>
                                     Departure: &nbsp;&nbsp;@Model.Admission.DischargeDate. <br>
@@ -984,7 +987,7 @@
                         }
 
                         <!-- Investigation Charges -->
-                        @if (Model.AdmissionInvestigationList != null)
+                            @if (Model.TotalInvestigationAmount != 0)
                         {
                            
                                 <tr>
@@ -994,7 +997,7 @@
                            
                         }
                         <!-- Other Items -->
-                        @if (Model.AdmissionItemsList != null)
+                            @if (Model.TotalItemAmount !=0)
                         {
                            
                                 <tr>
