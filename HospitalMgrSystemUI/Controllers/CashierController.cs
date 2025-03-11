@@ -502,7 +502,8 @@ namespace HospitalMgrSystemUI.Controllers
 							cashierDto.TotalDrugsAmount = drugAmount;
 							cashierDto.TotalInvestigationAmount = investigationAmount;
 							cashierDto.TotalItemAmount = itemAmount;
-							cashierDto.AdmissionConsultantList = Admconsultants;
+							cashierDto.TotalcounsultantAmount = consultantDoctorFee+consultantHosspitalFee;
+                            cashierDto.AdmissionConsultantList = Admconsultants;
 							cashierDto.AdmissionDrugusList = drugs;
 							cashierDto.AdmissionInvestigationList = investigations;
 							cashierDto.AdmissionItemsList = Item;
@@ -518,8 +519,8 @@ namespace HospitalMgrSystemUI.Controllers
 							cashierDto.invoiceType = InvoiceType.ADM;
 							cashierDto.customerID = adm.PatientId;
                             if (adm.paymentStatus != PaymentStatus.PAID) cashierDto.AvailableDiscount = getADMAvailableDiscountAmount(number);
-                           
-								
+
+							decimal refund = 0;	
 
                             if (cashierDto.invoice != null)
                             {
@@ -552,7 +553,7 @@ namespace HospitalMgrSystemUI.Controllers
                                             discount += tempDiscount;
                                             subtotal += item.qty * item.price;
                                         }
-
+										refund += ADMHospitalFeeRemoved(cashierDto.invoice.Id, item.ItemID, item.billingItemsType);
 
                                     }
 									else
@@ -568,6 +569,7 @@ namespace HospitalMgrSystemUI.Controllers
                                 }
                                 subtotal = subtotal;
                                 discount = discount;
+								cashierDto.refunfAmount = refund;
                             }
 							else
 							{
@@ -1855,7 +1857,26 @@ namespace HospitalMgrSystemUI.Controllers
 
             return isRemoved;
         }
+        public decimal ADMHospitalFeeRemoved(int invoicedID, int itemId, BillingItemsType type)
+        {
+            CashierService cashierService = new CashierService();
+            decimal isRemoved = 0;
+            InvoiceItem invoiceItem = new InvoiceItem();
+            invoiceItem.InvoiceId = invoicedID;
+            invoiceItem.billingItemsType = type;
+            invoiceItem.ItemID = itemId;
+            InvoiceItem invoiceItem2 = new InvoiceItem();
+            // Get all hospital fee items for the given invoice ID
+            invoiceItem2 = cashierService.GetADMInvoiceItemByItemId(invoiceItem);
 
+            if (invoiceItem2.itemInvoiceStatus == ItemInvoiceStatus.Remove)
+            {
+                // If any hospital fee item is marked as removed, set isRemoved to true
+                isRemoved = invoiceItem2.Total;
+            }
+
+            return isRemoved;
+        }
         public bool checkADMConsultantFeeRemoved(int invoicedID, int itemId)
         {
             CashierService cashierService = new CashierService();

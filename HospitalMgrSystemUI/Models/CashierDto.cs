@@ -48,6 +48,7 @@ namespace HospitalMgrSystemUI.Models
         public decimal TotalDrugsAmount { get; set; }
         public decimal TotalInvestigationAmount { get; set; }
         public decimal TotalItemAmount { get; set; }
+        public decimal TotalcounsultantAmount { get; set; }
         public OPD opd { get; set; }
         public Admission adm { get; set; }
         public Invoice invoice { get; set; }

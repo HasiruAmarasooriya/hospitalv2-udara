@@ -17,7 +17,7 @@
             font-size: 15px;
             margin: 0 auto; /* Center the content */
             max-width: 800px; /* Limit the width of the receipt */
-            padding: 60px; /* Add padding to the left and right */
+            padding: 60px 20px; /* Add padding to the left and right */
         }
 
         h1, h2, h3, h4, h5, h6, p, td, th {
@@ -123,11 +123,61 @@
             }
         }
 
+        .Admreceipt {
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            align-items: center; /* Center items horizontally */
+            justify-content: center; /* Center items vertically (optional) */
+            padding: 0 10px;
+           
+            position: relative;
+            text-align: center; /* Ensure text inside is centered */
+             /* Full width */
+        }
         .header {
-            text-align: center;
-            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 10px 0;
+            
+            position: relative;
         }
 
+        
+        .content {
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            align-items: center; /* Center items horizontally */
+            justify-content: center; /* Center items vertically (optional) */
+            padding: 5px 0;
+            border-bottom: 2px solid black;
+            position: relative;
+            text-align: center; /* Ensure text inside is centered */
+             /* Full width */
+        }
+        .bill {
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            align-items: center; /* Center items horizontally */
+            justify-content: center; /* Center items vertically (optional) */
+            padding: 5px 0;
+            
+            position: relative;
+            text-align: center; /* Ensure text inside is centered */
+             /* Full width */
+        }
+
+        .bill-content {
+            
+            flex-direction: column; /* Stack items vertically */
+            align-items: center; /* Center items horizontally */
+            justify-content: center; /* Center items vertically (optional) */
+            padding: 5px 0;
+            /* Ensure text inside is centered */
+            /* Full width */
+        }
+        
         .logo {
             max-width: 150px;
             height: auto;
@@ -143,26 +193,44 @@
             margin: 10px 0;
         }
 
-        /* Details Section */
         .details {
             display: flex;
-            justify-content: space-between;
-            padding: 0 40px; /* Add more space from left and right borders in print */
-            margin: 0 auto; /* Center the details container */
+            justify-content: column;
+            padding: 5px 0; /* Balance left and right padding */
+            
             font-size: 15px;
+            width: 100%; /* Ensure full width */
+            box-sizing: border-box;
+            line-height: 1.6; /* Good line height for clarity */
         }
 
             .details div {
-                width: 48%;
+                width: 48%; /* Split space evenly */
             }
 
                 .details div:last-child {
-                    text-align: right;
+                    text-align: right; /* Right side text align */
                 }
 
+            /* Optional: To align colons and labels properly */
+            .details .label {
+                display: inline-block;
+                min-width: 120px; /* Adjust width as needed */
+                font-weight: bold;
+            }
+
+        .details-table {
+           /* Increase table width to 90% of the page */
+            margin: 0 auto; /* Center the table horizontally */
+            padding: 20px 20px;
+            margin-bottom: 20px;
+            table-layout: fixed;
+            border-bottom: 2px solid black;
+           
+        }
         /* Table Styles */
         .bill-table {
-            width: 90%; /* Increase table width to 90% of the page */
+           /* Increase table width to 90% of the page */
             margin: 0 auto; /* Center the table horizontally */
             padding: 20px 20px;
             margin-bottom: 20px;
@@ -205,12 +273,7 @@
                 width: 15%;
             }
 
-        /* Barcode Section */
-        #barcodeTrueCopy {
-            text-align: center;
-            margin-top: 20px;
-        }
-
+        
         /* Footer Styles */
         p {
             text-align: center;
@@ -232,9 +295,9 @@
             }
 
             .details {
-                padding: 0 20px; /* Add more space from left and right borders in print */
+                padding: 5px 0; /* Add more space from left and right borders in print */
                 margin: 0 auto; /* Center the details container */
-                width: 90%; /* Ensure it takes up 90% of the page width */
+                /* Ensure it takes up 90% of the page width */
                 font-size: 15px;
             }
 
@@ -284,16 +347,17 @@
                 .bill-table th:first-child,
                 .bill-table td:first-child {
                     border-left: none; /* Remove left border for the first column */
-                    padding-left: 8px;
+                    
                     width: 85%; /* First column (Description) takes up more space */
                 }
 
-                .bill-table th:last-child,
+                
                 .bill-table td:last-child {
                     border-right: none; /* Remove right border for the last column */
                     border-left: 1px solid #000;
                     width: 15%;
                 }
+
 
             p {
                 font-size: 15px;
@@ -830,14 +894,14 @@
         
     </div>
  
-    <div id="receipt">
+    <div id="Admreceipt">
         @if (Model.invoiceType == HospitalMgrSystem.Model.Enums.InvoiceType.ADM)
         {
             @if (Model != null)
             {
                 <div class="header">
                     <!-- Add a fallback for the logo image -->
-                    <img src="https://kumuduhospital.com/assets/images/kumudu_logo2.jpg" alt="Kumudu Hospital Logo"/>
+                    <img src="https://kumuduhospital.com/assets/images/kumudu_logo2.jpg" alt="Kumudu Hospital Logo" width="150" style="padding-left: 40px;" />
 
                     <div class="address">
                         KUMUDU HOSPITAL PLC<br>
@@ -847,25 +911,48 @@
                         Tel: 066 22 22 244 | 066 22 30 027<br>
                         Email: kumuduhospital@gmail.com
                     </div>
+                   
+                </div>
+                <div class="bill">
                     <h2>Inpatients Final Bill</h2>
                     <h4 style="text-align:center"> @(Model.PrintCount > 1 ? "Re-Print" : "") </h4>
                 </div>
+                <div class="bill-content">
+                    <table class="details-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          
+                             <tr>
+                                <td>
+                                    <div>
+                                    Name:&nbsp;&nbsp; <b>@Model.customerName</b><br>
+                                    Address:&nbsp;&nbsp;@Model.address <br>
+                                    Primary Consultant: &nbsp;&nbsp;@Model.consaltantName<br>
+                                    Age : &nbsp;&nbsp; @Model.patientAge
+                                        
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                    Bill No: &nbsp;&nbsp; BHT-@Model.adm.Id<br>
+                                    Date Of Bill: &nbsp;&nbsp;@DateTime.Now<br>
+                                    Arrival: &nbsp;&nbsp;@Model.Admission.CreateDate <br>
+                                    Departure: &nbsp;&nbsp;@Model.Admission.DischargeDate. <br>
+                                    Bed/Room: &nbsp;&nbsp; @Model.adm!.Room!.Name
+                                    </div>
+                                </td>
+                              </tr>
+                         </tbody>
+                     </table>
 
-                <div class="details">
-                    <div>
-                        Bill No: BHT-@Model.adm.Id<br>
-                        Name: @Model.customerName<br>
-                        Address:@Model.address <br>
-                        Primary Consultant: @Model.consaltantName<br>
-                    </div>
-                    <div>
-                        Date Of Bill: @DateTime.Now<br>
-                        Arrival:@Model.Admission.CreateDate <br>
-                        Departure:@Model.Admission.DischargeDate. <br>
-                        Bed/Room: @Model.adm!.Room!.Name
-                    </div>
                 </div>
-
+               
+                <div class="content">
                 <table class="bill-table">
                     <thead>
                         <tr>
@@ -880,44 +967,41 @@
                             foreach (var Item in Model.AdmissionFeeList)
                             {
                                 <tr>
-                                    <td>@Item.ItemName</td>
-                                    <td>Rs. @Item.Amount.ToString("0.00")</td>
+                                        <td>@Item.ItemName - {(Units)@Item.Qty *(Price)*@Item.Price}</td>
+                                        <td>Rs. @Item.Amount.ToString("0.00")</td>
                                 </tr>
                             }
                         }
                         <!-- Consultant Fees -->
                         @if (Model.AdmissionConsultantList != null)
                         {
-                            foreach (var Item in Model.AdmissionConsultantList)
-                            {
+                            
                                 <tr>
-                                    <td>@Item.ConsultantName</td>
-                                    <td>Rs. @Item.DoctorFee.ToString("0.00")</td>
+                                    <td>Total Counsultants Chargers</td>
+                                    <td>Rs. @Model.TotalcounsultantAmount.ToString("0.00")</td>
                                 </tr>
-                            }
+                           
                         }
 
                         <!-- Investigation Charges -->
                         @if (Model.AdmissionInvestigationList != null)
                         {
-                            foreach (var Item in Model.AdmissionInvestigationList)
-                            {
+                           
                                 <tr>
-                                    <td>@Item.InvestigationName</td>
-                                    <td>Rs. @Item.Amount.ToString("0.00")</td>
+                                    <td>Total Labotary Chargers</td>
+                                    <td>Rs. @Model.TotalInvestigationAmount.ToString("0.00")</td>
                                 </tr>
-                            }
+                           
                         }
                         <!-- Other Items -->
                         @if (Model.AdmissionItemsList != null)
                         {
-                            foreach (var Item in Model.AdmissionItemsList)
-                            {
+                           
                                 <tr>
-                                    <td>@Item.ItemName</td>
-                                    <td>Rs. @Item.Amount.ToString("0.00")</td>
+                                    <td>Total Ward Consumable Chargers</td>
+                                        <td>Rs. @Model.TotalItemAmount.ToString("0.00")</td>
                                 </tr>
-                            }
+                            
                         }
                         <!-- Drug Fees -->
                         @if (Model.TotalDrugsAmount != 0)
@@ -956,40 +1040,48 @@
                                 <td><hr>Rs.@Model.hospitalFee.ToString("0.00") </td>
                             </tr>
                             <tr>
-                                <td>Total CONSULTANT CHARGES:</td>
-                                <td>Rs.@Model.consaltantFee.ToString("0.00")</td>
+                                    <td>Total Consultant Chargers:</td>
+                                    <td>Rs.@Model.TotalcounsultantAmount.ToString("0.00")</td>
                             </tr>
                             <tr>
                                 <td style="text-align : center; "></td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td style="text-align : right;">Sub total:</td>
+                                    <td style="text-align : right; font-weight:bold">Sub total:</td>
                                 <td><hr>Rs.@Model.preSubtotal.ToString("0.00")</td>
                             </tr>
                             @if (Model.discount != 0)
                             {
                                 <tr>
-                                    <td style="text-align : right;">Discount:</td>
+                                        <td style="text-align : right;font-weight:bold">Discount Amount:</td>
                                     <td>Rs.@Model.discount.ToString("0.00")</td>
                                 </tr>
                             }
+                                @if (Model.refunfAmount != 0)
+                                {
+                                    <tr>
+                                        <td style="text-align : right;font-weight:bold">Refund Amount:</td>
+                                        <td>Rs.@Model.refunfAmount.ToString("0.00")</td>
+                                    </tr>
+                                }
                             <tr>
-                                <td style="text-align : right;">Net Total:</td>
+                                    <td style="text-align : right; font-weight:bold">Net Total:</td>
                                 <td>Rs.@Model.preTotal.ToString("0.00")</td>
                             </tr>
                             <tr>
-                                <td style="text-align : right;">Cash Payment:</td>
+                                    <td style="text-align : right; font-weight:bold">Cash Payment:</td>
                                 <td>Rs.@totalCash.ToString("0.00")<hr></td>
                             </tr>
                             <tr>
-                                <td style="text-align : right;">Balance:</td>
+                                <td style="text-align : right; font-weight:bold">Balance:</td>
                                 <td><hr>Rs.@(Math.Abs(totalBlence).ToString("0.00"))<hr><hr></td>
                             </tr>
                         }
                     </tbody>
-                </table>
 
+                </table>
+                </div>
                 <div id="barcodeTrueCopy">
                     <svg id="barcodeSvgTrueCopy"></svg>
                 </div>
@@ -1001,7 +1093,7 @@
                 {
 
                 }
-                <hr>
+               
             }
         }
     </div>
