@@ -22,6 +22,7 @@ namespace HospitalMgrSystemUI.Models
         public string? BatchNumber { get; set; }
         public string? SerialNumber { get; set; }
         public decimal Price { get; set; }
+        public decimal ReStockLevel { get; set; }
         public DateTime ExpireDate { get; set; }
         public DateTime ProductDate { get; set; }
         public int CreateUser { get; set; }

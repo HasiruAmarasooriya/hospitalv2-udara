@@ -657,46 +657,40 @@
                     });
                 }
 
-                $(document).on('change', '#requestId', function () {
-                    var requestId = $(this).val();
-                    console.log('Selected Request ID:', requestId);
+                        $(document).on('change', '#requestId', function () {
+            var requestId = $(this).val();
+            console.log('Selected Request ID:', requestId);
 
-                    if (requestId) {
-                        $.ajax({
+            if (requestId) {
+                $.ajax({
                             url: '/Stock/RequestDetails', // Replace with your controller URL
-                            type: 'POST',
-                            data: { requestId: requestId },
-                            success: function (response) {
-                                console.log('Response:', response);
+                    type: 'POST',
+                    data: { requestId: requestId },
+                    success: function (response) {
+                        console.log('Response:', response);
 
-                                if (response && response.data) {
-                                    var tableBody = $('#drugTableBody');
-                                    tableBody.empty(); // Clear existing rows
-                                    var rowIndex = 0;
-                                    // Loop through the response data and populate the table with editable fields
-                                    response.data.forEach(function (item) {
-                                                addDrugRow(item.drugID,item.requestId, item.drugName, item.quantity, '', '', '', '', '', '');
-                                        rowIndex++;
-                                    });
-                                    console.log('Table updated with editable fields.');
-                                }
-
-
-                                else {
-                                    alert('No drugs found for the selected Request ID.');
-                                }
-                            },
-                            error: function () {
-                                alert('An error occurred while fetching the drug list.');
-                            }
-                        });
-                    } else {
-                        $('#tblBodyPayments2').empty(); // Clear table if no request ID is selected
+                        if (response && response.data) {
+                            var tableBody = $('#drugTableBody');
+                            tableBody.empty(); // Clear existing rows
+                            response.data.forEach(function (item) {
+                                addDrugRow(item.drugID, item.requestId, item.drugName, item.quantity, '', '', '', '', '', '', '','');
+                            });
+                            console.log('Table updated with editable fields.');
+                        } else {
+                            alert('No drugs found for the selected Request ID.');
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred while fetching the drug list.');
                     }
                 });
+            } else {
+                $('#drugTableBody').empty(); // Clear table if no request ID is selected
+            }
+        });
                  function addDrugRow(drugId,requestId, drugName, quantity, supplier, productDate, expiryDate, price, batchNumber, serialNumber,ReStockLevel) {
-                    var row = `
-                                    <tr>
+            var row = `
+                <tr>
                                       <input type="hidden" id="drugId" value="${drugId}" />
                                       <input type="hidden" id="requestId" value="${requestId}" />
                                       <td><input type="text" id="drugName" class="form-control" value="${drugName}" placeholder="Drug Name" readonly /></td>
@@ -740,10 +734,10 @@
                                        </td>
                                       <td> <input class="form-check-input" type="checkbox" asp-for="Drug.IsDiscountAvailable" id="discount" name="discount"/></td>
                                       <td><button type="button" id="saveChangesButton" class="btn btn-primary" onclick="addDrugs(this)">Add Drug</button></td>
-                                    </tr>
-                                `;
-                    $('#drugTableBody').append(row);
-                }
+                </tr>
+            `;
+            $('#drugTableBody').append(row);
+        }
 
                 // Delete Row
                 $(document).on('click', '.delete-row', function () {
@@ -972,7 +966,7 @@
                             GRNId: supplier,
                             BatchNumber: batchNumber,
                             SerialNumber: serialNumber,
-                            ReStockLevel = restock,
+                            ReStockLevel : restock,
                             Price: price,
                             ExpireDate: expiryDate,
                             ProductDate: productDate,
@@ -982,32 +976,29 @@
                         };
                                         Items.push(Item);
                                 console.log("Extracted Item:", Items); //Debugging purposes
-
-                        //Append the data to the main table (#ItemTableBody)
-                        var newRow = `
-                            <tr>
-                                <td>${drugName}</td>
-                                <td>${quantity}</td>
-                                <td>${supplierName}</td>
-                                <td>${productDate}</td>
-                                <td>${expiryDate}</td>
-                                <td>${price}</td>
-                                <td>${batchNumber}</td>
-                                <td>${serialNumber}</td>
-                                 <td>${restock}</td>
-                                <td>
+            var newRow = `
+                <tr>
+                    <td>${drugName}</td>
+                    <td>${quantity}</td>
+                    <td>${supplierName}</td>
+                    <td>${productDate}</td>
+                    <td>${expiryDate}</td>
+                    <td>${price}</td>
+                    <td>${batchNumber}</td>
+                    <td>${serialNumber}</td>
+                    <td>${restock}</td>
+                    <td>
                                     <input type="hidden" class="drugId"  value="${drugId}" />
                                     <input type="hidden" class="requestId" id="requestId" value="${requestId}" />
-                                    <input type="hidden" class="supplier" value="${supplier}" />
-                                    <input type="hidden" class="category" value="${category}" />
-                                    <input type="hidden" class="subCategory" value="${subCategory}" />
-                                    <input type="hidden" class="discount" value="${discount}" />
-
-                                    <button type="button" class="btn btn-danger btn-sm delete-row">Delete</button>
-                                </td>
-                            </tr>
-                        `;
-                        $("#ItemTableBody").append(newRow);
+                        <input type="hidden" class="supplier" value="${supplier}" />
+                        <input type="hidden" class="category" value="${category}" />
+                        <input type="hidden" class="subCategory" value="${subCategory}" />
+                        <input type="hidden" class="discount" value="${discount}" />
+                        <button type="button" class="btn btn-danger btn-sm delete-row">Delete</button>
+                    </td>
+                </tr>
+            `;
+            $("#ItemTableBody").append(newRow);
 
                         //Optionally, clear the current row's inputs
                         row.find('input, select').val('');
@@ -1032,128 +1023,64 @@
                 table.show();
             }
            });
+        function collectItems() {
+            var items = [];
+            $("#ItemTableBody tr").each(function () {
+                var row = $(this);
+                var item = {
+                    DrugID: parseInt(row.find('input.drugId').val() || 0),
+                    RequestId: parseInt(row.find('input.requestId').val() || 0),
+                    Qty: parseInt(row.find('td:nth-child(2)').text() || 0),
+                    GRNId: parseInt(row.find('input.supplier').val() || 0),
+                    BatchNumber: row.find('td:nth-child(7)').text().trim(),
+                    SerialNumber: row.find('td:nth-child(8)').text().trim(),
+                    ReStockLevel: parseFloat(row.find('td:nth-child(9)').text().replace(',', '.') || 0),
+                    Price: parseFloat(row.find('td:nth-child(6)').text().replace(',', '.') || 0),
+                    ExpireDate: row.find('td:nth-child(5)').text().trim(), // Ensure this is in yyyy-MM-dd
+                    ProductDate: row.find('td:nth-child(4)').text().trim(),
+                    Category: parseInt(row.find('input.category').val() || 0),
+                    SubCategory: parseInt(row.find('input.subCategory').val() || 0),
+                    Discount: row.find('input.discount').val() === "1" // Boolean
+                };
+                items.push(item);
+            });
+            console.log('Collected Items:', items);
+            return items;
+        }
 
-           function collectItems() {
-                    var items = [];
-
-                    // Select all rows in the table body
-                    $("#ItemTableBody tr").each(function () {
-                        var row = $(this); // Current row
-
-                        // Extract data from the row using proper selectors
-                        var item = {
-                            DrugID: parseInt(row.find('input.drugId').val() || 0), // Hidden input for DrugID
-                            RequestId: parseInt(row.find('input.requestId').val() || 0), // Hidden input for RequestId
-                            Qty: parseInt(row.find('td:nth-child(2)').text() || 0), // Quantity in 2nd <td>
-                            GRNId: parseInt(row.find('input.supplier').val() || 0), // Hidden input for Supplier
-                            BatchNumber: String(row.find('td:nth-child(7)').text() || 0), // BatchNumber in 7th <td>
-                            SerialNumber: String(row.find('td:nth-child(8)').text() || 0), // SerialNumber in 8th <td>
-                            Price: parseFloat(row.find('td:nth-child(6)').text() || 0), // Price in 6th <td>
-                            ExpireDate: row.find('td:nth-child(5)').text(), // Expiry Date in 5th <td>
-                            ProductDate: row.find('td:nth-child(4)').text(), // Product Date in 4th <td>
-                            Category: row.find(`input.category`).val(),
-                     
-                            SubCategory: row.find(`input.subCategory`).val(),
-                            Discount: row.find(`input.discount`).is(':checked'),
-                            ReStockLevel: parentdecimal(row.find(`#restock`)..val() || 0 )
-                        };
-
-                        console.log("Extracted item: ", item); // Debug log
-
-                        // Add item to the array if valid
-                        if (item.DrugID && item.RequestId) {
-                            items.push(item);
-                        }
-                    });
-
-                    console.log("Collected items: ", items); // Debug log
-                    return items;
-                }
-
-
-
-           // function submitItems() {
-           //          var requestId = $(`#requestId`).val();
-           //          var drugName = $(`#drugName`).val();
-           //          var drugId = $(`#drugId`).val();
-           //          var quantity = $(`#quantity`).val();
-           //          var supplier = $(`#supplier`).val();
-           //          var supplierName = $(`#SupplierName`).val();
-           //          var productDate = $(`#productDate`).val();
-           //          var expiryDate = $(`#expiryDate`).val();
-           //          var price = $(`#price`).val();
-           //          var batchNumber = $(`#batchNumber`).val();
-           //          var serialNumber = $(`#serialNumber`).val();
-           //                   var items = collectItems();
-           //                          var amont  =price*quantity;
-           //                  Item = {
-           //          BatchNumber: parseInt(batchNumber), Ensure integer
-           //          DrugID: parseInt(drugId), Ensure integer
-           //          ExpireDate: expiryDate, Keep as DateTime-compatible string
-           //          GRNId: parseInt(supplier), Ensure integer
-           //          Price: parseFloat(price), Ensure decimal
-           //          ProductDate: productDate, Keep as DateTime-compatible string
-           //          Qty: parseInt(quantity), Ensure integer
-           //          RequestId: parseInt(requestId), Ensure integer
-           //          SerialNumber: parseInt(serialNumber) Ensure integer
-           //      };
-
-           //          if (Item.length === 0) {
-           //              alert("No items to submit!");
-           //              return;
-           //          }
-           //          var grpvDto = {
-           //              Items: Item
-
-           //          };
-           //          console.log(Item);
-           //          $.ajax({
-           //              url: 'Stock/AddItem',
-           //              type: 'POST',
-           //              contentType: 'application/json',
-           //              data: JSON.stringify(grpvDto),
-           //              success: function (response) {
-           //                  alert(response.message);
-
-           //                  $("#ItemTableBody").empty();
-           //              },
-           //              error: function () {
-           //                  alert("Error occurred while adding the purchase request.");
-           //              }
-           //          });
-           //      }
-           function submitItems() {
-                    var items = collectItems();
-                    console.log('collected',items);
-                    if (items.length === 0) {
-                        alert("No items to submit!");
-                        return;
-                    }
-
-                    var grpvDto = {
-                        Items: items // Pass the collected items array
-                    };
-
-                    $.ajax({
-                        url: '/Stock/AddItem',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(grpvDto),
-                        success: function (response) {
-                            if (response.success) {
-                                alert(response.message);
-                                window.location.href = '/Stock/Index';
-                            } else {
-                                alert("Error: " + response.message);
-                                console.log(response.errors);
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            alert("An error occurred while submitting the data: " + error);
-                            console.log(xhr.responseText);
-                        }
-                    });
+        function submitItems() {
+            var items = collectItems();
+            console.log('submit items', items);
+            if (items.length === 0) {
+                alert("No items to submit!");
+                return;
             }
+
+            var grpvDto = {
+                Items: items
+            };
+
+            $.ajax({
+                url: '/Stock/AddItem',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(grpvDto),
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        window.location.href = '/Stock/Index';
+                    } else {
+                        alert("Error: " + response.message);
+                        console.log(response.errors);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("An error occurred while submitting the data: " + error);
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+
                     function checkAndAddDrug() {
                     const drugName = document.getElementById('drugName').value.trim();
 
