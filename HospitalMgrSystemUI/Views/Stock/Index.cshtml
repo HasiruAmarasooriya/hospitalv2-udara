@@ -694,7 +694,7 @@
                         $('#tblBodyPayments2').empty(); // Clear table if no request ID is selected
                     }
                 });
-                 function addDrugRow(drugId,requestId, drugName, quantity, supplier, productDate, expiryDate, price, batchNumber, serialNumber) {
+                 function addDrugRow(drugId,requestId, drugName, quantity, supplier, productDate, expiryDate, price, batchNumber, serialNumber,ReStockLevel) {
                     var row = `
                                     <tr>
                                       <input type="hidden" id="drugId" value="${drugId}" />
@@ -715,6 +715,7 @@
                                     <td><input type="text" id="price" class="form-control" value="${price}" placeholder="Price" /></td>
                                     <td><input type="text" id="batchNumber" class="form-control" value="${batchNumber}" placeholder="Batch Number" /></td>
                                     <td><input type="text" id="serialNumber" class="form-control" value="${serialNumber}" placeholder="Serial Number" /></td>
+                                    <td><input type="text" id="restock" class="form-control" value="${ReStockLevel}" placeholder="ReStck - Level" /></td>
                                     <td>
                                                     <select class="form-control ddlSearchList" onchange="javascript:select_onchange(this.value, this);" asp-for="Drug.DrugsCategoryId" id="dropCategory">
                                         <option value="">Please Select</option>
@@ -959,6 +960,7 @@
                         var category = row.find(`#dropCategory`).val();
                         var subCategory = row.find(`#dropSubCategory`).val();
                         var discount = row.find(`#discount`).val();
+                        var restock =row.find(`#restock`).val();
                         //Validate the extracted data
 
                                 var Items = [];
@@ -970,6 +972,7 @@
                             GRNId: supplier,
                             BatchNumber: batchNumber,
                             SerialNumber: serialNumber,
+                            ReStockLevel = restock,
                             Price: price,
                             ExpireDate: expiryDate,
                             ProductDate: productDate,
@@ -991,6 +994,7 @@
                                 <td>${price}</td>
                                 <td>${batchNumber}</td>
                                 <td>${serialNumber}</td>
+                                 <td>${restock}</td>
                                 <td>
                                     <input type="hidden" class="drugId"  value="${drugId}" />
                                     <input type="hidden" class="requestId" id="requestId" value="${requestId}" />
@@ -1048,8 +1052,10 @@
                             ExpireDate: row.find('td:nth-child(5)').text(), // Expiry Date in 5th <td>
                             ProductDate: row.find('td:nth-child(4)').text(), // Product Date in 4th <td>
                             Category: row.find(`input.category`).val(),
+                     
                             SubCategory: row.find(`input.subCategory`).val(),
-                            Discount: row.find(`input.discount`).is(':checked')
+                            Discount: row.find(`input.discount`).is(':checked'),
+                            ReStockLevel: parentdecimal(row.find(`#restock`)..val() || 0 )
                         };
 
                         console.log("Extracted item: ", item); // Debug log

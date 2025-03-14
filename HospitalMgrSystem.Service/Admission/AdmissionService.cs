@@ -539,6 +539,19 @@ namespace HospitalMgrSystem.Service.Admission
             }
             return mtList;
         }
+        public Model.AdmissionConsultant GetAdmissionConsultantbyId(int ItemId, int AdmissionId)
+        {
+            using (HospitalMgrSystem.DataAccess.HospitalDBContext dbContext = new HospitalMgrSystem.DataAccess.HospitalDBContext())
+            {
+                return dbContext.AdmissionConsultants
+                    .Include(c => c.Consultant) // Include related Consultant entity if needed
+                    .Include(c => c.Admission)  // Include related Admission entity if needed
+                    .FirstOrDefault(c => c.Status == Model.Enums.CommonStatus.Active &&
+                                         c.ConsultantId == ItemId &&
+                                         c.AdmissionId == AdmissionId)
+                    ?? new Model.AdmissionConsultant();
+            }
+        }
 
         public Model.AdmissionConsultant DeleteAdmissionConsultant(HospitalMgrSystem.Model.AdmissionConsultant admissionConsultant)
         {

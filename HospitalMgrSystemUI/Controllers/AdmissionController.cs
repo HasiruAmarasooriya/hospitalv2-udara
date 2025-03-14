@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.IsisMtt.X509;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace HospitalMgrSystemUI.Controllers
 {
@@ -1070,26 +1071,54 @@ namespace HospitalMgrSystemUI.Controllers
             var userIdCookie = HttpContext.Request.Cookies["UserIdCookie"];
             try
             {
+                AdmissionService adminservice = new AdmissionService();
                 foreach (var consultant in consultants)
                 {
-                   var adminconsultant = new AdmissionConsultant
+                    var existing = adminservice.GetAdmissionConsultantbyId(consultant.ConsultantId, consultant.AdmissionId);
+                    if(existing.AdmissionId != 0)
                     {
-                       AdmissionId = consultant.AdmissionId,
-                       ConsultantId = consultant.ConsultantId,
-                       HospitalFee = consultant.HospitalFee,
-                       DoctorFee = consultant.DocFee,
-                       Amount = consultant.HospitalFee + consultant.DocFee,
-                       paymentStatus = PaymentStatus.NOT_PAID,
-                       itemInvoiceStatus = ItemInvoiceStatus.Add,
-                       CreateUser = Convert.ToInt32(userIdCookie),
-                       ModifiedUser = Convert.ToInt32(userIdCookie),
-                       CreateDate = DateTime.Now,
-                       ModifiedDate = DateTime.Now
-                   };
-                    //consultant.AdmissionId = consultant.AdmissionId;
-                    //consultant.Amount = consultant.HospitalFee + consultant.DocFee;
-                    //Save each consultant to the database (e.g., via an API call)
-                    new AdmissionService().CreateAdmissionConsultant(adminconsultant);
+                        var adminconsultant = new AdmissionConsultant
+                        {
+                            Id =existing.Id,
+                            AdmissionId = existing.AdmissionId,
+                            ConsultantId = existing.ConsultantId,
+                            HospitalFee = consultant.HospitalFee + existing.HospitalFee,
+                            DoctorFee = consultant.DocFee + existing.DoctorFee,
+                            Amount = consultant.HospitalFee + consultant.DocFee + existing.DoctorFee+existing.HospitalFee,
+                            paymentStatus = PaymentStatus.NOT_PAID,
+                            itemInvoiceStatus = ItemInvoiceStatus.Add,
+                            CreateUser = Convert.ToInt32(userIdCookie),
+                            ModifiedUser = Convert.ToInt32(userIdCookie),
+                            CreateDate = DateTime.Now,
+                            ModifiedDate = DateTime.Now
+                        };
+                        //consultant.AdmissionId = consultant.AdmissionId;
+                        //consultant.Amount = consultant.HospitalFee + consultant.DocFee;
+                        //Save each consultant to the database (e.g., via an API call)
+                        new AdmissionService().CreateAdmissionConsultant(adminconsultant);
+                    }
+                    else
+                    {
+                        var adminconsultant = new AdmissionConsultant
+                        {
+                            AdmissionId = consultant.AdmissionId,
+                            ConsultantId = consultant.ConsultantId,
+                            HospitalFee = consultant.HospitalFee,
+                            DoctorFee = consultant.DocFee,
+                            Amount = consultant.HospitalFee + consultant.DocFee,
+                            paymentStatus = PaymentStatus.NOT_PAID,
+                            itemInvoiceStatus = ItemInvoiceStatus.Add,
+                            CreateUser = Convert.ToInt32(userIdCookie),
+                            ModifiedUser = Convert.ToInt32(userIdCookie),
+                            CreateDate = DateTime.Now,
+                            ModifiedDate = DateTime.Now
+                        };
+                        //consultant.AdmissionId = consultant.AdmissionId;
+                        //consultant.Amount = consultant.HospitalFee + consultant.DocFee;
+                        //Save each consultant to the database (e.g., via an API call)
+                        new AdmissionService().CreateAdmissionConsultant(adminconsultant);
+                    }
+                    
                    
                 }
 
@@ -1147,9 +1176,9 @@ namespace HospitalMgrSystemUI.Controllers
         #endregion
 
         #region Item Management
-        public List<Item> SearchItems()
+        public List<HospitalMgrSystem.Model.Item> SearchItems()
         {
-            List<Item> items = new List<Item>();
+            List<HospitalMgrSystem.Model.Item> items = new List<HospitalMgrSystem.Model.Item>();
             using (var httpClient = new HttpClient())
             {
                 try
@@ -1157,7 +1186,7 @@ namespace HospitalMgrSystemUI.Controllers
 
                     string APIUrl = _configuration.GetValue<string>("MainAPI:APIURL");
                     httpClient.BaseAddress = new Uri(APIUrl + "Items/");
-                    var postObj = httpClient.GetFromJsonAsync<List<Item>>("GetAllInvestigation");
+                    var postObj = httpClient.GetFromJsonAsync<List<HospitalMgrSystem.Model.Item>>("GetAllInvestigation");
                     postObj.Wait();
                     var result = postObj.Result;
 
@@ -1180,17 +1209,17 @@ namespace HospitalMgrSystemUI.Controllers
                {
                   AdmissionItems admissionItems;
                   var existing = adminservice.GetAdmissionItemsById(item.ItemId, item.AdmissionId);
-                    if (existing != null)
+                    if (existing.AdmissionId != 0)
                     {
                         admissionItems = new AdmissionItems
                         {
                             Id = existing.Id,
-                            AdmissionId = item.AdmissionId,
-                            ItemId = item.ItemId,
-                            Type = item.Type,
-                            Qty = item.Qty,
+                            AdmissionId = existing.AdmissionId,
+                            ItemId = existing.ItemId,
+                            Type = existing.Type,
+                            Qty = existing.Qty+item.Qty,
                             Price = item.Price,
-                            Amount = item.Qty * item.Price,
+                            Amount = item.Qty * item.Price+ existing.Amount,
                             paymentStatus = PaymentStatus.NOT_PAID,
                             itemInvoiceStatus = ItemInvoiceStatus.Add,
                             CreateUser = Convert.ToInt32(userIdCookie),
@@ -1198,6 +1227,7 @@ namespace HospitalMgrSystemUI.Controllers
                             CreateDate = DateTime.Now,
                             ModifiedDate = DateTime.Now
                         };
+                        new AdmissionService().CreateAdmissionItems(admissionItems);
                     }
                     else
                     {
@@ -1216,8 +1246,9 @@ namespace HospitalMgrSystemUI.Controllers
                             CreateDate = DateTime.Now,
                             ModifiedDate = DateTime.Now
                         };
+                        new AdmissionService().CreateAdmissionItems(admissionItems);
                     }
-                    new AdmissionService().CreateAdmissionItems(item);
+                   
                    
                }
                 
@@ -1233,16 +1264,13 @@ namespace HospitalMgrSystemUI.Controllers
         private List<AdmissionItems> GetAdmissionItems(int admissionId)
         {
             List<AdmissionItems> admissionItems = new List<AdmissionItems>();
-
+            AdmissionService admissionService = new AdmissionService();
             using (var httpClient = new HttpClient())
             {
                 try
                 {
-                    string APIUrl = _configuration.GetValue<string>("MainAPI:APIURL");
-                    httpClient.BaseAddress = new Uri(APIUrl + "Admission/");
-                    var postObj = httpClient.GetFromJsonAsync<List<AdmissionItems>>($"GetAdmissionItems?AdmissionId={admissionId}");
-                    postObj.Wait();
-                    admissionItems = postObj.Result;
+
+                    admissionItems = admissionService.GetAdmissionItemsbyAdmissionID(admissionId);
 
                 }
                 catch (Exception ex) { }

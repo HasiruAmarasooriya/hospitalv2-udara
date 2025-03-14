@@ -1012,20 +1012,20 @@ namespace HospitalMgrSystemUI.Controllers
                             };
                             billingItemDtoList.Add(hospitalFeeItem);
                         }
-                        if (consultantHos != null)
-                        {
-                            var hospitalFeeItem = new BillingItemDto
-                            {
-                                BillingItemID = consultantHos.Id,
-                                billingItemName = consultantHos.ConsultantName + " Hospital Fee",
-                                billingItemsType = BillingItemsType.Hospital,
-                                price = invoiceItem.price,
-                                qty = invoiceItem.qty,
-                                amount = invoiceItem.Total,
-                                discount = invoiceItem.Discount
-                            };
-                            billingItemDtoList.Add(hospitalFeeItem);
-                        }
+                        //if (consultantHos != null)
+                        //{
+                        //    var hospitalFeeItem = new BillingItemDto
+                        //    {
+                        //        BillingItemID = consultantHos.Id,
+                        //        billingItemName = consultantHos.ConsultantName + " Hospital Fee",
+                        //        billingItemsType = BillingItemsType.Hospital,
+                        //        price = invoiceItem.price,
+                        //        qty = invoiceItem.qty,
+                        //        amount = invoiceItem.Total,
+                        //        discount = invoiceItem.Discount
+                        //    };
+                        //    billingItemDtoList.Add(hospitalFeeItem);
+                        //}
                         break;
 
                     case BillingItemsType.Items:
@@ -1929,10 +1929,10 @@ namespace HospitalMgrSystemUI.Controllers
                 var number = GetNumber(input);
                 var totalOfPaymentType = _CashierDto.cash + _CashierDto.cheque + _CashierDto.giftCard + _CashierDto.credit + _CashierDto.debit;
 
-				if (totalOfPaymentType < _CashierDto.total)
-				{
-					return RedirectToAction("Index", new { PreID = _CashierDto.PreID });
-				}
+				//if (totalOfPaymentType < _CashierDto.total)
+				//{
+				//	return RedirectToAction("Index", new { PreID = _CashierDto.PreID });
+				//}
 
 				try
 				{
@@ -2424,9 +2424,10 @@ namespace HospitalMgrSystemUI.Controllers
 							new OPDService().UpdateOPDDrugInvoiceStatus(invoiceItems);
 						}
 
-						
-                        Response.Cookies.Append("printFlag", "true");
-                        Response.Cookies.Append("preId", _CashierDto.PreID.ToString());
+
+						Response.Cookies.Append("printFlag", "true");
+						Response.Cookies.Append("preId", _CashierDto.PreID.ToString());
+					
                         return RedirectToAction("Index", new { PreID = _CashierDto.PreID });
 					}
                     return RedirectToAction("Index");

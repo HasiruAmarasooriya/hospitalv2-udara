@@ -136,10 +136,26 @@
             contentType: 'application/json',
             data: JSON.stringify(dugList),
             success: function (response) {
-              
-                console.log(@Model.AdmissionsId);
-                ShowShiftDetails(@Model.AdmissionsId)
-                //location.reload(); // Refresh the page or update the UI
+              alert('Drugs saved successfully!');
+
+           dugList = [];
+
+            // ✅ Clear all rows except the header
+            const table = document.getElementById('tempConsultantTable');
+            const rowCount = table.rows.length;
+            for (let i = rowCount - 1; i > 0; i--) { // loop from last row to first (skip header)
+                table.deleteRow(i);
+            }
+
+            // ✅ Optionally, clear input fields
+            $("#drugus").val(0);
+            $("#txtQty").val("1.00");
+            $("#txtPrice").val("1.00");
+            $("#txtAmount").val("0.00");
+
+            // ✅ Optionally, refresh admission-specific data
+            console.log(@Model.AdmissionsId); // ensure @Model.AdmissionsId is properly rendered in view
+            ShowShiftDetails(@Model.AdmissionsId);
             },
             error: function (response) {
                 alert(response.responseText);

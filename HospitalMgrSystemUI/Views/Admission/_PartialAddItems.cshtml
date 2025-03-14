@@ -41,12 +41,11 @@
     }
      let itemList = [];
 
-    function addItem() {
+        function addItem() {
         var drugDropdown = document.getElementById("item");
         var selectedDrugId = drugDropdown.value;
         var selectedDrugName = drugDropdown.options[drugDropdown.selectedIndex].text;
-        console.log('item ID',selectedDrugId);
-        console.log('item ID',selectedDrugName);
+
         var price = parseFloat(document.getElementById("txtPrice").value) || 0;
         var qty = parseFloat(document.getElementById("txtQty").value) || 0;
         var amount = price * qty;
@@ -66,36 +65,52 @@
         console.log('list price:', price);
         console.log('list Amount:', amount);
 
-        // Add drug to list
-        itemList.push({
-            AdmissionId: AdmissionId,
-            ItemId: selectedDrugId,
-            DrugName: selectedDrugName,
-            Price: price,
-            Qty: qty,
-            Amount: amount
-        });
+        // ✅ Check if item already exists in the list
+        let existingItem = itemList.find(item => item.ItemId == selectedDrugId);
 
-        // Append new row to the table
-        const newRow = `
-            <tr id="row_${selectedDrugId}">
-                <td>${selectedDrugName}</td>
-                <td>${qty.toFixed(2)}</td>
-                <td>${price.toFixed(2)}</td>
-                <td>${amount.toFixed(2)}</td>
-                <td>
-                    <button type="button" class="btn btn-danger btn-sm" onclick="removedrug(${selectedDrugId})">Remove</button>
-                </td>
-            </tr>
-        `;
+        if (existingItem) {
+            // ✅ Update existing item's Qty and Amount
+            existingItem.Qty += qty;
+            existingItem.Amount = existingItem.Qty * existingItem.Price;
 
-        $("#tempConsultantTable tbody").append(newRow);
+            // ✅ Update row in the table
+            $(`#row_${selectedDrugId} td:eq(1)`).text(existingItem.Qty.toFixed(2)); // Qty column
+            $(`#row_${selectedDrugId} td:eq(3)`).text(existingItem.Amount.toFixed(2)); // Amount column
 
-        // Clear input fields after adding the drug
-        $("#drugus").val(0);
+        } else {
+            // ✅ Add new item if not exist
+            let newItem = {
+                AdmissionId: AdmissionId,
+                ItemId: selectedDrugId,
+                DrugName: selectedDrugName,
+                Price: price,
+                Qty: qty,
+                Amount: amount
+            };
+            itemList.push(newItem);
+
+            // ✅ Append new row to the table
+            const newRow = `
+                <tr id="row_${selectedDrugId}">
+                    <td>${selectedDrugName}</td>
+                    <td>${qty.toFixed(2)}</td>
+                    <td>${price.toFixed(2)}</td>
+                    <td>${amount.toFixed(2)}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removedrug(${selectedDrugId})">Remove</button>
+                    </td>
+                </tr>
+            `;
+            $("#tempConsultantTable tbody").append(newRow);
+        }
+
+        // ✅ Clear input fields after adding/updating the drug
+        $("#item").val(0);
         $("#txtQty").val("1.00");
         $("#txtPrice").val("1.00");
+        $("#txtAmount").val("0.00");
     }
+
 
     function removedrug(id) {
         // Remove from the list
@@ -118,6 +133,23 @@
             contentType: 'application/json',
             data: JSON.stringify(itemList),
             success: function (response) {
+                 alert('Drugs saved successfully!');
+                itemList = [];
+                
+
+          
+            // ✅ Clear all rows except the header
+            const table = document.getElementById('tempConsultantTable');
+            const rowCount = table.rows.length;
+            for (let i = rowCount - 1; i > 0; i--) { // loop from last row to first (skip header)
+                table.deleteRow(i);
+            }
+
+            // ✅ Optionally, clear input fields
+            $("#drugus").val(0);
+            $("#txtQty").val("1.00");
+            $("#txtPrice").val("1.00");
+            $("#txtAmount").val("0.00");
                ShowShiftDetails(@Model.AdmissionsId) // Navigate  to Admission
             },
             error: function (response) {
@@ -154,7 +186,7 @@
                     <div class="form-group">
                         <label for="companyName">Name of Item </label>
                         <select class="form-control ddlSearchList" onchange="javascript:select_onchange(this.value);" asp-for="AdmissionItem.ItemId" id="item">
-                            <option value="0">Name of Consultant</option>
+                            <option value="0">Name of Item</option>
                             @foreach (var item in Model.Items)
                             {
                                 <option value="@item.Id">@item.ItemName - @item.ItemCategory.ItemCategoryName</option>

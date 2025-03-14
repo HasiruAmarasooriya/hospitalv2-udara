@@ -10,6 +10,7 @@ namespace HospitalMgrSystemUI.Models
         public int GRNId { get; set; }
         public string? BatchNumber { get; set; }
         public string? SerialNumber { get; set; }
+        public decimal RestockLevel { get; set; }
         public decimal Price { get; set; }
         public int Category { get; set; }
         public int SubCategory { get; set; }

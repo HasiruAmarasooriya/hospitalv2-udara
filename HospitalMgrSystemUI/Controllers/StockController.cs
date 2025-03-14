@@ -126,7 +126,7 @@ namespace HospitalMgrSystemUI.Controllers
                         ModifiedDate = DateTime.Now,
                         CreateUser = item.CreateUser,
                         Status = 0, // Or any default status
-                        ReStockLevel = drug.ReStockLevel
+                        ReStockLevel = item.RestockLevel
                     };
                     drugService.CreateDrugs(drugs);
                     var addgrrn = new GRPV
@@ -144,7 +144,7 @@ namespace HospitalMgrSystemUI.Controllers
                         ModifiedUser = item.ModifiedUser,
                         CreateDate = DateTime.Now,
                         ModifiedDate = DateTime.Now,
-                        ReStockLevel = drug.ReStockLevel
+                        ReStockLevel = item.RestockLevel
 
                     };
                     stockService.AddGRPV(addgrrn);
@@ -168,7 +168,8 @@ namespace HospitalMgrSystemUI.Controllers
                         IsDiscountAvailable = drug.IsDiscountAvailable,
                         ModifiedDate = DateTime.Now,
                         CreateUser = drug.CreateUser,
-                        Status = drug.Status // Or any default status
+                        Status = drug.Status, // Or any default status
+                        ReStockLevel = item.RestockLevel
                     };
                     drugService.CreateDrugs(drugs);
                     var grpv = new GRPV
@@ -185,7 +186,8 @@ namespace HospitalMgrSystemUI.Controllers
                         CreateUser = item.CreateUser,
                         ModifiedUser = item.ModifiedUser,
                         CreateDate = DateTime.Now,
-                        ModifiedDate = DateTime.Now
+                        ModifiedDate = DateTime.Now,
+                        ReStockLevel = item.RestockLevel
                     };
                     stockService.AddGRPV(grpv);
                 }
