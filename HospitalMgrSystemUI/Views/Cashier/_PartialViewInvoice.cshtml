@@ -252,11 +252,12 @@
                 .bill-table td:first-child {
                     text-align: left; /* Align first column data to the left */
                     border-left: none; /* Remove left border for the first column */
+                    border-color:dimgray;
                 }
 
             .bill-table th:nth-child(2) {
                 text-align: right; /* Align first column data to the left */
-                /* Remove left border for the first column */
+                border-color: dimgray;
             }
 
             .bill-table th:first-child,
@@ -264,12 +265,14 @@
                 /* Remove left border for the first column */
                 padding-left: 8px;
                 width: 85%; /* First column (Description) takes up more space */
+                border-left: none !important;
+                border-right: none !important;
             }
 
             .bill-table th:last-child,
             .bill-table td:last-child {
-                border-right: none; /* Remove right border for the last column */
-                border-left: none;
+                border-left: none !important;
+                border-right: none !important;
                 width: 15%;
             }
 
@@ -354,7 +357,7 @@
                 
                 .bill-table td:last-child {
                     border-right: none; /* Remove right border for the last column */
-                    border-left: 1px solid #000;
+                   
                     width: 15%;
                 }
 
@@ -1040,7 +1043,7 @@
                             </tr>
                             <tr>
                                 <td>Total Hospital Chargers:</td>
-                                <td><hr>Rs.@Model.hospitalFee.ToString("0.00") </td>
+                                <td>Rs.@Model.hospitalFee.ToString("0.00") </td>
                             </tr>
                             <tr>
                                     <td>Total Consultant Chargers:</td>
@@ -1051,13 +1054,13 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                    <td style="text-align : right; font-weight:bold">Sub total:</td>
-                                <td><hr>Rs.@Model.preSubtotal.ToString("0.00")</td>
+                                <td style="text-align : right; font-weight:bold">Sub total:</td>
+                                <td>Rs.@Model.preSubtotal.ToString("0.00")</td>
                             </tr>
                             @if (Model.discount != 0)
                             {
                                 <tr>
-                                        <td style="text-align : right;font-weight:bold">Discount Amount:</td>
+                                    <td style="text-align : right;font-weight:bold">Discount Amount:</td>
                                     <td>Rs.@Model.discount.ToString("0.00")</td>
                                 </tr>
                             }
@@ -1069,22 +1072,25 @@
                                     </tr>
                                 }
                             <tr>
-                                    <td style="text-align : right; font-weight:bold">Net Total:</td>
+                                 <td style="text-align : right; font-weight:bold">Net Total:</td>
                                 <td>Rs.@Model.preTotal.ToString("0.00")</td>
                             </tr>
                             <tr>
-                                    <td style="text-align : right; font-weight:bold">Cash Payment:</td>
-                                <td>Rs.@totalCash.ToString("0.00")<hr></td>
+                                 <td style="text-align : right; font-weight:bold">Cash Payment:</td>
+                                <td>Rs.@totalCash.ToString("0.00")</td>
                             </tr>
                             <tr>
                                 <td style="text-align : right; font-weight:bold">Balance:</td>
-                                <td><hr>Rs.@(Math.Abs(totalBlence).ToString("0.00"))<hr><hr></td>
+                                <td>Rs.@(Math.Abs(totalBlence).ToString("0.00"))</td>
                             </tr>
                         }
                     </tbody>
 
                 </table>
+                 
                 </div>
+
+                
                 <div id="barcodeTrueCopy">
                     <svg id="barcodeSvgTrueCopy"></svg>
                 </div>
