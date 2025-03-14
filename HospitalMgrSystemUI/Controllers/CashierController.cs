@@ -516,6 +516,7 @@ namespace HospitalMgrSystemUI.Controllers
 							cashierDto.patientNIC = patient != null ? patient.NIC != null ? patient.NIC : "N/A" : "N/A";
 							cashierDto.patientAge = patient != null ? patient.Age : 0;
 							cashierDto.patientSex = patient != null ? (SexStatus)patient.Sex : SexStatus.Non;
+							cashierDto.address = patient != null ? patient.Address : "N/A";
 							cashierDto.invoiceType = InvoiceType.ADM;
 							cashierDto.customerID = adm.PatientId;
                             if (adm.paymentStatus != PaymentStatus.PAID) cashierDto.AvailableDiscount = getADMAvailableDiscountAmount(number);
