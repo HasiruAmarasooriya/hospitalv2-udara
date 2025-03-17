@@ -544,23 +544,23 @@ namespace HospitalMgrSystemUI.Controllers
                         Consultant saveconsultant = new Consultant();
                    
 
-                    saveconsultant = consultantService.GetAllConsultantByID(admissionDto.Admissions.ConsultantId);
-                        AdmissionConsultant new_consultant = new AdmissionConsultant
+                    //saveconsultant = consultantService.GetAllConsultantByID(admissionDto.Admissions.ConsultantId);
+                    //    AdmissionConsultant new_consultant = new AdmissionConsultant
 
-                        {
-                            AdmissionId = savedAdmission.Id,
-                            ConsultantId = admissionDto.Admissions.ConsultantId,
-                            HospitalFee = saveconsultant.HospitalFee ?? 0,
-                            DoctorFee = saveconsultant.DoctorFee ?? 0,
-                            Amount = (saveconsultant.HospitalFee ?? 0) + (saveconsultant.DoctorFee ?? 0),
-                            paymentStatus = PaymentStatus.NOT_PAID,
-                            itemInvoiceStatus = ItemInvoiceStatus.Add,
-                            CreateUser = Convert.ToInt32(userIdCookie),
-                            ModifiedUser = Convert.ToInt32(userIdCookie),
-                            CreateDate = DateTime.Now,
-                            ModifiedDate = DateTime.Now
-                        };
-                        new AdmissionService().CreateAdmissionConsultant(new_consultant);
+                    //    {
+                    //        AdmissionId = savedAdmission.Id,
+                    //        ConsultantId = admissionDto.Admissions.ConsultantId,
+                    //        HospitalFee = saveconsultant.HospitalFee ?? 0,
+                    //        DoctorFee = saveconsultant.DoctorFee ?? 0,
+                    //        Amount = (saveconsultant.HospitalFee ?? 0) + (saveconsultant.DoctorFee ?? 0),
+                    //        paymentStatus = PaymentStatus.NOT_PAID,
+                    //        itemInvoiceStatus = ItemInvoiceStatus.Add,
+                    //        CreateUser = Convert.ToInt32(userIdCookie),
+                    //        ModifiedUser = Convert.ToInt32(userIdCookie),
+                    //        CreateDate = DateTime.Now,
+                    //        ModifiedDate = DateTime.Now
+                    //    };
+                    //    new AdmissionService().CreateAdmissionConsultant(new_consultant);
 
 
 

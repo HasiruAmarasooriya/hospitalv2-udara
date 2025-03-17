@@ -478,20 +478,14 @@ namespace HospitalMgrSystemUI.Controllers
 							var consultants = new Consultant();
 							decimal consultantHosspitalFee = 0;
 							decimal consultantDoctorFee = 0;
-							if (Admconsultants != null && Admconsultants.Count > 0)
-							{
-								consultants = new ConsultantService().GetAllConsultantByID(Admconsultants.FirstOrDefault()?.ConsultantId);
-								consultantHosspitalFee = Admconsultants.Sum(x => x.HospitalFee);
-								consultantDoctorFee = Admconsultants.Sum(x => x.DoctorFee);
-							}
-							else
-							{
-								consultants = new ConsultantService().GetAllConsultantByID(number);
-								consultantDoctorFee = consultants.DoctorFee ?? 0;
-								consultantHosspitalFee = consultants.HospitalFee ?? 0;
-							}
 
-							var drugAmount = drugs.Sum(x => (x.Price * x.Qty));
+                            if (Admconsultants != null && Admconsultants.Count > 0)
+                            {
+                                consultants = new ConsultantService().GetAllConsultantByID(Admconsultants.FirstOrDefault()?.ConsultantId);
+                                consultantHosspitalFee = Admconsultants.Sum(x => x.HospitalFee);
+                                consultantDoctorFee = Admconsultants.Sum(x => x.DoctorFee);
+                            }
+                            var drugAmount = drugs.Sum(x => (x.Price * x.Qty));
 							var investigationAmount = investigations.Sum(x => (x.Price * x.Qty));
 							var itemAmount = Item.Sum(x => (x.Price * x.Qty));
 							var FixedChagersAmount = DefultCharge.Sum(x => x.Amount);
@@ -520,8 +514,9 @@ namespace HospitalMgrSystemUI.Controllers
 							cashierDto.invoiceType = InvoiceType.ADM;
 							cashierDto.customerID = adm.PatientId;
                             if (adm.paymentStatus != PaymentStatus.PAID) cashierDto.AvailableDiscount = getADMAvailableDiscountAmount(number);
-
-							decimal refund = 0;	
+                           
+                                
+                            decimal refund = 0;	
 
                             if (cashierDto.invoice != null)
                             {
@@ -529,11 +524,28 @@ namespace HospitalMgrSystemUI.Controllers
                                 // cashierDto.customerName=cashierDto.invoice.CustomerName;
                                 if (cashierDto.invoice.IsDiscountAdded == 1) cashierDto.discountEnabled = true;
                                 cashierDto.paymentList = new CashierService().GetAllPaymentsByInvoiceID(cashierDto.invoice.Id);
-                                foreach (var item in cashierDto.paymentList)
-                                {
-                                    decimal subtot = item.CashAmount + item.ChequeAmount + item.CreditAmount + item.DdebitAmount + item.GiftCardAmount;
-                                    cashierDto.totalPaymentPaidAmount = cashierDto.totalPaymentPaidAmount + subtot;
+								if(cashierDto.invoice.paymentStatus != PaymentStatus.NOT_PAID &&  cashierDto.invoice.InvoiceType ==InvoiceType.ADM)
+								{
+                                    foreach (var item in cashierDto.paymentList)
+                                    {
+										if(item.BillingType != BillingType.ADM_DUE)
+										{
+                                            decimal subtot = item.CashAmount + item.ChequeAmount + item.CreditAmount + item.DdebitAmount + item.GiftCardAmount;
+                                            cashierDto.totalPaymentPaidAmount = cashierDto.totalPaymentPaidAmount + subtot;
+                                        }
+                                        
+                                    }
                                 }
+                               
+                                if (cashierDto.invoice.paymentStatus != PaymentStatus.PARTIAL_PAID && cashierDto.invoice.InvoiceType != InvoiceType.ADM)
+                                {
+                                    foreach (var item in cashierDto.paymentList)
+                                    {
+                                        decimal subtot = item.CashAmount + item.ChequeAmount + item.CreditAmount + item.DdebitAmount + item.GiftCardAmount;
+                                        cashierDto.totalPaymentPaidAmount = cashierDto.totalPaymentPaidAmount + subtot;
+                                    }
+                                }
+                                
 
                                 CashierService cashierService = new CashierService();
                                 List<InvoiceItem> invoiceItemList = cashierService.GetInvoiceItemByInvoicedID(cashierDto.invoice.Id);
@@ -1938,9 +1950,8 @@ namespace HospitalMgrSystemUI.Controllers
 				try
 				{
 					var invoiceData = new CashierService().GetInvoiceDataByServiceIdAndWithoutOtherIncome(_CashierDto.sufID);
-
-					if (invoiceData != null) return RedirectToAction("Index", new { PreID = _CashierDto.PreID });
-					if (prefix == "ADM")
+                  
+                    if (prefix == "ADM")
 					{
                         var adm = new AdmissionService().GetAdmissionByID(number);
 
@@ -1994,443 +2005,816 @@ namespace HospitalMgrSystemUI.Controllers
 
 					if (_CashierDto.totalDueAmount <= 0)
 					{
-						var isNightShift = false;
-                        var userID = Convert.ToInt32(userIdCookie);
-                        var user = GetUserById(userID);
-						if (user != null)
+                        var CashierSessionList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
+                        if (invoiceData != null && invoiceData.paymentStatus == PaymentStatus.PARTIAL_PAID)
 						{
-							if (user.userRole == UserRole.OPDNURSE)
-							{
-								if (_CashierDto.invoiceType == InvoiceType.OPD)
-								{
-									var opdForSession = new OPD();
-									opdForSession = new OPDService().GetAllOPDByID(_CashierDto.sufID);
-									if (opdForSession != null)
-									{
-										if (opdForSession.nightShiftSession.shift == Shift.NIGHT_SHIFT)
-										{
-											isNightShift = true;
-										}
-									}
-								}
-							}
+							_CashierDto.PreID = "ADM" + invoiceData.ServiceID;
 
-						}
-						invoice.Id = _CashierDto.invoiceID;
-						invoice.CustomerID = _CashierDto.customerID;
-						invoice.CustomerName = _CashierDto.customerName;
-						invoice.InvoiceType = _CashierDto.invoiceType;
-						invoice.paymentStatus = PaymentStatus.NOT_PAID;
-						invoice.Status = InvoiceStatus.New;
-						invoice.CreateUser = Convert.ToInt32(userIdCookie);
-						invoice.ModifiedUser = Convert.ToInt32(userIdCookie);
-						invoice.CreateDate = DateTime.Now;
-						invoice.ModifiedDate = DateTime.Now;
-						invoice.ServiceID = _CashierDto.sufID;
-						invoice.IsDiscountAdded = _CashierDto.discountEnabled ? 1 : 0;
+							payments.InvoiceID = invoiceData.Id;
+                            payments.CashAmount = _CashierDto.cash;
+                            payments.CreditAmount = _CashierDto.credit;
+                            payments.DdebitAmount = _CashierDto.debit;
+                            payments.ChequeAmount = _CashierDto.cheque;
+                            payments.GiftCardAmount = _CashierDto.giftCard;
+                            payments.CreateUser = Convert.ToInt32(userIdCookie);
+                            payments.ModifiedUser = Convert.ToInt32(userIdCookie);
+                            payments.CreateDate = DateTime.Now;
+                            payments.ModifiedDate = DateTime.Now;
+                            payments.CashierStatus = CashierStatus.CashierIn;
+                            payments.BillingType = BillingType.CASHIER;
+                            payments.sessionID = CashierSessionList[0].Id;
+                            Payment resPaymentPartial = new CashierService().AddPayments(payments);
+
+                            if (_CashierDto.totalDueAmount < 0)
+                            {
+                                Payment paymentsOut = new Payment();
+                                paymentsOut.InvoiceID = invoiceData.Id;
+                                paymentsOut.CashAmount = _CashierDto.totalDueAmount;
+                                paymentsOut.CreditAmount = 0;
+                                paymentsOut.DdebitAmount = 0;
+                                paymentsOut.ChequeAmount = 0;
+                                paymentsOut.GiftCardAmount = 0;
+                                paymentsOut.CreateUser = Convert.ToInt32(userIdCookie);
+                                paymentsOut.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                paymentsOut.CreateDate = DateTime.Now;
+                                paymentsOut.ModifiedDate = DateTime.Now;
+                                paymentsOut.CashierStatus = CashierStatus.CashierOut;
+                                paymentsOut.BillingType = BillingType.BALENCE;
+                                paymentsOut.sessionID = CashierSessionList[0].Id;
+                                Payment resPaymentOut = new CashierService().AddPayments(paymentsOut);
+                            }
+                            if (_CashierDto.discountEnabled)
+                            {
+                                // Create a new Payment object
+                                var discount = new Payment();
+
+                                // Set properties individually
+                                discount.InvoiceID = invoiceData.Id;
+                                discount.CashAmount = 0 - _CashierDto.AvailableDiscount;
+                                discount.CreditAmount = 0;
+                                discount.DdebitAmount = 0;
+                                discount.ChequeAmount = 0;
+                                discount.GiftCardAmount = 0;
+                                discount.CreateUser = Convert.ToInt32(userIdCookie);
+                                discount.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                discount.CreateDate = DateTime.Now;
+                                discount.ModifiedDate = DateTime.Now;
+                                discount.CashierStatus = CashierStatus.CashierOut;
+                                discount.BillingType = BillingType.DISCOUNT;
+                                discount.sessionID = CashierSessionList[0].Id;
+
+                                // Add the payment using the CashierService
+                                var resDiscount = new CashierService().AddPayments(discount);
+                            }
+                            var adm = new Admission
+                            {
+                                Id = number,
+                                paymentStatus = PaymentStatus.PAID,
+                                ModifiedUser = Convert.ToInt32(userIdCookie)
+                            };
+
+                            new AdmissionService().UpdatePaidStatus(adm);
+                            if (tempOpdData.admissionConsultants.Count > 0)
+                            {
+                                foreach (var item in tempOpdData.admissionConsultants)
+                                {
+                                    var admissionConsultant = new AdmissionConsultant
+                                    {
+                                        Id = item.Id,
+
+                                        paymentStatus = PaymentStatus.PAID,
+                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                        ModifiedUser = Convert.ToInt32(userIdCookie)
+                                    };
+                                    new AdmissionService().UpdateAdmissionConsultant(admissionConsultant);
+                                }
+                            }
+                            if (tempOpdData.admissionDrugus.Count > 0)
+                            {
+                                foreach (var item in tempOpdData.admissionDrugus)
+                                {
+                                    var admissionDrugus = new AdmissionDrugus
+                                    {
+                                        Id = item.Id,
+                                        paymentStatus = PaymentStatus.PAID,
+                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                        ModifiedUser = Convert.ToInt32(userIdCookie)
+                                    };
+                                    new AdmissionService().UpdateAdmissionDrugus(admissionDrugus);
+                                }
+                            }
+                            if (tempOpdData.admissionInvestigations.Count > 0)
+                            {
+                                foreach (var item in tempOpdData.admissionInvestigations)
+                                {
+                                    var admissionInvestigation = new AdmissionInvestigation
+                                    {
+                                        Id = item.Id,
+                                        paymentStatus = PaymentStatus.PAID,
+                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                        ModifiedUser = Convert.ToInt32(userIdCookie)
+                                    };
+                                    new AdmissionService().UpdateAdmissionInvestigation(admissionInvestigation);
+                                }
+                            }
+                            if (tempOpdData.admissionItems.Count > 0)
+                            {
+                                foreach (var item in tempOpdData.admissionItems)
+                                {
+                                    var admissionItem = new AdmissionItems
+                                    {
+                                        Id = item.Id,
+                                        paymentStatus = PaymentStatus.PAID,
+                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                        ModifiedUser = Convert.ToInt32(userIdCookie)
+                                    };
+                                    new AdmissionService().UpdateAdmissionItems(admissionItem);
+
+                                }
+                            }
+                            if (tempOpdData.admissionsCharges.Count > 0)
+                            {
+                                foreach (var item in tempOpdData.admissionsCharges)
+                                {
+                                    var admissionItem = new AdmissionsCharges
+                                    {
+                                        Id = item.Id,
+                                        paymentStatus = PaymentStatus.PAID,
+                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                        ModifiedUser = Convert.ToInt32(userIdCookie)
+                                    };
+                                    new AdmissionService().UpdateAdmissionChargers(admissionItem);
+
+                                }
+                            }
+                            invoiceData.paymentStatus = PaymentStatus.PAID;
+                        
+
+                        Invoice upInvoice = new CashierService().UpdatePaidStatus(invoiceData);
 						
-						var resInvoice = new CashierService().AddInvoice(invoice);
-						
-						if (resInvoice != null && resInvoice.paymentStatus != PaymentStatus.PAID)
+                    }
+                        else
 						{
-							_CashierDto.PreID = resInvoice.InvoiceType switch
-							{
-								InvoiceType.OPD => "OPD" + resInvoice.ServiceID,
-								InvoiceType.ADM => "ADM" + resInvoice.ServiceID,
-								InvoiceType.CHE => "CHE" + resInvoice.ServiceID,
-								_ => _CashierDto.PreID
-							};
-
-							var CashierSessionList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
-							// _CashierDto.invoice = new CashierService().AddInvoiceItems(invoiceItems);
-							payments.InvoiceID = resInvoice.Id;
-							payments.CashAmount = _CashierDto.cash;
-							payments.CreditAmount = _CashierDto.credit;
-							payments.DdebitAmount = _CashierDto.debit;
-							payments.ChequeAmount = _CashierDto.cheque;
-							payments.GiftCardAmount = _CashierDto.giftCard;
-							payments.CreateUser = Convert.ToInt32(userIdCookie);
-							payments.ModifiedUser = Convert.ToInt32(userIdCookie);
-							payments.CreateDate = DateTime.Now;
-							payments.ModifiedDate = DateTime.Now;
-							payments.CashierStatus = CashierStatus.CashierIn;
-							payments.BillingType = BillingType.CASHIER;
-							payments.sessionID = CashierSessionList[0].Id;
-							Payment resPayment = new CashierService().AddPayments(payments);
-							if (_CashierDto.totalDueAmount <= 0)
-							{
-								if (_CashierDto.totalDueAmount < 0)
-								{
-									Payment paymentsOut = new Payment();
-									paymentsOut.InvoiceID = resInvoice.Id;
-									paymentsOut.CashAmount = _CashierDto.totalDueAmount;
-									paymentsOut.CreditAmount = 0;
-									paymentsOut.DdebitAmount = 0;
-									paymentsOut.ChequeAmount = 0;
-									paymentsOut.GiftCardAmount = 0;
-									paymentsOut.CreateUser = Convert.ToInt32(userIdCookie);
-									paymentsOut.ModifiedUser = Convert.ToInt32(userIdCookie);
-									paymentsOut.CreateDate = DateTime.Now;
-									paymentsOut.ModifiedDate = DateTime.Now;
-									paymentsOut.CashierStatus = CashierStatus.CashierOut;
-									paymentsOut.BillingType = BillingType.BALENCE;
-									paymentsOut.sessionID = CashierSessionList[0].Id;
-									Payment resPaymentOut = new CashierService().AddPayments(paymentsOut);
-								}
-
-								if (_CashierDto.discountEnabled)
-								{
-									// Create a new Payment object
-									var discount = new Payment();
-
-									// Set properties individually
-									discount.InvoiceID = resInvoice.Id;
-									discount.CashAmount = 0 - _CashierDto.AvailableDiscount;
-									discount.CreditAmount = 0;
-									discount.DdebitAmount = 0;
-									discount.ChequeAmount = 0;
-									discount.GiftCardAmount = 0;
-									discount.CreateUser = Convert.ToInt32(userIdCookie);
-									discount.ModifiedUser = Convert.ToInt32(userIdCookie);
-									discount.CreateDate = DateTime.Now;
-									discount.ModifiedDate = DateTime.Now;
-									discount.CashierStatus = CashierStatus.CashierOut;
-									discount.BillingType = BillingType.DISCOUNT;
-									discount.sessionID = CashierSessionList[0].Id;
-
-									// Add the payment using the CashierService
-									var resDiscount = new CashierService().AddPayments(discount);
-								}
-								switch (resInvoice.InvoiceType)
-								{
-									case InvoiceType.OPD:
-                                        OPD updateOPD = new OPD();
-                                        updateOPD.Id = _CashierDto.sufID;
-                                        updateOPD.ModifiedUser = Convert.ToInt32(userIdCookie);
-                                        if (isNightShift)
+                            var isNightShift = false;
+                            var userID = Convert.ToInt32(userIdCookie);
+                            var user = GetUserById(userID);
+                            if (user != null)
+                            {
+                                if (user.userRole == UserRole.OPDNURSE)
+                                {
+                                    if (_CashierDto.invoiceType == InvoiceType.OPD)
+                                    {
+                                        var opdForSession = new OPD();
+                                        opdForSession = new OPDService().GetAllOPDByID(_CashierDto.sufID);
+                                        if (opdForSession != null)
                                         {
-                                            updateOPD.paymentStatus = PaymentStatus.OPD;
+                                            if (opdForSession.nightShiftSession.shift == Shift.NIGHT_SHIFT)
+                                            {
+                                                isNightShift = true;
+                                            }
                                         }
-                                        else
-                                        {
-                                            updateOPD.paymentStatus = PaymentStatus.PAID;
-                                        }
+                                    }
+                                }
 
-                                        OPD upOpd = new OPDService().UpdatePaidStatus(updateOPD);
+                            }
+                            invoice.Id = _CashierDto.invoiceID;
+                            invoice.CustomerID = _CashierDto.customerID;
+                            invoice.CustomerName = _CashierDto.customerName;
+                            invoice.InvoiceType = _CashierDto.invoiceType;
+                            invoice.paymentStatus = PaymentStatus.NOT_PAID;
+                            invoice.Status = InvoiceStatus.New;
+                            invoice.CreateUser = Convert.ToInt32(userIdCookie);
+                            invoice.ModifiedUser = Convert.ToInt32(userIdCookie);
+                            invoice.CreateDate = DateTime.Now;
+                            invoice.ModifiedDate = DateTime.Now;
+                            invoice.ServiceID = _CashierDto.sufID;
+                            invoice.IsDiscountAdded = _CashierDto.discountEnabled ? 1 : 0;
 
-                                        break;
+                            var resInvoice = new CashierService().AddInvoice(invoice);
 
-									case InvoiceType.CHE:
-                                        
+                            if (resInvoice != null && resInvoice.paymentStatus != PaymentStatus.PAID)
+                            {
+                                _CashierDto.PreID = resInvoice.InvoiceType switch
+                                {
+                                    InvoiceType.OPD => "OPD" + resInvoice.ServiceID,
+                                    InvoiceType.ADM => "ADM" + resInvoice.ServiceID,
+                                    InvoiceType.CHE => "CHE" + resInvoice.ServiceID,
+                                    _ => _CashierDto.PreID
+                                };
+
+                                
+                                // _CashierDto.invoice = new CashierService().AddInvoiceItems(invoiceItems);
+                                payments.InvoiceID = resInvoice.Id;
+                                payments.CashAmount = _CashierDto.cash;
+                                payments.CreditAmount = _CashierDto.credit;
+                                payments.DdebitAmount = _CashierDto.debit;
+                                payments.ChequeAmount = _CashierDto.cheque;
+                                payments.GiftCardAmount = _CashierDto.giftCard;
+                                payments.CreateUser = Convert.ToInt32(userIdCookie);
+                                payments.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                payments.CreateDate = DateTime.Now;
+                                payments.ModifiedDate = DateTime.Now;
+                                payments.CashierStatus = CashierStatus.CashierIn;
+                                payments.BillingType = BillingType.CASHIER;
+                                payments.sessionID = CashierSessionList[0].Id;
+                                Payment resPayment = new CashierService().AddPayments(payments);
+                                if (_CashierDto.totalDueAmount <= 0)
+                                {
+                                    if (_CashierDto.totalDueAmount < 0)
+                                    {
+                                        Payment paymentsOut = new Payment();
+                                        paymentsOut.InvoiceID = resInvoice.Id;
+                                        paymentsOut.CashAmount = _CashierDto.totalDueAmount;
+                                        paymentsOut.CreditAmount = 0;
+                                        paymentsOut.DdebitAmount = 0;
+                                        paymentsOut.ChequeAmount = 0;
+                                        paymentsOut.GiftCardAmount = 0;
+                                        paymentsOut.CreateUser = Convert.ToInt32(userIdCookie);
+                                        paymentsOut.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                        paymentsOut.CreateDate = DateTime.Now;
+                                        paymentsOut.ModifiedDate = DateTime.Now;
+                                        paymentsOut.CashierStatus = CashierStatus.CashierOut;
+                                        paymentsOut.BillingType = BillingType.BALENCE;
+                                        paymentsOut.sessionID = CashierSessionList[0].Id;
+                                        Payment resPaymentOut = new CashierService().AddPayments(paymentsOut);
+                                    }
+
+                                    if (_CashierDto.discountEnabled)
+                                    {
+                                        // Create a new Payment object
+                                        var discount = new Payment();
+
+                                        // Set properties individually
+                                        discount.InvoiceID = resInvoice.Id;
+                                        discount.CashAmount = 0 - _CashierDto.AvailableDiscount;
+                                        discount.CreditAmount = 0;
+                                        discount.DdebitAmount = 0;
+                                        discount.ChequeAmount = 0;
+                                        discount.GiftCardAmount = 0;
+                                        discount.CreateUser = Convert.ToInt32(userIdCookie);
+                                        discount.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                        discount.CreateDate = DateTime.Now;
+                                        discount.ModifiedDate = DateTime.Now;
+                                        discount.CashierStatus = CashierStatus.CashierOut;
+                                        discount.BillingType = BillingType.DISCOUNT;
+                                        discount.sessionID = CashierSessionList[0].Id;
+
+                                        // Add the payment using the CashierService
+                                        var resDiscount = new CashierService().AddPayments(discount);
+                                    }
+                                    switch (resInvoice.InvoiceType)
+                                    {
+                                        case InvoiceType.OPD:
+                                            OPD updateOPD = new OPD();
+                                            updateOPD.Id = _CashierDto.sufID;
+                                            updateOPD.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                            if (isNightShift)
+                                            {
+                                                updateOPD.paymentStatus = PaymentStatus.OPD;
+                                            }
+                                            else
+                                            {
+                                                updateOPD.paymentStatus = PaymentStatus.PAID;
+                                            }
+
+                                            OPD upOpd = new OPDService().UpdatePaidStatus(updateOPD);
+
+                                            break;
+
+                                        case InvoiceType.CHE:
+
                                             OPD updateCHE = new OPD();
                                             updateCHE.Id = _CashierDto.sufID;
                                             updateCHE.ModifiedUser = Convert.ToInt32(userIdCookie);
                                             updateCHE.paymentStatus = PaymentStatus.PAID;
                                             OPD upche = new OPDService().UpdatePaidStatus(updateCHE);
-                                      
-                                        break;
 
-									case InvoiceType.ADM:
-										var adm = new Admission
-										{
-											Id = number,
-											paymentStatus = PaymentStatus.PAID,
-											ModifiedUser = Convert.ToInt32(userIdCookie)
-										};
+                                            break;
 
-                                         new AdmissionService().UpdatePaidStatus(adm);
-                                        if (tempOpdData.admissionConsultants.Count > 0)
-                                        {
-                                            foreach (var item in tempOpdData.admissionConsultants)
+                                        case InvoiceType.ADM:
+                                            var adm = new Admission
                                             {
-                                                var admissionConsultant = new AdmissionConsultant
-                                                {
-                                                    Id = item.Id,
-
-                                                    paymentStatus = PaymentStatus.PAID,
-                                                    itemInvoiceStatus = ItemInvoiceStatus.BILLED,
-                                                    ModifiedUser = userID
-                                                };
-                                                new AdmissionService().UpdateAdmissionConsultant(admissionConsultant);
-                                            }
-                                        }
-                                        if (tempOpdData.admissionDrugus.Count > 0)
-                                        {
-                                            foreach (var item in tempOpdData.admissionDrugus)
-                                            {
-                                                var admissionDrugus = new AdmissionDrugus
-                                                {
-                                                    Id = item.Id,
-                                                    paymentStatus = PaymentStatus.PAID,
-                                                    itemInvoiceStatus = ItemInvoiceStatus.BILLED,
-                                                    ModifiedUser = userID
-                                                };
-                                                new AdmissionService().UpdateAdmissionDrugus(admissionDrugus);
-                                            }
-                                        }
-                                        if (tempOpdData.admissionInvestigations.Count > 0)
-                                        {
-                                            foreach (var item in tempOpdData.admissionInvestigations)
-                                            {
-                                                var admissionInvestigation = new AdmissionInvestigation
-                                                {
-                                                    Id = item.Id,
-                                                    paymentStatus = PaymentStatus.PAID,
-                                                    itemInvoiceStatus = ItemInvoiceStatus.BILLED,
-                                                    ModifiedUser = userID
-                                                };
-                                                new AdmissionService().UpdateAdmissionInvestigation(admissionInvestigation);
-                                            }
-                                        }
-                                        if (tempOpdData.admissionItems.Count > 0)
-                                        {
-                                            foreach (var item in tempOpdData.admissionItems)
-                                            {
-                                                var admissionItem = new AdmissionItems
-                                                {
-                                                    Id = item.Id,
-                                                    paymentStatus = PaymentStatus.PAID,
-                                                    itemInvoiceStatus = ItemInvoiceStatus.BILLED,
-                                                    ModifiedUser = userID
-                                                };
-                                                new AdmissionService().UpdateAdmissionItems(admissionItem);
-
-                                            }
-                                        }
-                                        if (tempOpdData.admissionsCharges.Count > 0)
-                                        {
-                                            foreach (var item in tempOpdData.admissionsCharges)
-                                            {
-                                                var admissionItem = new AdmissionsCharges
-                                                {
-                                                    Id = item.Id,
-                                                    paymentStatus = PaymentStatus.PAID,
-                                                    itemInvoiceStatus = ItemInvoiceStatus.BILLED,
-                                                    ModifiedUser = userID
-                                                };
-                                                new AdmissionService().UpdateAdmissionChargers(admissionItem);
-
-                                            }
-                                        }
-                                        break;
-									
-								}
-                                if (isNightShift)
-								{
-									resInvoice.paymentStatus = PaymentStatus.OPD;
-								}
-								else
-								{
-
-									resInvoice.paymentStatus = PaymentStatus.PAID;
-								}
-
-								Invoice upInvoice = new CashierService().UpdatePaidStatus(resInvoice);
-
-
-							}
-							else
-							{
-								if(resInvoice.InvoiceType ==InvoiceType.ADM)
-								{
-                                    var admission = new Admission
-                                    {
-                                        Id = number,
-                                        ModifiedUser = userID,
-                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
-                                        paymentStatus = PaymentStatus.PARTIAL_PAID,
-                                        DischargeDate = DateTime.Now
-                                    };
-                                    new AdmissionService().UpdatePaidStatus(admission);
-
-                                    if (tempOpdData.admissionConsultants.Count > 0)
-                                    {
-                                        foreach (var item in tempOpdData.admissionConsultants)
-                                        {
-                                            var admissionConsultant = new AdmissionConsultant
-                                            {
-                                                Id = item.Id,
-
-                                                paymentStatus = PaymentStatus.PARTIAL_PAID,
-                                                itemInvoiceStatus = ItemInvoiceStatus.BILLED,
-                                                ModifiedUser = userID
+                                                Id = number,
+                                                paymentStatus = PaymentStatus.PAID,
+                                                ModifiedUser = Convert.ToInt32(userIdCookie)
                                             };
-                                            new AdmissionService().UpdateAdmissionConsultant(admissionConsultant);
-                                        }
-                                    }
-                                    if (tempOpdData.admissionDrugus.Count > 0)
-                                    {
-                                        foreach (var item in tempOpdData.admissionDrugus)
-                                        {
-                                            var admissionDrugus = new AdmissionDrugus
-                                            {
-                                                Id = item.Id,
-                                                paymentStatus = PaymentStatus.PARTIAL_PAID,
-                                                itemInvoiceStatus = ItemInvoiceStatus.BILLED,
-                                                ModifiedUser = userID
-                                            };
-                                            new AdmissionService().UpdateAdmissionDrugus(admissionDrugus);
-                                        }
-                                    }
-                                    if (tempOpdData.admissionInvestigations.Count > 0)
-                                    {
-                                        foreach (var item in tempOpdData.admissionInvestigations)
-                                        {
-                                            var admissionInvestigation = new AdmissionInvestigation
-                                            {
-                                                Id = item.Id,
-                                                paymentStatus = PaymentStatus.PARTIAL_PAID,
-                                                itemInvoiceStatus = ItemInvoiceStatus.BILLED,
-                                                ModifiedUser = userID
-                                            };
-                                            new AdmissionService().UpdateAdmissionInvestigation(admissionInvestigation);
-                                        }
-                                    }
-                                    if (tempOpdData.admissionItems.Count > 0)
-                                    {
-                                        foreach (var item in tempOpdData.admissionItems)
-                                        {
-                                            var admissionItem = new AdmissionItems
-                                            {
-                                                Id = item.Id,
-                                                paymentStatus = PaymentStatus.PARTIAL_PAID,
-                                                itemInvoiceStatus = ItemInvoiceStatus.BILLED,
-                                                ModifiedUser = userID
-                                            };
-                                            new AdmissionService().UpdateAdmissionItems(admissionItem);
 
-                                        }
-                                    }
-                                    if (tempOpdData.admissionsCharges.Count > 0)
-                                    {
-                                        foreach (var item in tempOpdData.admissionsCharges)
-                                        {
-                                            var admissionItem = new AdmissionsCharges
+                                            new AdmissionService().UpdatePaidStatus(adm);
+                                            if (tempOpdData.admissionConsultants.Count > 0)
                                             {
-                                                Id = item.Id,
-                                                paymentStatus = PaymentStatus.PARTIAL_PAID,
-                                                itemInvoiceStatus = ItemInvoiceStatus.BILLED,
-                                                ModifiedUser = userID
-                                            };
-                                            new AdmissionService().UpdateAdmissionChargers(admissionItem);
+                                                foreach (var item in tempOpdData.admissionConsultants)
+                                                {
+                                                    var admissionConsultant = new AdmissionConsultant
+                                                    {
+                                                        Id = item.Id,
 
-                                        }
+                                                        paymentStatus = PaymentStatus.PAID,
+                                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                                        ModifiedUser = userID
+                                                    };
+                                                    new AdmissionService().UpdateAdmissionConsultant(admissionConsultant);
+                                                }
+                                            }
+                                            if (tempOpdData.admissionDrugus.Count > 0)
+                                            {
+                                                foreach (var item in tempOpdData.admissionDrugus)
+                                                {
+                                                    var admissionDrugus = new AdmissionDrugus
+                                                    {
+                                                        Id = item.Id,
+                                                        paymentStatus = PaymentStatus.PAID,
+                                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                                        ModifiedUser = userID
+                                                    };
+                                                    new AdmissionService().UpdateAdmissionDrugus(admissionDrugus);
+                                                }
+                                            }
+                                            if (tempOpdData.admissionInvestigations.Count > 0)
+                                            {
+                                                foreach (var item in tempOpdData.admissionInvestigations)
+                                                {
+                                                    var admissionInvestigation = new AdmissionInvestigation
+                                                    {
+                                                        Id = item.Id,
+                                                        paymentStatus = PaymentStatus.PAID,
+                                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                                        ModifiedUser = userID
+                                                    };
+                                                    new AdmissionService().UpdateAdmissionInvestigation(admissionInvestigation);
+                                                }
+                                            }
+                                            if (tempOpdData.admissionItems.Count > 0)
+                                            {
+                                                foreach (var item in tempOpdData.admissionItems)
+                                                {
+                                                    var admissionItem = new AdmissionItems
+                                                    {
+                                                        Id = item.Id,
+                                                        paymentStatus = PaymentStatus.PAID,
+                                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                                        ModifiedUser = userID
+                                                    };
+                                                    new AdmissionService().UpdateAdmissionItems(admissionItem);
+
+                                                }
+                                            }
+                                            if (tempOpdData.admissionsCharges.Count > 0)
+                                            {
+                                                foreach (var item in tempOpdData.admissionsCharges)
+                                                {
+                                                    var admissionItem = new AdmissionsCharges
+                                                    {
+                                                        Id = item.Id,
+                                                        paymentStatus = PaymentStatus.PAID,
+                                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                                        ModifiedUser = userID
+                                                    };
+                                                    new AdmissionService().UpdateAdmissionChargers(admissionItem);
+
+                                                }
+                                            }
+                                            break;
+
                                     }
-                                }
-								else
-								{
-                                    resInvoice.paymentStatus = PaymentStatus.PARTIAL_PAID;
+                                    if (isNightShift)
+                                    {
+                                        resInvoice.paymentStatus = PaymentStatus.OPD;
+                                    }
+                                    else
+                                    {
+
+                                        resInvoice.paymentStatus = PaymentStatus.PAID;
+                                    }
+
                                     Invoice upInvoice = new CashierService().UpdatePaidStatus(resInvoice);
-                                }
-								
 
-							}
-						}
-						invoiceItems = GetInvoiceItemsAlldetails(resInvoice!.Id, resInvoice.InvoiceType, _CashierDto.sufID);
-                        _CashierDto = GetCashierAlldetails(_CashierDto.PreID);
-                        _CashierDto.InvoiceItemList = invoiceItems;
+
+                                }
+                                invoiceItems = GetInvoiceItemsAlldetails(resInvoice!.Id, resInvoice.InvoiceType, _CashierDto.sufID);
+                                foreach (var invoiceItem in invoiceItems)
+                                {
+                                    if (_CashierDto.discountEnabled && checkIsDiscountAvailableForThatItem(invoiceItem.ItemID) && invoiceItem.billingItemsType == BillingItemsType.Drugs)
+                                    {
+                                        invoiceItem.Discount = calculateDiscount(invoiceItem.price * invoiceItem.qty);
+                                        invoiceItem.Total = (invoiceItem.price * invoiceItem.qty) - invoiceItem.Discount;
+                                        invoiceItem.PrevPrice = invoiceItem.price * invoiceItem.qty;
+                                        invoiceItem.DiscountPercentage = new DefaultService().getDiscount().Percentage;
+                                    }
+
+                                }
+                                _CashierDto = GetCashierAlldetails(_CashierDto.PreID);
+                                _CashierDto.InvoiceItemList = invoiceItems;
+
+                                var hospitalItem = new InvoiceItem();
+                                hospitalItem.itemInvoiceStatus = ItemInvoiceStatus.BILLED;
+                                hospitalItem.billingItemsType = BillingItemsType.Hospital;
+                                hospitalItem.ItemID = 2;
+                                hospitalItem.Discount = _CashierDto.discountEnabled ? calculateDiscount(_CashierDto.hospitalFee) : 0m;
+                                hospitalItem.price = _CashierDto.hospitalFee;
+                                hospitalItem.qty = 1;
+                                hospitalItem.Total = (hospitalItem.price * hospitalItem.qty) - hospitalItem.Discount;
+                                hospitalItem.InvoiceId = _CashierDto.invoiceID;
+                                hospitalItem.PrevPrice = _CashierDto.hospitalFee;
+                                hospitalItem.DiscountPercentage = _CashierDto.discountEnabled ? new DefaultService().getDiscount().Percentage : 0;
+                                _CashierDto.InvoiceItemList.Add(hospitalItem);
+
+
+                                InvoiceItem consaltantItem = new InvoiceItem();
+                                consaltantItem.itemInvoiceStatus = ItemInvoiceStatus.BILLED;
+                                consaltantItem.billingItemsType = BillingItemsType.Consultant;
+                                consaltantItem.ItemID = 1;
+                                consaltantItem.Discount = 0;
+                                consaltantItem.price = _CashierDto.consaltantFee;
+                                consaltantItem.qty = 1;
+                                consaltantItem.Total = _CashierDto.consaltantFee;
+                                consaltantItem.InvoiceId = _CashierDto.invoiceID;
+                                _CashierDto.InvoiceItemList.Add(consaltantItem);
+
+                                _CashierDto.cash = payments.CashAmount;
+                                _CashierDto.credit = payments.CreditAmount;
+                                _CashierDto.debit = payments.DdebitAmount;
+                                _CashierDto.cheque = payments.ChequeAmount;
+                                _CashierDto.giftCard = payments.GiftCardAmount;
+
+                                Invoice InvoiceItem = new CashierService().AddInvoiceItems(invoiceItems, Convert.ToInt32(userIdCookie));
+                            }
+                            if (resInvoice.InvoiceType == InvoiceType.OPD)
+                            {
+                                new OPDService().UpdateOPDDrugInvoiceStatus(invoiceItems);
+                            }
+                            if (resInvoice.InvoiceType == InvoiceType.CHE)
+                            {
+                                new OPDService().UpdateOPDDrugInvoiceStatus(invoiceItems);
+                            }
+
+
+                        }
+
 
                         if (prefix == "ADM")
-						{
-							foreach(var item in invoiceItems)
-							{
-								if(item.billingItemsType != BillingItemsType.Consultant)
-								{
-                                    InvoiceItem invoiceitm = new InvoiceItem();
-									invoiceitm.ItemID = item.ItemID;
-									invoiceitm.InvoiceId = item.InvoiceId;
-                                    invoiceitm.Id = item.Id;
-									invoiceitm.billingItemsType = item.billingItemsType;
-									invoiceitm.itemInvoiceStatus = item.itemInvoiceStatus;
-                                    invoiceitm.Discount = _CashierDto.discountEnabled ? calculateDiscount(item.Total) : 0m;
-                                    invoiceitm.Total = item.Total - invoiceitm.Discount;
-									invoiceitm.qty = item.qty;
-									invoiceitm.price = item.price;
-                                    invoiceitm.DiscountPercentage = _CashierDto.discountEnabled ? new DefaultService().getDiscount().Percentage : 0;
-                                    invoiceitm.PrevPrice = item.price * item.qty;
-                                    invoiceitm.ModifiedUser = Convert.ToInt32(userIdCookie);
-									invoiceitm.CreateDate = DateTime.Now;
-                                    invoiceitm.ModifiedDate = DateTime.Now;
-                                    InvoiceItem InvoiceIt = new CashierService().AddSingleInvoiceItem(invoiceitm);
-                                }
-								else
-								{
-                                    InvoiceItem InvoiceIt = new CashierService().AddSingleInvoiceItem(item);
-                                }
-							}
-                         
-
-                            _CashierDto.cash = payments.CashAmount;
-                            _CashierDto.credit = payments.CreditAmount;
-                            _CashierDto.debit = payments.DdebitAmount;
-                            _CashierDto.cheque = payments.ChequeAmount;
-                            _CashierDto.giftCard = payments.GiftCardAmount;
-
-                           
-                        }
-						else
-						{
-                            foreach (var invoiceItem in invoiceItems)
                             {
-                                if (_CashierDto.discountEnabled && checkIsDiscountAvailableForThatItem(invoiceItem.ItemID) && invoiceItem.billingItemsType == BillingItemsType.Drugs)
+                                foreach (var item in invoiceItems)
                                 {
-                                    invoiceItem.Discount = calculateDiscount(invoiceItem.price * invoiceItem.qty);
-                                    invoiceItem.Total = (invoiceItem.price * invoiceItem.qty) - invoiceItem.Discount;
-                                    invoiceItem.PrevPrice = invoiceItem.price * invoiceItem.qty;
-                                    invoiceItem.DiscountPercentage = new DefaultService().getDiscount().Percentage;
+                                    if (item.billingItemsType != BillingItemsType.Consultant)
+                                    {
+                                        InvoiceItem invoiceitm = new InvoiceItem();
+                                        invoiceitm.ItemID = item.ItemID;
+                                        invoiceitm.InvoiceId = item.InvoiceId;
+                                        invoiceitm.Id = item.Id;
+                                        invoiceitm.billingItemsType = item.billingItemsType;
+                                        invoiceitm.itemInvoiceStatus = item.itemInvoiceStatus;
+                                        invoiceitm.Discount = _CashierDto.discountEnabled ? calculateDiscount(item.Total) : 0m;
+                                        invoiceitm.Total = item.Total - invoiceitm.Discount;
+                                        invoiceitm.qty = item.qty;
+                                        invoiceitm.price = item.price;
+                                        invoiceitm.DiscountPercentage = _CashierDto.discountEnabled ? new DefaultService().getDiscount().Percentage : 0;
+                                        invoiceitm.PrevPrice = item.price * item.qty;
+                                        invoiceitm.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                        invoiceitm.CreateDate = DateTime.Now;
+                                        invoiceitm.ModifiedDate = DateTime.Now;
+                                        InvoiceItem InvoiceIt = new CashierService().AddSingleInvoiceItem(invoiceitm);
+                                    }
+                                    else
+                                    {
+                                        InvoiceItem InvoiceIt = new CashierService().AddSingleInvoiceItem(item);
+                                    }
                                 }
+
+
+                                _CashierDto.cash = payments.CashAmount;
+                                _CashierDto.credit = payments.CreditAmount;
+                                _CashierDto.debit = payments.DdebitAmount;
+                                _CashierDto.cheque = payments.ChequeAmount;
+                                _CashierDto.giftCard = payments.GiftCardAmount;
+
 
                             }
                             
 
-							var hospitalItem = new InvoiceItem();
-							hospitalItem.itemInvoiceStatus = ItemInvoiceStatus.BILLED;
-							hospitalItem.billingItemsType = BillingItemsType.Hospital;
-							hospitalItem.ItemID = 2;
-							hospitalItem.Discount = _CashierDto.discountEnabled ? calculateDiscount(_CashierDto.hospitalFee) : 0m;
-							hospitalItem.price = _CashierDto.hospitalFee;
-							hospitalItem.qty = 1;
-							hospitalItem.Total = (hospitalItem.price * hospitalItem.qty) - hospitalItem.Discount;
-							hospitalItem.InvoiceId = _CashierDto.invoiceID;
-							hospitalItem.PrevPrice = _CashierDto.hospitalFee;
-							hospitalItem.DiscountPercentage = _CashierDto.discountEnabled ? new DefaultService().getDiscount().Percentage : 0;
-							_CashierDto.InvoiceItemList.Add(hospitalItem);
 
-
-							InvoiceItem consaltantItem = new InvoiceItem();
-							consaltantItem.itemInvoiceStatus = ItemInvoiceStatus.BILLED;
-							consaltantItem.billingItemsType = BillingItemsType.Consultant;
-							consaltantItem.ItemID = 1;
-							consaltantItem.Discount = 0;
-							consaltantItem.price = _CashierDto.consaltantFee;
-							consaltantItem.qty = 1;
-							consaltantItem.Total = _CashierDto.consaltantFee;
-							consaltantItem.InvoiceId = _CashierDto.invoiceID;
-							_CashierDto.InvoiceItemList.Add(consaltantItem);
-
-							_CashierDto.cash = payments.CashAmount;
-							_CashierDto.credit = payments.CreditAmount;
-							_CashierDto.debit = payments.DdebitAmount;
-							_CashierDto.cheque = payments.ChequeAmount;
-							_CashierDto.giftCard = payments.GiftCardAmount;
-
-							Invoice InvoiceItem = new CashierService().AddInvoiceItems(invoiceItems, Convert.ToInt32(userIdCookie));
-						}
-						if (resInvoice.InvoiceType == InvoiceType.OPD)
-						{
-							new OPDService().UpdateOPDDrugInvoiceStatus(invoiceItems);
-						}
-						if (resInvoice.InvoiceType == InvoiceType.CHE)
-						{
-							new OPDService().UpdateOPDDrugInvoiceStatus(invoiceItems);
-						}
-
-
-						Response.Cookies.Append("printFlag", "true");
+                        Response.Cookies.Append("printFlag", "true");
 						Response.Cookies.Append("preId", _CashierDto.PreID.ToString());
-					
-                        return RedirectToAction("Index", new { PreID = _CashierDto.PreID });
+
+						return RedirectToAction("Index", new { PreID = _CashierDto.PreID });
 					}
+
+					if (_CashierDto.totalDueAmount > 0 && _CashierDto.invoiceType == InvoiceType.ADM)
+					{
+                        
+                        var CashierSessionList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
+						if(_CashierDto.invoice != null)
+						{
+                            _CashierDto.PreID = "ADM" + _CashierDto.invoice.ServiceID;
+
+                            payments.InvoiceID = _CashierDto.invoice.Id;
+                            payments.CashAmount = _CashierDto.cash;
+                            payments.CreditAmount = _CashierDto.credit;
+                            payments.DdebitAmount = _CashierDto.debit;
+                            payments.ChequeAmount = _CashierDto.cheque;
+                            payments.GiftCardAmount = _CashierDto.giftCard;
+                            payments.CreateUser = Convert.ToInt32(userIdCookie);
+                            payments.ModifiedUser = Convert.ToInt32(userIdCookie);
+                            payments.CreateDate = DateTime.Now;
+                            payments.ModifiedDate = DateTime.Now;
+                            payments.CashierStatus = CashierStatus.CashierIn;
+                            payments.BillingType = BillingType.CASHIER;
+                            payments.sessionID = CashierSessionList[0].Id;
+                            Payment resPaymentPartial = new CashierService().AddPayments(payments);
+                            if (_CashierDto.totalDueAmount > 0)
+                            {
+                               
+                                    Payment paymentsOut = new Payment();
+                                    paymentsOut.InvoiceID = _CashierDto.invoice.Id;
+                                    paymentsOut.CashAmount = _CashierDto.totalDueAmount;
+                                    paymentsOut.CreditAmount = 0;
+                                    paymentsOut.DdebitAmount = 0;
+                                    paymentsOut.ChequeAmount = 0;
+                                    paymentsOut.GiftCardAmount = 0;
+                                    paymentsOut.CreateUser = Convert.ToInt32(userIdCookie);
+                                    paymentsOut.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                    paymentsOut.CreateDate = DateTime.Now;
+                                    paymentsOut.ModifiedDate = DateTime.Now;
+                                    paymentsOut.CashierStatus = CashierStatus.CashierOut;
+                                    paymentsOut.BillingType = BillingType.BALENCE;
+                                    paymentsOut.sessionID = CashierSessionList[0].Id;
+                                    Payment resPaymentOut = new CashierService().AddPayments(paymentsOut);
+                                
+
+
+                            }
+
+                        }
+                        else
+						{
+                            var isNightShift = false;
+                            var userID = Convert.ToInt32(userIdCookie);
+                            var user = GetUserById(userID);
+                            if (user != null)
+                            {
+                                if (user.userRole == UserRole.OPDNURSE)
+                                {
+                                    if (_CashierDto.invoiceType == InvoiceType.OPD)
+                                    {
+                                        var opdForSession = new OPD();
+                                        opdForSession = new OPDService().GetAllOPDByID(_CashierDto.sufID);
+                                        if (opdForSession != null)
+                                        {
+                                            if (opdForSession.nightShiftSession.shift == Shift.NIGHT_SHIFT)
+                                            {
+                                                isNightShift = true;
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+                            invoice.Id = _CashierDto.invoiceID;
+                            invoice.CustomerID = _CashierDto.customerID;
+                            invoice.CustomerName = _CashierDto.customerName;
+                            invoice.InvoiceType = _CashierDto.invoiceType;
+                            invoice.paymentStatus = PaymentStatus.NOT_PAID;
+                            invoice.Status = InvoiceStatus.New;
+                            invoice.CreateUser = Convert.ToInt32(userIdCookie);
+                            invoice.ModifiedUser = Convert.ToInt32(userIdCookie);
+                            invoice.CreateDate = DateTime.Now;
+                            invoice.ModifiedDate = DateTime.Now;
+                            invoice.ServiceID = _CashierDto.sufID;
+                            invoice.IsDiscountAdded = _CashierDto.discountEnabled ? 1 : 0;
+
+                            var resInvoice = new CashierService().AddInvoice(invoice);
+                            invoiceItems = GetInvoiceItemsAlldetails(resInvoice!.Id, resInvoice.InvoiceType, _CashierDto.sufID);
+                            if (resInvoice != null && resInvoice.paymentStatus != PaymentStatus.PAID)
+                            {
+                                _CashierDto.PreID = resInvoice.InvoiceType switch
+                                {
+                                    InvoiceType.OPD => "OPD" + resInvoice.ServiceID,
+                                    InvoiceType.ADM => "ADM" + resInvoice.ServiceID,
+                                    InvoiceType.CHE => "CHE" + resInvoice.ServiceID,
+                                    _ => _CashierDto.PreID
+                                };
+
+                                payments.InvoiceID = resInvoice.Id;
+                                payments.CashAmount = _CashierDto.cash;
+                                payments.CreditAmount = _CashierDto.credit;
+                                payments.DdebitAmount = _CashierDto.debit;
+                                payments.ChequeAmount = _CashierDto.cheque;
+                                payments.GiftCardAmount = _CashierDto.giftCard;
+                                payments.CreateUser = Convert.ToInt32(userIdCookie);
+                                payments.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                payments.CreateDate = DateTime.Now;
+                                payments.ModifiedDate = DateTime.Now;
+                                payments.CashierStatus = CashierStatus.CashierIn;
+                                payments.BillingType = BillingType.CASHIER;
+                                payments.sessionID = CashierSessionList[0].Id;
+                                Payment resPayment = new CashierService().AddPayments(payments);
+                                if (_CashierDto.totalDueAmount > 0)
+                                {
+                                    if (_CashierDto.totalDueAmount > 0)
+                                    {
+                                        Payment paymentsOut = new Payment();
+                                        paymentsOut.InvoiceID = resInvoice.Id;
+                                        paymentsOut.CashAmount = _CashierDto.totalDueAmount;
+                                        paymentsOut.CreditAmount = 0;
+                                        paymentsOut.DdebitAmount = 0;
+                                        paymentsOut.ChequeAmount = 0;
+                                        paymentsOut.GiftCardAmount = 0;
+                                        paymentsOut.CreateUser = Convert.ToInt32(userIdCookie);
+                                        paymentsOut.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                        paymentsOut.CreateDate = DateTime.Now;
+                                        paymentsOut.ModifiedDate = DateTime.Now;
+                                        paymentsOut.CashierStatus = CashierStatus.CashierRemain;
+                                        paymentsOut.BillingType = BillingType.ADM_DUE;
+                                        paymentsOut.sessionID = CashierSessionList[0].Id;
+                                        Payment resPaymentOut = new CashierService().AddPayments(paymentsOut);
+                                    }
+
+                                    if (_CashierDto.discountEnabled)
+                                    {
+                                        // Create a new Payment object
+                                        var discount = new Payment();
+
+                                        // Set properties individually
+                                        discount.InvoiceID = resInvoice.Id;
+                                        discount.CashAmount = 0 - _CashierDto.AvailableDiscount;
+                                        discount.CreditAmount = 0;
+                                        discount.DdebitAmount = 0;
+                                        discount.ChequeAmount = 0;
+                                        discount.GiftCardAmount = 0;
+                                        discount.CreateUser = Convert.ToInt32(userIdCookie);
+                                        discount.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                        discount.CreateDate = DateTime.Now;
+                                        discount.ModifiedDate = DateTime.Now;
+                                        discount.CashierStatus = CashierStatus.CashierOut;
+                                        discount.BillingType = BillingType.DISCOUNT;
+                                        discount.sessionID = CashierSessionList[0].Id;
+
+                                        // Add the payment using the CashierService
+                                        var resDiscount = new CashierService().AddPayments(discount);
+                                    }
+                                    switch (resInvoice.InvoiceType)
+                                    {
+                                        case InvoiceType.OPD:
+                                            OPD updateOPD = new OPD();
+                                            updateOPD.Id = _CashierDto.sufID;
+                                            updateOPD.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                            if (isNightShift)
+                                            {
+                                                updateOPD.paymentStatus = PaymentStatus.OPD;
+                                            }
+                                            else
+                                            {
+                                                updateOPD.paymentStatus = PaymentStatus.PARTIAL_PAID;
+                                            }
+
+                                            OPD upOpd = new OPDService().UpdatePaidStatus(updateOPD);
+
+                                            break;
+
+                                        case InvoiceType.CHE:
+
+                                            OPD updateCHE = new OPD();
+                                            updateCHE.Id = _CashierDto.sufID;
+                                            updateCHE.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                            updateCHE.paymentStatus = PaymentStatus.PARTIAL_PAID;
+                                            OPD upche = new OPDService().UpdatePaidStatus(updateCHE);
+
+                                            break;
+
+                                        case InvoiceType.ADM:
+                                            var adm = new Admission
+                                            {
+                                                Id = number,
+                                                paymentStatus = PaymentStatus.PARTIAL_PAID,
+                                                ModifiedUser = Convert.ToInt32(userIdCookie)
+                                            };
+
+                                            new AdmissionService().UpdatePaidStatus(adm);
+                                            if (tempOpdData.admissionConsultants.Count > 0)
+                                            {
+                                                foreach (var item in tempOpdData.admissionConsultants)
+                                                {
+                                                    var admissionConsultant = new AdmissionConsultant
+                                                    {
+                                                        Id = item.Id,
+
+                                                        paymentStatus = PaymentStatus.PARTIAL_PAID,
+                                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                                        ModifiedUser = userID
+                                                    };
+                                                    new AdmissionService().UpdateAdmissionConsultant(admissionConsultant);
+                                                }
+                                            }
+                                            if (tempOpdData.admissionDrugus.Count > 0)
+                                            {
+                                                foreach (var item in tempOpdData.admissionDrugus)
+                                                {
+                                                    var admissionDrugus = new AdmissionDrugus
+                                                    {
+                                                        Id = item.Id,
+                                                        paymentStatus = PaymentStatus.PARTIAL_PAID,
+                                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                                        ModifiedUser = userID
+                                                    };
+                                                    new AdmissionService().UpdateAdmissionDrugus(admissionDrugus);
+                                                }
+                                            }
+                                            if (tempOpdData.admissionInvestigations.Count > 0)
+                                            {
+                                                foreach (var item in tempOpdData.admissionInvestigations)
+                                                {
+                                                    var admissionInvestigation = new AdmissionInvestigation
+                                                    {
+                                                        Id = item.Id,
+                                                        paymentStatus = PaymentStatus.PARTIAL_PAID,
+                                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                                        ModifiedUser = userID
+                                                    };
+                                                    new AdmissionService().UpdateAdmissionInvestigation(admissionInvestigation);
+                                                }
+                                            }
+                                            if (tempOpdData.admissionItems.Count > 0)
+                                            {
+                                                foreach (var item in tempOpdData.admissionItems)
+                                                {
+                                                    var admissionItem = new AdmissionItems
+                                                    {
+                                                        Id = item.Id,
+                                                        paymentStatus = PaymentStatus.PARTIAL_PAID,
+                                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                                        ModifiedUser = userID
+                                                    };
+                                                    new AdmissionService().UpdateAdmissionItems(admissionItem);
+
+                                                }
+                                            }
+                                            if (tempOpdData.admissionsCharges.Count > 0)
+                                            {
+                                                foreach (var item in tempOpdData.admissionsCharges)
+                                                {
+                                                    var admissionItem = new AdmissionsCharges
+                                                    {
+                                                        Id = item.Id,
+                                                        paymentStatus = PaymentStatus.PARTIAL_PAID,
+                                                        itemInvoiceStatus = ItemInvoiceStatus.BILLED,
+                                                        ModifiedUser = userID
+                                                    };
+                                                    new AdmissionService().UpdateAdmissionChargers(admissionItem);
+
+                                                }
+                                            }
+                                            break;
+
+                                    }
+                                    if (isNightShift)
+                                    {
+                                        resInvoice.paymentStatus = PaymentStatus.OPD;
+                                    }
+                                    else
+                                    {
+
+                                        resInvoice.paymentStatus = PaymentStatus.PARTIAL_PAID;
+                                    }
+
+                                    Invoice upInvoice = new CashierService().UpdatePaidStatus(resInvoice);
+
+                                    foreach (var item in invoiceItems)
+                                    {
+                                        if (item.billingItemsType != BillingItemsType.Consultant)
+                                        {
+                                            InvoiceItem invoiceitm = new InvoiceItem();
+                                            invoiceitm.ItemID = item.ItemID;
+                                            invoiceitm.InvoiceId = item.InvoiceId;
+                                            invoiceitm.Id = item.Id;
+                                            invoiceitm.billingItemsType = item.billingItemsType;
+                                            invoiceitm.itemInvoiceStatus = item.itemInvoiceStatus;
+                                            invoiceitm.Discount = _CashierDto.discountEnabled ? calculateDiscount(item.Total) : 0m;
+                                            invoiceitm.Total = item.Total - invoiceitm.Discount;
+                                            invoiceitm.qty = item.qty;
+                                            invoiceitm.price = item.price;
+                                            invoiceitm.DiscountPercentage = _CashierDto.discountEnabled ? new DefaultService().getDiscount().Percentage : 0;
+                                            invoiceitm.PrevPrice = item.price * item.qty;
+                                            invoiceitm.ModifiedUser = Convert.ToInt32(userIdCookie);
+                                            invoiceitm.CreateDate = DateTime.Now;
+                                            invoiceitm.ModifiedDate = DateTime.Now;
+                                            InvoiceItem InvoiceIt = new CashierService().AddSingleInvoiceItem(invoiceitm);
+                                        }
+                                        else
+                                        {
+                                            InvoiceItem InvoiceIt = new CashierService().AddSingleInvoiceItem(item);
+                                        }
+                                    }
+
+
+
+
+                                }
+                            }
+                        }
+                        Response.Cookies.Append("printFlag", "true");
+                        Response.Cookies.Append("preId", _CashierDto.PreID.ToString());
+
+                        return RedirectToAction("Index", new { PreID = _CashierDto.PreID });
+                    }
                     return RedirectToAction("Index");
 				}
 				catch (Exception ex)

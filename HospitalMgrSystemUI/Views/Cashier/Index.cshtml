@@ -1576,12 +1576,12 @@
                             @if (Model.invoiceID == 0 || Model.totalDueAmount > 0)
                             {
                                 @if (
-                                    Model.userRole == UserRole.CASHIER && ((Model.ChannelingSchedule != null && Model.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.SESSION_END) || (Model.opd != null && Model.opd.isOnOPD == 0 && Model.opd.CreateDate.Date == DateTime.Today|| Model.adm !=null ))
+                                    Model.userRole == UserRole.CASHIER && ((Model.ChannelingSchedule != null && Model.ChannelingSchedule.scheduleStatus != ChannellingScheduleStatus.SESSION_END) || (Model.opd != null && Model.opd.CreateDate.Date == DateTime.Today)|| (Model.adm !=null))
                                 )
                                 {
                                     <button id="endSaleBtn" type="submit" class="btn btn-success" onclick="disableButton(this)">END SALE</button>
                                 }
-
+                                   
 
                                 @if (Model.userRole == HospitalMgrSystem.Model.Enums.UserRole.OPDNURSE)
                                 {
@@ -1597,8 +1597,14 @@
                                     }
                                 }
                             }
+                            @if(Model.invoiceID !=0 ){
+                                    @if (Model.userRole == UserRole.CASHIER && (Model.adm != null) && (Model.invoice.paymentStatus !=PaymentStatus.PAID))
+                                    {
+                                        <button id="endSaleBtn" type="submit" class="btn btn-success" onclick="disableButton(this)">END SALE</button>
+                                    }
+                            }
                         }
-
+                           
                     </center>
                 </form>
                 <center>

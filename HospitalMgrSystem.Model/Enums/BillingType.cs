@@ -8,5 +8,7 @@
         OTHER_IN, // All other in
         OTHER_OUT, // All other out
         DISCOUNT, // All discount
+        DEPOSIT, // All deposit
+        ADM_DUE
     }
 }

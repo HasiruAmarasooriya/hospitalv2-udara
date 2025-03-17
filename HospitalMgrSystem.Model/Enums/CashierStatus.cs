@@ -3,6 +3,7 @@
     public enum CashierStatus
     {
         CashierIn,
-        CashierOut
+        CashierOut,
+        CashierRemain
     }
 }
