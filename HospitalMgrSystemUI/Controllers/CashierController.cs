@@ -2006,7 +2006,7 @@ namespace HospitalMgrSystemUI.Controllers
 					if (_CashierDto.totalDueAmount <= 0)
 					{
                         var CashierSessionList = GetActiveCashierSession(Convert.ToInt32(userIdCookie));
-                        if (invoiceData != null && invoiceData.paymentStatus == PaymentStatus.PARTIAL_PAID)
+                        if (invoiceData != null && invoiceData.paymentStatus == PaymentStatus.PARTIAL_PAID && _CashierDto.invoiceType ==InvoiceType.ADM)
 						{
 							_CashierDto.PreID = "ADM" + invoiceData.ServiceID;
 
