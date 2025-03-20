@@ -1,0 +1,20 @@
+services:
+  hospitalv2:
+    container_name: hospitalv2
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: techwire/hospitalv2:1.0.0
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=RAVIndu751
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ./https:/https:ro
+
+volumes:
+  certs:
