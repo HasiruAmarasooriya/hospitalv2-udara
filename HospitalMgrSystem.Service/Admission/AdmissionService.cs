@@ -927,9 +927,7 @@ namespace HospitalMgrSystem.Service.Admission
                 }
 
                 // Determine the date for calculation
-                DateTime referenceDate = (admission.DischargeDate != DateTime.MinValue && admission.paymentStatus == PaymentStatus.NOT_PAID)
-                    ? admission.DischargeDate
-                    : DateTime.Now;
+                DateTime referenceDate = (admission.paymentStatus == PaymentStatus.PARTIAL_PAID || admission.paymentStatus == PaymentStatus.NOT_PAID || admission.DischargeDate == DateTime.MinValue)? DateTime.Now : admission.DischargeDate;
 
                 // Fetch the charges
                 mtList = dbContext.AdmissionsCharges
@@ -968,6 +966,12 @@ namespace HospitalMgrSystem.Service.Admission
                             {
                                 // Special logic for Room Fee
                                 item.Amount = numberOfDays == 0 ? item.Item.Price / 2 : item.Item.Price * numberOfDays;
+                            }
+                            else if (item.Item.Description == "Oneday_free_Fee")
+                            {
+                                // Special logic for Onday_free_Fee
+                                item.Amount = numberOfDays <= 1 ? 0 : item.Item.Price * (numberOfDays-1);
+                                item.Qty = numberOfDays == 0 ? 0 : (numberOfDays - 1);
                             }
                             else
                             {
@@ -1014,6 +1018,11 @@ namespace HospitalMgrSystem.Service.Admission
                             if (numberOfDays == 0)
                             {
                                 price = admissionFees.Price / 2;
+                            }
+                            else if (admissionFees.Description == "Oneday_free_Fee")
+                            {
+                                // Special logic for Onday_free_Fee
+                                price = numberOfDays <= 1 ? 0 : admissionFees.Price * (numberOfDays - 1);
                             }
                             else
                             {
@@ -1123,6 +1132,12 @@ namespace HospitalMgrSystem.Service.Admission
                                 item.Amount = numberOfDays == 0 ? item.Item.Price / 2 : item.Item.Price * numberOfDays;
                                 item.Qty = numberOfDays == 0 ? 0.50m : numberOfDays;
                             }
+                            else if (item.Item.Description == "Oneday_free_Fee")
+                            {
+                                // Special logic for Onday_free_Fee
+                                item.Amount = numberOfDays <= 1 ? 0 : item.Item.Price * (numberOfDays - 1);
+                                item.Qty = numberOfDays == 0 ? 0 : (numberOfDays - 1);
+                            }
                             else
                             {
                                 // General per-day calculation
@@ -1161,16 +1176,9 @@ namespace HospitalMgrSystem.Service.Admission
                 }
 
                 // Determine the date for calculation
-                DateTime referenceDate;
+                DateTime referenceDate = (admission.paymentStatus == PaymentStatus.PARTIAL_PAID || admission.paymentStatus == PaymentStatus.NOT_PAID || admission.DischargeDate == DateTime.MinValue) ? DateTime.Now : admission.DischargeDate; 
 
-                if (admission.paymentStatus == PaymentStatus.PARTIAL_PAID || admission.paymentStatus ==PaymentStatus.NOT_PAID || admission.DischargeDate == DateTime.MinValue)
-                {
-                    referenceDate = DateTime.Now;
-                }
-                else
-                {
-                    referenceDate = admission.DischargeDate;
-                }
+                
 
                 // Fetch the charges
                 mtList = dbContext.AdmissionsCharges
@@ -1212,6 +1220,12 @@ namespace HospitalMgrSystem.Service.Admission
                                 item.Amount = numberOfDays == 0 ? item.Item.Price / 2 : item.Item.Price * numberOfDays;
                                 item.Qty = numberOfDays == 0 ? 0.50m : numberOfDays;
                             }
+                            else if (item.Item.Description == "Oneday_free_Fee")
+                            {
+                                // Special logic for Onday_free_Fee
+                                item.Amount = numberOfDays <= 1 ? 0 : item.Item.Price * (numberOfDays - 1);
+                                item.Qty = numberOfDays == 0 ? 0 : (numberOfDays - 1);
+                            }
                             else
                             {
                                 // General per-day calculation
@@ -1250,16 +1264,7 @@ namespace HospitalMgrSystem.Service.Admission
                 }
 
                 // Determine the date for calculation
-                DateTime referenceDate;
-
-                if (admission.paymentStatus == PaymentStatus.PARTIAL_PAID || admission.paymentStatus == PaymentStatus.NOT_PAID || admission.DischargeDate == DateTime.MinValue)
-                {
-                    referenceDate = DateTime.Now;
-                }
-                else
-                {
-                    referenceDate = admission.DischargeDate;
-                }
+                DateTime referenceDate = (admission.paymentStatus == PaymentStatus.PARTIAL_PAID || admission.paymentStatus == PaymentStatus.NOT_PAID || admission.DischargeDate == DateTime.MinValue) ? DateTime.Now : admission.DischargeDate;
 
                 // Fetch the charges
                 mtList = dbContext.AdmissionsCharges
@@ -1300,6 +1305,12 @@ namespace HospitalMgrSystem.Service.Admission
                                 // Special logic for Room Fee
                                 item.Amount = numberOfDays == 0 ? item.Item.Price / 2 : item.Item.Price * numberOfDays;
                                 item.Qty = numberOfDays == 0 ? 0.50m : numberOfDays;
+                            }
+                            else if (item.Item.Description == "Oneday_free_Fee")
+                            {
+                                // Special logic for Onday_free_Fee
+                                item.Amount = numberOfDays <= 1 ? 0 : item.Item.Price * (numberOfDays - 1);
+                                item.Qty = numberOfDays == 0 ? 0 : (numberOfDays - 1);
                             }
                             else
                             {
