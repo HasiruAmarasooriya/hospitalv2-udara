@@ -11,7 +11,7 @@ namespace HospitalMgrSystem.DataAccess
 			"Data Source=172.201.169.155;Initial Catalog=KUMUDU1;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
 		//new Production database
 		public static string PRODUCTION_DATABASE { get; } =
-            "Data Source=mssql-194208-0.cloudclusters.net,19006;Initial Catalog=KUMUDU;User ID=kumudu_user;Password=HuQAGh72;Connect Timeout=30;Encrypt=False;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False;";
+            "Data Source=mssql-194208-0.cloudclusters.net,19006;Initial Catalog=Kumudu_Pod;User ID=kumudu_user;Password=HuQAGh72;Connect Timeout=30;Encrypt=False;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False;";
     //Old Poduction Data base
 		//    public static string PRODUCTION_DATABASE { get; } =
     //        "Data Source=172.201.169.155;Initial Catalog=KUMUDU;User ID=kumudu;Password=z/api)/c>iTKB4#%lbN;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
