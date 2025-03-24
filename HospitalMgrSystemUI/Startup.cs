@@ -6,9 +6,9 @@ namespace HospitalMgrSystemUI
 {
     public class Startup
     {
-	    public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; }
 
-		public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
@@ -16,17 +16,17 @@ namespace HospitalMgrSystemUI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-	        // Set the static Configuration property
-	        HospitalDBContext.Configuration = Configuration;
+            // Set the static Configuration property
+            HospitalDBContext.Configuration = Configuration;
 
-	        services.AddDbContext<HospitalDBContext>(options =>
-		        options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<HospitalDBContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
 
-			// To enable runtime compilation
-			// services.AddControllersWithViews().AddRazorRuntimeCompilation();
-			services.AddScoped<DrugsController>();
-		}
+            // To enable runtime compilation
+            // services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddScoped<DrugsController>();
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -43,16 +43,10 @@ namespace HospitalMgrSystemUI
             }
 
             app.UseCors("CorsPolicy");
-
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
 
             app.UseEndpoints(endpoints =>
             {
@@ -60,7 +54,6 @@ namespace HospitalMgrSystemUI
                     name: "default",
                     pattern: "{controller=Login}/{action=Index}/{id?}");
             });
-            
         }
     }
 }
