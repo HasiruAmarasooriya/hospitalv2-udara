@@ -1,0 +1,46 @@
+﻿# Stage 1: Base image
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+WORKDIR /app
+ENV ASPNETCORE_URLS="https://+:8443;http://+:8080"
+EXPOSE 8443
+EXPOSE 8080
+
+# Copy the HTTPS certificate from the project folder (host) into the container
+COPY https/aspnetapp.pfx /https/aspnetapp.pfx
+
+# Set environment variables for the HTTPS certificate
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password="RAVIndu751"
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+
+# Stage 2: Build image
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+
+# Copy project files and restore dependencies
+COPY ["HospitalMgrSystem.DataAccess/HospitalMgrSystem.DataAccess.csproj", "HospitalMgrSystem.DataAccess/"]
+COPY ["HospitalMgrSystem.Model/HospitalMgrSystem.Model.csproj", "HospitalMgrSystem.Model/"]
+COPY ["HospitalMgrSystem.Service/HospitalMgrSystem.Service.csproj", "HospitalMgrSystem.Service/"]
+COPY ["HospitalMgrSystem.WebAPI/HospitalMgrSystem.WebAPI.csproj", "HospitalMgrSystem.WebAPI/"]
+RUN dotnet restore "HospitalMgrSystem.WebAPI/HospitalMgrSystem.WebAPI.csproj"
+
+# Copy all source files
+COPY . .
+
+WORKDIR "/src/HospitalMgrSystem.WebAPI"
+RUN dotnet build "HospitalMgrSystem.WebAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+# Stage 3: Publish image
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "HospitalMgrSystem.WebAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish
+
+# Stage 4: Final image
+FROM base AS final
+WORKDIR /app
+
+# Copy published output to the final image
+COPY --from=publish /app/publish .
+
+# Run the application
+ENTRYPOINT ["dotnet", "HospitalMgrSystem.WebAPI.dll", "--server.urls", "https://+:8443;http://+:8080"]
