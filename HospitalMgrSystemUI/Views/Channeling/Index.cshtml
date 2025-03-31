@@ -21,10 +21,6 @@
 		.select2-selection__arrow {
 			height: 34px !important;
 		}
-	</style>
-
-	<style>
-
 
 		.btn:hover {
 			transform: translateY(-2px);
@@ -33,13 +29,13 @@
 
 		/* Primary button (Add Item) */
 		.btn-primary {
-			background: linear-gradient(135deg, #6a11cb, #2575fc);
+			background: linear-gradient(150deg, rgba(34,195,55,1) 50%, rgba(0,255,33,1) 80%);
 			color: white;
 		}
 
 		/* Info button (Add Transfer) */
 		.btn-info {
-			background: linear-gradient(135deg, #17ead9, #6078ea);
+			background: linear-gradient(135deg, rgba(8,0,255,1) 0%, rgba(3,165,255,1) 80%);
 			color: white;
 		}
 
@@ -56,16 +52,51 @@
 		}
 
 		.table-success {
-			background: linear-gradient(135deg, #33ddee, #33ffdd);
+			background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(0,255,243,1) 80%);
 		}
+
+		.label-success {
+			color: #000;
+		}
+
+
+		
 
 		/*Table*/
 
-		.table tbody tr:hover {
+		#basic-2 tbody tr:hover {
+			background-color: rgba(0, 123, 255, 0.1) !important; /* Light blue hover */
 			transform: translateY(-2px);
 			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+			transition: all 0.3s ease-in-out;
 		}
 
+		.spark-chart.form-material1 {
+			display: flex; /* Use flexbox to align buttons horizontally */
+			gap: 2px; /* Add space between buttons */
+		}
+
+		.dropdown-menu {
+			border: none;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+		}
+
+
+
+		.modal-dialog {
+			max-width: 95%; /* Adjust to fit the modal within the screen */
+			max-height: 95%; /* Ensure the modal fits vertically */
+		}
+
+		.modal-content {
+			overflow-y: auto; /* Add scrolling for the modal content */
+		}
+	
+
+	
+
+
+		
 		.order-card {
 			color: #fff;
 		}

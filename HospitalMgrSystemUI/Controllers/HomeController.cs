@@ -62,5 +62,19 @@ namespace HospitalMgrSystemUI.Controllers
             }
             return user;
         }
-    }
+		[HttpGet]
+		public JsonResult GetEvents()
+		{
+			var events = new List<object>
+	{
+		new { title = "Doctor Appointment", start = DateTime.Now.ToString("yyyy-MM-dd") },
+		new { title = "Patient Surgery", start = DateTime.Now.AddDays(3).ToString("yyyy-MM-dd") },
+		new { title = "Medicine Delivery", start = DateTime.Now.AddDays(5).ToString("yyyy-MM-dd") }
+	};
+
+			return Json(events);
+		}
+
+
+	}
 }

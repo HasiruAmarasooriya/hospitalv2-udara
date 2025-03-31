@@ -8,10 +8,10 @@ namespace HospitalMgrSystem.DataAccess
 	public static class ConnectionStrings
 	{
 		public static string DEVELOPMENT_DATABASE { get; } =
-			"Data Source=HASIRUNOTEBOOK\\SQLEXPRESS;Database=KUMUDU_250221;Trusted_Connection=True;TrustServerCertificate=True;";
+			"Data Source=139.84.143.10;Initial Catalog=Kumudu_Pod;User ID=kumuduuser;Password=£0Jy^6b0;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
 
 		public static string PRODUCTION_DATABASE { get; } =
-			"Data Source=";
+			"Data Source=139.84.143.10;Initial Catalog=Kumudu_Pod;User ID=kumuduuser;Password=£0Jy^6b0;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;";
 	}
 
 
@@ -53,7 +53,7 @@ namespace HospitalMgrSystem.DataAccess
 		public DbSet<OPDConsultantFee> OPDConsultantFee { get; set; }
 
 		public DbSet<OPDScheduler> OPDScheduler { get; set; }
-		
+
 		public DbSet<NightShift> NightShifts { get; set; }
 		public DbSet<CashierSession> CashierSessions { get; set; }
 
@@ -73,14 +73,14 @@ namespace HospitalMgrSystem.DataAccess
 		public DbSet<Video> Video { get; set; }
 		public DbSet<Warehouse> Warehouse { get; set; }
 		public DbSet<GRN> GRN { get; set; }
-		public DbSet<GRPV> GRPV {  get; set; }
-        public DbSet<stockTransaction> stockTransaction { get; set; }
-        public DbSet<StockRequest> StockRequest { get; set; }
-        public DbSet<StockRequestItem> StockRequestItem { get; set; }
+		public DbSet<GRPV> GRPV { get; set; }
+		public DbSet<stockTransaction> stockTransaction { get; set; }
+		public DbSet<StockRequest> StockRequest { get; set; }
+		public DbSet<StockRequestItem> StockRequestItem { get; set; }
 
-        #region DTOs
+		#region DTOs
 
-        public DbSet<AppointmentDTO> AppointmentsDTO { get; set; }
+		public DbSet<AppointmentDTO> AppointmentsDTO { get; set; }
 		public DbSet<ReportOpdXrayOtherPaidDto> ReportOpdXrayOtherPaidDtos { get; set; }
 		public DbSet<ReportOpdXrayOtherRefundDTO> ReportOpdXrayOtherRefundDTOs { get; set; }
 		public DbSet<PaymentSummaryOpdXrayOtherDTO> PaymentSummaryOpdXrayOtherDtos { get; set; }
@@ -97,50 +97,50 @@ namespace HospitalMgrSystem.DataAccess
 		public DbSet<PreviousForwardBookingDataDto> PreviousForwardBookingDataDtos { get; set; }
 		public DbSet<ChannelingRefundReportDto> ChannelingRefundReportDtos { get; set; }
 		public DbSet<ChannelingPaymentSummaryReportDto> ChannelingPaymentSummaryReportDtos { get; set; }
-        public DbSet<DiscountTableReport> DiscountTableReports { get; set; }
-       
-        public DbSet<GRPVDetailsDto> GRPVDetailsDtos { get; set; }
-        public DbSet<LogTranDTO> LogTranDTO { get; set; }
-        public DbSet<RequestDetailsDto> RequestDetailsDto { get; set; }
-        public DbSet<RequestItemDetailsDto> RequestItemDetailsDto { get; set; }
-        public DbSet<DrugStoresDetailsDto> DrugStoresDetailsDto { get; set; }
-        public DbSet<StockQuantityDto> StockQuantityDto { get; set; }
-        public DbSet<RequestDetailsByIdDto> RequestDetailsByIdDto { get; set; }
-        public DbSet<StoresDetailsDto> StoresDetailsDto { get; set; }
-        
-        #endregion
+		public DbSet<DiscountTableReport> DiscountTableReports { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		public DbSet<GRPVDetailsDto> GRPVDetailsDtos { get; set; }
+		public DbSet<LogTranDTO> LogTranDTO { get; set; }
+		public DbSet<RequestDetailsDto> RequestDetailsDto { get; set; }
+		public DbSet<RequestItemDetailsDto> RequestItemDetailsDto { get; set; }
+		public DbSet<DrugStoresDetailsDto> DrugStoresDetailsDto { get; set; }
+		public DbSet<StockQuantityDto> StockQuantityDto { get; set; }
+		public DbSet<RequestDetailsByIdDto> RequestDetailsByIdDto { get; set; }
+		public DbSet<StoresDetailsDto> StoresDetailsDto { get; set; }
+
+		#endregion
+
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			optionsBuilder.UseSqlServer(ConnectionStrings.DEVELOPMENT_DATABASE);
 		}
-       /* protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
-			base.OnModelCreating(modelBuilder);
+		/* protected override void OnModelCreating(ModelBuilder modelBuilder)
+		 {
+			 base.OnModelCreating(modelBuilder);
 
-			#region Ignoring DTOs
+			 #region Ignoring DTOs
 
-			modelBuilder.Ignore<ClaimBillDto>();
-			modelBuilder.Ignore<PaymentSummaryOfDoctorsOPDDTO>();
-			modelBuilder.Ignore<ForwardBookingDataTableDTO>();
-			modelBuilder.Ignore<TotalPaidAmountOfForwardBookingDTO>();
-			modelBuilder.Ignore<OtherTransactionsDTO>();
-			modelBuilder.Ignore<PatientsDataTableDTO>();
-			modelBuilder.Ignore<CashierSessionDTO>();
-			modelBuilder.Ignore<ChannelingPaidReport>();
-			modelBuilder.Ignore<PreviousForwardBookingDataDto>();
-			modelBuilder.Ignore<ChannelingRefundReportDto>();
-			modelBuilder.Ignore<ChannelingPaymentSummaryReportDto>();
-			modelBuilder.Ignore<GRPVDetailsDto>();
-			modelBuilder.Ignore<LogTranDTO>();
-		    modelBuilder.Ignore<RequestDetailsDto>();
-		    modelBuilder.Ignore<RequestItemDetailsDto>();
-			modelBuilder.Ignore<DrugStoresDetailsDto>();
-			modelBuilder.Ignore<StockQuantityDto>();
-			modelBuilder.Ignore<RequestDetailsByIdDto>();
-			modelBuilder.Ignore<StoresDetailsDto>();
-		
-			#endregion
-		}*/
-    }
+			 modelBuilder.Ignore<ClaimBillDto>();
+			 modelBuilder.Ignore<PaymentSummaryOfDoctorsOPDDTO>();
+			 modelBuilder.Ignore<ForwardBookingDataTableDTO>();
+			 modelBuilder.Ignore<TotalPaidAmountOfForwardBookingDTO>();
+			 modelBuilder.Ignore<OtherTransactionsDTO>();
+			 modelBuilder.Ignore<PatientsDataTableDTO>();
+			 modelBuilder.Ignore<CashierSessionDTO>();
+			 modelBuilder.Ignore<ChannelingPaidReport>();
+			 modelBuilder.Ignore<PreviousForwardBookingDataDto>();
+			 modelBuilder.Ignore<ChannelingRefundReportDto>();
+			 modelBuilder.Ignore<ChannelingPaymentSummaryReportDto>();
+			 modelBuilder.Ignore<GRPVDetailsDto>();
+			 modelBuilder.Ignore<LogTranDTO>();
+			 modelBuilder.Ignore<RequestDetailsDto>();
+			 modelBuilder.Ignore<RequestItemDetailsDto>();
+			 modelBuilder.Ignore<DrugStoresDetailsDto>();
+			 modelBuilder.Ignore<StockQuantityDto>();
+			 modelBuilder.Ignore<RequestDetailsByIdDto>();
+			 modelBuilder.Ignore<StoresDetailsDto>();
+
+			 #endregion
+		 }*/
+	}
 }

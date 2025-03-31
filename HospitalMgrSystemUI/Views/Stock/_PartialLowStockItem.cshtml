@@ -25,12 +25,12 @@
             height: 34px !important;
         }
 
-        <style >
+        
         .modal-content {
             max-width: 90%; /* Ensure the modal stretches to fit more content */
         }
 
-        .table-responsive {
+        .table-responsive1 {
             overflow-x: auto; /* Enable horizontal scrolling */
         }
 
@@ -43,6 +43,48 @@
             padding: 0.25rem 0.5rem; /* Adjust button padding for better fit */
         }
 
+        .table-success {
+            background-color: aqua;
+            color: black;
+        }
+
+        .table-danger {
+            background-color: #E52020 !important; /* Red */
+            color: black; /* Ensure text is visible */
+        }
+
+        .table-warning {
+            background-color: #d4a017 !important; /* Dark Yellow */
+            color: black; /* Ensure text is readable */
+        }
+
+        .odd {
+            background-color: white !important; /* Dark Yellow */
+            color: black; /* Ensure text is readable */
+        }
+
+        .even {
+            background-color: white !important; /* Dark Yellow */
+            color: black; /* Ensure text is readable */
+        }
+
+        /*Table*/
+
+        .table tbody tr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .spark-chart.form-material1 {
+            display: flex; /* Use flexbox to align buttons horizontally */
+            gap: 2px; /* Add space between buttons */
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
         .modal-dialog {
             max-width: 95%; /* Adjust to fit the modal within the screen */
             max-height: 95%; /* Ensure the modal fits vertically */
@@ -53,7 +95,7 @@
         }
     </style>
 
-        </style>
+      
 }
 
 
@@ -64,7 +106,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Low Stock Items</h4>
-                <div class="table-responsive">
+                <div class="table-responsive1">
                     <table id="lowStockTable" class="table table-striped table-bordered dataTable fonts-12" cellspacing="0" width="100%">
                         <thead>
                             <tr>

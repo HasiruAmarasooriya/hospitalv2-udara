@@ -30981,3 +30981,104 @@ span.twitter-typeahead .tt-suggestion {
     60. RTL CSS Ends
 ==========================**/
 /*# sourceMappingURL=style.css.map */
+
+
+
+/* Card Bounce Animation */
+@keyframes cardBounce {
+    0% {
+        transform: perspective(1500px) rotateY(15deg) translateY(-20px);
+    }
+
+    25% {
+        transform: perspective(1500px) rotateY(10deg) translateY(-10px);
+    }
+
+    50% {
+        transform: perspective(1500px) rotateY(5deg) translateY(0);
+    }
+
+    75% {
+        transform: perspective(1500px) rotateY(10deg) translateY(-10px);
+    }
+
+    100% {
+        transform: perspective(1500px) rotateY(15deg) translateY(-20px);
+    }
+}
+
+/* Keyframes for Icon Rotation and Shadow Pop */
+@keyframes rotateAndPop {
+    0% {
+        transform: rotate(0deg) translateY(0);
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+        z-index: 1;
+    }
+
+    50% {
+        transform: rotate(180deg) translateY(-50px); /* Move icon halfway out of the card */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Add shadow when icon moves out */
+        z-index: 2;
+    }
+
+    100% {
+        transform: rotate(360deg) translateY(-100px); /* Finish full rotation and move icon out */
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5); /* Deeper shadow as it pops */
+        z-index: 3;
+    }
+}
+
+@keyframes floatAnimation {
+    0% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-30px) translateX(10px) rotate(10deg);
+    }
+
+    100% {
+        transform: translateY(30px) translateX(-10px) rotate(-10deg);
+    }
+}
+
+/* Bouncing Animation for Each Letter */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-15px);
+    }
+
+    60% {
+        transform: translateY(-7px);
+    }
+}
+
+/* Keyframes for Animations */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Keyframes for Pill Animation */
+@keyframes movePills {
+    0% {
+        transform: translateY(-100%) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+    }
+}

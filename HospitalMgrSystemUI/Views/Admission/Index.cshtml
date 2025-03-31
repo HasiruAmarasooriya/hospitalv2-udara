@@ -19,47 +19,20 @@
             height: 34px !important;
         }
 
-
-        .table-responsive {
-            overflow-x: auto; /* Enable horizontal scrolling */
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
-
-        .table td, .table th {
-            white-space: nowrap; /* Prevent content wrapping inside cells */
-            text-align: center; /* Center-align table content */
-        }
-
-        .btn {
-            padding: 6px 12px; /* Adjust button padding for better fit */
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin: 5px;
-        }
-
-            .btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            }
 
         /* Primary button (Add Item) */
         .btn-primary {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background: linear-gradient(150deg, rgba(34,195,55,1) 50%, rgba(0,255,33,1) 80%);
             color: white;
         }
 
         /* Info button (Add Transfer) */
         .btn-info {
-            background: linear-gradient(135deg, #17ead9, #6078ea);
+            background: linear-gradient(135deg, rgba(8,0,255,1) 0%, rgba(3,165,255,1) 80%);
             color: white;
         }
 
@@ -75,17 +48,23 @@
             color: white;
         }
 
-        /* Icon styling */
-        .btn i {
-            margin-right: 8px;
-            font-size: 18px;
+        .table-success {
+            background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(0,255,243,1) 80%);
         }
+
+        .label-success {
+            color: #000;
+        }
+
+
 
         /*Table*/
 
-        .table tbody tr:hover {
+        #basic-2 tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.1) !important; /* Light blue hover */
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-in-out;
         }
 
         .spark-chart.form-material1 {

@@ -95,7 +95,7 @@
             }
 
             .table-success {
-                background: #96c281 !important;
+                background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(0,255,243,1) 80%) !important;
             }
 
             .yellow {
@@ -205,16 +205,16 @@
             }
                 .dark-theme .table-responsive th,
                 .dark-theme .table-responsive td {
-                    border: 1px solid #333 !important;
+                    border: 1px solid black !important;
                 }
 
                 .dark-theme .table-responsive th {
-                    background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(0,255,243,1) 80%);
-                    color: #F8F8F2 !important;
+                background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(0,255,243,1) 80%);
+                    color: black !important;
                 }
 
                 .dark-theme .table-responsive td {
-                    background-color: #262626 !important;
+                    background-color:black !important;
                     color: #F8F8F2 !important;
                 }
 
@@ -248,7 +248,7 @@
             .dark-theme .dataTables_filter,
             .dark-theme .basic-2,
             .dark-theme .dataTables_length {
-                background-color: #262626 !important;
+                background-color: black !important;
                 color: #F8F8F2 !important;
             }
 
@@ -282,7 +282,7 @@
             .dark-theme .select2-selection__rendered,
             .dark-theme .select2-selection--single,
             .dark-theme .dropdown-wrapper {
-                background-color: #262626 !important;
+                background-color: black !important;
                 color: #F8F8F2 !important;
             }
 
@@ -432,7 +432,7 @@
                             <li class="nav-devider"></li>
                             @*                        <li class="nav-small-cap">Operations</li>*@
                             <li>
-                                <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-book-multiple"></i><span class="hide-menu">Cashier</span></a>
+                                <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-currency-usd"></i><span class="hide-menu">Cashier</span></a>
                                 <ul aria-expanded="false" class="collapse">
                                     <li><a href="@Url.Action("Index", "Cashier")">Cashier</a></li>
                                     <li><a href="@Url.Action("Index", "OtherIncome")">Other Income/Expenses</a></li>
@@ -457,7 +457,7 @@
                             <li class="nav-devider"></li>
                             @*                        <li class="nav-small-cap">Master Data</li>*@
                             <li>
-                                <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-book-multiple"></i><span class="hide-menu">Master Data</span></a>
+                                <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-database"></i><span class="hide-menu">Master Data</span></a>
                                 <ul aria-expanded="false" class="collapse">
                                     <li><a href="@Url.Action("Index", "Patient")">Register Patient</a></li>
                                     @if (userRoleCookie == "ADMIN")

@@ -1,4 +1,5 @@
 ﻿using HospitalMgrSystem.Model;
+using HospitalMgrSystem.Service.Drugs;
 using HospitalMgrSystemUI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,13 +35,10 @@ namespace HospitalMgrSystemUI.Controllers
                 try
                 {
 
-                    string APIUrl = _configuration.GetValue<string>("MainAPI:APIURL");
-                    httpClient.BaseAddress = new Uri(APIUrl + "Drugs/");
-                    var postObj = httpClient.GetFromJsonAsync<List<Drug>>("GetAllDrugs");
-                    postObj.Wait();
-                    var result = postObj.Result;
+                    DrugsService drugsService = new DrugsService();
 
-                    drugsDto.ListDrogs = result;
+
+                    drugsDto.ListDrogs = drugsService.GetAllDrugsByStatus();
 
                 }
                 catch (Exception ex) { }

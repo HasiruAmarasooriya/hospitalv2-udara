@@ -28,13 +28,13 @@
 
 		/* Primary button (Add Item) */
 		.btn-primary {
-			background: linear-gradient(135deg, #6a11cb, #2575fc);
+			background: linear-gradient(150deg, rgba(34,195,55,1) 50%, rgba(0,255,33,1) 80%);
 			color: white;
 		}
 
 		/* Info button (Add Transfer) */
 		.btn-info {
-			background: linear-gradient(135deg, #17ead9, #6078ea);
+			background: linear-gradient(135deg, rgba(8,0,255,1) 0%, rgba(3,165,255,1) 80%);
 			color: white;
 		}
 
@@ -53,11 +53,16 @@
 		.table-success {
 			background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(0,255,243,1) 80%);
 		}
-		.table-danger{
-			background: linear-gradient(135deg, #ff416c, #ff4b2b);
+
+		.label-success {
+			color: #000;
 		}
-		.table-primary{
-			background: linear-gradient(135deg, #fff, #ff4e50);
+
+
+		/* Icon styling */
+		.btn i {
+			margin-right: 8px;
+			font-size: 18px;
 		}
 
 		/*Table*/
@@ -66,9 +71,29 @@
 			transform: translateY(-2px);
 			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 		}
+
+		.spark-chart.form-material1 {
+			display: flex; /* Use flexbox to align buttons horizontally */
+			gap: 2px; /* Add space between buttons */
+		}
+
+		.dropdown-menu {
+			border: none;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+		}
+
+
+
+		.modal-dialog {
+			max-width: 95%; /* Adjust to fit the modal within the screen */
+			max-height: 95%; /* Ensure the modal fits vertically */
+		}
+
+		.modal-content {
+			overflow-y: auto; /* Add scrolling for the modal content */
+		}
 	</style>
 }
-
 <div class="row page-titles">
 	<div class="col-md-5 col-8 align-self-center">
 		<h3 class="text-themecolor m-b-0 m-t-0">Summary Reports</h3>
